@@ -1,0 +1,225 @@
+# exocortex-playbook.yaml
+# Prompt-Driven Development Playbook for Exocórtex.IA
+# Version: 1.0.0
+# License: MIT (same as Hermes Agent)
+#
+# USAGE:
+#   Manual: Execute prompts 001-028 sequentially via hermes CLI
+#   Automated: hermes-trainer run playbook.yaml --target <container>
+#
+# CONVENTION:
+#   - Each prompt has an ID (3 digits), phase, and expected artifacts
+#   - checkpoint: true means self-test must pass before continuing
+#   - min_score: minimum self-test score to advance
+#   - max_retries: how many self-repair attempts before escalating
+
+version: "1.0.0"
+target: "hermes-agent"
+metadata:
+  product: "Exocórtex.IA"
+  methodology: "PDD (Prompt-Driven Development)"
+  total_prompts: 28
+  total_phases: 7  # P0 is manual
+
+phases:
+  # ─── P1: IDENTITY ──────────────────────────────────────────
+  - id: P1_IDENTITY
+    name: "Identity — Alma do Exocórtex"
+    description: "Self-test skill, SOUL.md, behavioral boundaries, prompt logging"
+    prompts:
+      - id: "001"
+        name: "Bootstrap Self-Test"
+        content_ref: "phases/P1_IDENTITY.md#prompt-001"
+        artifact_ref: "artifacts/SELF_TEST_SKILL.md"
+        expected_artifacts:
+          - path: "skills/exocortex-self-test/SKILL.md"
+            check: exists
+          - path: "SOUL.md"
+            check: contains
+            value: "Configuration State"
+        checkpoint: false
+
+      - id: "002"
+        name: "Core Identity"
+        content_ref: "phases/P1_IDENTITY.md#prompt-002"
+        artifact_ref: "artifacts/SOUL_SEED.md"
+        expected_artifacts:
+          - path: "SOUL.md"
+            check: contains
+            value: "Exocórtex"
+          - path: "SOUL.md"
+            check: contains
+            value: "# Values"
+        checkpoint: false
+
+      - id: "003"
+        name: "Behavioral Boundaries"
+        content_ref: "phases/P1_IDENTITY.md#prompt-003"
+        expected_artifacts:
+          - path: "SOUL.md"
+            check: contains
+            value: "Draft-First Protocol"
+          - path: "SOUL.md"
+            check: contains
+            value: "Behavioral Boundaries"
+        checkpoint: false
+
+      - id: "004"
+        name: "Prompt Log Skill"
+        content_ref: "phases/P1_IDENTITY.md#prompt-004"
+        expected_artifacts:
+          - path: "skills/exocortex-prompt-log/SKILL.md"
+            check: exists
+          - path: "MEMORY.md"
+            check: contains
+            value: "PDD-001"
+        checkpoint: false
+
+      - id: "005"
+        name: "P1 Checkpoint"
+        content_ref: "phases/P1_IDENTITY.md#prompt-005"
+        checkpoint: true
+        min_score: 2
+        max_retries: 3
+
+  # ─── P2: MEMORY ────────────────────────────────────────────
+  - id: P2_MEMORY
+    name: "Memory — Estrutura Cognitiva"
+    description: "Acervo Cognitivo, 7 Nature skills, Microverso CRUD, semantic search"
+    prompts:
+      - id: "006"
+        name: "Acervo Structure"
+        content_ref: "phases/P2_MEMORY.md#prompt-006"
+        expected_artifacts:
+          - path: "acervo/macro/soul.md"
+            check: exists
+          - path: "acervo/micro/_template/contexto.md"
+            check: exists
+        checkpoint: false
+
+      - id: "007"
+        name: "7 Nature Skills"
+        content_ref: "phases/P2_MEMORY.md#prompt-007"
+        expected_artifacts:
+          - path: "skills/nature-contexto/SKILL.md"
+            check: exists
+          - path: "skills/nature-reflexao/SKILL.md"
+            check: exists
+        checkpoint: false
+
+      - id: "008"
+        name: "Microverso Creation"
+        content_ref: "phases/P2_MEMORY.md#prompt-008"
+        expected_artifacts:
+          - path: "skills/exocortex-new-microverso/SKILL.md"
+            check: exists
+        checkpoint: false
+
+      - id: "009"
+        name: "Memory Indexing"
+        content_ref: "phases/P2_MEMORY.md#prompt-009"
+        checkpoint: false
+
+      - id: "010"
+        name: "P2 Checkpoint"
+        content_ref: "phases/P2_MEMORY.md#prompt-010"
+        checkpoint: true
+        min_score: 3
+        max_retries: 3
+
+  # ─── P3: TOOLS ─────────────────────────────────────────────
+  - id: P3_TOOLS
+    name: "Tools & MCPs"
+    description: "MCP servers, tool governance, profiles, bundles"
+    prompts:
+      - id: "011"
+        name: "Filesystem MCP"
+        content_ref: "phases/P3_TOOLS.md#prompt-011"
+        checkpoint: false
+      - id: "012"
+        name: "Web Search MCP"
+        content_ref: "phases/P3_TOOLS.md#prompt-012"
+        checkpoint: false
+      - id: "013"
+        name: "Google Workspace MCP"
+        content_ref: "phases/P3_TOOLS.md#prompt-013"
+        checkpoint: false
+      - id: "014"
+        name: "Observability"
+        content_ref: "phases/P3_TOOLS.md#prompt-014"
+        checkpoint: false
+      - id: "015"
+        name: "Tool Governance"
+        content_ref: "phases/P3_TOOLS.md#prompt-015"
+        checkpoint: false
+      - id: "016"
+        name: "Bundle exocortex-alpha"
+        content_ref: "phases/P3_TOOLS.md#prompt-016"
+        checkpoint: false
+      - id: "017"
+        name: "Profiles (Exec/Evol)"
+        content_ref: "phases/P3_TOOLS.md#prompt-017"
+        checkpoint: false
+      - id: "018"
+        name: "P3 Checkpoint"
+        content_ref: "phases/P3_TOOLS.md#prompt-018"
+        checkpoint: true
+        min_score: 4
+        max_retries: 3
+
+  # ─── P4: BEHAVIOR ──────────────────────────────────────────
+  - id: P4_BEHAVIOR
+    name: "Business Rules"
+    description: "Draft-First, Vetor Ativo, Canvas Cognitivo, Briefing, Onboarding"
+    prompts:
+      - id: "019"
+        name: "Draft-First Skill"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-019"
+        checkpoint: false
+      - id: "020"
+        name: "Vetor Ativo"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-020"
+        checkpoint: false
+      - id: "021"
+        name: "Canvas Cognitivo"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-021"
+        checkpoint: false
+      - id: "022"
+        name: "Morning Briefing"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-022"
+        checkpoint: false
+      - id: "023"
+        name: "Onboarding Skill"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-023"
+        checkpoint: false
+      - id: "024"
+        name: "Behavioral Tests"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-024"
+        checkpoint: false
+      - id: "025"
+        name: "P4 Checkpoint"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-025"
+        checkpoint: true
+        min_score: 4
+        max_retries: 3
+
+  # ─── P5: VALIDATION ────────────────────────────────────────
+  - id: P5_VALIDATION
+    name: "Validation & Self-Repair"
+    description: "End-to-end smoke tests, self-repair loop, graduation"
+    prompts:
+      - id: "026"
+        name: "Full Smoke Test"
+        content_ref: "phases/P5_VALIDATION.md#prompt-026"
+        checkpoint: false
+      - id: "027"
+        name: "Self-Repair Loop"
+        content_ref: "phases/P5_VALIDATION.md#prompt-027"
+        checkpoint: false
+        max_retries: 3
+      - id: "028"
+        name: "Graduation"
+        content_ref: "phases/P5_VALIDATION.md#prompt-028"
+        checkpoint: true
+        min_score: 5
+        max_retries: 0  # No retries — must be 5/5
