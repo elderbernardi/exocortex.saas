@@ -57,3 +57,19 @@ Summary: Checkpoint final P2_MEMORY aprovado. Score 9/9 (T1-T9 all pass). 13 ski
 Artifacts: docs/ADR/ADR-001-four-layer-acervo.md; docs/ADR/ADR-002-context-isolation.md; docs/ADR/ADR-003-hybrid-natures.md; docs/ADR/ADR-004-llm-wiki-alignment.md; plans/pdd/phases/P2_MEMORY.md (updated); plans/pdd/PLAN.md (updated)
 Summary: Alinhamento da estrutura P2 com LLM Wiki nativa do Hermes. Decisões: (1) Arquitetura de 4 camadas — macro flat + global wiki + micro wiki isolado + shared ponte (ADR-001). (2) Isolamento de contexto via filtro de domínio + deny-list com aliases ALL/CLIENTS/PROJECTS, allow > deny (ADR-002). (3) Natures híbridas arquivo→diretório em ~150 linhas (ADR-003). (4) Mecânicas LLM Wiki (SCHEMA/index/log/raw/frontmatter/wikilinks) adaptadas à ontologia 7 Natures (ADR-004). Plano de execução: 4 fases, 15 ações. Prompts 006B-010B criados em P2_MEMORY.md. Aguardando implementação.
 
+[ADR-005] 2026-05-26T20:41:00-03:00 | Phase: P2 (Wiki Alignment) | Status: accepted
+Artifacts: docs/ADR/ADR-005-consolidate-nature-skills.md; plans/pdd/phases/P2_MEMORY.md (updated); plans/pdd/PLAN.md (updated)
+Summary: Consolidação das 7 Nature skills (nature-contexto, nature-conhecimento, nature-instrucao, nature-persona, nature-processo, nature-ferramenta, nature-reflexao) + exocortex-search em 1 skill unificada: acervo-manager. Motivação: procedimento idêntico em todas (ler arquivo → operar). Natures são classificação de dados (definida por SCHEMA + frontmatter), não comportamentos distintos. acervo-manager unifica: read, write (c/ filtro domínio), promote (arquivo→dir), search (4 camadas), scope (firewall deny/allow). 8 skills → 1.
+
+[PDD-008B] 2026-05-26T20:52:00-03:00 | Phase: P2 (Wiki Alignment) | Status: success
+Artifacts: ~/.hermes/acervo/shared/cross-refs/_template.md
+Summary: Template de cross-reference criado em shared/cross-refs/. Formato: frontmatter YAML (from/to/subject/tags) + corpo 5-15 linhas + ponteiro 1 linha em cada micro afetado.
+
+[PDD-009B] 2026-05-26T20:53:00-03:00 | Phase: P2 (Wiki Alignment) | Status: success
+Artifacts: smoke test end-to-end (Microverso temporário _smoke-test — removido após teste)
+Summary: Smoke test das 5 operações do acervo-manager: WRITE (3 Natures), READ (lógica dual arquivo), SEARCH (multi-camada com prioridade), SCOPE (deny/allow com aliases + type resolution), CLEANUP. Todos ✅.
+
+[PDD-010B] 2026-05-26T20:54:00-03:00 | Phase: P2 (Wiki Alignment) | Status: success
+Artifacts: checkpoint validation (10/10 critérios)
+Summary: P2 Checkpoint aprovado. Critérios: 4 camadas ✅, global wiki ✅, template wiki ✅, acervo-manager 5 ops ✅, 8 skills removidas ✅, filtro domínio ✅, groups aliases ✅, new-microverso wiki ✅, MEMORY log ✅, ADRs 001-005 ✅. Pronto para P3_TOOLS.
+

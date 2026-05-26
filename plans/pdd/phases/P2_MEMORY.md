@@ -71,50 +71,59 @@ acervo/
 
 ---
 
-### Prompt 007B — Atualizar Nature Skills (Lógica Dual)
+### Prompt 007B — Criar Skill `acervo-manager` (substitui 7 Nature skills + search)
 
-Atualizar 7 Nature skills para operar em **modo dual** (arquivo OU diretório):
+> ADR-005: As 7 Nature skills tinham procedimento idêntico (ler arquivo do acervo).
+> Consolidadas em 1 skill unificada. Natures são classificação de dados, não comportamentos.
 
-1. Detectar se Nature é arquivo `.md` ou diretório
-2. Arquivo → `read_file` direto
-3. Diretório → ler `_index.md`, depois página específica
-4. **Filtro de Domínio** antes de qualquer escrita:
-   - Conteúdo específico do domínio? → escrever aqui
+Criar skill `acervo-manager` com as seguintes operações:
+
+1. **read** — Ler Nature de qualquer camada (macro/global/micro)
+   - Detectar se Nature é arquivo `.md` ou diretório
+   - Arquivo → `read_file` direto
+   - Diretório → ler `_index.md`, depois página específica
+2. **write** — Escrever com Filtro de Domínio:
+   - Conteúdo específico do domínio? → micro/{slug}/{nature}
    - Cross-domain? → shared/cross-refs/
-   - Universal? → global/
+   - Universal? → global/{nature}
    - De outro micro? → escrever lá (se scope permitir)
-5. Frontmatter YAML obrigatório em toda página wiki criada
+   - Frontmatter YAML obrigatório em toda página wiki criada
+3. **promote** — Detectar Nature > ~150 linhas → converter arquivo para diretório
+4. **search** — Busca em 4 camadas (micro > global > shared)
+5. **scope** — Resolver firewall deny/allow com aliases de `shared/groups.md`
 
-**Validação:** Nature skill opera corretamente sobre arquivo E diretório.
+Remover 7 skills obsoletas: `nature-contexto`, `nature-conhecimento`, `nature-instrucao`,
+`nature-persona`, `nature-processo`, `nature-ferramenta`, `nature-reflexao`.
+Remover `exocortex-search` (absorvida).
 
----
-
-### Prompt 008B — Firewall de Acesso + Cross-Reference
-
-1. Criar `shared/groups.md` com aliases:
-   - `ALL` = todos os Microversos
-   - `CLIENTS` = type: client
-   - `PROJECTS` = type: project
-2. Implementar lógica de scope em tarefas:
-   - `deny: [alias]` bloqueia leitura E escrita
-   - `allow: [slug]` sobrescreve deny (SEMPRE)
-3. Criar template de cross-ref em `shared/cross-refs/`
-4. Atualizar `exocortex-new-microverso` para nova estrutura wiki
-
-**Validação:** Tarefa com `deny: [ALL], allow: [X]` acessa SOMENTE X.
+**Validação:** `acervo-manager` opera sobre arquivo E diretório em qualquer camada.
 
 ---
 
-### Prompt 009B — Atualizar Busca Multi-Camada
+### Prompt 008B — Atualizar `exocortex-new-microverso` + Cross-Reference
 
-Atualizar `exocortex-search` para busca em 4 camadas:
+1. Atualizar `exocortex-new-microverso` para gerar estrutura wiki completa:
+   - SCHEMA.md, index.md, log.md, raw/, _archive/ + 7 Nature files com frontmatter
+   - Substituir placeholders em SCHEMA.md (domain, type, description)
+   - Registrar tipo (client/project/domain/role) para resolução de aliases
+2. Criar template de cross-ref em `shared/cross-refs/`
 
-1. **Boot:** Ler `global/index.md` + `micro/{scope}/index.md`
-2. **Busca:** grep + index.md + wikilinks + frontmatter
-3. **Cross-domain:** Buscar em `shared/` quando resultado parcial
-4. **Prioridade:** micro (mais específico) > global > shared
+**Validação:** Novo Microverso tem estrutura wiki completa + SCHEMA preenchido.
 
-**Validação:** Busca retorna resultados com indicação de camada de origem.
+---
+
+### Prompt 009B — Integração e Smoke Test
+
+Testar `acervo-manager` end-to-end:
+
+1. **Criar** Microverso de teste via `exocortex-new-microverso`
+2. **Write:** Escrever conteúdo em 3 Natures distintas via `acervo-manager`
+3. **Read:** Ler de volta via `acervo-manager` (validar lógica dual)
+4. **Search:** Buscar em 4 camadas (micro > global > shared)
+5. **Scope:** Testar deny/allow com aliases
+6. **Cleanup:** Remover Microverso de teste
+
+**Validação:** Todas as operações (read/write/search/scope) funcionais.
 
 ---
 
@@ -124,13 +133,14 @@ Self-test atualizado. Critérios:
 
 1. `acervo/` com 4 camadas (macro, global, micro, shared)
 2. `global/` com SCHEMA + index + log + raw + _archive
-3. `_template/` com estrutura wiki completa
-4. 7 Nature skills com lógica dual (arquivo/diretório)
-5. Filtro de Domínio ativo em toda escrita
-6. `shared/groups.md` com aliases
-7. Busca multi-camada funcional
-8. MEMORY.md com log 006B-010B
-9. ADRs documentadas em `docs/ADR/`
+3. `_template/` com estrutura wiki completa (SCHEMA + index + log + raw + 7 Natures)
+4. `acervo-manager` funcional (read/write/promote/search/scope)
+5. 7 Nature skills antigas removidas + `exocortex-search` removida
+6. Filtro de Domínio ativo em toda escrita via `acervo-manager`
+7. `shared/groups.md` com aliases (ALL, CLIENTS, PROJECTS)
+8. `exocortex-new-microverso` gera estrutura wiki completa
+9. MEMORY.md com log 006B-010B
+10. ADRs 001-005 documentadas em `docs/ADR/`
 
 Se OK → Confirmar avanço para `P3_TOOLS`
 
@@ -144,6 +154,7 @@ Se OK → Confirmar avanço para `P3_TOOLS`
 | [ADR-002](../../docs/ADR/ADR-002-context-isolation.md) | Isolamento via filtro de domínio + deny-list com aliases, allow > deny |
 | [ADR-003](../../docs/ADR/ADR-003-hybrid-natures.md) | Natures começam arquivo, promovem para dir em ~150 linhas |
 | [ADR-004](../../docs/ADR/ADR-004-llm-wiki-alignment.md) | Mecânicas da LLM Wiki + ontologia das 7 Natures |
+| [ADR-005](../../docs/ADR/ADR-005-consolidate-nature-skills.md) | 7 Nature skills → 1 `acervo-manager` (Natures são dados, não comportamentos) |
 
 ---
 
