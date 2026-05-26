@@ -1,7 +1,7 @@
 # Exocórtex.IA — Plano PDD (Prompt-Driven Development)
 
 > **Branch:** PDD — Infrastructure as Prompts
-> **Status:** 🟡 Em Revisão
+> **Status:** 🟢 Em Progresso
 > **Owner:** @elder
 > **Last Updated:** 2025-05-26T00:15
 
@@ -64,7 +64,7 @@ stateDiagram-v2
 |---|---|---|---|---|
 | **P0** | Setup | — (manual) | Hermes instalado, env configurado | `hermes doctor` |
 | **P1** | Identity | 001-005 | `SOUL.md`, skill `exocortex-self-test`, skill `exocortex-prompt-log`, **skill `stop-slop`**, **skill `taste-skill`** (gpt-taste + brandkit + brutalist) | self-test score ≥ 2/5 |
-| **P2** | Memory | 006-010 | Acervo Cognitivo dirs, 7 Nature skills, `exocortex-new-microverso` skill | self-test score ≥ 3/5 |
+| **P2** | Memory | 006-010 + 006B-010B | Acervo Cognitivo 4 camadas (macro/global/micro/shared), wiki structure (SCHEMA/index/log/raw), 7 Nature skills (dual-mode), firewall deny-list c/ aliases, `exocortex-new-microverso` + `exocortex-search` multi-camada. ADRs: 001-004 | self-test score ≥ 3/5 |
 | **P3** | Tools | 011-018 | `config.yaml` MCPs, skill `exocortex-tool-governance`, bundle `exocortex-alpha` | self-test score ≥ 4/5 |
 | **P4** | Behavior | 019-028 | Draft-First skill, Vetor Ativo skill, Canvas Cognitivo skill, Morning Briefing, **Output Quality Gate skill** | self-test score ≥ 4/5 |
 | **P5** | Validation | 029-031 | Smoke tests executados, **quality audit de outputs**, relatório de graduação | self-test score = 5/5 |
@@ -304,9 +304,13 @@ Cada fase é verificada por:
 |---|---|
 | Status global | `../STATUS.md` |
 | Knowledge base | `../KNOWLEDGE.md` |
-| Decisões arquiteturais | `../DECISIONS.md` |
+| Decisões arquiteturais | `../../docs/ADR/` |
 | Comunicação inter-agentes | `../COMMS.md` |
 | Code Branch (complementar) | `../code/PLAN.md` |
+| ADR-001: 4 Camadas | `../../docs/ADR/ADR-001-four-layer-acervo.md` |
+| ADR-002: Isolamento | `../../docs/ADR/ADR-002-context-isolation.md` |
+| ADR-003: Natures Híbridas | `../../docs/ADR/ADR-003-hybrid-natures.md` |
+| ADR-004: LLM Wiki Align | `../../docs/ADR/ADR-004-llm-wiki-alignment.md` |
 | Hermes SoT | `../../docs/hermes-agent-kwon/hermes-agent-sot-for-agents.md` |
 | PRD Dev | `../../docs/PRD/PRD_dev_v1.md` |
 | PRD Executive | `../../docs/PRD/PRD_executive_v1.md` |

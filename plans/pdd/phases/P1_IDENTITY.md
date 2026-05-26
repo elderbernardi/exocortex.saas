@@ -1,6 +1,6 @@
 # Fase P1: Identity — Alma do Exocórtex
 
-> **Status:** ⬜ Não Iniciada
+> **Status:** ✅ Completa (2026-05-26T12:30 BRT)
 > **Prompts:** 001–005
 > **Checkpoint:** self-test score ≥ 2/5
 > **Depende de:** P0 completo

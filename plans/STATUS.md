@@ -1,15 +1,15 @@
 # Exocórtex.IA — Status Board
 
-> **Last Updated:** 2025-05-25T23:30 (BRT)
-> **Updated By:** project-planner
+> **Last Updated:** 2026-05-26T12:30 (BRT)
+> **Updated By:** antigravity (session audit + P1 completion)
 
 ---
 
 ## 🔴 Current Focus
 
 **Branch:** PDD (Prompt-Driven Development)
-**Phase:** Pre-Execution (Planejamento)
-**Blocker:** Nenhum — aguardando aprovação do plano PDD
+**Phase:** Fase P2 (Memory) — pronto para iniciar
+**Blocker:** Nenhum — P1 concluída, aguardando início de P2
 
 ---
 
@@ -17,7 +17,7 @@
 
 | Branch | Status | Current Phase | Next Action |
 |---|---|---|---|
-| **PDD** | 🟡 Planejamento | Pre-P0 | Aprovar plano → clonar Hermes → executar P0 |
+| **PDD** | 🟢 Execução | P2 | Iniciar Prompt 006 (Memory Architecture) |
 | **Code** | ⚪ Não iniciado | — | Depende de validação do PDD na Alpha |
 
 ---
@@ -26,10 +26,10 @@
 
 | Milestone | Target | Status |
 |---|---|---|
-| Plano PDD aprovado | Semana 1 | 🟡 Em revisão |
-| Hermes clonado e funcional | Semana 1 | ⬜ Pendente |
-| P0 (Setup) completo | Semana 1 | ⬜ Pendente |
-| P1 (Identity) completo | Semana 2 | ⬜ Pendente |
+| Plano PDD aprovado | Semana 1 | ✅ Completo |
+| Hermes clonado e funcional | Semana 1 | ✅ Completo |
+| P0 (Setup) completo | Semana 1 | ✅ Completo |
+| P1 (Identity) completo | Semana 2 | ✅ Completo |
 | P2 (Memory) completo | Semana 2 | ⬜ Pendente |
 | P3 (Tools) completo | Semana 3 | ⬜ Pendente |
 | P4 (Behavior) completo | Semana 3 | ⬜ Pendente |

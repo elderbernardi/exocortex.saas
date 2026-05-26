@@ -224,20 +224,34 @@ The Hermes architecture already has a conceptual "Outer Loop":
 
 ## Development Environment
 
-### K-009: Hermes Installation
-- **Date:** 2025-05-25
-- **Source:** GitHub README
-- **Relevance:** PDD P0
-- **Tags:** hermes, installation, setup, python, uv
+### K-009: Hermes Installation & Doctor Status
+- **Date:** 2026-05-26
+- **Source:** User manual installation & `hermes doctor`
+- **Relevance:** PDD P0 (Setup) Complete
+- **Tags:** hermes, installation, setup, doctor
 
-Key files for setup:
-- `setup-hermes.sh` — main installation script
-- `pyproject.toml` — Python dependencies (uses `uv` package manager)
-- `.env.example` — comprehensive env var template (23KB!)
-- `cli-config.yaml.example` — full config reference (57KB!)
-- `hermes_bootstrap.py` — first-run bootstrap
+Completed Setup Details:
+- **Version:** Hermes Agent v0.14.0 (2026.5.16)
+- **Runtime:** Python 3.11.14 (running on Linux)
+- **Method:** Manual installation using the curl script:
+  `curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash`
+- **Executable Path:** `~/.local/bin/hermes`
+- **Active Workspace:** `~/.hermes/hermes-agent`
 
-Commands:
-- `hermes doctor` — diagnostic check
-- `hermes model` — configure LLM provider
-- `hermes gateway setup` — configure messaging platforms
+Diagnostic Warnings (from `hermes doctor`):
+1. **OAuth/API Auth:** Not logged into Nous Portal, OpenAI Codex, Google Gemini OAuth, MiniMax, or xAI OAuth (can be configured via `hermes model` / `hermes auth` if needed).
+2. **First Run State:** `MEMORY.md`, `USER.md`, and `state.db` are not yet created in `~/.hermes/memories/` (they will initialize automatically upon first session run).
+
+---
+
+### K-010: Configuração de Provedores e Fallback (Codex + DeepSeek)
+- **Date:** 2026-05-26
+- **Source:** experimentação & config.yaml
+- **Relevance:** PDD P0/P1
+- **Tags:** fallback, openrouter, deepseek, codex, oauth
+
+Configuração atual do runtime do Hermes para o experimento:
+1. **Primary Provider:** OpenAI Codex (autenticado via OAuth do Codex).
+2. **Fallback Provider:** OpenRouter, configurado no `config.yaml` sob `fallback_model`.
+3. **Fallback Model:** `deepseek/deepseek-chat` (DeepSeek V3 no OpenRouter).
+4. **API Key:** `OPENROUTER_API_KEY` ativa em `~/.hermes/.env`.

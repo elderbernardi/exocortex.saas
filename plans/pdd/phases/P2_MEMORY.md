@@ -1,96 +1,152 @@
 # Fase P2: Memory — Estrutura Cognitiva
 
-> **Status:** ⬜ Não Iniciada  
-> **Prompts:** 006–010  
-> **Checkpoint:** self-test score ≥ 3/5  
-> **Depende de:** P1 completo  
-> **Estimated Time:** 1-2 horas
+> **Status:** 🟡 Em Reestruturação (alinhamento LLM Wiki)
+> **Prompts:** 006–010 (concluídos) + 006B–010B (reestruturação)
+> **Checkpoint:** self-test score ≥ 3/5
+> **Depende de:** P1 completo
+> **ADRs:** ADR-001 (4 Camadas), ADR-002 (Isolamento), ADR-003 (Natures Híbridas), ADR-004 (LLM Wiki)
 
 ---
 
 ## Objetivo
 
-Criar o Acervo Cognitivo (7 Natures), skills de gerenciamento de Microversos, e busca semântica.
+Criar o Acervo Cognitivo com **4 camadas** (macro, global, micro, shared), integrar mecânicas da LLM Wiki (index, log, raw, frontmatter, wikilinks), e garantir isolamento de contexto entre Microversos.
 
 ---
 
-## Prompts
+## Prompts Originais (006–010) — Concluídos ✅
 
-### Prompt 006 — Acervo Cognitivo Structure
+Estabeleceram a estrutura base de 3 camadas (macro/micro/shared), 7 Nature skills, skill de criação de Microversos e busca semântica.
 
-Criar diretórios em `HERMES_HOME`:
+---
+
+## Prompts de Reestruturação (006B–010B) — Pendentes
+
+### Prompt 006B — Reestruturar para 4 Camadas + Wiki
+
+Atualizar estrutura do Acervo para a arquitetura de 4 camadas com mecânicas wiki:
 
 ```
 acervo/
-├── macro/          # Macroverso (Identidade)
-│   ├── soul.md, valores.md, estilo.md
-├── micro/          # Microversos (Domínios)
-│   └── _template/  # 7 arquivos (1 por Nature)
-│       ├── contexto.md, conhecimento.md, instrucoes.md
-│       ├── persona.md, processos.md, ferramentas.md, reflexoes.md
-└── shared/         # Conhecimento transversal
-    └── glossario.md
+├── macro/                      # Camada 1: Identidade (FLAT, sempre carregado)
+│   ├── soul.md
+│   ├── valores.md
+│   └── estilo.md
+│
+├── global/                     # Camada 2: Operação Universal (WIKI)
+│   ├── SCHEMA.md               # Convenções globais
+│   ├── index.md                # Catálogo (carregado no boot)
+│   ├── log.md                  # Log append-only
+│   ├── raw/                    # Fontes brutas universais
+│   │   ├── articles/
+│   │   ├── documents/
+│   │   └── assets/
+│   ├── _archive/               # Páginas supersedidas
+│   ├── instrucoes.md           # Regras universais
+│   ├── processos.md            # Workflows globais
+│   ├── ferramentas.md          # Tools de todo contexto
+│   ├── conhecimento.md         # Compliance, legal
+│   └── reflexoes.md            # Lições transversais
+│
+├── micro/                      # Camada 3: Domínios Isolados (WIKI)
+│   ├── _template/              # Template wiki completo
+│   │   ├── SCHEMA.md           # Com regras de isolamento
+│   │   ├── index.md
+│   │   ├── log.md
+│   │   ├── raw/
+│   │   ├── _archive/
+│   │   └── {7 Nature files}    # Arquivos únicos iniciais
+│   └── {slug}/                 # Microverso instanciado
+│
+└── shared/                     # Camada 4: Ponte Cross-domain
+    ├── SCHEMA.md               # Convenções de cross-ref
+    ├── index.md                # Catálogo de cross-refs
+    ├── log.md                  # Log cross-domain
+    ├── glossario.md            # Vocabulário comum
+    ├── groups.md               # Grupos de aliases (ALL, CLIENTS, PROJECTS)
+    └── cross-refs/             # Referências cruzadas pragmáticas
 ```
 
-Cada template deve ter: Header, Purpose, Format, Examples.
-
-**Validação:** `ls acervo/` mostra estrutura completa.
+**Validação:** `tree acervo/ -L 2` mostra 4 camadas com wiki structure.
 
 ---
 
-### Prompt 007 — 7 Nature Skills
+### Prompt 007B — Atualizar Nature Skills (Lógica Dual)
 
-Criar 7 skills (`nature-{nome}`), uma para cada Nature:
-1. `nature-contexto` — injetar contexto de domínio
-2. `nature-conhecimento` — indexar/buscar knowledge
-3. `nature-instrucao` — aplicar regras condicionais
-4. `nature-persona` — alternar personas por domínio
-5. `nature-processo` — executar workflows multi-step
-6. `nature-ferramenta` — gerenciar tools por domínio
-7. `nature-reflexao` — registrar auto-aprendizados
+Atualizar 7 Nature skills para operar em **modo dual** (arquivo OU diretório):
 
-Cada skill: frontmatter YAML + Trigger + Procedure + Verification.
+1. Detectar se Nature é arquivo `.md` ou diretório
+2. Arquivo → `read_file` direto
+3. Diretório → ler `_index.md`, depois página específica
+4. **Filtro de Domínio** antes de qualquer escrita:
+   - Conteúdo específico do domínio? → escrever aqui
+   - Cross-domain? → shared/cross-refs/
+   - Universal? → global/
+   - De outro micro? → escrever lá (se scope permitir)
+5. Frontmatter YAML obrigatório em toda página wiki criada
 
-**Validação:** `hermes skills list` mostra 7 nature skills.
-
----
-
-### Prompt 008 — Microverso Creation Skill
-
-Skill `exocortex-new-microverso`:
-- Copia `_template/` para `micro/{slug}/`
-- Preenche contexto.md
-- Entrevista executivo (ferramentas, persona, regras)
-- Registra em MEMORY.md
-
-**Teste:** Criar `teste-financeiro`, verificar, deletar.
+**Validação:** Nature skill opera corretamente sobre arquivo E diretório.
 
 ---
 
-### Prompt 009 — Memory Indexing
+### Prompt 008B — Firewall de Acesso + Cross-Reference
 
-Configurar busca semântica (sqlite-vec/FTS5) no Acervo:
-- Segmentar documentos por parágrafos
-- Embedar e armazenar com metadados (nature, microverso, timestamp)
-- Skill `exocortex-search` para busca híbrida
+1. Criar `shared/groups.md` com aliases:
+   - `ALL` = todos os Microversos
+   - `CLIENTS` = type: client
+   - `PROJECTS` = type: project
+2. Implementar lógica de scope em tarefas:
+   - `deny: [alias]` bloqueia leitura E escrita
+   - `allow: [slug]` sobrescreve deny (SEMPRE)
+3. Criar template de cross-ref em `shared/cross-refs/`
+4. Atualizar `exocortex-new-microverso` para nova estrutura wiki
 
-**Teste:** 3 docs fictícios → busca por tema → resultados relevantes.
+**Validação:** Tarefa com `deny: [ALL], allow: [X]` acessa SOMENTE X.
 
 ---
 
-### Prompt 010 — P2 Checkpoint
+### Prompt 009B — Atualizar Busca Multi-Camada
 
-self-test completo. Critérios:
-1. `acervo/` completo
-2. 7 Nature skills instaladas
-3. `exocortex-new-microverso` funcional
-4. Busca semântica funcional
-5. MEMORY.md com log 006-010
+Atualizar `exocortex-search` para busca em 4 camadas:
 
-Se OK → `current_phase: P3_TOOLS`
+1. **Boot:** Ler `global/index.md` + `micro/{scope}/index.md`
+2. **Busca:** grep + index.md + wikilinks + frontmatter
+3. **Cross-domain:** Buscar em `shared/` quando resultado parcial
+4. **Prioridade:** micro (mais específico) > global > shared
+
+**Validação:** Busca retorna resultados com indicação de camada de origem.
+
+---
+
+### Prompt 010B — P2 Checkpoint (Reestruturação)
+
+Self-test atualizado. Critérios:
+
+1. `acervo/` com 4 camadas (macro, global, micro, shared)
+2. `global/` com SCHEMA + index + log + raw + _archive
+3. `_template/` com estrutura wiki completa
+4. 7 Nature skills com lógica dual (arquivo/diretório)
+5. Filtro de Domínio ativo em toda escrita
+6. `shared/groups.md` com aliases
+7. Busca multi-camada funcional
+8. MEMORY.md com log 006B-010B
+9. ADRs documentadas em `docs/ADR/`
+
+Se OK → Confirmar avanço para `P3_TOOLS`
+
+---
+
+## Decisões Arquiteturais
+
+| ADR | Decisão |
+|---|---|
+| [ADR-001](../../docs/ADR/ADR-001-four-layer-acervo.md) | 4 camadas: macro (flat) + global (wiki) + micro (wiki isolado) + shared (ponte) |
+| [ADR-002](../../docs/ADR/ADR-002-context-isolation.md) | Isolamento via filtro de domínio + deny-list com aliases, allow > deny |
+| [ADR-003](../../docs/ADR/ADR-003-hybrid-natures.md) | Natures começam arquivo, promovem para dir em ~150 linhas |
+| [ADR-004](../../docs/ADR/ADR-004-llm-wiki-alignment.md) | Mecânicas da LLM Wiki + ontologia das 7 Natures |
 
 ---
 
 ## Próximo
 
-Após P2 → `P3_TOOLS.md`
+Após P2 (reestruturação) → `P3_TOOLS.md`

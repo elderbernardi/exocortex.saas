@@ -72,3 +72,13 @@
   - ✅ Best-in-class reasoning (GPT-5.x)
   - ✅ Fallback automático nativo do Hermes
   - ⚠️ Custo de API sob controle via rate limiting
+
+### ADR-006: Configuração de Fallback com DeepSeek V3 no OpenRouter
+- **Date:** 2026-05-26
+- **Status:** Accepted
+- **Context:** Necessidade de resiliência caso o Codex OAuth falhe, garantindo continuidade das operações com modelo de baixo custo e alta velocidade.
+- **Decision:** Configurar `fallback_model` no arquivo `~/.hermes/config.yaml` com o provider `openrouter` e modelo `deepseek/deepseek-chat`.
+- **Consequences:**
+  - ✅ Failover automático e transparente em caso de indisponibilidade ou rate-limit do primary provider.
+  - ✅ Baixo custo operacional usando a API do OpenRouter com o modelo DeepSeek V3.
+  - ⚠️ Dependência da chave `OPENROUTER_API_KEY` configurada localmente no arquivo `.env`.
