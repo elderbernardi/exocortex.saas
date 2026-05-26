@@ -228,6 +228,93 @@ Confirme: self-test
 
 ---
 
+### Prompt 004B — Install stop-slop (Quality Gate Textual)
+
+**Propósito:** Instalar a skill anti-slop que garante que toda prosa gerada soa humana e direta. Qualidade de output é identidade, não comportamento opcional.
+
+**Artefatos criados:**
+- `~/.hermes/skills/stop-slop/SKILL.md`
+- `SOUL.md` (atualizado: Value #6)
+
+**Prompt:**
+```
+Crie a skill "stop-slop" no diretório de skills com o seguinte
+conteúdo:
+[Inserir conteúdo de artifacts/STOP_SLOP_SKILL.md]
+
+Esta skill é OBRIGATÓRIA. Ela define regras de escrita que 
+eliminam padrões previsíveis de IA em toda prosa:
+- Cortar frases de enchimento e advérbios
+- Quebrar estruturas formulaicas (contrastes binários, falsa agência)
+- Voz ativa obrigatória
+- Ser específico, não vago
+- Variar ritmo de frases
+- Confiar no leitor (sem hand-holding)
+- Scoring mínimo: 35/50 em 5 dimensões
+
+Adicione ao SOUL.md na seção Values:
+6. Output Autêntico: Toda comunicação deve soar humana, direta,
+   e livre de padrões genéricos de IA. A skill stop-slop é o 
+   guardrail permanente contra escrita artificial.
+
+Atualize prompts_executed para [001-004B].
+Confirme: self-test
+```
+
+**Validação esperada:**
+- [ ] Skill `stop-slop` criada e listada em `hermes skills list`
+- [ ] `SOUL.md` contém Value #6 sobre Output Autêntico
+- [ ] Skill contém Quick Checks e tabela de Scoring
+
+---
+
+### Prompt 004C — Install taste-skill (Quality Gate Visual)
+
+**Propósito:** Instalar o conjunto de sub-skills de qualidade visual que quebram defaults estatísticos de LLMs na geração de UI, apresentações e outputs visuais.
+
+**Artefatos criados:**
+- `~/.hermes/skills/taste-skill/SKILL.md` (orquestrador)
+- `~/.hermes/skills/taste-skill/gpt-taste.md` (UI premium)
+- `~/.hermes/skills/taste-skill/brandkit.md` (identidade visual)
+- `~/.hermes/skills/taste-skill/brutalist.md` (dados pesados)
+- `SOUL.md` (atualizado: Value #7)
+
+**Prompt:**
+```
+Crie a skill "taste-skill" no diretório de skills como um 
+conjunto de 3 sub-skills para qualidade visual:
+
+1. gpt-taste (UI premium): 
+[Inserir conteúdo de artifacts/TASTE_SKILL.md#gpt-taste]
+
+2. brandkit (identidade visual):
+[Inserir conteúdo de artifacts/TASTE_SKILL.md#brandkit]
+
+3. brutalist (dados pesados / dashboards):
+[Inserir conteúdo de artifacts/TASTE_SKILL.md#brutalist]
+
+Crie também um SKILL.md orquestrador que seleciona o sub-skill
+correto por contexto:
+- Output de dados/métricas → brutalist
+- Output de identidade/marca → brandkit  
+- Output de landing/produto → gpt-taste
+
+Adicione ao SOUL.md na seção Values:
+7. Excelência Visual: Outputs visuais devem ser premium,
+   intencionais, e livres de clichês de IA. A skill taste-skill
+   seleciona automaticamente o sub-skill correto por contexto.
+
+Atualize prompts_executed para [001-004C].
+Confirme: self-test
+```
+
+**Validação esperada:**
+- [ ] Skill `taste-skill` criada com 3 sub-skills
+- [ ] `SOUL.md` contém Value #7 sobre Excelência Visual
+- [ ] Orquestrador seleciona sub-skill por tipo de output
+
+---
+
 ### Prompt 005 — P1 Checkpoint
 
 **Propósito:** Validação completa da fase P1. Gate para P2.
@@ -237,11 +324,14 @@ Confirme: self-test
 Execute self-test completo e reporte o resultado.
 
 Critérios para avançar para P2:
-1. SOUL.md contém Identity, Values, Communication Style, 
-   Behavioral Boundaries, e Configuration State
+1. SOUL.md contém Identity, Values (7 valores), Communication 
+   Style, Behavioral Boundaries, e Configuration State
 2. Skill exocortex-self-test está funcional
 3. Skill exocortex-prompt-log está funcional
-4. MEMORY.md contém log dos prompts 001-005
+4. Skill stop-slop está instalada e contém Quick Checks + Scoring
+5. Skill taste-skill está instalada com 3 sub-skills 
+   (gpt-taste, brandkit, brutalist)
+6. MEMORY.md contém log dos prompts 001-005
 
 Se TODOS os critérios passarem:
 - Atualize Configuration State para:
@@ -258,6 +348,7 @@ Confirme: self-test
 
 **Validação esperada:**
 - [ ] self-test score ≥ 2/5 (Identity + Self-Test checkpoints)
+- [ ] Quality skills (stop-slop + taste-skill) instaladas
 - [ ] Configuration State atualizado para P2_MEMORY
 - [ ] Se falha: diagnóstico claro + sugestão de fix
 
@@ -267,9 +358,11 @@ Confirme: self-test
 
 | Critério | Verificação |
 |---|---|
-| SOUL.md completo | Contém 5 seções obrigatórias |
+| SOUL.md completo | Contém 5 seções obrigatórias + 7 Values |
 | Self-test funcional | Roda sem erros |
-| Prompt-log funcional | MEMORY.md tem 5 entries |
+| Prompt-log funcional | MEMORY.md tem entries para todos os prompts |
+| stop-slop instalada | Skill listada, contém Quick Checks + Scoring |
+| taste-skill instalada | 3 sub-skills (gpt-taste, brandkit, brutalist) |
 | Phase avançada | Configuration State = P2_MEMORY |
 
 ---

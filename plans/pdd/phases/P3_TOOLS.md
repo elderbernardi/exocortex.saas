@@ -47,6 +47,8 @@ Criar bundle que agrupa as skills essenciais:
 - exocortex-search
 - exocortex-new-microverso
 - exocortex-tool-governance
+- stop-slop
+- taste-skill (gpt-taste, brandkit, brutalist)
 - 7 nature-* skills
 
 ### Prompt 017 — Profiles por Vetor

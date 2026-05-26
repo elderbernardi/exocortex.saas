@@ -1,10 +1,10 @@
 # exocortex-playbook.yaml
 # Prompt-Driven Development Playbook for Exocórtex.IA
-# Version: 1.0.0
+# Version: 1.1.0
 # License: MIT (same as Hermes Agent)
 #
 # USAGE:
-#   Manual: Execute prompts 001-028 sequentially via hermes CLI
+#   Manual: Execute prompts 001-031 sequentially via hermes CLI
 #   Automated: hermes-trainer run playbook.yaml --target <container>
 #
 # CONVENTION:
@@ -13,13 +13,21 @@
 #   - min_score: minimum self-test score to advance
 #   - max_retries: how many self-repair attempts before escalating
 
-version: "1.0.0"
+version: "1.1.0"
 target: "hermes-agent"
 metadata:
   product: "Exocórtex.IA"
   methodology: "PDD (Prompt-Driven Development)"
-  total_prompts: 28
+  total_prompts: 31
   total_phases: 7  # P0 is manual
+  quality_skills:
+    - name: stop-slop
+      source: https://github.com/hardikpandya/stop-slop
+      purpose: "Eliminates predictable AI writing patterns from prose"
+    - name: taste-skill
+      source: https://github.com/Leonxlnx/taste-skill
+      purpose: "Breaks LLM statistical defaults in UI/visual generation"
+      sub_skills: [gpt-taste, brandkit, brutalist]
 
 phases:
   # ─── P1: IDENTITY ──────────────────────────────────────────
@@ -73,6 +81,36 @@ phases:
           - path: "MEMORY.md"
             check: contains
             value: "PDD-001"
+        checkpoint: false
+
+      - id: "004B"
+        name: "Install stop-slop (Quality Gate Textual)"
+        content_ref: "phases/P1_IDENTITY.md#prompt-004b"
+        artifact_ref: "artifacts/STOP_SLOP_SKILL.md"
+        expected_artifacts:
+          - path: "skills/stop-slop/SKILL.md"
+            check: exists
+          - path: "SOUL.md"
+            check: contains
+            value: "Output Autêntico"
+        checkpoint: false
+
+      - id: "004C"
+        name: "Install taste-skill (Quality Gate Visual)"
+        content_ref: "phases/P1_IDENTITY.md#prompt-004c"
+        artifact_ref: "artifacts/TASTE_SKILL.md"
+        expected_artifacts:
+          - path: "skills/taste-skill/SKILL.md"
+            check: exists
+          - path: "skills/taste-skill/gpt-taste.md"
+            check: exists
+          - path: "skills/taste-skill/brandkit.md"
+            check: exists
+          - path: "skills/taste-skill/brutalist.md"
+            check: exists
+          - path: "SOUL.md"
+            check: contains
+            value: "Excelência Visual"
         checkpoint: false
 
       - id: "005"
@@ -169,8 +207,8 @@ phases:
 
   # ─── P4: BEHAVIOR ──────────────────────────────────────────
   - id: P4_BEHAVIOR
-    name: "Business Rules"
-    description: "Draft-First, Vetor Ativo, Canvas Cognitivo, Briefing, Onboarding"
+    name: "Business Rules + Quality Gate"
+    description: "Draft-First, Vetor Ativo, Canvas Cognitivo, Briefing, Onboarding, Output Quality Gate"
     prompts:
       - id: "019"
         name: "Draft-First Skill"
@@ -193,33 +231,40 @@ phases:
         content_ref: "phases/P4_BEHAVIOR.md#prompt-023"
         checkpoint: false
       - id: "024"
-        name: "Behavioral Tests"
+        name: "Output Quality Gate"
         content_ref: "phases/P4_BEHAVIOR.md#prompt-024"
+        expected_artifacts:
+          - path: "skills/exocortex-output-quality-gate/SKILL.md"
+            check: exists
         checkpoint: false
       - id: "025"
-        name: "P4 Checkpoint"
+        name: "Behavioral Tests (incl. Quality)"
         content_ref: "phases/P4_BEHAVIOR.md#prompt-025"
+        checkpoint: false
+      - id: "026"
+        name: "P4 Checkpoint"
+        content_ref: "phases/P4_BEHAVIOR.md#prompt-026"
         checkpoint: true
         min_score: 4
         max_retries: 3
 
   # ─── P5: VALIDATION ────────────────────────────────────────
   - id: P5_VALIDATION
-    name: "Validation & Self-Repair"
-    description: "End-to-end smoke tests, self-repair loop, graduation"
+    name: "Validation & Self-Repair (incl. Quality Audit)"
+    description: "End-to-end smoke tests with quality gate validation, self-repair loop, graduation"
     prompts:
-      - id: "026"
-        name: "Full Smoke Test"
-        content_ref: "phases/P5_VALIDATION.md#prompt-026"
+      - id: "029"
+        name: "Full Smoke Test (incl. Quality Gate)"
+        content_ref: "phases/P5_VALIDATION.md#prompt-029"
         checkpoint: false
-      - id: "027"
+      - id: "030"
         name: "Self-Repair Loop"
-        content_ref: "phases/P5_VALIDATION.md#prompt-027"
+        content_ref: "phases/P5_VALIDATION.md#prompt-030"
         checkpoint: false
         max_retries: 3
-      - id: "028"
+      - id: "031"
         name: "Graduation"
-        content_ref: "phases/P5_VALIDATION.md#prompt-028"
+        content_ref: "phases/P5_VALIDATION.md#prompt-031"
         checkpoint: true
         min_score: 5
         max_retries: 0  # No retries — must be 5/5
