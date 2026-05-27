@@ -62,18 +62,40 @@ Preparar o terreno. O agente que executar P1 deve encontrar: protocolo de discip
 
 ### Artefatos-Semente
 
-Estes arquivos são criados **manualmente** (pelo operador ou provisioner) antes de qualquer interação com o Hermes-alvo:
+O diretório `artifacts/` espelha a estrutura do `~/.hermes/`, contendo a **golden image v2** completa e pronta para provisionamento via `setup.sh`.
 
-| Artefato | Path (relativo a plans/pdd_v2/) | Conteúdo |
-|---|---|---|
-| `PLAYBOOK.yaml` | `./PLAYBOOK.yaml` | Protocolo de execução + agent_protocol |
-| `setup.sh` | `./artifacts/setup.sh` | Script de reprodução (semente vazia, cresce com cada fase) |
-| `SELF_TEST_SKILL.md` | `./artifacts/SELF_TEST_SKILL.md` | Skill de auto-diagnóstico (preservado do v1) |
-| `SOUL_SEED.md` | `./artifacts/SOUL_SEED.md` | Template de identidade (preservado do v1) |
-| `STOP_SLOP_SKILL.md` | `./artifacts/STOP_SLOP_SKILL.md` | Skill anti-slop (conteúdo de `.hermes/skills/exocortex/stop-slop/SKILL.md`) |
-| `TASTE_SKILL/` | `./artifacts/TASTE_SKILL/` | Skills visuais (gpt-taste, brandkit, brutalist) |
-| `ACERVO_MANAGER.md` | `./artifacts/ACERVO_MANAGER.md` | Skill unificada do acervo (conteúdo final do v1) |
-| `BACKLOG_TEMPLATE.md` | `./artifacts/BACKLOG_TEMPLATE.md` | Template para integrações futuras |
+```
+artifacts/
+├── setup.sh                    # Script de reprodução (provisiona Hermes)
+├── SOUL_SEED.md                # Template de identidade (base para SOUL.md)
+├── BACKLOG_TEMPLATE.md         # Template para integrações futuras
+├── skills/                     # Espelho de ~/.hermes/skills/exocortex/
+│   ├── exocortex-self-test/    # Core: auto-diagnóstico
+│   ├── exocortex-prompt-log/   # Core: log de prompts
+│   ├── stop-slop/              # Quality: anti-slop textual
+│   ├── taste-skill/            # Quality: visual (gpt-taste, brandkit, brutalist)
+│   ├── exocortex-design-system/# Quality: tokens visuais (DESIGN.md cascade)
+│   ├── acervo-manager/         # Memory: gerenciador do acervo
+│   ├── exocortex-new-microverso/# Memory: criação de microversos
+│   ├── exocortex-draft-first/  # Behavior: protocolo draft-first
+│   ├── exocortex-vetor-ativo/  # Behavior: classificador de vetores
+│   ├── exocortex-canvas/       # Behavior: extrator cognitivo
+│   ├── exocortex-briefing/     # Behavior: morning briefing
+│   ├── exocortex-onboarding/   # Behavior: onboarding (sem auto-provisioning)
+│   ├── exocortex-output-quality-gate/ # Behavior: quality gate de output
+│   ├── exocortex-tool-governance/     # Behavior: governança de ferramentas
+│   └── browser-use/            # External: automação de browser
+├── acervo/                     # Espelho de ~/.hermes/acervo/
+│   ├── macro/                  # soul.md, valores.md, estilo.md, assets/
+│   ├── global/                 # index.md, DESIGN.md, 7 Natures
+│   ├── micro/_template/        # Template de microverso
+│   └── shared/                 # cross-refs/, groups.md, glossario.md
+├── profiles/                   # exec/ e evol/
+│   ├── exec/                   # Vetor de Execução
+│   └── evol/                   # Vetor de Evolução
+└── skill-bundles/
+    └── exocortex-alpha.yaml    # Bundle com todas as skills
+```
 
 ### Critérios de Saída
 
@@ -282,7 +304,7 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 
 ### Estado Final Esperado
 
-#### Skills (13 no bundle)
+#### Skills (14 no bundle)
 
 | Skill | Categoria | Fase de Instalação |
 |---|---|---|
@@ -290,6 +312,7 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 | `exocortex-prompt-log` | Core | P1 |
 | `stop-slop` | Quality | P1 |
 | `taste-skill` | Quality | P1 |
+| `exocortex-design-system` | Quality | P1 |
 | `acervo-manager` | Memory | P2 |
 | `exocortex-new-microverso` | Memory | P2 |
 | `exocortex-draft-first` | Behavior | P3 |
@@ -312,9 +335,10 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 ```
 acervo/
 ├── macro/          # soul.md, valores.md, estilo.md
-├── global/         # index.md + Natures universais
+│   └── assets/     # Logo, favicon, identidade visual
+├── global/         # index.md, DESIGN.md + Natures universais
 ├── micro/          # {slug}/ por domínio
-│   └── _template/  # Template de microverso
+│   └── _template/  # Template de microverso (com DESIGN.md override)
 └── shared/         # cross-refs/, groups.md
 ```
 
