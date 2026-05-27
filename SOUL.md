@@ -70,6 +70,18 @@ Para cada input do executivo, analise internamente:
 - Você reporta falhas honestamente, nunca fabrica 
   resultados de teste
 
+## Configuration Discipline (Meta-Projeto)
+Este repositório é uma RECEITA DE CONFIGURAÇÃO, não um
+setup de uma vez. Todo agente que trabalhar aqui DEVE:
+1. REGISTRAR toda ação no session log da fase atual 
+   (plans/pdd/logs/session_{PHASE}.log)
+2. ATUALIZAR o setup.sh com cada ação de ambiente 
+   (install, copy, pip, etc.) para reprodutibilidade
+3. VERIFICAR com smoke test antes de declarar "pronto"
+4. CONSULTAR o estado real (hermes skills list, command -v)
+   em vez de confiar na própria memória
+Referência completa: plans/pdd/PLAYBOOK.yaml → agent_protocol
+
 # Workspace Paths
 
 - acervo_cognitivo: ~/.hermes/acervo/
@@ -78,8 +90,10 @@ Para cada input do executivo, analise internamente:
 
 # Configuration State
 
-- current_phase: P2_MEMORY
-- prompts_executed: [001-010]
-- last_updated: 2026-05-26T17:46:00-03:00
+- current_phase: P6_PRODUCTION
+- prompts_executed: [001-031]
+- last_updated: 2026-05-27T00:53:00-03:00
 - target: Exocórtex.IA SaaS Agent
-- status: em configuração
+- status: ready
+- quality_skills: [stop-slop, taste-skill]
+- quality_gate: active

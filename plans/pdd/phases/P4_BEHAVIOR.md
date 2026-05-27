@@ -1,6 +1,6 @@
 # Fase P4: Behavior — Regras de Negócio + Quality Gate
 
-> **Status:** ⬜ Não Iniciada  
+> **Status:** ✅ Completa (2026-05-27) — 6/6 testes comportamentais passados, self-test 5/5  
 > **Prompts:** 019–026  
 > **Checkpoint:** self-test score ≥ 4/5  
 > **Depende de:** P3 completo  
@@ -10,7 +10,7 @@
 
 ## Objetivo
 
-Implementar as regras de negócio do Exocórtex como skills: Draft-First, Vetor Ativo, Canvas Cognitivo, Morning Briefing, Onboarding, e **Output Quality Gate** (integração das skills stop-slop e taste-skill como interceptor obrigatório de todos os outputs).
+Implementar as regras de negócio do Exocórtex como skills: Draft-First, Vetor Ativo, Canvas Cognitivo, Morning Briefing, Onboarding, e **Output Quality Gate** (integração das skills stop-slop e taste-skill como gate de qualidade aplicado pelo agente executor; ignorado para código e doc técnica).
 
 ---
 
@@ -45,14 +45,14 @@ Skill de entrevista para novos executivos:
 - Auto-gera: SOUL.md, microversos iniciais, ferramentas.md
 
 ### Prompt 024 — Output Quality Gate Skill
-Skill `exocortex-output-quality-gate` que intercepta TODOS os outputs antes de entregá-los ao executivo:
+Skill `exocortex-output-quality-gate` aplicada pelo **agente executor** como último passo de cada tarefa:
 
-**Trigger:** Ativar ANTES de entregar qualquer output.
+**Princípio:** O agente que produz o output é quem garante sua qualidade. O orquestrador **nunca** corrige — devolve ao executor com feedback.
 
-**Classificação de output:**
-- PROSA (email, briefing, análise, reflexão) → aplicar `stop-slop`
-- VISUAL (UI, dashboard, apresentação, gráfico) → aplicar `taste-skill`
-- MISTO → aplicar ambos
+**Escopo:**
+- ✅ PROSA para executivo (email, briefing, análise) → `stop-slop`
+- ✅ VISUAL para executivo (UI, dashboard, gráfico) → `taste-skill`
+- ❌ CÓDIGO, DOCUMENTAÇÃO TÉCNICA, DADOS BRUTOS → **gate ignorado**
 
 **Para PROSA — Quick Checks (stop-slop):**
 - Algum advérbio? Matar.
@@ -67,11 +67,11 @@ Skill `exocortex-output-quality-gate` que intercepta TODOS os outputs antes de e
 - Hero ultrapassa 3 linhas? Alargar container, reduzir fonte.
 - Grid tem gaps vazios? Aplicar grid-flow-dense.
 - Usa labels genéricos (SECTION 01, QUESTION 05)? Remover.
-- Layout idêntico ao anterior? Forçar randomização via taste-skill.
+- Layout idêntico ao anterior? Forçar variação via taste-skill.
 - Texto de botão invisível (contraste baixo)? Corrigir.
 - Selecionar sub-skill correto por contexto (brutalist/brandkit/gpt-taste).
 
-**Falha no gate:** Reescrever automaticamente, logar correção, entregar apenas versão corrigida.
+**Falha no gate:** Executor corrige ele mesmo (tem contexto do domínio). Se falhar 2x → sinaliza ao orquestrador, que devolve ao executor ou roteia para outro agente/modelo.
 
 ### Prompt 025 — Testes Comportamentais
 Bateria de testes:

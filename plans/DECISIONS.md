@@ -38,7 +38,7 @@
 - **Decision:** Usar prompts sequenciais (Infrastructure as Prompts) para configurar o Hermes como Exocórtex na fase Alpha. Playbook YAML versionado para reprodutibilidade.
 - **Consequences:**
   - ✅ Velocidade: dias em vez de semanas
-  - ✅ Reprodutível via Meta-Trainer para multi-tenant
+  - ✅ Reprodutível via Provisioner Agent (agente dedicado, separado) para multi-tenant
   - ⚠️ Limitado às capacidades nativas do Hermes
   - ⚠️ Code Branch necessário para Beta/V1
 

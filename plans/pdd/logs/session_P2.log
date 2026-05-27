@@ -1,0 +1,172 @@
+# Exocórtex PDD Configuration Log — Phase P2 (Memory)
+
+## ⚠️ RETROACTIVE LOG — Reconstructed 2026-05-27T00:01-03:00
+
+> This log was reconstructed from MEMORY.md entries, filesystem timestamps,
+> and ADR documents. P2 prompts 006-010B were executed on 2026-05-26 but
+> no session log file was created at the time (pre-dates Configuration
+> Discipline protocol codified in P3-PRE-003).
+
+---
+
+### [PDD-P2-006] 2026-05-26T17:40-03:00 | Phase: P2_MEMORY | Prompt: 006 — Acervo Structure
+
+#### Context:
+Criação da estrutura completa do Acervo Cognitivo com 4 camadas.
+
+#### Files Created (verified via filesystem):
+- `~/.hermes/acervo/README.md` (3859 bytes)
+- `~/.hermes/acervo/macro/soul.md` (1026 bytes)
+- `~/.hermes/acervo/macro/valores.md` (1197 bytes)
+- `~/.hermes/acervo/macro/estilo.md` (1659 bytes)
+- `~/.hermes/acervo/micro/_template/` (14 files: SCHEMA, index, log, raw, 7 Natures, _archive)
+- `~/.hermes/acervo/shared/glossario.md` (548 bytes)
+
+#### Verification (retroactive):
+```bash
+ls ~/.hermes/acervo/macro/  # soul.md valores.md estilo.md ✅
+ls ~/.hermes/acervo/micro/_template/  # 14 items ✅
+ls ~/.hermes/acervo/shared/  # glossario.md + 4 wiki files ✅
+```
+
+---
+
+### [PDD-P2-007] 2026-05-26T17:42-03:00 | Phase: P2_MEMORY | Prompt: 007 — 7 Nature Skills
+
+#### Context:
+Criação das 7 Nature skills individuais (nature-contexto, nature-conhecimento, etc.)
+
+#### Files Created:
+- 7 skills em `~/.hermes/skills/exocortex/nature-*/SKILL.md`
+
+#### Note:
+Estas 7 skills foram posteriormente consolidadas em `acervo-manager` (ADR-005, PDD-010B).
+Todas foram removidas do runtime após consolidação. ✅
+
+---
+
+### [PDD-P2-008] 2026-05-26T17:43-03:00 | Phase: P2_MEMORY | Prompt: 008 — Microverso Creation
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-new-microverso/SKILL.md`
+
+#### Verification (retroactive):
+```bash
+ls ~/.hermes/skills/exocortex/exocortex-new-microverso/  # SKILL.md ✅
+```
+
+---
+
+### [PDD-P2-009] 2026-05-26T17:44-03:00 | Phase: P2_MEMORY | Prompt: 009 — Memory Indexing (Search)
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-search/SKILL.md`
+
+#### Note:
+Skill consolidada em `acervo-manager` (ADR-005, PDD-010B). Removida do runtime. ✅
+
+---
+
+### [PDD-P2-010] 2026-05-26T17:45-03:00 | Phase: P2_MEMORY | Prompt: 010 — P2 Checkpoint
+
+#### Results:
+Score 9/9 (T1-T9). 13 skills instaladas, 12 arquivos no acervo, 7 Nature skills operacionais.
+P2 original concluída — pronto para reestruturação wiki.
+
+---
+
+## Wiki Alignment Phase (Prompts 006B-010B)
+
+### [PDD-P2-RESTRUCTURE] 2026-05-26T19:57-03:00 | Phase: P2 (Wiki Alignment) | Action: Planning
+
+#### Context:
+Alinhamento da estrutura P2 com LLM Wiki nativa do Hermes.
+
+#### ADRs Created:
+- `docs/ADR/ADR-001-four-layer-acervo.md` — Arquitetura macro/global/micro/shared
+- `docs/ADR/ADR-002-context-isolation.md` — Filtro domínio + deny-list
+- `docs/ADR/ADR-003-hybrid-natures.md` — Natures arquivo→diretório
+- `docs/ADR/ADR-004-llm-wiki-alignment.md` — Mecânicas LLM Wiki adaptadas
+
+#### Files Modified:
+- `plans/pdd/phases/P2_MEMORY.md` — prompts 006B-010B adicionados
+- `plans/pdd/PLAN.md` — tabela P2 atualizada
+
+---
+
+### [ADR-005] 2026-05-26T20:41-03:00 | Phase: P2 (Wiki Alignment) | Action: Consolidate Nature Skills
+
+#### Files Created:
+- `docs/ADR/ADR-005-consolidate-nature-skills.md`
+
+#### Decision:
+8 skills (7 Nature + search) → 1 skill (acervo-manager).
+Natures são classificação de dados, não comportamentos distintos.
+
+---
+
+### [PDD-P2-006B-007B] 2026-05-26T20:24-03:00 | Phase: P2 (Wiki Alignment) | Action: Wiki Structure
+
+#### Files Created/Modified:
+- `~/.hermes/acervo/global/` — Wiki global (SCHEMA, index, log, 5 Natures, raw, _archive)
+- `~/.hermes/acervo/micro/_template/` — Reestruturado com SCHEMA, index, log, raw, _archive
+- `~/.hermes/acervo/shared/` — groups.md, index.md, log.md, SCHEMA.md adicionados
+- `~/.hermes/skills/exocortex/acervo-manager/SKILL.md` — Skill unificada v2.0
+- `~/.hermes/skills/exocortex/exocortex-new-microverso/SKILL.md` — v2.0 wiki-aware
+
+#### Verification (retroactive):
+```bash
+ls ~/.hermes/acervo/global/   # 12 items (SCHEMA, index, log, 5 natures, raw, _archive) ✅
+ls ~/.hermes/acervo/shared/   # 6 items (cross-refs, glossario, groups, index, log, SCHEMA) ✅
+cat ~/.hermes/skills/exocortex/acervo-manager/SKILL.md | head -5  # version: 2.0.0 ✅
+```
+
+---
+
+### [PDD-P2-008B] 2026-05-26T20:52-03:00 | Phase: P2 (Wiki Alignment) | Action: Cross-Reference Template
+
+#### Files Created:
+- `~/.hermes/acervo/shared/cross-refs/_template.md` (967 bytes)
+
+---
+
+### [PDD-P2-009B] 2026-05-26T20:53-03:00 | Phase: P2 (Wiki Alignment) | Action: Smoke Test
+
+#### Results:
+Smoke test end-to-end: WRITE (3 Natures), READ (dual), SEARCH (multi-layer),
+SCOPE (deny/allow with aliases), CLEANUP. Todos ✅.
+
+---
+
+### [PDD-P2-010B] 2026-05-26T20:54-03:00 | Phase: P2 (Wiki Alignment) | Action: P2 Checkpoint Final
+
+#### Results:
+10/10 critérios aprovados. 8 skills removidas (7 Natures + search).
+`acervo-manager` v2.0 operacional com 5 operações.
+
+---
+
+## 📦 Manifesto de Arquivos — Sessão P2
+
+### No Hermes Runtime
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `acervo/macro/{soul,valores,estilo}.md` | CRIADO | 006 |
+| `acervo/micro/_template/` (14 files) | CRIADO + REESTRUTURADO | 006, 006B |
+| `acervo/shared/glossario.md` | CRIADO | 006 |
+| `acervo/global/` (12 files) | CRIADO | 006B |
+| `acervo/shared/{groups,index,log,SCHEMA}.md` | CRIADO | 007B |
+| `acervo/shared/cross-refs/_template.md` | CRIADO | 008B |
+| `skills/exocortex/acervo-manager/SKILL.md` | CRIADO (v2.0) | 007B |
+| `skills/exocortex/exocortex-new-microverso/SKILL.md` | ATUALIZADO (v2.0) | 007B |
+| 7 nature-* skills | CRIADO → REMOVIDO (ADR-005) | 007 → 010B |
+| `skills/exocortex/exocortex-search/SKILL.md` | CRIADO → REMOVIDO (ADR-005) | 009 → 010B |
+
+### No Projeto (versionados)
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `docs/ADR/ADR-001..005` | CRIADO | RESTRUCTURE, ADR-005 |
+| `plans/pdd/phases/P2_MEMORY.md` | EDITADO | RESTRUCTURE |
+| `plans/pdd/PLAN.md` | EDITADO | RESTRUCTURE, ADR-005 |

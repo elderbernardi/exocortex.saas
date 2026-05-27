@@ -1,6 +1,6 @@
 # Fase P2: Memory — Estrutura Cognitiva
 
-> **Status:** 🟡 Em Reestruturação (alinhamento LLM Wiki)
+> **Status:** ✅ Completa (2026-05-26, incl. reestruturação wiki)
 > **Prompts:** 006–010 (concluídos) + 006B–010B (reestruturação)
 > **Checkpoint:** self-test score ≥ 3/5
 > **Depende de:** P1 completo
@@ -20,7 +20,7 @@ Estabeleceram a estrutura base de 3 camadas (macro/micro/shared), 7 Nature skill
 
 ---
 
-## Prompts de Reestruturação (006B–010B) — Pendentes
+## Prompts de Reestruturação (006B–010B) — Concluídos ✅
 
 ### Prompt 006B — Reestruturar para 4 Camadas + Wiki
 

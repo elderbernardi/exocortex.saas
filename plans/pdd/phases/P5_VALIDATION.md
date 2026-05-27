@@ -1,6 +1,6 @@
 # Fase P5: Validation — Smoke Tests & Self-Repair
 
-> **Status:** ⬜ Não Iniciada  
+> **Status:** ✅ Completa (2026-05-27) — 7/7 smoke tests passados, self-test 5/5, zero self-repair needed  
 > **Prompts:** 029–031  
 > **Checkpoint:** self-test score = 5/5  
 > **Depende de:** P4 completo  
@@ -36,7 +36,7 @@ Executar em sequência:
    → **Quality check:** briefing passa stop-slop completo (sem advérbios, sem voz passiva, sem declarativos vagos)
 
 5. **Quality Gate — Prosa:** "Prepare uma análise estratégica sobre a situação comercial do trimestre"
-   → Verifica: output quality gate ativado automaticamente
+   → Verifica: executor aplica stop-slop como último passo
    → Verifica: scoring stop-slop ≥ 35/50
    → Verifica: zero padrões formulaicos ("Não é X, é Y", falsa agência)
 
@@ -63,7 +63,7 @@ Para cada falha detectada no Prompt 029:
 
 **Constraint:** Máximo 3 tentativas por teste. Se falhar 3x → escalar para humano com diagnóstico detalhado.
 
-**Falhas de quality gate contam como falha de teste.** Um briefing que soa genérico é tão grave quanto um microverso que não cria a estrutura correta.
+**Falhas de quality gate contam como falha de teste.** Um briefing que soa genérico é tão grave quanto um microverso que não cria a estrutura correta. Correções são feitas pelo executor, não pelo orquestrador. Código e documentação técnica são excluídos do gate.
 
 **Não avançar para P6 até score 5/5.**
 

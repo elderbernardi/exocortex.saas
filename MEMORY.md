@@ -1,8 +1,8 @@
 # Exocórtex Configuration Memory
 
 ## Current Phase
-- phase: P2_MEMORY
-- last_updated: 2026-05-26T17:44:00-03:00
+- phase: P6_PRODUCTION (ready)
+- last_updated: 2026-05-27T00:53:00-03:00
 
 ## Prompt Log
 [PDD-001] 2026-05-26T02:09:00-03:00 | Phase: P1 | Status: success
@@ -73,3 +73,81 @@ Summary: Smoke test das 5 operações do acervo-manager: WRITE (3 Natures), READ
 Artifacts: checkpoint validation (10/10 critérios)
 Summary: P2 Checkpoint aprovado. Critérios: 4 camadas ✅, global wiki ✅, template wiki ✅, acervo-manager 5 ops ✅, 8 skills removidas ✅, filtro domínio ✅, groups aliases ✅, new-microverso wiki ✅, MEMORY log ✅, ADRs 001-005 ✅. Pronto para P3_TOOLS.
 
+[PDD-P3-PRE-001] 2026-05-26T23:16:00-03:00 | Phase: P3 | Status: success
+Artifacts: plans/pdd/phases/P3_TOOLS.md; plans/pdd/BACKLOG_INTEGRATIONS.md; plans/pdd/PLAYBOOK.yaml; plans/pdd/PLAN.md; plans/pdd/phases/P6_PRODUCTION.md
+Summary: Split P3 em Core (015-018) + Backlog (011-014). MCPs diferidos — zero dependências em P4/P5. Backlog criado com 4 itens (BKL-001 a 004).
+
+[PDD-P3-PRE-002] 2026-05-26T23:38:00-03:00 | Phase: P3 | Status: success
+Artifacts: ~/.hermes/skills/research/duckduckgo-search/; ~/.hermes/skills/exocortex/browser-use/
+Summary: Instaladas skills de pesquisa: duckduckgo-search (Skills Hub) + browser-use (AG Kit). CLIs ddgs e browser-use verificados via smoke test. BKL-002 resolvido.
+
+[PDD-P3-PRE-003] 2026-05-26T23:43:00-03:00 | Phase: P3 | Status: success
+Artifacts: plans/pdd/PLAYBOOK.yaml (agent_protocol); SOUL.md (Configuration Discipline); plans/pdd/PLAN.md (disciplina); setup.sh; plans/pdd/logs/session_P3.log
+Summary: Codificada disciplina de configuração: 5 regras obrigatórias (LOG, SETUP, VERIFY, BACKLOG, STATE). setup.sh criado como script reproduzível.
+
+[PDD-015] 2026-05-26T23:47:00-03:00 | Phase: P3 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-tool-governance/SKILL.md; .hermes/skills/exocortex/exocortex-tool-governance/SKILL.md
+Summary: Criada skill de governança de tools: classificação (internos/pesquisa/comunicação/sistema), logging obrigatório, sandbox por microverso.
+
+[PDD-016] 2026-05-26T23:48:00-03:00 | Phase: P3 | Status: success
+Artifacts: ~/.hermes/skill-bundles/exocortex-alpha.yaml
+Summary: Criado bundle exocortex-alpha com 9 skills (self-test, prompt-log, acervo-manager, new-microverso, tool-governance, stop-slop, taste-skill, duckduckgo-search, browser-use).
+
+[PDD-017] 2026-05-26T23:48:00-03:00 | Phase: P3 | Status: success
+Artifacts: ~/.hermes/profiles/exec/; ~/.hermes/profiles/evol/
+Summary: Criados profiles exec (Vetor de Execução) e evol (Vetor de Evolução) via hermes profile create.
+
+[PDD-018] 2026-05-26T23:50:00-03:00 | Phase: P3 | Status: success
+Artifacts: SOUL.md; MEMORY.md
+Summary: P3 Checkpoint aprovado 9/9. Skills: 8 exocortex + 1 research. Bundle: exocortex-alpha (9 skills). Profiles: exec + evol. CLIs: ddgs + browser-use. P3 concluída — pronto para P4_BEHAVIOR.
+
+[PDD-AUDIT] 2026-05-27T00:01:00-03:00 | Phase: P4 (prep) | Status: success
+Artifacts: SOUL.md; MEMORY.md; plans/pdd/logs/session_P2.log; plans/pdd/phases/P2_MEMORY.md; plans/pdd/phases/P3_TOOLS.md; .hermes/skills/exocortex/
+Summary: Auditoria de drift cross-phase. Corrigidos 8 issues: SOUL P2→P4, MEMORY backfill P3, session_P2.log retroativo, status P2/P3 atualizado, skills backed up ao projeto.
+
+[PDD-019] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-draft-first/SKILL.md
+Summary: Criada skill Draft-First — interceptor de ações externas. Gera rascunho para aprovação do executivo antes de qualquer envio.
+
+[PDD-020] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-vetor-ativo/SKILL.md
+Summary: Criada skill Vetor Ativo — classificador de input Execução/Evolução com modo Socrático.
+
+[PDD-021] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-canvas/SKILL.md
+Summary: Criada skill Canvas Cognitivo — extrai intent, gaps, persona, urgência e dependências do input do executivo.
+
+[PDD-022] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-briefing/SKILL.md
+Summary: Criada skill Morning Briefing — consolidação cross-microverso com ações pendentes, status por domínio e insights.
+
+[PDD-023] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-onboarding/SKILL.md
+Summary: Criada skill Onboarding — entrevista de 5 blocos para auto-gerar SOUL.md e microversos personalizados.
+
+[PDD-024] 2026-05-27T00:09:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skills/exocortex/exocortex-output-quality-gate/SKILL.md
+Summary: Criada skill Output Quality Gate — interceptor que aplica stop-slop (prosa ≥35/50) e taste-skill (visual) em todos os outputs.
+
+[PDD-P4-BUNDLE] 2026-05-27T00:30:00-03:00 | Phase: P4 | Status: success
+Artifacts: ~/.hermes/skill-bundles/exocortex-alpha.yaml; .hermes/skill-bundles/exocortex-alpha.yaml
+Summary: Bundle exocortex-alpha atualizado de 9 para 15 skills, incluindo 6 skills P4 (draft-first, vetor-ativo, canvas, briefing, onboarding, output-quality-gate).
+
+[PDD-025] 2026-05-27T00:31:00-03:00 | Phase: P4 | Status: success
+Artifacts: 6 Hermes sessions (20260527_003110_bff10d, 20260527_003213_1299ae, 20260527_003304_05daac, 20260527_003430_3c9718, 20260527_003517_d8626b, 20260527_003724_37393c)
+Summary: Testes comportamentais 6/6 passados: Draft-First (DRAFT gerado), Vetor Evolução (Socrático ativado), Morning Briefing (acervo consultado), Quality Prosa (stop-slop OK), Quality Visual (brutalist ativado), Self-test (5/5).
+
+[PDD-026] 2026-05-27T00:38:00-03:00 | Phase: P4 | Status: success
+Artifacts: SOUL.md; MEMORY.md; plans/pdd/phases/P4_BEHAVIOR.md
+Summary: P4 Checkpoint aprovado. Todos critérios atendidos: quality gate funcional, testes passados, bundle 15 skills, self-test 5/5. Phase avançada para P5_VALIDATION.
+
+[PDD-029] 2026-05-27T00:41:00-03:00 | Phase: P5 | Status: success
+Artifacts: 7 Hermes sessions (P5 smoke tests)
+Summary: Smoke tests 7/7 passados: 1) Microverso CRUD (cliente-alfa criado com 7 Natures), 2) Draft-First + Quality (email com stop-slop + acervo atualizado), 3) Vetor Evolução (Socrático + Canvas Cognitivo), 4) Morning Briefing (cross-microverso com lacunas honestas), 5) Quality Prosa (análise estratégica ~42/50), 6) Quality Visual (brutalist 8/8 checks), 7) Self-test (5/5).
+
+[PDD-030] 2026-05-27T00:53:00-03:00 | Phase: P5 | Status: skipped
+Summary: Self-Repair Loop não necessário — zero falhas detectadas nos 7 smoke tests.
+
+[PDD-031] 2026-05-27T00:53:00-03:00 | Phase: P5 | Status: success
+Artifacts: SOUL.md; MEMORY.md; plans/pdd/phases/P5_VALIDATION.md; plans/pdd/phases/P6_PRODUCTION.md
+Summary: Graduação para P6_PRODUCTION. SOUL.md status: ready. Quality gate: active. Golden image pronta.

@@ -3,7 +3,7 @@
 > **Branch:** PDD — Infrastructure as Prompts
 > **Status:** 🟢 Em Progresso
 > **Owner:** @elder
-> **Last Updated:** 2025-05-26T00:15
+> **Last Updated:** 2026-05-27T00:53
 
 ---
 
@@ -42,6 +42,30 @@ Hermes Vanilla → [P0: Setup] → [P1: Identity] → [P2: Memory] → [P3: Tool
 
 ---
 
+## 🔴 Meta-Projeto: Disciplina de Configuração
+
+> **LEIA ANTES DE EXECUTAR QUALQUER COISA.**
+>
+> Este repositório é uma **receita reproduzível**, não um setup de uma vez.
+> Rodar `setup.sh` em um Hermes limpo deve recriar o Exocórtex completo.
+> Isso só funciona se TODO agente seguir estas regras:
+
+| # | Regra | Artefato |
+|---|---|---|
+| 1 | **Registrar** toda ação no session log da fase | `plans/pdd/logs/session_{PHASE}.log` |
+| 2 | **Atualizar** o setup.sh com cada ação de ambiente | `setup.sh` |
+| 3 | **Verificar** com smoke test antes de declarar "pronto" | Output no session log |
+| 4 | **Consultar** o estado real do sistema, não a memória do agente | `hermes skills list`, `command -v`, `ls` |
+| 5 | **Documentar** itens diferidos com critérios de reavaliação | `BACKLOG_INTEGRATIONS.md` |
+
+**Referência completa:** `PLAYBOOK.yaml` → `agent_protocol`
+
+**Checklists (mental, antes/depois de cada ação):**
+- PRÉ: Estado verificado? Fase/prompt corretos? Log aberto? Teste planejado?
+- PÓS: Logado? Setup.sh atualizado? Smoke test OK? Outros arquivos afetados?
+
+---
+
 ## Máquina de Estados
 
 ```mermaid
@@ -65,7 +89,7 @@ stateDiagram-v2
 | **P0** | Setup | — (manual) | Hermes instalado, env configurado | `hermes doctor` |
 | **P1** | Identity | 001-005 | `SOUL.md`, skill `exocortex-self-test`, skill `exocortex-prompt-log`, **skill `stop-slop`**, **skill `taste-skill`** (gpt-taste + brandkit + brutalist) | self-test score ≥ 2/5 |
 | **P2** | Memory | 006-010 + 006B-010B | Acervo Cognitivo 4 camadas (macro/global/micro/shared), wiki structure (SCHEMA/index/log/raw), skill `acervo-manager` (read/write/promote/search/scope), firewall deny-list c/ aliases, `exocortex-new-microverso` wiki. ADRs: 001-005 | self-test score ≥ 3/5 |
-| **P3** | Tools | 011-018 | `config.yaml` MCPs, skill `exocortex-tool-governance`, bundle `exocortex-alpha` | self-test score ≥ 4/5 |
+| **P3** | Tools & Governance | 015-018 (Core) | skill `exocortex-tool-governance`, bundle `exocortex-alpha`, profiles exec/evol. *MCPs 011-014 diferidos → `BACKLOG_INTEGRATIONS.md`* | self-test score ≥ 4/5 |
 | **P4** | Behavior | 019-028 | Draft-First skill, Vetor Ativo skill, Canvas Cognitivo skill, Morning Briefing, **Output Quality Gate skill** | self-test score ≥ 4/5 |
 | **P5** | Validation | 029-031 | Smoke tests executados, **quality audit de outputs**, relatório de graduação | self-test score = 5/5 |
 | **P6** | Production | — | Estado `ready`, tenant pronto para uso | Full green |
@@ -190,21 +214,27 @@ Após criar a skill, adicione ao SOUL.md na seção Values:
 
 ### 2. Enforcement (P4 — Behavior, Prompt 026)
 
-Um novo prompt cria a skill `exocortex-output-quality-gate` que intercepta outputs antes da entrega:
+Um novo prompt cria a skill `exocortex-output-quality-gate` — aplicada pelo **agente executor**, não pelo orquestrador:
 
 **Prompt 026 — Output Quality Gate:**
 ```
-Crie a skill "exocortex-output-quality-gate" que funciona como 
-interceptor de qualidade em todos os outputs do agente:
+Crie a skill "exocortex-output-quality-gate" — o agente executor é
+responsável pela qualidade do seu próprio output:
 
-## Trigger
-Ativar ANTES de entregar qualquer output ao executivo.
+## Princípio
+O agente que produz o output garante sua qualidade.
+O orquestrador NUNCA corrige — devolve ao executor com feedback.
+
+## Escopo
+- ✅ PROSA para executivo (email, briefing, análise) → stop-slop
+- ✅ VISUAL para executivo (UI, dashboard, gráfico) → taste-skill
+- ❌ CÓDIGO, DOCUMENTAÇÃO TÉCNICA, DADOS BRUTOS → gate ignorado
 
 ## Procedure
-1. Classificar o output:
-   - PROSA (email, briefing, análise, reflexão) → aplicar stop-slop
-   - VISUAL (UI, dashboard, apresentação, gráfico) → aplicar taste-skill
-   - MISTO → aplicar ambos
+1. Executor classifica o output:
+   - Prosa para executivo? → Gate de Prosa (stop-slop)
+   - Visual para executivo? → Gate Visual (taste-skill)
+   - Código, doc técnica, dados? → Entregar sem gate
 
 2. Para PROSA — Quick Checks (stop-slop):
    - Algum advérbio? Matar.
@@ -212,20 +242,20 @@ Ativar ANTES de entregar qualquer output ao executivo.
    - Coisa inanimada fazendo verbo humano? Nomear a pessoa.
    - Contraste "não X, é Y"? Dizer Y diretamente.
    - Frase soa como pull-quote? Reescrever.
-   - Declarativo vago ("As implicações são significativas")? Nomear.
+   - Declarativo vago? Nomear.
    - Scoring mínimo: 35/50 nas 5 dimensões.
 
 3. Para VISUAL — Pre-flight (taste-skill):
    - Hero ultrapassa 3 linhas? Alargar container.
    - Grid tem gaps vazios? Aplicar grid-flow-dense.
    - Usa labels genéricos (SECTION 01)? Remover.
-   - Layout idêntico ao anterior? Randomizar.
+   - Layout idêntico ao anterior? Forçar variação.
    - Texto de botão invisível? Corrigir contraste.
 
 4. Se o output falhar no gate:
-   - Reescrever automaticamente
-   - Logar a correção no MEMORY.md
-   - Entregar apenas a versão corrigida
+   - Executor corrige ele mesmo (tem contexto do domínio)
+   - Se falhar 2x → sinaliza ao orquestrador
+   - Orquestrador devolve ao executor com feedback, NUNCA corrige
 ```
 
 ### 3. Validação (P5 — Validation, Prompt 029-030)
@@ -253,38 +283,42 @@ Reportar resultado de cada teste com scoring detalhado.
 
 ---
 
-## Meta-Trainer (Automação)
+## Meta-Trainer / Provisioner Agent
 
-Para provisionar novos tenants automaticamente, um segundo Hermes (o "Trainer") executa o Playbook no Hermes alvo.
+> ⚠️ O Provisioner é um **agente dedicado e separado**. O Hermes de um executivo nunca provisiona outro. Um Exocórtex não se auto-replica.
+
+Para provisionar novos tenants, um **Provisioner Agent** (que pode ser outro Hermes dedicado exclusivamente a esta função, ou um serviço na Code Branch) executa o Playbook no Hermes alvo.
 
 ```mermaid
 sequenceDiagram
-    participant T as Hermes Trainer
-    participant P as PLAYBOOK.yaml
-    participant E as Hermes Target
+    participant P as Provisioner Agent
+    participant PB as PLAYBOOK.yaml
+    participant E as Hermes Target (novo tenant)
 
-    T->>P: Carrega playbook
+    P->>P: Cria container + HERMES_HOME isolado
+    P->>PB: Carrega playbook
     loop Para cada prompt
-        T->>E: Envia prompt N via API/gateway
+        P->>E: Envia prompt N via API/gateway
         E->>E: Executa (modifica SOUL, skills, config)
-        E-->>T: Resposta
-        T->>T: Valida resposta contra expected_output
-        T->>T: Aplica quality gate (stop-slop/taste) na resposta
+        E-->>P: Resposta
+        P->>P: Valida resposta contra expected_output
+        P->>P: Aplica quality gate (stop-slop/taste) na resposta
         alt Checkpoint prompt
-            T->>E: "self-test"
-            E-->>T: Relatório
+            P->>E: "self-test"
+            E-->>P: Relatório
             alt Score OK
-                T->>T: Próximo prompt
+                P->>P: Próximo prompt
             else Score insuficiente
-                T->>E: Prompt de repair
-                T->>T: Re-verifica (max 3 tentativas)
+                P->>E: Prompt de repair
+                P->>P: Re-verifica (max 3 tentativas)
             end
         end
     end
-    T->>T: Relatório de deployment (inclui quality score)
+    P->>P: Marca tenant como ready
+    Note over E: Primeira interação do executivo → Onboarding (023)
 ```
 
-**Detalhes de implementação:** O Meta-Trainer é implementado na Code Branch (Beta). O PDD Branch define o playbook que ele executa.
+**Detalhes de implementação:** O Provisioner Agent é implementado na Code Branch (Epic E4). O PDD Branch define o playbook que ele executa. No Alpha, o provisionamento é feito manualmente via `setup.sh`.
 
 ---
 
@@ -312,8 +346,33 @@ Cada fase é verificada por:
 | ADR-003: Natures Híbridas | `../../docs/ADR/ADR-003-hybrid-natures.md` |
 | ADR-004: LLM Wiki Align | `../../docs/ADR/ADR-004-llm-wiki-alignment.md` |
 | ADR-005: Consolidar Skills | `../../docs/ADR/ADR-005-consolidate-nature-skills.md` |
+| Backlog Integrações | `BACKLOG_INTEGRATIONS.md` |
+| **Setup reproduzível** | **`../../setup.sh`** |
+| Session Logs | `logs/` |
 | Hermes SoT | `../../docs/hermes-agent-kwon/hermes-agent-sot-for-agents.md` |
 | PRD Dev | `../../docs/PRD/PRD_dev_v1.md` |
 | PRD Executive | `../../docs/PRD/PRD_executive_v1.md` |
 | stop-slop (source) | `https://github.com/hardikpandya/stop-slop` |
 | taste-skill (source) | `https://github.com/Leonxlnx/taste-skill` |
+| browser-use (source) | `https://github.com/browser-use/browser-use` |
+
+---
+
+## ⚠️ Pós-Validação: Versionamento de Artefatos Runtime
+
+> Após conclusão de P5 (Validation), os seguintes artefatos que vivem
+> exclusivamente no Hermes runtime (`~/.hermes/`) **DEVEM ser copiados
+> para este projeto** e versionados em `.hermes/`:
+
+| Artefato | Runtime Path | Destino no projeto |
+|---|---|---|
+| Skills (8) | `~/.hermes/skills/exocortex/*/SKILL.md` | `.hermes/skills/exocortex/` |
+| Bundle YAML | `~/.hermes/skill-bundles/exocortex-alpha.yaml` | `.hermes/skill-bundles/` |
+| Profiles | `~/.hermes/profiles/{exec,evol}/` | `.hermes/profiles/` |
+| config.yaml | `~/.hermes/config.yaml` | `.hermes/config.yaml` |
+| SOUL.md (runtime) | `~/.hermes/SOUL.md` | Comparar com `SOUL.md` raiz |
+
+**Motivo:** O `setup.sh` copia skills de `.hermes/skills/` do projeto para o runtime.
+Se os sources não existem no projeto, um Hermes limpo não consegue reproduzir o estado.
+
+**Gatilho:** Executar após todos os testes P5 passarem e antes de declarar P6 ready.

@@ -23,7 +23,7 @@ Esta branch é ativada quando o PDD Branch atinge seus limites — quando funcio
 | Epic | Escopo | Depende de PDD |
 |---|---|---|
 | E3 — Draft-First HITL Plugin | Approval API + Queue | P4 (skill como MVP) |
-| E4 — Multi-Tenant Control Plane | Provisioner + Registry | P6 (golden image) |
+| E4 — Multi-Tenant Control Plane | Provisioner Agent (dedicado, separado do tenant) + Registry | P6 (golden image) |
 | E5 — External Integration MCPs | Google Workspace, Corp Insights | P3 (tool governance) |
 | E6 — Cognitive Studio & HITL Cockpit | Next.js Web UI | E3 + E4 |
 

@@ -1,6 +1,6 @@
 # Fase P6: Production — Tenant Pronto
 
-> **Status:** ⬜ Não Iniciada  
+> **Status:** ✅ Ready (2026-05-27) — Golden image pronta  
 > **Prompts:** Nenhum (estado final)  
 > **Depende de:** P5 score = 5/5
 
@@ -8,7 +8,7 @@
 
 ## Objetivo
 
-Estado final da configuração PDD. O Hermes agora É o Exocórtex.IA e está pronto para uso real ou para servir como template de tenant.
+Estado final da configuração PDD. O Hermes agora É o Exocórtex.IA e está pronto para uso real ou para servir como **golden image** consumida pelo Provisioner Agent.
 
 ---
 
@@ -25,45 +25,65 @@ Estado final da configuração PDD. O Hermes agora É o Exocórtex.IA e está pr
 |---|---|
 | `exocortex-self-test` | Core |
 | `exocortex-prompt-log` | Core |
-| `exocortex-search` | Memory |
+| `acervo-manager` | Memory (consolida 7 Natures — ADR-005) |
 | `exocortex-new-microverso` | Memory |
 | `exocortex-tool-governance` | Tools |
-| `nature-contexto` | Nature |
-| `nature-conhecimento` | Nature |
-| `nature-instrucao` | Nature |
-| `nature-persona` | Nature |
-| `nature-processo` | Nature |
-| `nature-ferramenta` | Nature |
-| `nature-reflexao` | Nature |
+| `stop-slop` | Quality (textual) |
+| `taste-skill` | Quality (visual — gpt-taste, brandkit, brutalist) |
 | `exocortex-draft-first` | Behavior |
 | `exocortex-vetor-ativo` | Behavior |
 | `exocortex-canvas` | Behavior |
 | `exocortex-briefing` | Behavior |
 | `exocortex-onboarding` | Behavior |
+| `exocortex-output-quality-gate` | Behavior (Executor Gate) |
+
+### Bundle
+- `exocortex-alpha` — carrega skills Core + Memory + Quality via `/exocortex-alpha`
+
+### Profiles
+- `exec` — Vetor de Execução
+- `evol` — Vetor de Evolução
 
 ### Testes Passados
 - [x] Microverso CRUD
 - [x] Draft-First
 - [x] Vetor de Evolução (Socrático)
 - [x] Morning Briefing (cross-microverso)
+- [x] Quality Gate — Prosa (stop-slop ≥ 35/50)
+- [x] Quality Gate — Visual (taste-skill pre-flight)
 - [x] Self-test 5/5
+
+### MCPs (Backlog)
+Ver `BACKLOG_INTEGRATIONS.md` — integrações externas a ativar pós-P6.
 
 ---
 
 ## Uso para Multi-Tenant
 
-Este estado P6 serve como **golden image** para provisionar novos tenants:
+Este estado P6 serve como **golden image** consumida pelo **Provisioner Agent** — um agente dedicado e separado, que NÃO é uma instância do Exocórtex do executivo.
 
-```bash
-# Via Meta-Trainer (automático)
-hermes-trainer run playbook.yaml --target tenant-new
+### Modelo de Provisionamento
 
-# Via Docker (container template)
-docker commit exocortex-golden exocortex-base:p6
-docker run -d --name tenant-new exocortex-base:p6
+```
+[Provisioner Agent]  →  cria container + HERMES_HOME isolado
+                     →  instala golden image (P6)
+                     →  configura secrets/API keys
+                     →  ativa instância
+                             ↓
+[Hermes do Executivo] →  inicializa com bundle exocortex-alpha
+                      →  detecta acervo vazio
+                      →  executa Onboarding (Prompt 023)
+                      →  personaliza SOUL.md + microversos
 ```
 
-Cada novo tenant passa pelo Prompt 023 (Onboarding) para personalizar SOUL.md, microversos e integrações.
+### Responsabilidades
+
+| Agente | Responsabilidade |
+|---|---|
+| **Provisioner Agent** | Criar container, instalar golden image, configurar infra, ativar instância |
+| **Hermes do Executivo** | Executar onboarding, personalizar identidade, operar no dia-a-dia |
+
+> ⚠️ O Hermes do executivo **nunca** provisiona outros tenants. Um Exocórtex não se auto-replica. O Provisioner pode ser outro Hermes dedicado a essa função, ou um serviço na Code Branch (E4).
 
 ---
 

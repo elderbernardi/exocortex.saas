@@ -161,7 +161,7 @@ CLI commands:
 ### K-005: Hermes Multi-Agent Pattern (Noosphere)
 - **Date:** 2025-05-25
 - **Source:** hermes-agent-sot-for-agents.md
-- **Relevance:** PDD Meta-Trainer, Code Branch (Multi-tenant)
+- **Relevance:** PDD Provisioner Agent, Code Branch (Multi-tenant)
 - **Tags:** hermes, multi-agent, noosphere, swarm
 
 - **No direct peer-to-peer invocation** (prevents infinite loops)
@@ -210,7 +210,7 @@ bluebubbles, yuanbao, webhook, api_server
 ### K-008: Hermes Meta-Harness (Outer Loop)
 - **Date:** 2025-05-25
 - **Source:** hermes-agent-sot-for-agents.md
-- **Relevance:** PDD Meta-Trainer design
+- **Relevance:** PDD Provisioner Agent design
 - **Tags:** hermes, meta-harness, outer-loop, self-evolution
 
 The Hermes architecture already has a conceptual "Outer Loop":
@@ -218,7 +218,7 @@ The Hermes architecture already has a conceptual "Outer Loop":
 - **Outer Loop:** Analyzes execution archives, orchestrates evaluations, injects mutations
 - Integrates `lm-evaluation-harness` for self-verification (>60 academic metrics)
 
-**Key insight:** Our Meta-Trainer IS the Outer Loop for tenant provisioning. The architecture already supports this pattern natively.
+**Key insight:** Our Provisioner Agent IS the Outer Loop for tenant provisioning. It is a **dedicated, separate agent** — a tenant's Exocórtex never provisions another instance. The architecture already supports this pattern natively.
 
 ---
 

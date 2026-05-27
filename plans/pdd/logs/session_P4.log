@@ -1,0 +1,243 @@
+# Exocórtex PDD Configuration Log — Phase P4 (Behavior)
+
+## Session: 2026-05-27T00:01-03:00 | Agent: Antigravity (Claude Opus 4.6)
+
+---
+
+### [PDD-P4-AUDIT] 2026-05-27T00:01-03:00 | Phase: P4_BEHAVIOR (Prep) | Action: Drift Audit & Alignment
+
+#### Context:
+Antes de iniciar P4, auditoria completa de todas as fases anteriores revelou 8 drift issues.
+SOUL.md estava stuck em P2_MEMORY, MEMORY.md faltava entradas P3, session_P2.log não existia,
+phase files tinham status desatualizados, skills não estavam backed up no projeto.
+
+#### Commands Executed:
+```bash
+# Verificação de estado real de cada fase
+ls -la ~/.hermes/acervo/                    # P2 acervo: 4 camadas ✅
+ls -1d ~/.hermes/skills/exocortex/*/        # 8 skills ✅
+cat ~/.hermes/skill-bundles/exocortex-alpha.yaml  # bundle 9 skills ✅
+ls ~/.hermes/profiles/                      # exec + evol ✅
+command -v ddgs                             # CLI ✅
+command -v browser-use                      # CLI ✅
+
+# ADR-005 cleanup verification
+for s in nature-contexto nature-conhecimento nature-instrucao nature-persona nature-processo nature-ferramenta nature-reflexao exocortex-search; do
+  ls ~/.hermes/skills/exocortex/$s 2>/dev/null  # all removed ✅
+done
+```
+
+#### Files Modified:
+- `SOUL.md` — Configuration State: P2_MEMORY → P4_BEHAVIOR, prompts [001-018]
+- `MEMORY.md` — Phase: P3_TOOLS (completed), backfilled 8 P3 entries
+- `plans/pdd/logs/session_P2.log` — CRIADO (retroativo)
+- `plans/pdd/phases/P2_MEMORY.md` — Status: "Em Reestruturação" → "Completa"
+- `plans/pdd/phases/P3_TOOLS.md` — Status: "Não Iniciada" → "Completa"
+- `plans/pdd/PLAN.md` — Last Updated: 2026-05-27
+- `.hermes/skills/exocortex/` — Backed up 7 missing skills + bundle + profiles (trimmed)
+
+#### Verification:
+```bash
+grep "current_phase" SOUL.md        # P4_BEHAVIOR ✅
+grep "P3_TOOLS" MEMORY.md           # Present ✅
+ls plans/pdd/logs/session_P2.log    # Exists ✅
+grep "Completa" plans/pdd/phases/P3_TOOLS.md  # ✅
+ls .hermes/skills/exocortex/ | wc -l  # 8 dirs ✅
+```
+
+---
+
+### [PDD-019] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 019 — Draft-First Skill
+
+#### Context:
+Skill que intercepta ações externas e cria rascunho para aprovação.
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-draft-first/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-draft-first/SKILL.md` (backup)
+
+#### Verification:
+```bash
+ls ~/.hermes/skills/exocortex/exocortex-draft-first/SKILL.md  # ✅
+grep "Draft-First" ~/.hermes/skills/exocortex/exocortex-draft-first/SKILL.md | head -1  # ✅
+```
+
+---
+
+### [PDD-020] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 020 — Vetor Ativo
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-vetor-ativo/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-vetor-ativo/SKILL.md` (backup)
+
+#### Verification:
+```bash
+ls ~/.hermes/skills/exocortex/exocortex-vetor-ativo/SKILL.md  # ✅
+```
+
+---
+
+### [PDD-021] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 021 — Canvas Cognitivo
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-canvas/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-canvas/SKILL.md` (backup)
+
+---
+
+### [PDD-022] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 022 — Morning Briefing
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-briefing/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-briefing/SKILL.md` (backup)
+
+---
+
+### [PDD-023] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 023 — Onboarding
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-onboarding/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-onboarding/SKILL.md` (backup)
+
+---
+
+### [PDD-024] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Prompt: 024 — Output Quality Gate
+
+#### Files Created:
+- `~/.hermes/skills/exocortex/exocortex-output-quality-gate/SKILL.md`
+- `.hermes/skills/exocortex/exocortex-output-quality-gate/SKILL.md` (backup)
+
+---
+
+### [PDD-P4-INFRA] 2026-05-27T00:09-03:00 | Phase: P4_BEHAVIOR | Action: Infrastructure Updates
+
+#### Files Modified:
+- `setup.sh` — Added P4 skills section + updated bundle to 15 skills
+
+#### Verification:
+```bash
+grep "FASE P4" setup.sh                  # ✅
+grep "exocortex-draft-first" setup.sh    # ✅
+grep "15 skills" setup.sh                # ✅
+ls -1d ~/.hermes/skills/exocortex/*/ | wc -l  # 14 ✅
+```
+
+---
+
+## 📦 Manifesto de Arquivos — Sessão P4 (parcial)
+
+### No Hermes Runtime
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `skills/exocortex/exocortex-draft-first/SKILL.md` | CRIADO | 019 |
+| `skills/exocortex/exocortex-vetor-ativo/SKILL.md` | CRIADO | 020 |
+| `skills/exocortex/exocortex-canvas/SKILL.md` | CRIADO | 021 |
+| `skills/exocortex/exocortex-briefing/SKILL.md` | CRIADO | 022 |
+| `skills/exocortex/exocortex-onboarding/SKILL.md` | CRIADO | 023 |
+| `skills/exocortex/exocortex-output-quality-gate/SKILL.md` | CRIADO | 024 |
+
+### No Projeto (versionados)
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `SOUL.md` | EDITADO (P4_BEHAVIOR) | AUDIT |
+| `MEMORY.md` | EDITADO (P3 entries) | AUDIT |
+| `plans/pdd/logs/session_P2.log` | CRIADO (retro) | AUDIT |
+| `plans/pdd/phases/P2_MEMORY.md` | EDITADO (status) | AUDIT |
+| `plans/pdd/phases/P3_TOOLS.md` | EDITADO (status) | AUDIT |
+| `plans/pdd/PLAN.md` | EDITADO (timestamp) | AUDIT |
+| `.hermes/skills/exocortex/{6 P4 skills}/` | BACKED UP | 019-024 |
+| `.hermes/skills/exocortex/{7 P1-P3 skills}/` | BACKED UP | AUDIT |
+| `.hermes/skill-bundles/exocortex-alpha.yaml` | BACKED UP | AUDIT |
+| `.hermes/profiles/{exec,evol}/` | BACKED UP (trimmed) | AUDIT |
+| `setup.sh` | EDITADO (P4 + bundle 15) | INFRA |
+| `plans/pdd/logs/session_P4.log` | CRIADO | — |
+
+---
+
+### [PDD-P4-BUNDLE] 2026-05-27T00:30-03:00 | Phase: P4_BEHAVIOR | Action: Bundle Update
+
+#### Context:
+Bundle exocortex-alpha no runtime tinha apenas 9 skills (P1-P3). Atualizado para 15 skills com as 6 de P4.
+
+#### Files Modified:
+- `~/.hermes/skill-bundles/exocortex-alpha.yaml` — 9 → 15 skills
+- `.hermes/skill-bundles/exocortex-alpha.yaml` — Backup atualizado
+
+#### Verification:
+```bash
+grep -c "^-" ~/.hermes/skill-bundles/exocortex-alpha.yaml  # 15 ✅
+```
+
+---
+
+### [PDD-025] 2026-05-27T00:31-03:00 | Phase: P4_BEHAVIOR | Prompt: 025 — Testes Comportamentais
+
+#### Context:
+Bateria de 6 testes executados via `hermes chat -q` com sessão Hermes ativa (PID 302884).
+Skills carregadas por teste via `-s` flag.
+
+#### Test Results:
+
+| # | Teste | Skills | Session ID | Resultado |
+|---|---|---|---|---|
+| 1 | Draft-First: "Envie email para o Cliente Alfa" | draft-first, vetor-ativo, quality-gate | 20260527_003110_bff10d | ✅ Gerou DRAFT com [Aprovar/Editar/Descartar] |
+| 2 | Vetor Evolução: "O que considerar antes de renegociar?" | vetor-ativo, canvas | 20260527_003213_1299ae | ✅ Modo Socrático: 4 perguntas (BATNA, switching cost, cenário pior caso, gaps de info) |
+| 3 | Morning Briefing: "briefing da manhã" | briefing, canvas, acervo-manager | 20260527_003304_05daac | ✅ Consultou acervo real, reportou estado vazio honestamente |
+| 4 | Quality Gate Prosa: "resumo executivo para o board" | quality-gate, stop-slop, canvas | 20260527_003430_3c9718 | ✅ Voz ativa, zero advérbios, dados concretos (R$500k→R$650k), sem enchimento |
+| 5 | Quality Gate Visual: "painel de métricas de performance" | quality-gate, taste-skill | 20260527_003517_d8626b | ✅ Brutalist ativado (#080808, Inter+JetBrains Mono, bordas retas, grid sem gaps, sem "SECTION XX") |
+| 6 | Self-test: "Execute self-test completo" | self-test | 20260527_003724_37393c | ✅ Score 5/5 (SOUL, Acervo 4 camadas, 14 skills, bundle 15, Draft-First) |
+
+#### Verification:
+Todos os 6 testes passaram. HTML do teste visual removido após verificação.
+
+---
+
+### [PDD-026] 2026-05-27T00:38-03:00 | Phase: P4_BEHAVIOR | Prompt: 026 — P4 Checkpoint
+
+#### Results:
+- [x] Skill `exocortex-output-quality-gate` instalada e funcional
+- [x] Testes de qualidade textual passam (stop-slop aplicado em teste 4)
+- [x] Testes de qualidade visual passam (taste-skill brutalist ativado em teste 5)
+- [x] Draft-First gera DRAFT (teste 1)
+- [x] Vetor Ativo classifica Evolução → Socrático (teste 2)
+- [x] Briefing consulta acervo real (teste 3)
+- [x] Self-test 5/5 (teste 6)
+- [x] Bundle atualizado (15 skills)
+
+**P4 CHECKPOINT: ✅ PASSED — Pronto para P5_VALIDATION**
+
+---
+
+## 📦 Manifesto de Arquivos — Sessão P4 (completa)
+
+### No Hermes Runtime
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `skills/exocortex/exocortex-draft-first/SKILL.md` | CRIADO | 019 |
+| `skills/exocortex/exocortex-vetor-ativo/SKILL.md` | CRIADO | 020 |
+| `skills/exocortex/exocortex-canvas/SKILL.md` | CRIADO | 021 |
+| `skills/exocortex/exocortex-briefing/SKILL.md` | CRIADO | 022 |
+| `skills/exocortex/exocortex-onboarding/SKILL.md` | CRIADO | 023 |
+| `skills/exocortex/exocortex-output-quality-gate/SKILL.md` | CRIADO | 024 |
+| `skill-bundles/exocortex-alpha.yaml` | EDITADO (9→15 skills) | BUNDLE |
+
+### No Projeto (versionados)
+
+| Artefato | Ação | Prompt |
+|---|---|---|
+| `SOUL.md` | EDITADO (P4→P5) | 026 |
+| `MEMORY.md` | EDITADO (P4 entries + P5) | 026 |
+| `plans/pdd/logs/session_P2.log` | CRIADO (retro) | AUDIT |
+| `plans/pdd/phases/P2_MEMORY.md` | EDITADO (status) | AUDIT |
+| `plans/pdd/phases/P3_TOOLS.md` | EDITADO (status) | AUDIT |
+| `plans/pdd/phases/P4_BEHAVIOR.md` | EDITADO (status → Completa) | 026 |
+| `plans/pdd/PLAN.md` | EDITADO (timestamp) | 026 |
+| `.hermes/skills/exocortex/{6 P4 skills}/` | BACKED UP | 019-024 |
+| `.hermes/skills/exocortex/{7 P1-P3 skills}/` | BACKED UP | AUDIT |
+| `.hermes/skill-bundles/exocortex-alpha.yaml` | BACKED UP (15 skills) | BUNDLE |
+| `.hermes/profiles/{exec,evol}/` | BACKED UP (trimmed) | AUDIT |
+| `setup.sh` | EDITADO (P4 + bundle 15) | INFRA |
+| `plans/pdd/logs/session_P4.log` | CRIADO | — |

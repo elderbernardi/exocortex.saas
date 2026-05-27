@@ -1,0 +1,225 @@
+# Exocórtex PDD Configuration Log — Phase P3 (Pre-Core)
+
+## Session: 2026-05-26T23:15-03:00 | Agent: Antigravity (Gemini)
+
+---
+
+### [PDD-P3-PRE-001] 2026-05-26T23:16-03:00 | Phase: P3_TOOLS (Prep) | Action: Split P3 into Core + Backlog
+
+#### Context:
+Análise de dependência revelou que MCPs 011-014 (Filesystem, Web Search, Google Workspace, Otel) 
+NÃO são pré-requisitos para P4/P5. Decisão: diferir para backlog, manter Core (015-018).
+
+#### Commands Executed:
+```bash
+# Nenhum CLI — apenas edição de arquivos
+```
+
+#### Files Modified:
+- `plans/pdd/phases/P3_TOOLS.md` — reescrito: MCPs removidos, Core prompts 015-018
+- `plans/pdd/BACKLOG_INTEGRATIONS.md` — CRIADO: 4 itens (BKL-001 a 004)
+- `plans/pdd/PLAYBOOK.yaml` — seção P3 atualizada (só 4 prompts)
+- `plans/pdd/PLAN.md` — tabela P3 atualizada + link backlog
+- `plans/pdd/phases/P6_PRODUCTION.md` — corrigido: 7 Nature skills → acervo-manager (ADR-005)
+
+#### Decision Record:
+- ADR implícita: MCPs não bloqueiam P4/P5. Core pode avançar sem API keys.
+
+---
+
+### [PDD-P3-PRE-002] 2026-05-26T23:38-03:00 | Phase: P3_TOOLS (Prep) | Action: Install Web Search Skills
+
+#### Context:
+Executivo pediu capacidade de busca web. Avaliação do ecossistema Hermes:
+- Built-in `web_search`: precisa backend configurado (não temos)
+- Skills Hub: `duckduckgo-search` (official, zero API key)
+- AG Kit: `browser-use` wrapper (já presente em .agent/skills/)
+Decisão: instalar ambas como complementares.
+
+#### Commands Executed:
+```bash
+# 1. Instalar DuckDuckGo Search (Skills Hub oficial)
+hermes skills install official/research/duckduckgo-search -y
+# Resultado: ~/.hermes/skills/research/duckduckgo-search/ (SKILL.md + scripts/duckduckgo.sh)
+
+# 2. Instalar browser-use (local, copiando do AG Kit)
+mkdir -p ~/.hermes/skills/exocortex/browser-use/scripts
+cp .agent/skills/browser-use/SKILL.md ~/.hermes/skills/exocortex/browser-use/SKILL.md
+cp .agent/skills/browser-use/scripts/browser-use.sh ~/.hermes/skills/exocortex/browser-use/scripts/browser-use.sh
+
+# 3. Instalar dependência CLI do DuckDuckGo
+pip install ddgs
+# Resultado: ddgs v9.14.4
+
+# 4. browser-use CLI já estava instalado (~/.local/share/mise/shims/browser-use)
+```
+
+#### Verification (Smoke Tests):
+```bash
+# DDG
+ddgs text -k "exocortex AI agent" -m 3
+# Resultado: 3 resultados retornados (Reddit, etc.) ✅
+
+# browser-use
+~/.local/bin/browser-use doctor
+# Resultado: 3/5 checks (2 opcionais: cloudflared, profile-use) ✅
+```
+
+#### Files Modified:
+- `plans/pdd/BACKLOG_INTEGRATIONS.md` — BKL-002 marcado como RESOLVIDO
+
+#### Post-State:
+```bash
+hermes skills list | grep -E "browser-use|duckduck"
+# │ browser-use           │ exocortex  │ local    │ local    │ enabled │
+# │ duckduckgo-search     │ research   │ official │ official │ enabled │
+```
+
+---
+
+### [PDD-P3-PRE-003] 2026-05-26T23:43-03:00 | Phase: P3_TOOLS (Prep) | Action: Codify Configuration Discipline Protocol
+
+#### Context:
+Executivo identificou que o projeto é meta-configuração — toda ação precisa ser reproduzível
+e registrada. Até este ponto, ações estavam sendo executadas sem registro sistemático.
+Decisão: codificar a disciplina como regra obrigatória para TODOS os agentes.
+
+#### Commands Executed:
+```bash
+# Nenhum CLI — edição de 3 arquivos de governança
+```
+
+#### Files Modified:
+- `plans/pdd/PLAYBOOK.yaml` — CRIADO: seção `agent_protocol` com 5 regras + checklists
+- `SOUL.md` — ADICIONADO: seção "Configuration Discipline (Meta-Projeto)" em Behavioral Boundaries
+- `plans/pdd/PLAN.md` — ADICIONADO: seção "🔴 Meta-Projeto: Disciplina de Configuração" pré-estado-máquina
+- `setup.sh` — CRIADO: script reproduzível (P1 + P2 + P3 skills + CLIs)
+- `plans/pdd/logs/session_P3.log` — CRIADO: log de sessão P3
+
+#### Protocol Rules Codified:
+1. LOG_ALL_ACTIONS — registrar toda ação no session log
+2. UPDATE_SETUP_SCRIPT — refletir toda ação de ambiente no setup.sh
+3. VERIFY_BEFORE_DONE — smoke test obrigatório
+4. BACKLOG_WITH_CRITERIA — itens diferidos com critérios de reavaliação
+5. STATE_IS_TRUTH — verificar estado real, não confiar na memória
+
+#### Verification:
+```bash
+# Verificar que a regra existe nos 3 arquivos
+grep -l "Configuration Discipline" SOUL.md plans/pdd/PLAN.md plans/pdd/PLAYBOOK.yaml
+# SOUL.md ✅
+# plans/pdd/PLAN.md ✅  
+# plans/pdd/PLAYBOOK.yaml ✅
+```
+
+---
+
+### [PDD-P3-015] 2026-05-26T23:47-03:00 | Phase: P3_TOOLS | Prompt: 015 — Tool Governance Skill
+
+#### Context:
+Criar skill que define regras de uso de tools: classificação, menor privilégio, 
+logging obrigatório, Draft-First para comunicações, sandbox por microverso.
+
+#### Commands Executed:
+```bash
+# Criado via editor: ~/.hermes/skills/exocortex/exocortex-tool-governance/SKILL.md
+```
+
+#### Verification:
+```bash
+hermes skills list | grep governance
+# │ exocortex-tool-gover… │ exocortex │ local │ enabled │ ✅
+```
+
+---
+
+### [PDD-P3-016] 2026-05-26T23:48-03:00 | Phase: P3_TOOLS | Prompt: 016 — Bundle exocortex-alpha
+
+#### Commands Executed:
+```bash
+hermes bundles create exocortex-alpha \
+  --skill exocortex-self-test --skill exocortex-prompt-log \
+  --skill acervo-manager --skill exocortex-new-microverso \
+  --skill exocortex-tool-governance --skill stop-slop \
+  --skill taste-skill --skill duckduckgo-search --skill browser-use \
+  -d "Bundle principal do Exocórtex.IA" \
+  -i "Você é o Exocórtex.IA. Siga SOUL.md e governance rules."
+# Resultado: /home/elder/.hermes/skill-bundles/exocortex-alpha.yaml (9 skills) ✅
+```
+
+---
+
+### [PDD-P3-017] 2026-05-26T23:48-03:00 | Phase: P3_TOOLS | Prompt: 017 — Profiles Exec/Evol
+
+#### Commands Executed:
+```bash
+hermes profile create exec --clone \
+  --description "Vetor de Execução — foco em FAZER."
+hermes profile create evol --clone \
+  --description "Vetor de Evolução — foco em PENSAR."
+# Resultado: 2 profiles criados, aliases em ~/.local/bin/ ✅
+```
+
+#### Verification:
+```bash
+hermes profile list
+# ◆default  gpt-5.5  running
+#  evol     gpt-5.5  stopped  evol
+#  exec     gpt-5.5  stopped  exec ✅
+```
+
+---
+
+### [PDD-P3-018] 2026-05-26T23:50-03:00 | Phase: P3_TOOLS | Prompt: 018 — P3 Checkpoint
+
+#### Results:
+| Check | Expected | Actual | Status |
+|---|---|---|---|
+| Skills exocortex | 8 | 8 | ✅ |
+| Bundle exocortex-alpha | 9 skills | 9 skills | ✅ |
+| Profiles | default + exec + evol | 3 profiles | ✅ |
+| ddgs CLI | installed | /home/elder/.local/share/mise/installs/python/3.14.3/bin/ddgs | ✅ |
+| browser-use CLI | installed | /home/elder/.local/share/mise/shims/browser-use | ✅ |
+| Governance skill (active) | exists | ~/.hermes/skills/exocortex/exocortex-tool-governance/SKILL.md | ✅ |
+| Governance skill (source) | exists | .hermes/skills/exocortex/exocortex-tool-governance/SKILL.md | ✅ |
+| Bundle YAML | exists | ~/.hermes/skill-bundles/exocortex-alpha.yaml | ✅ |
+| setup.sh updated | includes P3-Core | yes | ✅ |
+
+#### Conclusion:
+P3_TOOLS COMPLETE. 9/9 checks passed. Ready for P4_BEHAVIOR.
+
+---
+
+## 📦 Manifesto de Arquivos — Sessão P3
+
+### No Projeto (versionados)
+
+| Arquivo | Ação | Prompt |
+|---|---|---|
+| `plans/pdd/phases/P3_TOOLS.md` | REESCRITO | PRE-001 |
+| `plans/pdd/BACKLOG_INTEGRATIONS.md` | CRIADO | PRE-001 |
+| `plans/pdd/PLAYBOOK.yaml` | EDITADO (P3 + agent_protocol) | PRE-001, PRE-003 |
+| `plans/pdd/PLAN.md` | EDITADO (P3 tabela + disciplina + pós-validação) | PRE-001, PRE-003, 018 |
+| `plans/pdd/phases/P6_PRODUCTION.md` | EDITADO (ADR-005) | PRE-001 |
+| `SOUL.md` | EDITADO (Configuration Discipline) | PRE-003 |
+| `setup.sh` | CRIADO + ATUALIZADO (P3-Core) | PRE-003, 015–017 |
+| `plans/pdd/logs/session_P3.log` | CRIADO | PRE-003 |
+| `.hermes/skills/exocortex/exocortex-tool-governance/SKILL.md` | CRIADO (backup source) | 015 |
+
+### No Hermes Runtime (`~/.hermes/` — NÃO versionados)
+
+| Arquivo | Ação | Prompt |
+|---|---|---|
+| `skills/exocortex/exocortex-tool-governance/SKILL.md` | CRIADO | 015 |
+| `skills/research/duckduckgo-search/` | INSTALADO (Skills Hub) | PRE-002 |
+| `skills/exocortex/browser-use/` | COPIADO (AG Kit) | PRE-002 |
+| `skill-bundles/exocortex-alpha.yaml` | CRIADO | 016 |
+| `profiles/exec/` | CRIADO (clone default) | 017 |
+| `profiles/evol/` | CRIADO (clone default) | 017 |
+
+### CLIs instalados
+
+| CLI | Método | Prompt |
+|---|---|---|
+| `ddgs` | `pip install ddgs` | PRE-002 |
+| `browser-use` | `uv tool install` (pré-existente) | PRE-002 |

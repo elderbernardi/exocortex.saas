@@ -29,6 +29,79 @@ metadata:
       purpose: "Breaks LLM statistical defaults in UI/visual generation"
       sub_skills: [gpt-taste, brandkit, brutalist]
 
+# =============================================================================
+# 🔴 AGENT PROTOCOL: CONFIGURATION DISCIPLINE
+# =============================================================================
+# Este projeto é uma META-CONFIGURAÇÃO. Ele não configura o Hermes uma vez —
+# ele é a RECEITA REPRODUZÍVEL para configurar QUALQUER instância do Exocórtex.
+#
+# TODO agente que trabalhar neste projeto DEVE seguir estas regras:
+# =============================================================================
+agent_protocol:
+  name: "Configuration Discipline"
+  scope: "ALL agents, ALL sessions, ALL phases"
+  mandatory: true
+
+  rules:
+    # REGRA 1: Tudo que é executado deve ser registrado
+    - id: LOG_ALL_ACTIONS
+      rule: >
+        Toda ação que modifique o ambiente Hermes (instalar skill, instalar CLI,
+        adicionar MCP, modificar config.yaml, criar/editar arquivo de
+        configuração) DEVE ser registrada no session log da fase atual.
+      log_format: |
+        ### [PDD-{PHASE}-{SEQ}] {TIMESTAMP} | Phase: {PHASE} | Action: {DESC}
+        #### Context: {WHY}
+        #### Commands Executed: ```bash {EXACT_COMMANDS}```
+        #### Files Modified: {LIST}
+        #### Verification: ```bash {SMOKE_TEST}```
+      log_path: "plans/pdd/logs/session_{PHASE}.log"
+
+    # REGRA 2: Tudo que é executado deve ser reproduzível
+    - id: UPDATE_SETUP_SCRIPT
+      rule: >
+        Toda ação de configuração de ambiente (install, copy, mkdir, pip, etc.)
+        DEVE ser refletida no setup.sh para que um Hermes limpo possa
+        reproduzir o estado completo. Se a ação não pode ser automatizada,
+        documentar como comentário no setup.sh com instruções manuais.
+      setup_path: "setup.sh"
+
+    # REGRA 3: Verificar antes de declarar pronto
+    - id: VERIFY_BEFORE_DONE
+      rule: >
+        Toda instalação (skill, CLI, dependência) DEVE ter um smoke test
+        imediatamente após. Nunca declarar "instalado" sem evidência de
+        funcionamento. Registrar o output do teste no session log.
+
+    # REGRA 4: Backlog tem critérios de reavaliação
+    - id: BACKLOG_WITH_CRITERIA
+      rule: >
+        Itens diferidos para backlog DEVEM incluir: motivo do diferimento,
+        critérios de reavaliação (quando voltar a avaliar), e dependências.
+        Usar BACKLOG_INTEGRATIONS.md como referência.
+      backlog_path: "plans/pdd/BACKLOG_INTEGRATIONS.md"
+
+    # REGRA 5: Estado é verdade — não a memória do agente
+    - id: STATE_IS_TRUTH
+      rule: >
+        Antes de executar qualquer ação, o agente DEVE verificar o estado
+        real do ambiente (hermes skills list, command -v, ls, etc.) em vez de
+        confiar na própria memória. O estado do sistema é a fonte de verdade,
+        não o contexto da conversa.
+
+  # Checklist de pré-commit mental para todo agente
+  pre_action_checklist:
+    - "Verifiquei o estado atual? (skills list, file exists, etc.)"
+    - "Sei em qual fase/prompt estou?"
+    - "O session log desta fase está aberto?"
+    - "Sei como vou verificar que funcionou?"
+
+  post_action_checklist:
+    - "Registrei no session log? (comando + output + verificação)"
+    - "Atualizei o setup.sh? (se foi ação de ambiente)"
+    - "O smoke test passou?"
+    - "Algum outro arquivo precisa refletir esta mudança? (PLAN, BACKLOG, etc.)"
+
 phases:
   # ─── P1: IDENTITY ──────────────────────────────────────────
   - id: P1_IDENTITY
@@ -165,34 +238,26 @@ phases:
         min_score: 3
         max_retries: 3
 
-  # ─── P3: TOOLS ─────────────────────────────────────────────
+  # ─── P3: TOOLS & GOVERNANCE ──────────────────────────────────
+  # MCPs 011-014 diferidos → BACKLOG_INTEGRATIONS.md
+  # Motivo: zero dependências em P4/P5, requerem API keys não disponíveis
   - id: P3_TOOLS
-    name: "Tools & MCPs"
-    description: "MCP servers, tool governance, profiles, bundles"
+    name: "Tools & Governance (Core)"
+    description: "Tool governance skill, skill bundle, profiles por vetor. MCPs externos diferidos para backlog."
     prompts:
-      - id: "011"
-        name: "Filesystem MCP"
-        content_ref: "phases/P3_TOOLS.md#prompt-011"
-        checkpoint: false
-      - id: "012"
-        name: "Web Search MCP"
-        content_ref: "phases/P3_TOOLS.md#prompt-012"
-        checkpoint: false
-      - id: "013"
-        name: "Google Workspace MCP"
-        content_ref: "phases/P3_TOOLS.md#prompt-013"
-        checkpoint: false
-      - id: "014"
-        name: "Observability"
-        content_ref: "phases/P3_TOOLS.md#prompt-014"
-        checkpoint: false
       - id: "015"
         name: "Tool Governance"
         content_ref: "phases/P3_TOOLS.md#prompt-015"
+        expected_artifacts:
+          - path: "skills/exocortex-tool-governance/SKILL.md"
+            check: exists
         checkpoint: false
       - id: "016"
         name: "Bundle exocortex-alpha"
         content_ref: "phases/P3_TOOLS.md#prompt-016"
+        expected_artifacts:
+          - path: "skill-bundles/exocortex-alpha"
+            check: exists
         checkpoint: false
       - id: "017"
         name: "Profiles (Exec/Evol)"
