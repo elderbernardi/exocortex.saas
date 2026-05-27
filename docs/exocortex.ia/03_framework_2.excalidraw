@@ -1,0 +1,1403 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
+  "elements": [
+    {
+      "id": "A",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 883.0059814453125,
+      "y": 5.0377655029296875,
+      "width": 260,
+      "height": 120,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "1. MAPEAR\\nOnde estou? O que preciso?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 75,
+      "versionNonce": 2115350885,
+      "index": "a0",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186933348,
+      "locked": false
+    },
+    {
+      "id": "B",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 908.9453125,
+      "y": 178,
+      "width": 242.328125,
+      "height": 90,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "2. CARREGAR\\nAlimentar o contexto",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 1004765131,
+      "index": "a1",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "C",
+      "type": "diamond",
+      "groupIds": [],
+      "x": 426.703125,
+      "y": 348,
+      "width": 350,
+      "height": 350,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "3. VALIDAR\\nA IA entendeu?\\nEu entendo o suficiente?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 99448421,
+      "index": "a2",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "D",
+      "type": "diamond",
+      "groupIds": [],
+      "x": 426.703125,
+      "y": 778,
+      "width": 350,
+      "height": 350,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "4. ESCOLHER VETOR\\nPreciso aprender\\nou produzir?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 28,
+      "versionNonce": 1383810027,
+      "index": "a3",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186882320,
+      "locked": false
+    },
+    {
+      "id": "E",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 8,
+      "y": 1208,
+      "width": 222.34375,
+      "height": 120,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "5a. EVOLUIR\\nDiálogo socrático,\\ndesafio, expansão",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 1612407237,
+      "index": "a4",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "F",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 295,
+      "y": 1223,
+      "width": 237.890625,
+      "height": 90,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "5b. EXECUTAR\\nGeração do artefato",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 1259882763,
+      "index": "a5",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "G",
+      "type": "diamond",
+      "groupIds": [],
+      "x": 150.046875,
+      "y": 1438,
+      "width": 350,
+      "height": 350,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "6. AVALIAR\\nAprendi o suficiente?\\nReconheço minha autoria?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 1211425061,
+      "index": "a6",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "H",
+      "type": "diamond",
+      "groupIds": [],
+      "x": 550.046875,
+      "y": 1408,
+      "width": 410,
+      "height": 410,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "6. AVALIAR\\nA qualidade supera\\no que eu faria sozinho?\\nReconheço minha autoria?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 719384491,
+      "index": "a7",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "I",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 420.0546875,
+      "y": 1898,
+      "width": 238.984375,
+      "height": 90,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "7. REGISTRAR\\nCapturar para reuso",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 598176901,
+      "index": "a8",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "J",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 409.546875,
+      "y": 2038,
+      "width": 260,
+      "height": 240,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "8. EVOLUIR O SISTEMA\\nO que aprendi sobre\\ncomo uso o framework?\\nO que posso guardar para reuso?",
+        "fontSize": 20
+      },
+      "link": null,
+      "version": 2,
+      "versionNonce": 1679540811,
+      "index": "a9",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "seed": 1,
+      "frameId": null,
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1778186870091,
+      "locked": false
+    },
+    {
+      "id": "A_B",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1030.109,
+      "y": 128,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          25
+        ],
+        [
+          0,
+          46
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "A"
+      },
+      "end": {
+        "id": "B"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1311808485,
+      "index": "aA",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 0,
+      "height": 46,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "B_C",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 908.945,
+      "y": 245.055,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -345.8080000000001,
+          62.94499999999999
+        ],
+        [
+          -334.76300000000003,
+          125.32999999999998
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "B"
+      },
+      "end": {
+        "id": "C"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1604534507,
+      "index": "aB",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 345.8080000000001,
+      "height": 125.32999999999998,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "C_B",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 705.694,
+      "y": 452.491,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          214.13,
+          -144.49099999999999
+        ],
+        [
+          262.861,
+          -182.04899999999998
+        ]
+      ],
+      "label": {
+        "text": "Não (refinar)",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "C"
+      },
+      "end": {
+        "id": "B"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1339938629,
+      "index": "aC",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 262.861,
+      "height": 182.04899999999998,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "C_D",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 601.203,
+      "y": 698,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          76
+        ]
+      ],
+      "label": {
+        "text": "Sim",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "C"
+      },
+      "end": {
+        "id": "D"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 117566347,
+      "index": "aD",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 0,
+      "height": 76,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "D_E",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 480.182,
+      "y": 1006.979,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -361.01,
+          161.02099999999996
+        ],
+        [
+          -361.01,
+          197.02099999999996
+        ]
+      ],
+      "label": {
+        "text": "Evolução",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "D"
+      },
+      "end": {
+        "id": "E"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1393338021,
+      "index": "aE",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 361.01,
+      "height": 197.02099999999996,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "D_F",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 519.738,
+      "y": 1046.535,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -105.79300000000006,
+          121.46499999999992
+        ],
+        [
+          -105.79300000000006,
+          172.46499999999992
+        ]
+      ],
+      "label": {
+        "text": "Execução",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "D"
+      },
+      "end": {
+        "id": "F"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 779239979,
+      "index": "aF",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 105.79300000000006,
+      "height": 172.46499999999992,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "E_G",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 99.166,
+      "y": 1328,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -13.337999999999994,
+          40
+        ],
+        [
+          136.226,
+          193.49900000000002
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "E"
+      },
+      "end": {
+        "id": "G"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1516931589,
+      "index": "aG",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 149.564,
+      "height": 193.49900000000002,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "F_H",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 365.924,
+      "y": 1313,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -58.69399999999996,
+          55
+        ],
+        [
+          252.66100000000006,
+          225.53199999999993
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "F"
+      },
+      "end": {
+        "id": "H"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1054786763,
+      "index": "aH",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 311.355,
+      "height": 225.53199999999993,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "G_B",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 458.055,
+      "y": 1571.508,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          654.836,
+          -203.50800000000004
+        ],
+        [
+          654.836,
+          -303.50800000000004
+        ],
+        [
+          654.836,
+          -403.50800000000004
+        ],
+        [
+          654.836,
+          -618.508
+        ],
+        [
+          654.836,
+          -833.508
+        ],
+        [
+          654.836,
+          -1048.508
+        ],
+        [
+          654.836,
+          -1263.508
+        ],
+        [
+          618.671,
+          -1300.642
+        ]
+      ],
+      "label": {
+        "text": "Preciso de mais contexto",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "G"
+      },
+      "end": {
+        "id": "B"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 922026341,
+      "index": "aI",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 654.836,
+      "height": 1300.642,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "G_D",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 426.673,
+      "y": 1540.126,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          241.21799999999996,
+          -172.12599999999998
+        ],
+        [
+          241.21799999999996,
+          -272.126
+        ],
+        [
+          241.21799999999996,
+          -372.126
+        ],
+        [
+          217.14499999999998,
+          -449.7359999999999
+        ]
+      ],
+      "label": {
+        "text": "Preciso mudar de vetor",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "G"
+      },
+      "end": {
+        "id": "D"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 534901611,
+      "index": "aJ",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 241.21799999999996,
+      "height": 449.7359999999999,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "G_E",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 252.357,
+      "y": 1510.19,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -99.84100000000001,
+          -142.19000000000005
+        ],
+        [
+          -111.91399999999999,
+          -178.39499999999998
+        ]
+      ],
+      "label": {
+        "text": "Não, iterar",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "G"
+      },
+      "end": {
+        "id": "E"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1039764677,
+      "index": "aK",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 111.91399999999999,
+      "height": 178.39499999999998,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "G_I",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 324.547,
+      "y": 1788,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          70
+        ],
+        [
+          97.457,
+          108.529
+        ]
+      ],
+      "label": {
+        "text": "Sim",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "G"
+      },
+      "end": {
+        "id": "I"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1640386059,
+      "index": "aL",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 97.457,
+      "height": 108.529,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "H_B",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 898.546,
+      "y": 1551.999,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          434.345,
+          -183.99900000000002
+        ],
+        [
+          434.345,
+          -283.999
+        ],
+        [
+          434.345,
+          -383.999
+        ],
+        [
+          434.345,
+          -598.999
+        ],
+        [
+          434.345,
+          -813.999
+        ],
+        [
+          434.345,
+          -1028.999
+        ],
+        [
+          434.345,
+          -1243.999
+        ],
+        [
+          256.57899999999995,
+          -1293.903
+        ]
+      ],
+      "label": {
+        "text": "Preciso de mais contexto",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "H"
+      },
+      "end": {
+        "id": "B"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1058384933,
+      "index": "aM",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 434.345,
+      "height": 1293.903,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "H_D",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 830.216,
+      "y": 1483.669,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          67.67499999999995,
+          -115.6690000000001
+        ],
+        [
+          67.67499999999995,
+          -215.6690000000001
+        ],
+        [
+          67.67499999999995,
+          -315.6690000000001
+        ],
+        [
+          -124.30500000000006,
+          -454.79100000000017
+        ]
+      ],
+      "label": {
+        "text": "Preciso mudar de vetor",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "H"
+      },
+      "end": {
+        "id": "D"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 663114923,
+      "index": "aN",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 191.98000000000002,
+      "height": 454.79100000000017,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "H_F",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 651.636,
+      "y": 1510.911,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -144.06199999999995,
+          -142.91100000000006
+        ],
+        [
+          -192.82399999999996,
+          -194.99099999999999
+        ]
+      ],
+      "label": {
+        "text": "Não, iterar",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "H"
+      },
+      "end": {
+        "id": "F"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 976674693,
+      "index": "aO",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 192.82399999999996,
+      "height": 194.99099999999999,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "H_I",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 754.547,
+      "y": 1818,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          -97.457,
+          78.529
+        ]
+      ],
+      "label": {
+        "text": "Sim",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "H"
+      },
+      "end": {
+        "id": "I"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1355581259,
+      "index": "aP",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 97.457,
+      "height": 78.529,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "I_J",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 539.547,
+      "y": 1988,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          25
+        ],
+        [
+          0,
+          46
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "I"
+      },
+      "end": {
+        "id": "J"
+      },
+      "lastCommittedPoint": null,
+      "version": 2,
+      "versionNonce": 1436198629,
+      "index": "aQ",
+      "isDeleted": false,
+      "fillStyle": "solid",
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "width": 0,
+      "height": 46,
+      "seed": 1,
+      "frameId": null,
+      "boundElements": [],
+      "updated": 1778186870092,
+      "link": null,
+      "locked": false,
+      "startBinding": null,
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    }
+  ],
+  "appState": {
+    "gridSize": 20,
+    "gridStep": 5,
+    "gridModeEnabled": false,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

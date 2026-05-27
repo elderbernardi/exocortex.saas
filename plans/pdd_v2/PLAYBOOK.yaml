@@ -1,0 +1,307 @@
+# exocortex-playbook-v2.yaml
+# Prompt-Driven Development Playbook for Exocórtex.IA — Version 2
+# Predecessor: plans/pdd/PLAYBOOK.yaml (v1.1.0)
+# License: MIT (same as Hermes Agent)
+#
+# CHANGES FROM v1:
+#   - agent_protocol is now the FIRST section (read before anything)
+#   - drift_audit added to every phase
+#   - quality_skills moved from P4 to P0/P1
+#   - MCPs removed from main flow (see BACKLOG)
+#   - Phases reduced: P0-P5 (was P0-P6)
+#   - Total prompts: 27 (was 31)
+
+version: "2.0.0"
+target: "hermes-agent"
+metadata:
+  product: "Exocórtex.IA"
+  methodology: "PDD (Prompt-Driven Development)"
+  total_prompts: 27
+  total_phases: 6  # P0 is manual
+  predecessor: "plans/pdd/PLAYBOOK.yaml"
+  retrospective: "plans/pdd_v2/RETROSPECTIVE.md"
+  quality_skills:
+    - name: stop-slop
+      source: https://github.com/hardikpandya/stop-slop
+      purpose: "Eliminates predictable AI writing patterns from prose"
+      phase: P1  # was P4 in v1
+    - name: taste-skill
+      source: https://github.com/Leonxlnx/taste-skill
+      purpose: "Breaks LLM statistical defaults in UI/visual generation"
+      sub_skills: [gpt-taste, brandkit, brutalist]
+      phase: P1  # was P4 in v1
+
+# =============================================================================
+# 🔴 AGENT PROTOCOL: CONFIGURATION DISCIPLINE (v2)
+# =============================================================================
+# READ THIS FIRST. Before any prompt. Before any action.
+#
+# This protocol was absent in v1 and caused drift. In v2 it is the
+# foundational contract that every agent must honor.
+# =============================================================================
+agent_protocol:
+  name: "Configuration Discipline v2"
+  scope: "ALL agents, ALL sessions, ALL phases"
+  mandatory: true
+  read_first: true  # NEW: agent MUST read this before any prompt
+
+  rules:
+    # REGRA 1: Tudo que é executado deve ser registrado
+    - id: LOG_ALL_ACTIONS
+      rule: >
+        Toda ação que modifique o ambiente Hermes (instalar skill, instalar CLI,
+        adicionar MCP, modificar config.yaml, criar/editar arquivo de
+        configuração) DEVE ser registrada no session log da fase atual.
+      log_format: |
+        ### [PDD-{PHASE}-{SEQ}] {TIMESTAMP} | Phase: {PHASE} | Action: {DESC}
+        #### Context: {WHY}
+        #### Commands Executed: ```bash {EXACT_COMMANDS}```
+        #### Files Modified: {LIST}
+        #### Verification: ```bash {SMOKE_TEST}```
+      log_path: "plans/pdd_v2/logs/session_{PHASE}.log"
+
+    # REGRA 2: Tudo que é executado deve ser reproduzível
+    - id: UPDATE_SETUP_SCRIPT
+      rule: >
+        Toda ação de configuração de ambiente (install, copy, mkdir, pip, etc.)
+        DEVE ser refletida no setup.sh para que um Hermes limpo possa
+        reproduzir o estado completo. Se a ação não pode ser automatizada,
+        documentar como comentário no setup.sh com instruções manuais.
+      setup_path: "plans/pdd_v2/artifacts/setup.sh"
+
+    # REGRA 3: Verificar antes de declarar pronto
+    - id: VERIFY_BEFORE_DONE
+      rule: >
+        Toda instalação (skill, CLI, dependência) DEVE ter um smoke test
+        imediatamente após. Nunca declarar "instalado" sem evidência de
+        funcionamento. Registrar o output do teste no session log.
+
+    # REGRA 4: Backlog tem critérios de reavaliação
+    - id: BACKLOG_WITH_CRITERIA
+      rule: >
+        Itens diferidos para backlog DEVEM incluir: motivo do diferimento,
+        critérios de reavaliação (quando voltar a avaliar), e dependências.
+        Usar BACKLOG_INTEGRATIONS.md como referência.
+      backlog_path: "plans/pdd_v2/BACKLOG_INTEGRATIONS.md"
+
+    # REGRA 5: Estado é verdade — não a memória do agente
+    - id: STATE_IS_TRUTH
+      rule: >
+        Antes de executar qualquer ação, o agente DEVE verificar o estado
+        real do ambiente (hermes skills list, command -v, ls, etc.) em vez de
+        confiar na própria memória. O estado do sistema é a fonte de verdade,
+        não o contexto da conversa.
+
+    # REGRA 6: Drift Audit obrigatório (NEW in v2)
+    - id: DRIFT_AUDIT_REQUIRED
+      rule: >
+        Ao final de cada fase, ANTES de avançar, o agente DEVE executar o
+        Drift Audit: comparar skills declaradas no PLAN vs. instaladas,
+        comparar setup.sh vs. estado real, e verificar MEMORY.md entries.
+        Se o audit falhar, a fase NÃO avança até a correção.
+      audit_checks:
+        - "Skills count: PLAN vs hermes skills list"
+        - "setup.sh sync: script vs estado real"
+        - "MEMORY.md entries: prompts executados vs prompts da fase"
+        - "Bundle validation: bundle skills vs skills instaladas"
+
+  # Checklist de pré-commit mental para todo agente
+  pre_action_checklist:
+    - "Li o agent_protocol? (obrigatório em toda sessão nova)"
+    - "Verifiquei o estado atual? (skills list, file exists, etc.)"
+    - "Sei em qual fase/prompt estou?"
+    - "O session log desta fase está aberto?"
+    - "Sei como vou verificar que funcionou?"
+
+  post_action_checklist:
+    - "Registrei no session log? (comando + output + verificação)"
+    - "Atualizei o setup.sh? (se ação de configuração)"
+    - "Atualizei o MEMORY.md? (via prompt-log skill)"
+    - "A ação é reproduzível por outro agente?"
+
+# =============================================================================
+# PHASES
+# =============================================================================
+
+phases:
+
+  # ---------------------------------------------------------------------------
+  # P0: FOUNDATION
+  # ---------------------------------------------------------------------------
+  - id: P0
+    name: Foundation
+    description: >
+      Preparação do terreno. Cria artefatos-semente que os agentes de P1+
+      precisam. Executado pelo operador humano ou pelo Provisioner Agent.
+    prompts: 0
+    prompt_range: null
+    checkpoint: false
+    artifacts:
+      - "artifacts/setup.sh (semente)"
+      - "artifacts/SELF_TEST_SKILL.md"
+      - "artifacts/SOUL_SEED.md"
+      - "artifacts/STOP_SLOP_SKILL.md"
+      - "artifacts/TASTE_SKILL/"
+      - "artifacts/ACERVO_MANAGER.md"
+      - "artifacts/BACKLOG_TEMPLATE.md"
+      - "PLAYBOOK.yaml (este arquivo)"
+    exit_criteria:
+      - "Todos os artefatos-semente existem em artifacts/"
+      - "setup.sh executa sem erros"
+      - "PLAYBOOK.yaml contém agent_protocol v2"
+      - "Diretório logs/ existe e está vazio"
+
+  # ---------------------------------------------------------------------------
+  # P1: IDENTITY
+  # ---------------------------------------------------------------------------
+  - id: P1
+    name: "Identity — Alma do Exocórtex"
+    description: >
+      Instalar identidade, auto-teste, logging, e quality skills.
+      Quality skills (stop-slop + taste-skill) são instaladas aqui,
+      não na fase de comportamento — qualidade é identidade.
+    prompts: 5
+    prompt_range: "001-005"
+    checkpoint: true
+    min_score: 2
+    max_retries: 3
+    exit_criteria:
+      - "SOUL.md com 5 seções + 7 Values"
+      - "4 skills instaladas: self-test, prompt-log, stop-slop, taste-skill"
+      - "MEMORY.md com entries para prompts 001-005"
+      - "self-test >= 2/5"
+      - "Drift audit PASS"
+
+  # ---------------------------------------------------------------------------
+  # P2: MEMORY
+  # ---------------------------------------------------------------------------
+  - id: P2
+    name: "Memory — Acervo Cognitivo"
+    description: >
+      Sistema de memória com 4 camadas (macro/global/micro/shared)
+      e acervo-manager unificado. Natures são classificação de dados
+      (frontmatter), não skills separadas.
+    prompts: 7
+    prompt_range: "006-012"
+    checkpoint: true
+    min_score: 3
+    max_retries: 3
+    design_decisions:
+      - "ADR-001: 4 Camadas desde o início (não descoberta orgânica)"
+      - "ADR-005: acervo-manager unificado (não 7 Nature skills)"
+      - "ADR-004: Wiki architecture (index, promoção, archiving)"
+    exit_criteria:
+      - "acervo-manager funcional (5 operações: READ/WRITE/SEARCH/PROMOTE/SCOPE)"
+      - "4 camadas criadas e populadas"
+      - "exocortex-new-microverso cria microverso completo"
+      - "Smoke test CRUD passa"
+      - "self-test >= 3/5"
+      - "Drift audit PASS"
+
+  # ---------------------------------------------------------------------------
+  # P3: BEHAVIOR
+  # ---------------------------------------------------------------------------
+  - id: P3
+    name: "Behavior — Skills de Negócio"
+    description: >
+      Regras de negócio como skills comportamentais. Sem MCPs.
+      Integrações externas ficam no BACKLOG.
+    prompts: 9
+    prompt_range: "013-021"
+    checkpoint: true
+    min_score: 4
+    max_retries: 3
+    design_decisions:
+      - "MCPs removidos do fluxo principal (BACKLOG)"
+      - "Output Quality Gate usa stop-slop/taste-skill (já instalados em P1)"
+      - "Onboarding v1.1: sem auto-provisionamento"
+    exit_criteria:
+      - "7 skills comportamentais instaladas"
+      - "Bundle exocortex-alpha carrega todas as skills"
+      - "Profiles exec/evol funcionais"
+      - "Testes comportamentais básicos passam"
+      - "self-test >= 4/5"
+      - "Drift audit PASS"
+
+  # ---------------------------------------------------------------------------
+  # P4: VALIDATION
+  # ---------------------------------------------------------------------------
+  - id: P4
+    name: "Validation — Testes e Qualidade"
+    description: >
+      Bateria de smoke tests que validam o sistema inteiro.
+      Nenhuma skill nova é criada.
+    prompts: 5
+    prompt_range: "022-026"
+    checkpoint: true
+    min_score: 5
+    max_retries: 2
+    smoke_tests:
+      - "Microverso CRUD"
+      - "Draft-First Protocol"
+      - "Vetor de Evolução (Socrático)"
+      - "Morning Briefing Cross-Microverso"
+      - "Quality Gates (prosa + visual)"
+    exit_criteria:
+      - "5 smoke tests passam"
+      - "self-test = 5/5"
+      - "Output Quality Gate funcional"
+      - "Drift audit final PASS"
+      - "Zero skills fantasma"
+
+  # ---------------------------------------------------------------------------
+  # P5: PRODUCTION
+  # ---------------------------------------------------------------------------
+  - id: P5
+    name: "Production — Golden Image"
+    description: >
+      Estado final. O Hermes É o Exocórtex.IA.
+      Golden image pronta para consumo pelo Provisioner Agent.
+    prompts: 1
+    prompt_range: "027"
+    checkpoint: false
+    exit_criteria:
+      - "Configuration State = PRODUCTION"
+      - "setup.sh reproduz o estado completo"
+      - "BACKLOG_INTEGRATIONS.md atualizado"
+      - "MEMORY.md contém log completo"
+      - "Todos os testes de P4 ainda passam"
+
+# =============================================================================
+# DRIFT AUDIT SPECIFICATION
+# =============================================================================
+drift_audit:
+  description: >
+    Verificação automatizada de integridade ao final de cada fase.
+    Compara estado declarado vs. estado real do sistema.
+  trigger: "Último prompt de cada fase (checkpoint)"
+  blocking: true  # Fase não avança se audit falhar
+
+  checks:
+    - id: SKILLS_COUNT
+      description: "Skills declaradas no PLAN == skills instaladas"
+      command: "hermes skills list | wc -l"
+      compare_to: "fase_expected_skills_count"
+
+    - id: SETUP_SYNC
+      description: "setup.sh reproduz o estado real"
+      verification: "Diff entre estado real e output de setup.sh em ambiente limpo"
+
+    - id: MEMORY_ENTRIES
+      description: "MEMORY.md tem entries para todos os prompts da fase"
+      command: "grep -c 'PDD-' MEMORY.md"
+      compare_to: "cumulative_prompt_count"
+
+    - id: BUNDLE_VALIDATION
+      description: "Bundle skills == skills instaladas"
+      command: "cat skill-bundles/exocortex-alpha.yaml"
+      compare_to: "hermes skills list"
+
+  output_format: |
+    ## Drift Audit — Phase {PHASE}
+    | Check | Expected | Actual | Status |
+    |---|---|---|---|
+    | Skills count | {N} | {N} | ✅/❌ |
+    | setup.sh sync | match | {result} | ✅/❌ |
+    | MEMORY.md entries | {N} | {N} | ✅/❌ |
+    | Bundle validation | {list} | {list} | ✅/❌ |
