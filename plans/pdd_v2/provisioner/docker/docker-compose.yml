@@ -2,23 +2,23 @@ version: "3.8"
 
 services:
   exocortex:
-    image: hermes-agent:local
+    build:
+      context: ../../..
+      dockerfile: plans/pdd_v2/provisioner/docker/Dockerfile
+    image: exocortex-provisioner:latest
     container_name: exocortex-provisioner
     volumes:
-      # Persistent data
       - hermes-data:/opt/data
-      # Repository (read-only — source of golden image)
-      - ./../../..:/workspace:ro
-      # Credentials (optional — mount from host)
+      # Mount host credentials (optional)
       - ${HERMES_SECRETS:-~/.hermes}/.env:/opt/secrets/.env:ro
     environment:
       HERMES_HOME: /opt/data
       HERMES_MODEL: ${HERMES_MODEL:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       AUTORUN: ${AUTORUN:-false}
-    entrypoint: /workspace/plans/pdd_v2/provisioner/docker/entrypoint.sh
-    working_dir: /workspace
+      PDD_PHASE: ${PDD_PHASE:-}
     tty: true
     stdin_open: true
 
