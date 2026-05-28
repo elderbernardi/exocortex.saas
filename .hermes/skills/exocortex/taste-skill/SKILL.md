@@ -34,6 +34,17 @@ O orquestrador seleciona o sub-skill por contexto:
 - Output de identidade/marca → brandkit
 - Output de landing/produto/UI → gpt-taste
 
+## Integração com Design System
+
+Antes de gerar qualquer output visual, verificar se `exocortex-design-system`
+tem tokens resolvidos para o microverso ativo:
+
+1. Chamar RESOLVE da skill `exocortex-design-system`
+2. Se tokens existem → usar como base para cores, tipografia e spacing
+3. Se não existem → aplicar defaults do sub-skill ativo (gpt-taste/brutalist)
+
+Fluxo completo: `brandkit` (criação) → `exocortex-design-system` (tokens) → `taste-skill` (validação)
+
 ## Anti-Slop Checks
 
 Antes de entregar qualquer output visual:

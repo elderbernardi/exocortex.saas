@@ -79,6 +79,9 @@ Se o executivo estiver disponível, coletar:
 - **Persona:** Tom de voz diferente do global?
 - **Regras:** Restrições específicas?
 - **Processos:** Workflows recorrentes?
+- **Estilo Visual:** Este domínio tem paleta visual própria diferente do padrão?
+  - Se SIM → Ativar `brandkit` como guia → Criar `DESIGN.md` com `extends: global` e apenas overrides via `exocortex-design-system`
+  - Se NÃO → Não criar arquivo (herda `global/DESIGN.md` automaticamente)
 
 Registrar respostas nos respectivos Nature files.
 

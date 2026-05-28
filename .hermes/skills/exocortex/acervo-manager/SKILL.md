@@ -63,6 +63,13 @@ cat "$ACERVO/macro/estilo.md"
 cat "$ACERVO/global/index.md"
 ```
 
+### Design System (Sob Demanda)
+
+- `global/DESIGN.md` **NÃO** é carregado no boot (economia de contexto)
+- Carregado quando: tarefa demanda output visual, `exocortex-design-system` solicita, ou `taste-skill` precisa validar
+- Override por microverso: `micro/{slug}/DESIGN.md` (opcional, apenas deltas)
+- Cascade: global = base, micro override vence. Skill `exocortex-design-system` resolve merge.
+
 ---
 
 ## Operation: READ

@@ -4,8 +4,9 @@
 > **Predecessor:** `plans/pdd/PLAN.md` (v1, concluído 2026-05-27)
 > **Retrospectiva:** `RETROSPECTIVE.md` (análise de drift v1 → v2)
 > **Playbook:** `PLAYBOOK.yaml` (protocolo de execução)
-> **Metodologia:** PDD (Prompt-Driven Development)
-> **Target:** Hermes Agent → Exocórtex.IA
+> **Metodologia:** Modelagem de configuração via prompts (evoluído de PDD)
+> **Target:** Instância Docker limpa do Hermes Agent → Exocórtex.IA
+> **Requisito:** `artifacts/` é autocontido — `setup.sh` provisiona sem dependências externas
 
 ---
 
@@ -60,9 +61,13 @@ P0 (Foundation)  →  P1 (Identity)  →  P2 (Memory)  →  P3 (Behavior)  →  
 
 Preparar o terreno. O agente que executar P1 deve encontrar: protocolo de disciplina instalado, setup.sh semente funcional, e skills de qualidade disponíveis no diretório de artefatos.
 
-### Artefatos-Semente
+### Artefatos-Semente (Golden Image Autocontida)
 
 O diretório `artifacts/` espelha a estrutura do `~/.hermes/`, contendo a **golden image v2** completa e pronta para provisionamento via `setup.sh`.
+
+> **Princípio de autocontenção:** `HERMES_HOME=/target bash artifacts/setup.sh` numa instância Docker limpa do Hermes deve produzir um Exocórtex funcional. Nenhum artefato externo é necessário — tudo está neste diretório.
+>
+> **MEMORY.md** não é semente — é gerado durante a execução dos prompts P1. O `setup.sh` cria apenas a estrutura; a identidade emerge dos prompts.
 
 ```
 artifacts/
@@ -135,14 +140,14 @@ Instalar a identidade do Exocórtex no Hermes: SOUL.md com personalidade executi
 | 001 | Bootstrap self-test | `exocortex-self-test` skill + Configuration State em SOUL.md |
 | 002 | Core Identity | SOUL.md com Identity, Values, Communication Style |
 | 003 | Behavioral Boundaries | SOUL.md + Draft-First + Vetores + Limites |
-| 004 | Prompt Log + Quality Skills | `exocortex-prompt-log` + `stop-slop` + `taste-skill` + Values #6/#7 |
+| 004 | Prompt Log + Quality Skills | `exocortex-prompt-log` + `stop-slop` + `taste-skill` + `exocortex-design-system` + Values "Estética Funcional" / "Anti-Slop" |
 | 005 | P1 Checkpoint + Drift Audit | self-test ≥ 2/5 + setup.sh audit |
 
 ### Critérios de Saída
 
 - [ ] SOUL.md com 5 seções + 7 Values
-- [ ] 4 skills instaladas: self-test, prompt-log, stop-slop, taste-skill
-- [ ] MEMORY.md com log dos prompts 001-005
+- [ ] 5 skills instaladas: self-test, prompt-log, stop-slop, taste-skill, exocortex-design-system
+- [ ] MEMORY.md com log dos prompts 001-005 (gerado durante execução, não é semente)
 - [ ] self-test ≥ 2/5
 - [ ] **Drift audit:** setup.sh espelha o estado real (skills instaladas = skills no script)
 - [ ] Configuration State = P2_MEMORY
@@ -304,7 +309,7 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 
 ### Estado Final Esperado
 
-#### Skills (14 no bundle)
+#### Skills (15 no bundle + 1 opcional)
 
 | Skill | Categoria | Fase de Instalação |
 |---|---|---|
@@ -323,9 +328,9 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 | `exocortex-output-quality-gate` | Behavior | P3 |
 | `exocortex-tool-governance` | Behavior | P3 |
 
-**Ferramentas de pesquisa** (opcionais, fora do bundle core):
-- `duckduckgo-search` (se disponível)
-- `browser-use` (se disponível)
+**Ferramentas externas** (opcionais, dependem de tooling no host):
+- `browser-use` — incluso no bundle, requer `browser-use.sh` funcional
+- `duckduckgo-search` — MCP externo, não tem seed em artifacts/
 
 #### Profiles
 - `exec` — Vetor de Execução

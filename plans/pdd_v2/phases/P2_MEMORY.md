@@ -65,7 +65,7 @@ acervo/
 
 ### Prompt 006 — Acervo Architecture + acervo-manager
 
-**Artefato-semente:** `artifacts/ACERVO_MANAGER.md`
+**Artefato-semente:** `artifacts/skills/acervo-manager/SKILL.md`
 
 **Prompt:**
 ```

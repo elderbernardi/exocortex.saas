@@ -24,3 +24,6 @@
 
 ## Reflexões
 - [reflexoes.md](reflexoes.md) — Lições aprendidas neste domínio
+
+## Estilo Visual (Opcional)
+- [DESIGN.md](DESIGN.md) — Override visual. Herda `global/DESIGN.md`. Apenas deltas. Requer `extends: global` no frontmatter.

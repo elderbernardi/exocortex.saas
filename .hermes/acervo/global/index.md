@@ -12,6 +12,7 @@
 
 ## Ferramentas
 <!-- Tools disponíveis em todo contexto — ordenar alfabeticamente -->
+- [DESIGN.md](DESIGN.md) — Tokens visuais (cores, tipografia, spacing). Carregado sob demanda por `exocortex-design-system`. Formato: Google DESIGN.md.
 
 ## Conhecimento
 <!-- Compliance, legal, fatos universais — ordenar alfabeticamente -->

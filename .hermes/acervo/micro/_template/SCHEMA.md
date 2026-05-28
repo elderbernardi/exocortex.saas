@@ -58,6 +58,15 @@ confidence: high | medium | low
 - Split de página wiki: quando ultrapassa ~200 linhas
 - Archive: quando conteúdo é supersedido → mover para _archive/
 
+## Style Override (DESIGN.md)
+
+- Arquivo `DESIGN.md` é **OPCIONAL** neste Microverso
+- Ausência = herda 100% de `global/DESIGN.md`
+- Presença = declara APENAS tokens que diferem do global
+- Frontmatter DEVE conter `extends: global`
+- Formato: Google DESIGN.md (YAML tokens + markdown prosa)
+- Criação guiada por `brandkit` via `exocortex-design-system`
+
 ## Update Policy
 - Alterações locais — sem aprovação extra necessária
 - Alterações que afetam global/ — confirmar com executivo

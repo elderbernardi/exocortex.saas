@@ -25,111 +25,79 @@ P0 resolve isso codificando a preparação como fase formal.
 
 ## Artefatos-Semente
 
-### 1. `PLAYBOOK.yaml` (este playbook)
+O diretório `artifacts/` é a **golden image autocontida**. Tudo que o Hermes
+precisa para se tornar um Exocórtex está aqui. `setup.sh` copia tudo para `~/.hermes/`.
+
+### 1. `PLAYBOOK.yaml` (protocolo de execução)
 - **Path:** `plans/pdd_v2/PLAYBOOK.yaml`
 - **Conteúdo:** Protocolo de execução + agent_protocol v2 + drift_audit spec
 - **O agente de P1 lê este arquivo PRIMEIRO.**
 
-### 2. `artifacts/setup.sh` (semente)
-- **Path:** `plans/pdd_v2/artifacts/setup.sh`
-- **Conteúdo inicial:** Header + variáveis + estrutura de diretórios
-- **Regra:** Cresce com cada fase. Ao final de P5, reproduz o estado completo.
+### 2. `artifacts/setup.sh`
+- Script de provisionamento: copia skills, acervo, profiles e bundle para `HERMES_HOME`.
+- **Uso:** `HERMES_HOME=/path/to/hermes bash artifacts/setup.sh`
+- **Idempotente:** pode ser re-executado sem efeitos colaterais.
 
-### 3. `artifacts/SELF_TEST_SKILL.md`
-- **Origem:** `.hermes/skills/exocortex/exocortex-self-test/SKILL.md` (v1)
-- **Conteúdo:** Skill de auto-diagnóstico com scoring progressivo
-- **Ajuste v2:** Nenhum (funcional como está)
+### 3. `artifacts/skills/` (15 skills)
+Espelho de `~/.hermes/skills/exocortex/`. Cada subdiretório contém `SKILL.md` + recursos.
 
-### 4. `artifacts/SOUL_SEED.md`
-- **Origem:** `plans/pdd/artifacts/SOUL_SEED.md` (v1)
-- **Conteúdo:** Template de identidade com seções a serem preenchidas por P1
-- **Ajuste v2:** Adicionar placeholders para Values #6 (stop-slop) e #7 (taste-skill)
+| Categoria | Skills |
+|---|---|
+| Core | `exocortex-self-test`, `exocortex-prompt-log` |
+| Quality | `stop-slop`, `taste-skill`, `exocortex-design-system` |
+| Memory | `acervo-manager`, `exocortex-new-microverso` |
+| Behavior | `exocortex-draft-first`, `exocortex-vetor-ativo`, `exocortex-canvas`, `exocortex-briefing`, `exocortex-onboarding`, `exocortex-output-quality-gate`, `exocortex-tool-governance` |
+| External | `browser-use` (requer tooling no host) |
 
-### 5. `artifacts/STOP_SLOP_SKILL.md`
-- **Origem:** `.hermes/skills/exocortex/stop-slop/SKILL.md` (v1)
-- **Conteúdo:** Regras de escrita anti-slop + scoring 1-10
-- **Ajuste v2:** Nenhum (funcional como está)
+### 4. `artifacts/acervo/` (4 camadas)
+Espelho de `~/.hermes/acervo/`. Estrutura wiki com 4 camadas:
+- `macro/` — soul.md, valores.md, estilo.md, assets/
+- `global/` — index.md, DESIGN.md (tokens visuais), 7 Natures
+- `micro/_template/` — Template de microverso com suporte a DESIGN.md override
+- `shared/` — cross-refs/, groups.md, glossario.md
 
-### 6. `artifacts/TASTE_SKILL/`
-- **Origem:** `.hermes/skills/exocortex/taste-skill/` (v1)
-- **Conteúdo:** gpt-taste, brandkit, brutalist sub-skills
-- **Ajuste v2:** Nenhum (funcional como está)
+### 5. `artifacts/profiles/` (2 profiles)
+- `exec/` — Vetor de Execução (foco em resultado tangível)
+- `evol/` — Vetor de Evolução (foco em compreensão)
 
-### 7. `artifacts/ACERVO_MANAGER.md`
-- **Origem:** `.hermes/skills/exocortex/acervo-manager/SKILL.md` (v1)
-- **Conteúdo:** Skill unificada do acervo (4 camadas, 5 operações, wiki architecture)
-- **Ajuste v2:** Verificar que schema YAML e 4 camadas estão documentados
+### 6. `artifacts/skill-bundles/exocortex-alpha.yaml`
+Bundle principal com 15 skills core + 1 opcional (browser-use).
+
+### 7. `artifacts/SOUL_SEED.md`
+Template de identidade. Base para o SOUL.md que será construído em P1.
 
 ### 8. `artifacts/BACKLOG_TEMPLATE.md`
-- **Conteúdo:** Template para integrações futuras (MCPs, APIs)
-- **Formato:** Tabela com: ID, Integração, Status, Motivo do Diferimento, Critérios de Reavaliação, Dependências
+Template para integrações futuras (MCPs, APIs externas) com critérios de reavaliação.
 
 ---
 
 ## Procedimento
 
 ```bash
-# 1. Criar estrutura de diretórios
-mkdir -p plans/pdd_v2/{phases,artifacts,logs}
+# Em uma instância Docker limpa do Hermes:
+HERMES_HOME=~/.hermes bash plans/pdd_v2/artifacts/setup.sh
 
-# 2. Copiar artefatos-semente do v1
-cp .hermes/skills/exocortex/exocortex-self-test/SKILL.md plans/pdd_v2/artifacts/SELF_TEST_SKILL.md
-cp plans/pdd/artifacts/SOUL_SEED.md plans/pdd_v2/artifacts/SOUL_SEED.md
-cp .hermes/skills/exocortex/stop-slop/SKILL.md plans/pdd_v2/artifacts/STOP_SLOP_SKILL.md
-cp -r .hermes/skills/exocortex/taste-skill/ plans/pdd_v2/artifacts/TASTE_SKILL/
-cp .hermes/skills/exocortex/acervo-manager/SKILL.md plans/pdd_v2/artifacts/ACERVO_MANAGER.md
-
-# 3. Criar setup.sh semente
-cat > plans/pdd_v2/artifacts/setup.sh << 'EOF'
-#!/bin/bash
-# Exocórtex.IA — PDD v2 Setup Script
-# This script grows with each phase. At P5 it reproduces the full state.
-# Version: 2.0.0-seed
-# Phase: P0 (Foundation)
-set -euo pipefail
-
-HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
-EXOCORTEX_SKILLS="$HERMES_HOME/skills/exocortex"
-
-echo "=== Exocórtex.IA PDD v2 Setup ==="
-echo "Phase: P0 (Foundation)"
-echo "Target: $HERMES_HOME"
-
-# Phase P0: Create directories
-mkdir -p "$EXOCORTEX_SKILLS"
-mkdir -p "$HERMES_HOME/acervo"/{macro,global,micro/_template,shared/cross-refs}
-
-echo "=== P0 Complete ==="
-EOF
-chmod +x plans/pdd_v2/artifacts/setup.sh
-
-# 4. Criar BACKLOG_TEMPLATE.md
-cat > plans/pdd_v2/artifacts/BACKLOG_TEMPLATE.md << 'EOF'
-# Backlog de Integrações
-
-| ID | Integração | Status | Motivo | Critério de Reavaliação | Dependências |
-|---|---|---|---|---|---|
-| BKL-001 | Google Workspace (OAuth) | Diferido | API keys não disponíveis | Quando OAuth estiver configurado | Google Cloud Project |
-| BKL-002 | Observability MCP | Diferido | Sem infra de métricas | Quando Prometheus/Grafana disponível | Monitoring stack |
-EOF
-
-# 5. Verificar
-echo "=== P0 Verification ==="
-ls -la plans/pdd_v2/artifacts/
-echo "✅ P0 Foundation complete"
+# Verificação:
+ls ~/.hermes/skills/exocortex/     # 15 skills
+ls ~/.hermes/acervo/               # macro/ global/ micro/ shared/
+cat ~/.hermes/skill-bundles/exocortex-alpha.yaml  # bundle com 15+1 skills
+cat ~/.hermes/SOUL.md              # SOUL_SEED.md copiado
 ```
 
 ---
 
 ## Critérios de Saída
 
-- [ ] `plans/pdd_v2/artifacts/` contém todos os 8 artefatos
-- [ ] `setup.sh` executa sem erros
-- [ ] `PLAYBOOK.yaml` contém `agent_protocol` com 6 regras (5 originais + DRIFT_AUDIT)
-- [ ] `logs/` existe e está vazio
-- [ ] `RETROSPECTIVE.md` existe (base factual)
-- [ ] `PLAN.md` existe (plano v2)
+- [ ] `setup.sh` executa sem erros em instância limpa
+- [ ] 15 skills copiadas para `~/.hermes/skills/exocortex/`
+- [ ] Acervo com 4 camadas populadas
+- [ ] Bundle `exocortex-alpha.yaml` instalado
+- [ ] SOUL.md instalado (de SOUL_SEED.md)
+- [ ] Profiles `exec` e `evol` instalados
+- [ ] `PLAYBOOK.yaml` existe com `agent_protocol` + `drift_audit`
+- [ ] `logs/` existe (para session logs de P1+)
 
 ---
 
 > **Próxima fase:** P1 (Identity)
+

@@ -13,7 +13,7 @@ Instalar a identidade do Exocórtex no Hermes. Ao final de P1, o agente:
 - Sabe quem é (SOUL.md)
 - Se auto-diagnostica (self-test)
 - Registra o que faz (prompt-log)
-- **Escreve com qualidade** (stop-slop + taste-skill) ← Novo em v2
+- **Escreve com qualidade** (stop-slop + taste-skill + exocortex-design-system) ← Novo em v2
 
 ### Mudança fundamental em relação ao v1
 
@@ -32,7 +32,7 @@ não escreve bem desde o dia 1 não é um Exocórtex — é um chatbot genérico
 
 **Objetivo:** Instalar skill de auto-diagnóstico e inicializar Configuration State.
 
-**Artefato-semente:** `artifacts/SELF_TEST_SKILL.md`
+**Artefato-semente:** `artifacts/skills/exocortex-self-test/SKILL.md`
 
 **Prompt:**
 ```
@@ -108,37 +108,43 @@ Refine o SOUL.md com:
 
 **Objetivo:** Instalar logging + quality skills como identidade.
 
-**Artefatos-semente:**
-- `artifacts/STOP_SLOP_SKILL.md`
-- `artifacts/TASTE_SKILL/`
+**Artefatos-semente:** (todos em `artifacts/skills/`)
+- `exocortex-prompt-log/`
+- `stop-slop/`
+- `taste-skill/`
+- `exocortex-design-system/`
 
 **Prompt:**
 ```
-Instale três skills nesta ordem:
+Instale quatro skills nesta ordem:
 
 1. exocortex-prompt-log — Skill que registra cada prompt significativo
    no MEMORY.md com: timestamp, intent, artifacts gerados, learnings.
    
 2. stop-slop — Skill anti-padrões de escrita de IA.
-   Adicione ao SOUL.md o Value #6:
+   Adicione ao SOUL.md o Value #6 ("Estética Funcional"):
    "Toda prosa gerada por mim passa pelo crivo do stop-slop.
     Pontuação mínima: 35/50. Abaixo disso, reescrevo."
    
 3. taste-skill — Skills anti-defaults visuais (gpt-taste, brandkit, brutalist).
-   Adicione ao SOUL.md o Value #7:
+   Adicione ao SOUL.md o Value #7 ("Anti-Slop Visual"):
    "Todo output visual é filtrado pelo taste-skill antes de entrega.
     Nenhuma geração visual sai sem pre-flight check."
+
+4. exocortex-design-system — Skill de tokens visuais (DESIGN.md cascade).
+   Gerencia o cascade global/DESIGN.md → micro/{slug}/DESIGN.md.
+   Integra com taste-skill (validação) e brandkit (criação).
 
 Execute smoke test para cada skill instalada.
 ```
 
 **Verificação:**
-- `hermes skills list` mostra 4 skills: self-test, prompt-log, stop-slop, taste-skill
+- `hermes skills list` mostra 5 skills: self-test, prompt-log, stop-slop, taste-skill, exocortex-design-system
 - SOUL.md contém Values #6 e #7
 - Smoke test stop-slop: gerar parágrafo + scoring ≥ 35/50
 - Smoke test taste-skill: gerar prompt visual com pre-flight check
 
-**Artefatos gerados:** 3 skills + SOUL.md (v3, 7 Values)
+**Artefatos gerados:** 4 skills + SOUL.md (v3, 7 Values)
 
 ---
 
@@ -151,8 +157,8 @@ Execute smoke test para cada skill instalada.
 Execute o self-test do Exocórtex. O resultado esperado é ≥ 2/5.
 
 Depois, execute o Drift Audit de P1:
-1. Quantas skills estão instaladas? (esperado: 4)
-2. O setup.sh reflete as 4 skills instaladas?
+1. Quantas skills estão instaladas? (esperado: 5)
+2. O setup.sh reflete as 5 skills instaladas?
 3. O MEMORY.md tem entries para os prompts 001-004?
 4. O SOUL.md tem 5 seções + 7 Values?
 
@@ -172,7 +178,7 @@ Se tudo passar, atualize Configuration State para P2_MEMORY.
 | Critério | Verificação |
 |---|---|
 | SOUL.md completo | 5 seções + 7 Values |
-| 4 skills instaladas | `hermes skills list` retorna 4 |
+| 5 skills instaladas | `hermes skills list` retorna 5 |
 | MEMORY.md com log | entries para prompts 001-005 |
 | self-test ≥ 2/5 | self-test skill output |
 | Drift audit PASS | 4/4 checks ✅ |
@@ -180,22 +186,12 @@ Se tudo passar, atualize Configuration State para P2_MEMORY.
 
 ---
 
-## Setup.sh — Incremento P1
+## Nota: Artefatos-Semente
 
-```bash
-# === Phase P1: Identity ===
-echo "Phase P1: Installing identity skills..."
-
-# Skills
-cp artifacts/SELF_TEST_SKILL.md "$EXOCORTEX_SKILLS/exocortex-self-test/SKILL.md"
-cp artifacts/STOP_SLOP_SKILL.md "$EXOCORTEX_SKILLS/stop-slop/SKILL.md"
-cp -r artifacts/TASTE_SKILL/ "$EXOCORTEX_SKILLS/taste-skill/"
-# prompt-log is generated during P1, added to setup.sh after generation
-
-# SOUL.md is generated during P1, added to setup.sh after generation
-
-echo "=== P1 Complete ==="
-```
+Todos os artefatos referenciados nesta fase existem no diretório
+`plans/pdd_v2/artifacts/skills/`. O `setup.sh` já copia todas as
+skills automaticamente — os prompts desta fase **ativam e configuram**
+as skills no contexto do agente, não as instalam manualmente.
 
 ---
 
