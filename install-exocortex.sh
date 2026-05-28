@@ -95,8 +95,8 @@ elif command -v aider &>/dev/null; then
 else
   warn "Nenhum agente CLI detectado"
   info "Instale um agente CLI compatível:"
+  info "  • Hermes Agent: uv tool install hermes-agent  (ou pipx install hermes-agent)"
   info "  • Codex CLI:    npm install -g @openai/codex"
-  info "  • Hermes Agent: curl -fsSL https://hermes.sh | bash"
   info "  • Gemini CLI:   npm install -g @google/gemini-cli"
   info "  • Claude CLI:   npm install -g @anthropic-ai/claude-code"
   echo ""
@@ -182,9 +182,7 @@ if [ -n "$AGENT_CMD" ]; then
       # Hermes: pass RUNBOOK content as context + instruction
       echo -e "${DIM}  → hermes chat com contexto do RUNBOOK${NC}"
       echo ""
-      exec hermes chat -q "$AGENT_INSTRUCTION" \
-        --context-file "$INSTALL_DIR/RUNBOOK.md" \
-        --cwd "$INSTALL_DIR"
+      cd "$INSTALL_DIR" && exec hermes chat -q "$AGENT_INSTRUCTION"
       ;;
     codex)
       # Codex: use CODEX_BOOTSTRAP.md as the prompt, --cd for workspace
