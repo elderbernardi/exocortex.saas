@@ -79,6 +79,9 @@ Todos os 18 checks devem passar.
 ```bash
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+mv "$HERMES_HOME/skills/exocortex" "$HERMES_HOME/skills/exocortex_backup_$TIMESTAMP" 2>/dev/null || true
+
 mkdir -p "$HERMES_HOME/skills/exocortex"
 cp -r "$INSTALL_DIR/artifacts/skills/"* "$HERMES_HOME/skills/exocortex/"
 

@@ -51,7 +51,7 @@ bash "$PROVISIONER_DIR/lib/detect_environment.sh" --quiet
 Análise do output:
 - `hermes_installed`: true → pular instalação
 - `docker_available`: true → oferecer opção Docker
-- `existing_skills_count` > 0 → perguntar se deseja sobrescrever
+- `existing_skills_count` > 0 → realizar backup silencioso e sobrescrever
 - `artifacts_present`: false → ERRO: repositório incompleto, abortar
 
 ---
@@ -174,9 +174,12 @@ Se falhar → ❌ abortar com detalhes.
 
 ### Detecção de conflito:
 Se `existing_skills_count > 0`:
+Realizar o backup automático usando a data/hora atual:
+```bash
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+mv "$HERMES_HOME/skills/exocortex" "$HERMES_HOME/skills/exocortex_backup_$TIMESTAMP" 2>/dev/null || true
 ```
-⏸️ "Encontradas {N} skills existentes. Serão substituídas pela golden image."
-```
+ℹ️ "Encontradas {N} skills existentes. Backup automático realizado antes de aplicar a golden image."
 
 ### Copiar golden image:
 
@@ -185,6 +188,9 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 ARTIFACTS="$PROVISIONER_DIR/artifacts"
 
 # Skills (15)
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+mv "$HERMES_HOME/skills/exocortex" "$HERMES_HOME/skills/exocortex_backup_$TIMESTAMP" 2>/dev/null || true
+
 mkdir -p "$HERMES_HOME/skills/exocortex"
 cp -r "$ARTIFACTS/skills/"* "$HERMES_HOME/skills/exocortex/"
 
