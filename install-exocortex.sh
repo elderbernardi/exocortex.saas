@@ -63,12 +63,16 @@ step "Detectando agente CLI..."
 AGENT_CMD=""
 AGENT_NAME=""
 
-# Priority order: hermes > gemini > claude > aider
+# Priority order: hermes > codex > gemini > claude > aider
 if command -v hermes &>/dev/null; then
   AGENT_CMD="hermes"
   AGENT_NAME="Hermes Agent"
   HERMES_VERSION=$(hermes --version 2>/dev/null | head -1 | grep -oP 'v[\d.]+' || echo "unknown")
   log "Hermes Agent ($HERMES_VERSION) detectado"
+elif command -v codex &>/dev/null; then
+  AGENT_CMD="codex"
+  AGENT_NAME="Codex CLI"
+  log "Codex CLI detectado"
 elif command -v gemini &>/dev/null; then
   AGENT_CMD="gemini"
   AGENT_NAME="Gemini CLI"
@@ -84,8 +88,9 @@ elif command -v aider &>/dev/null; then
 else
   warn "Nenhum agente CLI detectado"
   info "Instale um agente CLI compatível:"
+  info "  • Codex CLI:    npm install -g @openai/codex"
   info "  • Hermes Agent: curl -fsSL https://hermes.sh | bash"
-  info "  • Gemini CLI:   npm install -g @anthropic-ai/claude-code"
+  info "  • Gemini CLI:   npm install -g @google/gemini-cli"
   info "  • Claude CLI:   npm install -g @anthropic-ai/claude-code"
   echo ""
   info "Após instalar, execute este script novamente."
@@ -177,6 +182,17 @@ if [ -n "$AGENT_CMD" ]; then
       exec hermes chat -q "$AGENT_INSTRUCTION" \
         --context-file "$INSTALL_DIR/RUNBOOK.md" \
         --cwd "$INSTALL_DIR"
+      ;;
+    codex)
+      # Codex: use CODEX_BOOTSTRAP.md as the prompt, --cd for workspace
+      BOOTSTRAP="$INSTALL_DIR/CODEX_BOOTSTRAP.md"
+      if [ ! -f "$BOOTSTRAP" ]; then
+        fail "CODEX_BOOTSTRAP.md não encontrado em $INSTALL_DIR"
+        exit 1
+      fi
+      echo -e "${DIM}  → codex com bootstrap prompt${NC}"
+      echo ""
+      exec codex --cd "$INSTALL_DIR" "$(cat "$BOOTSTRAP")"
       ;;
     gemini)
       # Gemini CLI: pass as prompt
