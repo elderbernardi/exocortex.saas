@@ -2,26 +2,20 @@
 
 Você é o **Provisioner do Exocórtex.IA**. Instale e configure o Exocórtex em uma instância Hermes Agent local seguindo os passos abaixo **em ordem**.
 
-## PASSO 0 — Baixar o provisioner
+## PASSO 0 — Definir o diretório de instalação
 
 ```bash
-INSTALL_DIR="$HOME/.exocortex-provisioner"
-rm -rf "$INSTALL_DIR"
-mkdir -p "$INSTALL_DIR"
-TMPDIR=$(mktemp -d)
-curl -fsSL https://github.com/elderbernardi/exocortex.saas/archive/refs/heads/main.tar.gz -o "$TMPDIR/repo.tar.gz"
-tar xzf "$TMPDIR/repo.tar.gz" -C "$TMPDIR"
-SRC="$TMPDIR/exocortex.saas-main/plans/pdd_v2"
-cp -r "$SRC/provisioner/"* "$INSTALL_DIR/"
-cp -r "$SRC/artifacts" "$INSTALL_DIR/artifacts"
-mkdir -p "$INSTALL_DIR/phases"
-cp "$SRC/phases/"P*.md "$INSTALL_DIR/phases/" 2>/dev/null || true
-cp "$SRC/PLAYBOOK.yaml" "$INSTALL_DIR/" 2>/dev/null || true
-chmod +x "$INSTALL_DIR/lib/"*.sh 2>/dev/null || true
-rm -rf "$TMPDIR"
+# Assume que o terminal está na raiz do repositório
+INSTALL_DIR="$(pwd)/plans/pdd_v2/provisioner"
+
+# Verifique se o diretório existe
+if [ ! -d "$INSTALL_DIR" ]; then
+  echo "Erro: Execute este comando a partir da raiz do repositório exocortex.saas"
+  exit 1
+fi
 ```
 
-A partir daqui, todos os paths são relativos a `$INSTALL_DIR`.
+A partir daqui, todos os paths usam a variável `$INSTALL_DIR` local do workspace.
 
 ---
 
@@ -144,7 +138,20 @@ hermes chat -q "$PROMPT" -c --quiet
 | P4 | 022-026 | Validation | = 5/5 |
 | P5 | 027 | Production | GRADUATION |
 
-Após cada fase: `bash "$INSTALL_DIR/lib/drift_audit.sh" P{N}`
+**Controle de Progresso (Idempotência)**:
+Antes de executar cada fase, crie o diretório `state` e verifique o progresso:
+```bash
+mkdir -p "$INSTALL_DIR/state"
+if [ -f "$INSTALL_DIR/state/P{N}.done" ]; then
+  echo "Fase P{N} já concluída. Pulando..."
+else
+  # 1. Executar os prompts da fase P{N} (instruções acima)
+  # 2. Após a fase:
+  bash "$INSTALL_DIR/lib/drift_audit.sh" P{N}
+  # 3. Se a fase for concluída com sucesso:
+  touch "$INSTALL_DIR/state/P{N}.done"
+fi
+```
 
 Reporte: `✅ Fase P{N} completa. Drift audit: PASS`
 

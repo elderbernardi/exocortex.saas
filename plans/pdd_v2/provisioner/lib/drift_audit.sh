@@ -16,14 +16,7 @@ source "$SCRIPT_DIR/common.sh"
 PHASE="${1:-ALL}"
 ERRORS=0
 
-# Expected skill counts per phase
-declare -A PHASE_SKILLS
-PHASE_SKILLS[P1]=5   # self-test, prompt-log, stop-slop, taste-skill, design-system
-PHASE_SKILLS[P2]=7   # + acervo-manager, new-microverso
-PHASE_SKILLS[P3]=15  # + 8 behavioral skills
-PHASE_SKILLS[P4]=15
-PHASE_SKILLS[P5]=15
-PHASE_SKILLS[ALL]=15
+# Expected skills dynamically loaded from common.sh
 
 audit_check() {
   local id="$1"
@@ -40,7 +33,7 @@ audit_check() {
 
 run_audit() {
   local phase="$1"
-  local expected_skills="${PHASE_SKILLS[$phase]:-15}"
+  local expected_skills="${EXPECTED_SKILLS:-15}"
 
   step "Drift Audit — Phase $phase"
   echo ""

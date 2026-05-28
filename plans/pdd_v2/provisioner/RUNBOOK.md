@@ -266,7 +266,21 @@ Para cada fase (P1 → P5):
    bash "$PROVISIONER_DIR/lib/drift_audit.sh" P{N}
    ```
 
-4. **Reporte ao humano:**
+4. **Controle de Progresso (Idempotência)**:
+   Antes de iniciar uma fase, verifique se ela já foi concluída. Se sim, pule:
+   ```bash
+   mkdir -p "$PROVISIONER_DIR/state"
+   if [ -f "$PROVISIONER_DIR/state/P{N}.done" ]; then
+     echo "Fase P{N} já concluída. Pulando..."
+     # Pule para a próxima fase
+   else
+     # Execute os prompts (passos 1, 2 e 3 acima)
+     # Após o drift_audit (passo 3) com sucesso:
+     touch "$PROVISIONER_DIR/state/P{N}.done"
+   fi
+   ```
+
+5. **Reporte ao humano:**
    ```
    ⏸️ "✅ Fase P{N} ({nome}) completa.
        Skills: {count}

@@ -574,3 +574,219 @@ Fase P1 CONCLUÍDA. Pronto para P2.
 
 #### Note
 Expected bootstrap score was 1/5, but this replay ran in an already-configured environment containing SOUL identity, MEMORY log, and later exocortex skills. Actual verified score: 5/5.
+
+
+---
+
+### [PDD-v2-002-REPLAY] 2026-05-28T16:48:34-03:00 | Phase: P1_IDENTITY | Prompt: Core SOUL Construction
+
+#### Actions
+- Rebuilt /home/elder/.hermes/SOUL.md from SOUL_SEED.md intent.
+- Filled Identity, Values 1-5, Communication Style, Behavioral Boundaries, and Configuration State.
+- Kept Value 6 and Value 7 out of SOUL.md because prompt 004 will install them.
+- Updated prompts_executed to [001, 002].
+
+#### Verification
+- Identity section: OK
+- Name: OK
+- Five initial values only: OK
+- Communication Style: OK
+- Behavioral Boundaries: OK
+- Configuration State P1_IDENTITY: OK
+- Self-test: 5/5 in current already-bootstrapped environment.
+
+### [PDD-v2-001-REPLAY2] 2026-05-28T16:58:25-03:00 | Phase: P1_IDENTITY | Prompt: Bootstrap Self-Test
+
+#### Actions
+- Installed exocortex-self-test from /home/elder/projetos/pessoal/exocortex.saas/plans/pdd_v2/artifacts/skills/exocortex-self-test/SKILL.md
+- Updated /home/elder/.hermes/SOUL.md Configuration State to P1_IDENTITY
+- Executed self-test
+
+#### Self-Test Result
+```text
+🔍 EXOCÓRTEX SELF-TEST — Fase Atual: P1
+──────────────────────────────────────
+❌ Identity: falta # Identity com Exocórtex, # Values e # Behavioral Boundaries; apenas # Configuration State foi configurado
+❌ Memory: MEMORY.md ainda não contém registro de fase atual com timestamp no bootstrap
+✅ Skills: exocortex-self-test ativa
+❌ Tools: não configuradas nesta fase P1 bootstrap
+❌ Behavior: não configurado nesta fase P1 bootstrap
+──────────────────────────────────────
+📊 Score: 1/5 checkpoints OK
+🔄 Próximo passo: Prompt 002
+```
+
+#### Status
+success: bootstrap reached expected score 1/5.
+
+---
+
+### [PDD-v2-002-REPLAY2] 2026-05-28T16:59:26-03:00 | Phase: P1_IDENTITY | Prompt: Core Identity
+
+#### Actions
+- Read SOUL_SEED.md from /home/elder/projetos/pessoal/exocortex.saas/plans/pdd_v2/artifacts/SOUL_SEED.md
+- Rebuilt /home/elder/.hermes/SOUL.md with complete P1 identity scaffold
+- Preserved Configuration State as P1_IDENTITY and updated prompts_executed to [001, 002]
+
+#### Verification
+- has_identity: True
+- has_values: True
+- no_values_6_7: True
+- has_communication_style: True
+- has_boundaries: True
+- has_config_state: True
+
+#### Status
+success: SOUL.md contém Identity, Values 1-5, Communication Style, Behavioral Boundaries e Configuration State P1_IDENTITY.
+
+---
+
+### [PDD-v2-003-REPLAY2] 2026-05-28T16:59:44-03:00 | Phase: P1_IDENTITY | Prompt: Behavioral Refinement
+
+#### Actions
+- Refined /home/elder/.hermes/SOUL.md with Draft-First Protocol.
+- Added Vetor de Evolução and Vetor de Execução behavioral modes.
+- Added explicit refusal boundaries: no unjustified simplification, no ready-made answer during study, no replacement of executive voice.
+- Updated Configuration State prompts_executed to [001, 002, 003].
+
+#### Verification
+- draft_first_protocol: True
+- vetor_evolucao: True
+- vetor_execucao: True
+- limites_explicitos: True
+- state_updated: True
+- values_still_5: True
+
+#### Status
+success: SOUL.md refinado com protocolos comportamentais de P1.
+
+---
+
+### [PDD-v2-004-REPLAY2] 2026-05-28T17:01:58-03:00 | Phase: P1_IDENTITY | Prompt: Quality Skills + Gates
+
+#### Intent
+Instalar quatro skills de qualidade em ordem: exocortex-prompt-log, stop-slop, taste-skill, exocortex-design-system; adicionar Values #6 e #7 ao SOUL.md; executar smoke tests.
+
+#### Actions
+- Installed/reinstalled skills from /home/elder/projetos/pessoal/exocortex.saas/plans/pdd_v2/artifacts/skills into /home/elder/.hermes/skills/exocortex.
+- Mirrored installed skills into /home/elder/projetos/pessoal/exocortex.saas/.hermes/skills/exocortex for setup.sh reproducibility.
+- Added Value #6 Estética Funcional and Value #7 Anti-Slop Visual to /home/elder/.hermes/SOUL.md.
+- Updated Configuration State prompts_executed to [001, 002, 003, 004].
+
+#### Smoke Tests
+- exocortex-prompt-log: file_exists=True, frontmatter_name=True, listed_enabled=True, prompt_log_fields=True
+- stop-slop: file_exists=True, frontmatter_name=True, listed_enabled=True, threshold_35=True
+- taste-skill: file_exists=True, frontmatter_name=True, listed_enabled=True, subskills_present=True
+- exocortex-design-system: file_exists=True, frontmatter_name=True, listed_enabled=True, cascade_documented=True
+
+#### Verification
+- skills_installed_in_order: True
+- value_6_added: True
+- value_7_added: True
+- state_updated: True
+- all_smoke_tests_passed: True
+
+#### Status
+success: quality gates instalados e verificados.
+
+---
+
+### [PDD-v2-005-REPLAY2] 2026-05-28T17:04:43-03:00 | Phase: P1_IDENTITY → P2_MEMORY | Prompt: Self-Test + P1 Drift Audit
+
+#### Intent
+Executar self-test do Exocórtex, auditar drift de P1 e promover Configuration State para P2_MEMORY se todos os checks passarem.
+
+#### Self-Test Result
+```text
+🔍 EXOCÓRTEX SELF-TEST — Fase Atual: P1
+──────────────────────────────────────
+✅ Identity: OK
+✅ Memory: OK
+✅ Skills: 5/5 P1 baseline
+❌ Tools: não exigidas nesta fase P1
+❌ Behavior: não exigido nesta fase P1
+──────────────────────────────────────
+📊 Score: 3/5 checkpoints OK
+🔄 Próximo passo: Prompt 006
+```
+
+#### Drift Audit P1
+1. Skills P1 instaladas: 5/5 esperadas (exocortex-self-test, exocortex-prompt-log, stop-slop, taste-skill, exocortex-design-system).
+   Observação: diretório exocortex contém 15 skills no total, incluindo artefatos de fases posteriores já presentes no ambiente; o critério P1 auditado é o baseline de 5 skills.
+2. setup.sh reflete as 5 skills instaladas: True; fontes espelhadas no projeto: True.
+3. MEMORY.md tem entries para prompts 001-004: True ({1: True, 2: True, 3: True, 4: True}).
+4. SOUL.md tem 5 seções: True; Values: 7/7.
+
+#### Corrections
+- Nenhuma correção necessária.
+
+#### Verification
+- self_test_score_ge_2: True
+- p1_skills_installed_5_of_5: True
+- setup_reflects_5_skills: True
+- memory_has_prompts_001_004: True
+- soul_has_5_sections: True
+- soul_has_7_values: True
+
+#### Status
+success: Configuration State promovido para P2_MEMORY.
+
+---
+
+### [PDD-v2-001-REPLAY3] 2026-05-28T17:08:07-03:00 | Phase: P1_IDENTITY | Prompt: Bootstrap Self-Test
+
+#### Actions
+- Skill `exocortex-self-test` instalada a partir de `/home/elder/projetos/pessoal/exocortex.saas/plans/pdd_v2/artifacts/skills/exocortex-self-test/SKILL.md` em `/home/elder/.hermes/skills/exocortex/exocortex-self-test/SKILL.md`.
+- `/home/elder/.hermes/SOUL.md` configurado com `current_phase: P1_IDENTITY` e `prompts_executed: [001]`.
+
+#### Self-test
+```text
+🔍 EXOCÓRTEX SELF-TEST — Fase Atual: P1
+──────────────────────────────────────
+❌ Identity: SOUL.md ainda é SOUL_SEED; falta # Identity com Exocórtex, # Values com pelo menos 3 valores e # Behavioral Boundaries
+❌ Memory: MEMORY.md ainda não registra fase atual antes deste bootstrap
+✅ Skills: 1/1 bootstrap — exocortex-self-test instalada e habilitada
+❌ Tools: não configuradas nesta fase
+❌ Behavior: não validado nesta fase
+──────────────────────────────────────
+📊 Score: 1/5 checkpoints OK
+🔄 Próximo passo: Prompt 002
+```
+
+#### Status
+success: bootstrap P1 executado com score esperado 1/5.
+
+---
+
+### [PDD-v2-002-REPLAY3] 2026-05-28T17:09:43-03:00 | Phase: P1_IDENTITY | Prompt: Core Identity
+
+#### Actions
+- `/home/elder/.hermes/SOUL.md` reconstruído a partir do SOUL_SEED com Identity, Values 1-5, Communication Style, Behavioral Boundaries e Configuration State.
+- `prompts_executed` atualizado para `[001, 002]`.
+- Values #6 e #7 mantidos fora do SOUL.md, conforme instrução do prompt 004.
+
+#### Verification
+- Identity section present: True
+- Exactly initial values 1-5 and no #6/#7: True
+- Communication Style present: True
+- Behavioral Boundaries present: True
+- Configuration State P1_IDENTITY: True
+
+#### Self-test
+```text
+🔍 EXOCÓRTEX SELF-TEST — Fase Atual: P1_IDENTITY
+──────────────────────────────────────
+✅ Identity: OK
+❌ Memory: Prompt 002 ainda não estava registrado antes deste log
+✅ Skills: 2/2 bootstrap P1
+❌ Tools: não exigidas nesta fase P1
+❌ Behavior: não exigido nesta fase P1
+──────────────────────────────────────
+📊 Score: 2/5 checkpoints OK
+🔄 Próximo passo: Prompt 003
+```
+
+#### Status
+success: SOUL.md completo para P1 Identity.
+
+---

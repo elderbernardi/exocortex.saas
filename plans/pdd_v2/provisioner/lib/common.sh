@@ -31,7 +31,11 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_SKILLS="$HERMES_HOME/skills/exocortex"
 
 # Expected counts
-readonly EXPECTED_SKILLS=15
+if [ -f "$ARTIFACTS_DIR/skill-bundles/exocortex-alpha.yaml" ]; then
+  readonly EXPECTED_SKILLS=$(grep "^  -" "$ARTIFACTS_DIR/skill-bundles/exocortex-alpha.yaml" | wc -l)
+else
+  readonly EXPECTED_SKILLS=15
+fi
 readonly EXPECTED_ACERVO_LAYERS=4
 
 # Logging

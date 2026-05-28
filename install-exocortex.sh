@@ -15,8 +15,15 @@ set -euo pipefail
 REPO="elderbernardi/exocortex.saas"
 BRANCH="main"
 TARBALL_URL="https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz"
-INSTALL_DIR="${EXOCORTEX_DIR:-$HOME/.exocortex-provisioner}"
 PROVISIONER_REL="plans/pdd_v2/provisioner"
+
+if [ -d "$PWD/$PROVISIONER_REL" ]; then
+  INSTALL_DIR="$PWD/$PROVISIONER_REL"
+  LOCAL_REPO=true
+else
+  INSTALL_DIR="${EXOCORTEX_DIR:-$PWD/.exocortex-provisioner}"
+  LOCAL_REPO=false
+fi
 
 # ─── Colors ─────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -98,48 +105,44 @@ else
   AGENT_CMD=""
 fi
 
-# ─── Step 3: Download provisioner ──────────────────────────────────────────
-step "Baixando Exocórtex Provisioner de github.com/$REPO..."
+# ─── Step 3: Setup provisioner ──────────────────────────────────────────
 
-TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
+if [ "$LOCAL_REPO" = true ]; then
+  step "Usando repositório local em $INSTALL_DIR..."
+  log "Provisioner encontrado localmente"
+else
+  step "Baixando Exocórtex Provisioner de github.com/$REPO..."
 
-echo -e "  ${DIM}$TARBALL_URL${NC}"
-curl -fsSL "$TARBALL_URL" -o "$TMPDIR/repo.tar.gz"
-log "Download completo"
+  TMPDIR=$(mktemp -d)
+  trap "rm -rf $TMPDIR" EXIT
 
-# ─── Step 4: Extract provisioner ───────────────────────────────────────────
-step "Extraindo provisioner..."
+  echo -e "  ${DIM}$TARBALL_URL${NC}"
+  curl -fsSL "$TARBALL_URL" -o "$TMPDIR/repo.tar.gz"
+  log "Download completo"
 
-# GitHub tarballs extract to {repo}-{branch}/ prefix
-tar xzf "$TMPDIR/repo.tar.gz" -C "$TMPDIR"
-EXTRACTED=$(find "$TMPDIR" -maxdepth 1 -type d -name "exocortex*" | head -1)
+  step "Extraindo provisioner..."
 
-if [ -z "$EXTRACTED" ]; then
-  fail "Falha ao extrair — estrutura inesperada"
-  exit 1
+  tar xzf "$TMPDIR/repo.tar.gz" -C "$TMPDIR"
+  EXTRACTED=$(find "$TMPDIR" -maxdepth 1 -type d -name "exocortex*" | head -1)
+
+  if [ -z "$EXTRACTED" ]; then
+    fail "Falha ao extrair — estrutura inesperada"
+    exit 1
+  fi
+
+  rm -rf "$INSTALL_DIR"
+  mkdir -p "$INSTALL_DIR"
+
+  cp -r "$EXTRACTED/$PROVISIONER_REL/"* "$INSTALL_DIR/"
+  cp -r "$EXTRACTED/plans/pdd_v2/artifacts" "$INSTALL_DIR/artifacts"
+  mkdir -p "$INSTALL_DIR/phases"
+  cp "$EXTRACTED/plans/pdd_v2/phases/"P*.md "$INSTALL_DIR/phases/" 2>/dev/null || true
+  cp "$EXTRACTED/plans/pdd_v2/PLAYBOOK.yaml" "$INSTALL_DIR/" 2>/dev/null || true
+
+  log "Provisioner instalado em $INSTALL_DIR"
 fi
 
-# Copy provisioner to install dir (self-contained)
-rm -rf "$INSTALL_DIR"
-mkdir -p "$INSTALL_DIR"
-
-# Copy provisioner core
-cp -r "$EXTRACTED/$PROVISIONER_REL/"* "$INSTALL_DIR/"
-
-# Copy artifacts (golden image) into provisioner for portability
-cp -r "$EXTRACTED/plans/pdd_v2/artifacts" "$INSTALL_DIR/artifacts"
-
-# Copy phase docs for reference
-mkdir -p "$INSTALL_DIR/phases"
-cp "$EXTRACTED/plans/pdd_v2/phases/"P*.md "$INSTALL_DIR/phases/" 2>/dev/null || true
-
-# Copy PLAYBOOK
-cp "$EXTRACTED/plans/pdd_v2/PLAYBOOK.yaml" "$INSTALL_DIR/" 2>/dev/null || true
-
 chmod +x "$INSTALL_DIR/lib/"*.sh "$INSTALL_DIR/docker/entrypoint.sh" 2>/dev/null || true
-
-log "Provisioner instalado em $INSTALL_DIR"
 
 # ─── Step 5: Verify integrity ─────────────────────────────────────────────
 step "Verificando integridade..."

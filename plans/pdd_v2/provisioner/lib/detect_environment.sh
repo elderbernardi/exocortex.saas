@@ -31,7 +31,7 @@ detect() {
   # Hermes
   if has_command hermes; then
     hermes_installed="true"
-    hermes_version="$(hermes --version 2>/dev/null | head -1 | grep -oP 'v[\d.]+')" || hermes_version="unknown"
+    hermes_version="$(hermes --version 2>/dev/null | python3 -c "import sys, re; match = re.search(r'v[\d.]+', sys.stdin.read()); print(match.group(0)) if match else print('unknown')" || echo 'unknown')"
   else
     hermes_installed="false"
     hermes_version="none"
@@ -49,8 +49,27 @@ detect() {
 
   # Existing LLM config
   if [ -f "$hermes_home/config.yaml" ]; then
-    existing_provider="$(grep -A1 '^model:' "$hermes_home/config.yaml" 2>/dev/null | grep 'provider:' | awk '{print $2}')" || existing_provider="none"
-    existing_model="$(grep -A1 '^model:' "$hermes_home/config.yaml" 2>/dev/null | grep 'default:' | awk '{print $2}')" || existing_model="none"
+    existing_provider="$(python3 -c "
+import sys
+try:
+    import yaml
+    with open('$hermes_home/config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+        print(config.get('model', {}).get('provider', 'none'))
+except:
+    print('none')
+" 2>/dev/null)" || existing_provider="none"
+
+    existing_model="$(python3 -c "
+import sys
+try:
+    import yaml
+    with open('$hermes_home/config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+        print(config.get('model', {}).get('default', 'none'))
+except:
+    print('none')
+" 2>/dev/null)" || existing_model="none"
   else
     existing_provider="none"
     existing_model="none"
@@ -59,7 +78,7 @@ detect() {
   # Python
   local python_version="none"
   if has_command python3; then
-    python_version="$(python3 --version 2>/dev/null | awk '{print $2}')"
+    python_version="$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')" 2>/dev/null || echo 'none')"
   fi
 
   # Artifacts
@@ -94,10 +113,10 @@ else
 
   # Human-readable summary
   echo ""
-  os=$(echo "$output" | grep '"os"' | cut -d'"' -f4)
-  hermes=$(echo "$output" | grep '"hermes_installed"' | grep -o 'true\|false')
-  docker=$(echo "$output" | grep '"docker_available"' | grep -o 'true\|false')
-  skills=$(echo "$output" | grep '"existing_skills_count"' | grep -oP '\d+')
+  os=$(echo "$output" | python3 -c "import sys, json; print(json.load(sys.stdin).get('os', 'unknown'))")
+  hermes=$(echo "$output" | python3 -c "import sys, json; print(str(json.load(sys.stdin).get('hermes_installed', False)).lower())")
+  docker=$(echo "$output" | python3 -c "import sys, json; print(str(json.load(sys.stdin).get('docker_available', False)).lower())")
+  skills=$(echo "$output" | python3 -c "import sys, json; print(json.load(sys.stdin).get('existing_skills_count', 0))")
 
   [ "$hermes" = "true" ] && log "Hermes instalado" || warn "Hermes não encontrado"
   [ "$docker" = "true" ] && log "Docker disponível" || info "Docker não disponível"
