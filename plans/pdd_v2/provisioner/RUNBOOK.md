@@ -9,12 +9,27 @@ trigger:
 purpose: >
   Transform a fresh Hermes Agent instance into a fully configured Exocórtex.IA
   by orchestrating installation, golden image provisioning, and PDD v2 execution.
+paths:
+  root: "."
+  lib: "./lib"
+  prompts: "./prompts"
+  artifacts: "./artifacts"
+  docker: "./docker"
 ---
 
 # Exocórtex.IA — Provisioner Runbook
 
 Você é o **Provisioner do Exocórtex.IA**. Quando o humano solicitar instalação
 ou configuração do Exocórtex, siga este runbook sequencialmente.
+
+**IMPORTANTE**: Todos os paths neste documento são relativos ao diretório onde
+este RUNBOOK.md se encontra. Antes de executar, resolva o diretório base:
+
+```bash
+PROVISIONER_DIR="$(cd "$(dirname "$0")" && pwd)"
+# OU, se lendo este arquivo:
+PROVISIONER_DIR="$(dirname "$(readlink -f RUNBOOK.md)")"
+```
 
 ## Regras de Interação
 
@@ -30,8 +45,7 @@ ou configuração do Exocórtex, siga este runbook sequencialmente.
 Execute silenciosamente e armazene os resultados:
 
 ```bash
-# Detectar ambiente
-bash plans/pdd_v2/provisioner/lib/detect_environment.sh --quiet
+bash "$PROVISIONER_DIR/lib/detect_environment.sh" --quiet
 ```
 
 Análise do output:
@@ -154,7 +168,7 @@ Se falhar → ❌ "Falha na conexão com o LLM. Verifique suas credenciais."
 
 ### Pré-verificação:
 ```bash
-bash plans/pdd_v2/provisioner/lib/verify.sh --pre-provision
+bash "$PROVISIONER_DIR/lib/verify.sh" --pre-provision
 ```
 Se falhar → ❌ abortar com detalhes.
 
@@ -168,7 +182,7 @@ Se `existing_skills_count > 0`:
 
 ```bash
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
-ARTIFACTS="plans/pdd_v2/artifacts"
+ARTIFACTS="$PROVISIONER_DIR/artifacts"
 
 # Skills (15)
 mkdir -p "$HERMES_HOME/skills/exocortex"
@@ -192,7 +206,7 @@ cp "$ARTIFACTS/SOUL_SEED.md" "$HERMES_HOME/SOUL.md"
 
 ### Pós-verificação:
 ```bash
-bash plans/pdd_v2/provisioner/lib/verify.sh --post-provision
+bash "$PROVISIONER_DIR/lib/verify.sh" --post-provision
 ```
 
 ```
@@ -210,7 +224,7 @@ bash plans/pdd_v2/provisioner/lib/verify.sh --post-provision
 ### Sequência de execução:
 
 O Provisioner executa os 27 prompts do PDD conversando com o Hermes-alvo.
-Os prompts estão em `plans/pdd_v2/provisioner/prompts/`.
+Os prompts estão em `$PROVISIONER_DIR/prompts/`.
 
 ### Protocolo de execução por fase:
 
@@ -219,8 +233,8 @@ Para cada fase (P1 → P5):
 1. **Primeiro prompt da fase:**
    ```bash
    # Injetar contexto + primeiro prompt
-   CONTEXT=$(cat plans/pdd_v2/provisioner/prompts/_MASTER_CONTEXT.md)
-   PROMPT=$(cat plans/pdd_v2/provisioner/prompts/P{N}_{SEQ}_{name}.md)
+   CONTEXT=$(cat "$PROVISIONER_DIR/prompts/_MASTER_CONTEXT.md")
+   PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
 
    # Remover frontmatter YAML do prompt (tudo entre --- e ---)
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
@@ -234,7 +248,7 @@ Para cada fase (P1 → P5):
 
 2. **Prompts seguintes (mesma fase):**
    ```bash
-   PROMPT=$(cat plans/pdd_v2/provisioner/prompts/P{N}_{SEQ}_{name}.md)
+   PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
 
    hermes chat -q "$CLEAN_PROMPT" \
@@ -246,7 +260,7 @@ Para cada fase (P1 → P5):
    O prompt de checkpoint inclui drift audit.
    Após execução, rodar verificação local:
    ```bash
-   bash plans/pdd_v2/provisioner/lib/drift_audit.sh P{N}
+   bash "$PROVISIONER_DIR/lib/drift_audit.sh" P{N}
    ```
 
 4. **Reporte ao humano:**
@@ -280,7 +294,7 @@ Para cada fase (P1 → P5):
 ### Verificação final:
 ```bash
 hermes doctor
-bash plans/pdd_v2/provisioner/lib/drift_audit.sh ALL
+bash "$PROVISIONER_DIR/lib/drift_audit.sh" ALL
 ```
 
 ### Reporte final ao humano:
@@ -322,14 +336,14 @@ Se o humano escolheu Docker na Fase 1:
 
 ```bash
 # Build
-docker compose -f plans/pdd_v2/provisioner/docker/docker-compose.yml build
+docker compose -f "$PROVISIONER_DIR/docker/docker-compose.yml" build
 
 # Start
-docker compose -f plans/pdd_v2/provisioner/docker/docker-compose.yml up -d
+docker compose -f "$PROVISIONER_DIR/docker/docker-compose.yml" up -d
 
 # Provisioning (de fora do container)
 docker exec exocortex-provisioner \
-  bash /workspace/plans/pdd_v2/provisioner/lib/verify.sh --post-provision
+  bash /workspace/lib/verify.sh --post-provision
 
 # PDD execution (de fora do container — os prompts vão via hermes CLI)
 docker exec exocortex-provisioner \
@@ -368,4 +382,4 @@ docker exec exocortex-provisioner \
 ### Self-test abaixo do gate
 - Re-executar prompt de checkpoint da fase
 - Verificar se todas as skills respondem: `hermes skills list`
-- Verificar logs: `cat plans/pdd_v2/logs/session_P{N}.log`
+- Verificar logs: `cat logs/session_P{N}.log`
