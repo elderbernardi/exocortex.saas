@@ -179,18 +179,10 @@ if [ -n "$AGENT_CMD" ]; then
 
   case "$AGENT_CMD" in
     hermes)
-      # Hermes: no interactive prompt flag exists, so we ask the user to paste it.
-      echo -e "${DIM}  → hermes chat${NC}"
+      # Hermes: pass RUNBOOK content as context + instruction
+      echo -e "${DIM}  → hermes chat com contexto do RUNBOOK${NC}"
       echo ""
-      info "O Hermes Agent abrirá agora. Por favor, COPIE a instrução abaixo"
-      info "e COLE no chat para iniciar o provisionamento:"
-      echo ""
-      echo -e "${CYAN}────────────────────────────────────────────────────────────────────────${NC}"
-      echo -e "${BOLD}$AGENT_INSTRUCTION O RUNBOOK está em: $INSTALL_DIR/RUNBOOK.md${NC}"
-      echo -e "${CYAN}────────────────────────────────────────────────────────────────────────${NC}"
-      echo ""
-      read -p "Pressione ENTER para abrir o Hermes..."
-      cd "$INSTALL_DIR" && exec hermes chat
+      cd "$INSTALL_DIR" && exec hermes chat -q "$AGENT_INSTRUCTION"
       ;;
     codex)
       # Codex: use CODEX_BOOTSTRAP.md as the prompt, --cd for workspace
