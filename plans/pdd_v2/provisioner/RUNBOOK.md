@@ -230,7 +230,12 @@ Os prompts estão em `$PROVISIONER_DIR/prompts/`.
 
 Para cada fase (P1 → P5):
 
-1. **Primeiro prompt da fase:**
+1. **Resolver skills do bundle** (obrigatório — `hermes -s` não aceita bundles):
+   ```bash
+   SKILLS=$(grep '^  - ' "$PROVISIONER_DIR/artifacts/skill-bundles/exocortex-alpha.yaml" | sed 's/  - //g' | paste -sd, -)
+   ```
+
+2. **Primeiro prompt da fase:**
    ```bash
    # Injetar contexto + primeiro prompt
    CONTEXT=$(cat "$PROVISIONER_DIR/prompts/_MASTER_CONTEXT.md")
@@ -240,13 +245,13 @@ Para cada fase (P1 → P5):
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
 
    hermes chat -q "$CONTEXT\n\n$CLEAN_PROMPT" \
-     --skills exocortex-alpha \
+     -s "$SKILLS" \
      --pass-session-id \
      --quiet
    ```
    Capturar o `session_id` do output.
 
-2. **Prompts seguintes (mesma fase):**
+3. **Prompts seguintes (mesma fase):**
    ```bash
    PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
@@ -313,7 +318,7 @@ bash "$PROVISIONER_DIR/lib/drift_audit.sh" ALL
    └─────────────────────────────────────┘
 
    Para usar:
-     hermes chat --skills exocortex-alpha
+     hermes chat -s "$SKILLS"
      hermes profile use exec    # modo execução
      hermes profile use evol    # modo exploração
 
@@ -347,7 +352,7 @@ docker exec exocortex-provisioner \
 
 # PDD execution (de fora do container — os prompts vão via hermes CLI)
 docker exec exocortex-provisioner \
-  hermes chat -q "$PROMPT" --skills exocortex-alpha --quiet
+  hermes chat -q "$PROMPT" -s "$SKILLS" --quiet
 ```
 
 ### Credenciais Docker:

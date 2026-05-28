@@ -52,14 +52,16 @@ Pergunte ao usuário:
 
 ```
 Como deseja autenticar com o LLM?
-  1. OAuth via navegador (OpenAI/Nous)
-  2. API Key (OpenRouter sk-or-... ou Anthropic sk-ant-...)
-  3. Já tenho configuração — usar existente
+  1. OAuth via OpenAI (abre navegador)
+  2. OAuth via Nous Research (abre navegador)
+  3. API Key (OpenRouter sk-or-... ou Anthropic sk-ant-...)
+  4. Já tenho configuração — usar existente
 ```
 
-- Opção 1: `hermes login`
-- Opção 2: peça a key, detecte provider pelo prefixo, escreva em `~/.hermes/.env`
-- Opção 3: nenhuma ação
+- Opção 1: `hermes login --provider openai`
+- Opção 2: `hermes login --provider nous`
+- Opção 3: peça a key, detecte provider pelo prefixo (`sk-or-` → OpenRouter, `sk-ant-` → Anthropic), escreva em `~/.hermes/.env`
+- Opção 4: nenhuma ação
 
 Teste:
 ```bash
@@ -109,6 +111,12 @@ bash "$INSTALL_DIR/lib/verify.sh" --post-provision
 
 Os prompts estão em `$INSTALL_DIR/prompts/`. Execute sequencialmente via `hermes chat`.
 
+**Resolva as skills do bundle** (hermes `-s` não aceita bundles, apenas skills individuais):
+
+```bash
+SKILLS=$(grep '^  - ' "$INSTALL_DIR/artifacts/skill-bundles/exocortex-alpha.yaml" | sed 's/  - //g' | paste -sd, -)
+```
+
 **Primeiro prompt de cada fase** (com contexto master):
 
 ```bash
@@ -116,7 +124,7 @@ CONTEXT=$(cat "$INSTALL_DIR/prompts/_MASTER_CONTEXT.md")
 PROMPT=$(sed '/^---$/,/^---$/d' "$INSTALL_DIR/prompts/P1_001_soul_seed.md")
 hermes chat -q "$CONTEXT
 
-$PROMPT" --skills exocortex-alpha --pass-session-id --quiet
+$PROMPT" -s "$SKILLS" --pass-session-id --quiet
 ```
 
 Capture o `session_id`. **Prompts seguintes** da mesma fase:
