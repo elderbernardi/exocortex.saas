@@ -13,9 +13,8 @@ install_hermes() {
   fi
 
   if command -v hermes &>/dev/null; then
-    local ver
-    ver=$(hermes --version 2>/dev/null | head -1 || echo "unknown")
-    log "Hermes already installed: $ver"
+    log "Hermes binary found in PATH"
+    hermes_health_check
     return 0
   fi
 
@@ -39,12 +38,45 @@ install_hermes() {
     die "Failed to install Hermes. Install manually: pip install hermes-agent" 2
   fi
 
-  # Verify
-  if command -v hermes &>/dev/null; then
-    log "Hermes $(hermes --version 2>/dev/null | head -1)"
-  else
+  # Verify binary exists
+  if ! command -v hermes &>/dev/null; then
     die "Hermes installed but not found in PATH. Restart your shell and retry." 2
   fi
+
+  hermes_health_check
+}
+
+# ─── Hermes Health Check ────────────────────────────────────────────────────
+# Validates that hermes actually executes, not just that the binary exists.
+# Catches: broken installs, missing python deps, corrupt virtualenvs, etc.
+hermes_health_check() {
+  if [ "$DRY_RUN" = true ]; then
+    info "[dry-run] Would run hermes health check"
+    return 0
+  fi
+
+  debug "Running hermes health check..."
+
+  # Test 1: --version must exit 0 and produce output
+  local ver_output
+  if ! ver_output=$(hermes --version 2>&1); then
+    fail "hermes --version failed"
+    fail "Output: $ver_output"
+    die "Hermes binary exists but does not execute. Check Python dependencies." 2
+  fi
+
+  if [ -z "$ver_output" ]; then
+    die "hermes --version produced no output. Installation may be corrupt." 2
+  fi
+
+  log "Hermes $(echo "$ver_output" | head -1)"
+
+  # Test 2: hermes help must work (validates core modules load)
+  if ! hermes --help &>/dev/null 2>&1; then
+    warn "hermes --help failed — some modules may not be loaded"
+  fi
+
+  debug "Health check passed"
 }
 
 # ─── Configure LLM Auth ─────────────────────────────────────────────────────
@@ -238,8 +270,17 @@ run_pdd() {
 
   step "Executing PDD prompts..."
 
+  # Gate 1: binary exists
   if ! command -v hermes &>/dev/null; then
     die "Hermes CLI not found. Cannot execute PDD prompts." 4
+  fi
+
+  # Gate 2: hermes actually works (not just present in PATH)
+  if [ "$DRY_RUN" != true ]; then
+    if ! hermes --version &>/dev/null 2>&1; then
+      die "Hermes CLI exists but does not execute. Fix the installation before running PDD." 4
+    fi
+    debug "Hermes health check passed — ready for PDD"
   fi
 
   local prompts_dir="$INSTALL_DIR/prompts"
@@ -250,6 +291,7 @@ run_pdd() {
   mkdir -p "$INSTALL_DIR/state"
 
   local phases=("P1" "P2" "P3" "P4" "P5")
+  local MAX_CONSECUTIVE_FAILURES=3
 
   for phase in "${phases[@]}"; do
     # Phase gate
@@ -279,21 +321,53 @@ run_pdd() {
     fi
 
     local first=true
+    local consecutive_failures=0
+    local phase_failures=0
+    local phase_total=0
+
     for prompt_file in $(ls -v "$prompts_dir/${phase}_"*.md 2>/dev/null); do
       local pname
       pname=$(basename "$prompt_file")
+      phase_total=$((phase_total + 1))
       info "Executing $pname..."
 
       local clean_prompt
       clean_prompt=$(sed '/^---$/,/^---$/d' "$prompt_file")
 
+      local prompt_ok=false
       if [ "$first" = true ] && [ -n "$context" ]; then
-        hermes chat -q "${context}"$'\n\n'"${clean_prompt}" -c --quiet 2>&1 || warn "Prompt $pname had issues"
+        if hermes chat -q "${context}"$'\n\n'"${clean_prompt}" -c --quiet 2>&1; then
+          prompt_ok=true
+        fi
         first=false
       else
-        hermes chat -q "$clean_prompt" -c --quiet 2>&1 || warn "Prompt $pname had issues"
+        if hermes chat -q "$clean_prompt" -c --quiet 2>&1; then
+          prompt_ok=true
+        fi
+      fi
+
+      if [ "$prompt_ok" = true ]; then
+        consecutive_failures=0
+        log "$pname OK"
+      else
+        consecutive_failures=$((consecutive_failures + 1))
+        phase_failures=$((phase_failures + 1))
+        warn "Prompt $pname failed ($consecutive_failures consecutive)"
+
+        # Fail-fast: abort if hermes is systematically broken
+        if [ "$consecutive_failures" -ge "$MAX_CONSECUTIVE_FAILURES" ]; then
+          fail "$MAX_CONSECUTIVE_FAILURES consecutive prompt failures in $phase."
+          fail "Hermes is likely not executing correctly."
+          fail "Debug: hermes --version && hermes chat -q 'ping'"
+          die "Aborting PDD. Fix Hermes and re-run with: --skip-install --skip-golden-image --with-pdd" 4
+        fi
       fi
     done
+
+    # Phase summary
+    if [ "$phase_failures" -gt 0 ]; then
+      warn "Phase $phase: $phase_failures/$phase_total prompts had issues"
+    fi
 
     # Drift audit
     if [ -f "$INSTALL_DIR/lib/drift_audit.sh" ]; then
@@ -306,7 +380,7 @@ run_pdd() {
       fi
     else
       touch "$INSTALL_DIR/state/${phase}.done"
-      log "Phase $phase complete"
+      log "Phase $phase complete ($((phase_total - phase_failures))/$phase_total OK)"
     fi
   done
 }
