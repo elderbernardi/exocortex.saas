@@ -229,12 +229,10 @@ bash "$PROVISIONER_DIR/lib/verify.sh" --post-provision
 
 ### Sequência de execução:
 
-O Provisioner executa os 27 prompts do PDD conversando com o Hermes-alvo.
-Os prompts estão em `$PROVISIONER_DIR/prompts/`.
+⚠️ **REGRA CRÍTICA PARA O AGENTE:** Não crie arquivos de script auxiliares (como `run_pdd.py` ou `.sh`) nem tente rodar comandos como `find`, `ls` ou inspecionar os arquivos de prompt antes da execução. A automação já está pronta.
 
-### Protocolo de execução por fase:
+Para executar uma fase inteira (ex: `P1`), simplesmente **copie e rode o bloco de código bash abaixo DIRETAMENTE no seu terminal integrado**. O script em bash fará a leitura, o loop de execução e a auditoria de forma totalmente automática.
 
-⚠️ **REGRA CRÍTICA PARA O AGENTE:** Não crie arquivos de script auxiliares (como `run_pdd.py` ou `.sh`). Para executar uma fase inteira (ex: `P1`), simplesmente rode o bloco de código bash abaixo diretamente no seu terminal integrado. Ele contém a lógica de idempotência, loop de execução e auditoria em um único bloco!
 
 ```bash
 FASE="P1" # Troque por P2, P3, P4 ou P5
