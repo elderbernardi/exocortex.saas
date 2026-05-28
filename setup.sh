@@ -84,6 +84,7 @@ LOCAL_SKILLS=(
   "exocortex-prompt-log"
   "stop-slop"
   "taste-skill"
+  "exocortex-design-system"
 )
 
 for skill in "${LOCAL_SKILLS[@]}"; do

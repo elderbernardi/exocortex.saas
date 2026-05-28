@@ -35,8 +35,8 @@ bash plans/pdd_v2/artifacts/setup.sh
 bash lib/verify.sh --post-provision
 
 # 5. Executar PDD manualmente
-hermes chat --skills exocortex-alpha
-# (cole os prompts de prompts/ em ordem)
+hermes chat
+# (digite /exocortex-alpha para ativar o bundle, depois cole os prompts de prompts/ em ordem)
 ```
 
 ### Docker
@@ -49,7 +49,8 @@ docker compose -f docker/docker-compose.yml up -d
 docker exec exocortex-provisioner bash lib/verify.sh --post-provision
 
 # Executar PDD
-docker exec exocortex-provisioner hermes chat --skills exocortex-alpha
+docker exec -it exocortex-provisioner hermes chat
+# (digite /exocortex-alpha para ativar o bundle)
 ```
 
 ## Estrutura

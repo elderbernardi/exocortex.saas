@@ -83,7 +83,8 @@ if [ "${AUTORUN:-false}" = "true" ]; then
 else
   step "Interactive mode. Container is ready."
   info "To provision manually, use:"
-  info "  docker exec -it exocortex-provisioner hermes chat --skills exocortex-alpha"
+  info "  docker exec -it exocortex-provisioner hermes chat"
+  info "  (e digite /exocortex-alpha para ativar o bundle)"
   info ""
   info "To execute PDD via orchestrator:"
   info "  See RUNBOOK.md Phase 5 for prompt sequence."

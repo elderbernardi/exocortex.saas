@@ -58,9 +58,9 @@ Como deseja autenticar com o LLM?
   4. Já tenho configuração — usar existente
 ```
 
-- Opção 1: `hermes login --provider openai`
-- Opção 2: `hermes login --provider nous`
-- Opção 3: peça a key, detecte provider pelo prefixo (`sk-or-` → OpenRouter, `sk-ant-` → Anthropic), escreva em `~/.hermes/.env`
+- Opção 1: `hermes auth add codex-oauth`
+- Opção 2: `hermes auth add nous --type oauth`
+- Opção 3: peça a key, detecte provider pelo prefixo (`sk-or-` → OpenRouter, `sk-ant-` → Anthropic) e adicione usando `hermes auth add <provider> --api-key <key>`
 - Opção 4: nenhuma ação
 
 Teste:
@@ -111,10 +111,10 @@ bash "$INSTALL_DIR/lib/verify.sh" --post-provision
 
 Os prompts estão em `$INSTALL_DIR/prompts/`. Execute sequencialmente via `hermes chat`.
 
-**Resolva as skills do bundle** (hermes `-s` não aceita bundles, apenas skills individuais):
+**Ative o bundle na sessão inicial**:
 
 ```bash
-SKILLS=$(grep '^  - ' "$INSTALL_DIR/artifacts/skill-bundles/exocortex-alpha.yaml" | sed 's/  - //g' | paste -sd, -)
+hermes chat -q "/exocortex-alpha" --quiet
 ```
 
 **Primeiro prompt de cada fase** (com contexto master):
@@ -124,14 +124,14 @@ CONTEXT=$(cat "$INSTALL_DIR/prompts/_MASTER_CONTEXT.md")
 PROMPT=$(sed '/^---$/,/^---$/d' "$INSTALL_DIR/prompts/P1_001_soul_seed.md")
 hermes chat -q "$CONTEXT
 
-$PROMPT" -s "$SKILLS" --pass-session-id --quiet
+$PROMPT" -c --quiet
 ```
 
-Capture o `session_id`. **Prompts seguintes** da mesma fase:
+**Prompts seguintes** da mesma fase:
 
 ```bash
 PROMPT=$(sed '/^---$/,/^---$/d' "$INSTALL_DIR/prompts/P1_002_values.md")
-hermes chat -q "$PROMPT" --resume "$SESSION_ID" --quiet
+hermes chat -q "$PROMPT" -c --quiet
 ```
 
 ### Ordem
@@ -160,7 +160,8 @@ Reporte:
 ```
 ✅ Exocórtex.IA instalado!
   Skills: 15 | Profiles: exec, evol | Bundle: exocortex-alpha
-  → hermes chat --skills exocortex-alpha
+  → hermes chat
+
 ```
 
 ---

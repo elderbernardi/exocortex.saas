@@ -129,22 +129,22 @@ Baseado na resposta da Pergunta 2:
 
 ### Opção 1 — Nous Portal (OAuth):
 ```bash
-hermes login --provider nous
+hermes auth add nous --type oauth
 ```
 (Abre navegador para autenticação)
 
 ### Opção 2 — ChatGPT / OpenAI Codex (OAuth):
 ```bash
-hermes login --provider openai-codex
+hermes auth add codex-oauth
 ```
 (Abre navegador para autenticação)
 
 ### Opção 3 — API Key direta:
 ```bash
-# Detectar provider e escrever no .env
-echo "OPENROUTER_API_KEY=$KEY" >> ~/.hermes/.env   # Se OpenRouter
+# Detectar provider e adicionar via CLI
+hermes auth add openrouter --api-key "$KEY"   # Se OpenRouter
 # OU
-echo "ANTHROPIC_API_KEY=$KEY" >> ~/.hermes/.env     # Se Anthropic
+hermes auth add anthropic --type api-key --api-key "$KEY"     # Se Anthropic
 ```
 
 ### Opção 4 — Existente:
@@ -230,13 +230,12 @@ Os prompts estão em `$PROVISIONER_DIR/prompts/`.
 
 Para cada fase (P1 → P5):
 
-1. **Resolver skills do bundle** (obrigatório — `hermes -s` não aceita bundles):
+1. **Primeiro prompt da fase:**
+   O bundle deve ser ativado via slash command (`/exocortex-alpha`) como a primeira instrução enviada ao chat.
    ```bash
-   SKILLS=$(grep '^  - ' "$PROVISIONER_DIR/artifacts/skill-bundles/exocortex-alpha.yaml" | sed 's/  - //g' | paste -sd, -)
-   ```
+   # Iniciar a sessão ativando o bundle
+   hermes chat -q "/exocortex-alpha" --quiet
 
-2. **Primeiro prompt da fase:**
-   ```bash
    # Injetar contexto + primeiro prompt
    CONTEXT=$(cat "$PROVISIONER_DIR/prompts/_MASTER_CONTEXT.md")
    PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
@@ -244,12 +243,11 @@ Para cada fase (P1 → P5):
    # Remover frontmatter YAML do prompt (tudo entre --- e ---)
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
 
+   # Continuar a sessão e passar o prompt
    hermes chat -q "$CONTEXT\n\n$CLEAN_PROMPT" \
-     -s "$SKILLS" \
-     --pass-session-id \
+     -c \
      --quiet
    ```
-   Capturar o `session_id` do output.
 
 3. **Prompts seguintes (mesma fase):**
    ```bash
@@ -257,7 +255,7 @@ Para cada fase (P1 → P5):
    CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
 
    hermes chat -q "$CLEAN_PROMPT" \
-     --resume $SESSION_ID \
+     -c \
      --quiet
    ```
 
