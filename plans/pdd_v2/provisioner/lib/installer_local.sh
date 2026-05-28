@@ -335,12 +335,21 @@ run_pdd() {
       clean_prompt=$(sed '/^---$/,/^---$/d' "$prompt_file")
 
       local prompt_ok=false
-      if [ "$first" = true ] && [ -n "$context" ]; then
-        if hermes chat -q "${context}"$'\n\n'"${clean_prompt}" -c --quiet 2>&1; then
-          prompt_ok=true
+      if [ "$first" = true ]; then
+        # First prompt starts a NEW session (no -c flag).
+        # -c tries to continue a previous session which doesn't exist yet.
+        if [ -n "$context" ]; then
+          if hermes chat -q "${context}"$'\n\n'"${clean_prompt}" --quiet 2>&1; then
+            prompt_ok=true
+          fi
+        else
+          if hermes chat -q "$clean_prompt" --quiet 2>&1; then
+            prompt_ok=true
+          fi
         fi
         first=false
       else
+        # Subsequent prompts continue the session created by the first.
         if hermes chat -q "$clean_prompt" -c --quiet 2>&1; then
           prompt_ok=true
         fi
