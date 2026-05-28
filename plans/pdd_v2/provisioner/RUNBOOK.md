@@ -234,57 +234,39 @@ Os prompts estão em `$PROVISIONER_DIR/prompts/`.
 
 ### Protocolo de execução por fase:
 
-Para cada fase (P1 → P5):
+⚠️ **REGRA CRÍTICA PARA O AGENTE:** Não crie arquivos de script auxiliares (como `run_pdd.py` ou `.sh`). Para executar uma fase inteira (ex: `P1`), simplesmente rode o bloco de código bash abaixo diretamente no seu terminal integrado. Ele contém a lógica de idempotência, loop de execução e auditoria em um único bloco!
 
-1. **Primeiro prompt da fase:**
-   O bundle deve ser ativado via slash command (`/exocortex-alpha`) como a primeira instrução enviada ao chat.
-   ```bash
-   # Iniciar a sessão ativando o bundle
-   hermes chat -q "/exocortex-alpha" --quiet
+```bash
+FASE="P1" # Troque por P2, P3, P4 ou P5
+mkdir -p "$PROVISIONER_DIR/state"
 
-   # Injetar contexto + primeiro prompt
-   CONTEXT=$(cat "$PROVISIONER_DIR/prompts/_MASTER_CONTEXT.md")
-   PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
-
-   # Remover frontmatter YAML do prompt (tudo entre --- e ---)
-   CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
-
-   # Continuar a sessão e passar o prompt
-   hermes chat -q "$CONTEXT\n\n$CLEAN_PROMPT" \
-     -c \
-     --quiet
-   ```
-
-3. **Prompts seguintes (mesma fase):**
-   ```bash
-   PROMPT=$(cat "$PROVISIONER_DIR/prompts/P{N}_{SEQ}_{name}.md")
-   CLEAN_PROMPT=$(echo "$PROMPT" | sed '/^---$/,/^---$/d')
-
-   hermes chat -q "$CLEAN_PROMPT" \
-     -c \
-     --quiet
-   ```
-
-3. **Checkpoint (último prompt de cada fase):**
-   O prompt de checkpoint inclui drift audit.
-   Após execução, rodar verificação local:
-   ```bash
-   bash "$PROVISIONER_DIR/lib/drift_audit.sh" P{N}
-   ```
-
-4. **Controle de Progresso (Idempotência)**:
-   Antes de iniciar uma fase, verifique se ela já foi concluída. Se sim, pule:
-   ```bash
-   mkdir -p "$PROVISIONER_DIR/state"
-   if [ -f "$PROVISIONER_DIR/state/P{N}.done" ]; then
-     echo "Fase P{N} já concluída. Pulando..."
-     # Pule para a próxima fase
-   else
-     # Execute os prompts (passos 1, 2 e 3 acima)
-     # Após o drift_audit (passo 3) com sucesso:
-     touch "$PROVISIONER_DIR/state/P{N}.done"
-   fi
-   ```
+if [ -f "$PROVISIONER_DIR/state/$FASE.done" ]; then
+  echo "Fase $FASE já concluída. Pulando..."
+else
+  # Ativar bundle
+  hermes chat -q "/exocortex-alpha" --quiet
+  
+  CONTEXT=$(cat "$PROVISIONER_DIR/prompts/_MASTER_CONTEXT.md")
+  
+  for PROMPT_FILE in $(ls -v "$PROVISIONER_DIR/prompts/${FASE}_"*.md); do
+    echo "Executando $PROMPT_FILE..."
+    CLEAN_PROMPT=$(sed '/^---$/,/^---$/d' "$PROMPT_FILE")
+    
+    if [[ "$PROMPT_FILE" == *"_001_"* ]]; then
+      # Primeiro prompt injeta o contexto mestre
+      hermes chat -q "$CONTEXT"$'\n\n'"$CLEAN_PROMPT" -c --quiet
+    else
+      hermes chat -q "$CLEAN_PROMPT" -c --quiet
+    fi
+  done
+  
+  # Auditoria e Checkpoint
+  bash "$PROVISIONER_DIR/lib/drift_audit.sh" $FASE
+  if [ $? -eq 0 ]; then
+    touch "$PROVISIONER_DIR/state/$FASE.done"
+  fi
+fi
+```
 
 5. **Reporte ao humano:**
    ```
