@@ -82,3 +82,15 @@
   - ✅ Failover automático e transparente em caso de indisponibilidade ou rate-limit do primary provider.
   - ✅ Baixo custo operacional usando a API do OpenRouter com o modelo DeepSeek V3.
   - ⚠️ Dependência da chave `OPENROUTER_API_KEY` configurada localmente no arquivo `.env`.
+
+### ADR-007: Dashboard como superfície de operação; Tailscale como requisito de acesso remoto
+- **Date:** 2026-05-29
+- **Status:** Accepted
+- **Context:** O setup do Exocórtex precisa de uma superfície visual para administração sem aumentar a fricção do executivo nem expor o runtime Hermes na internet pública.
+- **Decision:** Adotar `Telegram + Hermes Gateway` como interface principal do executivo e `Hermes Dashboard` com TUI embutida como superfície secundária de operação. Persistir o dashboard via `systemd --user` quando disponível. Para acesso remoto, manter o dashboard privado em `127.0.0.1:9119` e exigir **Tailscale** ou túnel SSH; não expor a porta 9119 publicamente por padrão.
+- **Consequences:**
+  - ✅ Separa UX do executivo da UX do operador
+  - ✅ Preserva o dashboard como cockpit técnico para sessão, logs, config e recuperação
+  - ✅ Reduz risco operacional ao evitar bind público de uma superfície sensível
+  - ⚠️ Adiciona dependência operacional de Tailscale ou túnel seguro para administração remota
+  - ⚠️ O instalador ainda precisa incorporar esse hardening de forma mais automatizada nas próximas iterações

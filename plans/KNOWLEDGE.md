@@ -255,3 +255,18 @@ Configuração atual do runtime do Hermes para o experimento:
 2. **Fallback Provider:** OpenRouter, configurado no `config.yaml` sob `fallback_model`.
 3. **Fallback Model:** `deepseek/deepseek-chat` (DeepSeek V3 no OpenRouter).
 4. **API Key:** `OPENROUTER_API_KEY` ativa em `~/.hermes/.env`.
+
+---
+
+### K-011: Hermes Dashboard com TUI embutida é superfície operacional viável, mas deve ficar privada
+- **Date:** 2026-05-29
+- **Source:** documentação local do Hermes + experimentação em runtime
+- **Relevance:** setup operacional, UX executiva, hardening
+- **Tags:** hermes, dashboard, tui, systemd, tailscale, security
+
+Achados consolidados:
+- `hermes dashboard --tui --no-open` habilita a aba `CHAT` no dashboard e serve como cockpit operacional útil para o administrador.
+- O frontend pode fazer build automático na primeira subida; depois disso, `--skip-build` reduz custo de restart em serviço persistente.
+- Em Linux com `systemd --user`, o dashboard pode ser persistido com segurança via `hermes-dashboard.service` chamando `python -m hermes_cli.main dashboard --tui --no-open --skip-build`.
+- O dashboard expõe superfícies sensíveis: sessões, config, logs, skills e chaves. Portanto, não deve ser publicado em porta pública ou via bind amplo por default.
+- Para acesso remoto contínuo, o padrão recomendado é manter o serviço em `127.0.0.1:9119` e usar **Tailscale** ou túnel SSH. Tailscale entra como requisito de segurança do setup, não como conveniência opcional.

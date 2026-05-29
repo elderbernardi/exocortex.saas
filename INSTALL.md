@@ -1,7 +1,7 @@
 # Exocórtex.IA — Manual de Instalação
 
-> **Versão:** 3.0.0
-> **Última atualização:** 2026-05-28
+> **Versão:** 3.0.1
+> **Última atualização:** 2026-05-29
 > **Repositório:** [github.com/elderbernardi/exocortex.saas](https://github.com/elderbernardi/exocortex.saas)
 
 ---
@@ -17,6 +17,7 @@
 - [Referência de Parâmetros](#referência-de-parâmetros)
 - [Credenciais LLM](#credenciais-llm)
 - [PDD — Prompt-Driven Development](#pdd--prompt-driven-development)
+- [Superfícies Operacionais](#superfícies-operacionais)
 - [Exemplos de Uso](#exemplos-de-uso)
 - [Verificação](#verificação)
 - [Troubleshooting](#troubleshooting)
@@ -382,6 +383,119 @@ bash install-exocortex.sh --skip-install --skip-golden-image --with-pdd --phase 
 
 ---
 
+## Superfícies Operacionais
+
+Para setup entregue a um executivo, o Exocórtex deve separar **interface principal do usuário** de **superfície de operação/administração**.
+
+### Interface principal recomendada
+
+- **Telegram + Hermes Gateway** como canal primário do executivo
+- Fricção mínima: sem URL, sem login extra, sem navegação por abas
+- O dashboard não substitui esse canal; ele complementa a operação
+
+### Superfície operacional recomendada
+
+- **Hermes Dashboard** como cockpit de administração
+- **TUI embutida** habilitada para recuperação de sessão e operação técnica via browser
+- Uso esperado: operador/configurador, não usuário final
+
+### Habilitando dashboard com TUI
+
+Pré-requisitos práticos:
+
+```bash
+# Dependências recomendadas pelo Hermes para dashboard + chat embutido
+pip install 'hermes-agent[web,pty]'
+```
+
+Execução manual:
+
+```bash
+hermes dashboard --tui --no-open
+```
+
+Comportamento observado no setup atual:
+
+- `--tui` expõe a aba `CHAT` dentro do dashboard
+- o frontend web pode fazer build automático na primeira subida
+- após o primeiro build, `--skip-build` reduz atrito em reinícios futuros
+
+### Persistência via systemd user service
+
+Em ambientes Linux com `systemd --user`, o dashboard pode ser persistido como serviço de sessão:
+
+```ini
+[Unit]
+Description=Hermes Agent Dashboard with embedded TUI
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/USER/.hermes/hermes-agent/venv/bin/python -m hermes_cli.main dashboard --tui --no-open --skip-build
+WorkingDirectory=/home/USER/.hermes/hermes-agent
+Environment="PATH=/home/USER/.hermes/hermes-agent/venv/bin:/usr/bin:/home/USER/.local/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="VIRTUAL_ENV=/home/USER/.hermes/hermes-agent/venv"
+Environment="HERMES_HOME=/home/USER/.hermes"
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
+```
+
+Fluxo de ativação:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now hermes-dashboard.service
+systemctl --user status hermes-dashboard.service
+```
+
+No ambiente de referência, o serviço ficou em:
+
+```bash
+~/.config/systemd/user/hermes-dashboard.service
+```
+
+### Segurança: nunca expor o dashboard bruto na internet
+
+O dashboard concentra sessão, config, logs, skills e chaves do Hermes. Por isso:
+
+- não publicar com `--host 0.0.0.0` como default
+- não abrir a porta `9119` publicamente
+- não colocar atrás de reverse proxy público sem camada forte de controle de acesso
+
+Padrão recomendado para acesso remoto:
+
+- manter o dashboard em `127.0.0.1:9119`
+- acessar por **Tailscale** ou túnel SSH
+- tratar Tailscale como requisito de segurança do setup, não opcional de conveniência
+
+Exemplos:
+
+```bash
+# acesso local
+http://127.0.0.1:9119
+
+# túnel SSH temporário
+ssh -L 9119:127.0.0.1:9119 user@host
+
+# com Tailscale, expor apenas na rede privada tailnet
+# preferir ACLs e device approval para limitar quem vê o serviço
+```
+
+Resumo operacional:
+
+- executivo usa Telegram
+- operador usa dashboard
+- dashboard fica privado
+- acesso remoto passa por Tailscale
+
+---
+
 ## Exemplos de Uso
 
 ### 1. Instalação mínima local
@@ -461,6 +575,31 @@ bash install-exocortex.sh \
       | bash -s -- --non-interactive --skip-auth --no-color
 ```
 
+### 11. Persistir dashboard com TUI para operação
+
+```bash
+# subir uma vez para gerar o build web, se necessário
+hermes dashboard --tui --no-open
+
+# criar o serviço user systemd
+systemctl --user daemon-reload
+systemctl --user enable --now hermes-dashboard.service
+
+# validar
+systemctl --user status hermes-dashboard.service
+curl http://127.0.0.1:9119/
+```
+
+### 12. Acesso remoto seguro ao dashboard
+
+```bash
+# opção 1: túnel SSH
+ssh -L 9119:127.0.0.1:9119 user@host
+
+# opção 2: Tailscale
+# manter o dashboard bindado em localhost e publicar o host apenas na tailnet
+```
+
 ---
 
 ## Verificação
@@ -496,6 +635,19 @@ hermes chat -q "Execute o self-test do Exocórtex."
 hermes profile use exec    # Modo execução (foco em ação)
 hermes profile use evol    # Modo exploração (foco em reflexão)
 ```
+
+### Dashboard operacional
+
+```bash
+systemctl --user status hermes-dashboard.service
+curl http://127.0.0.1:9119/
+```
+
+Checklist esperado:
+- serviço `hermes-dashboard.service` em `active (running)`
+- dashboard respondendo em `127.0.0.1:9119`
+- aba `CHAT` visível quando iniciado com `--tui`
+- acesso remoto somente por Tailscale ou túnel SSH
 
 ---
 
@@ -584,6 +736,24 @@ docker logs exocortex-provisioner
 docker rm -f exocortex-provisioner
 bash install-exocortex.sh --mode docker --api-key sk-or-xxx
 ```
+
+### Dashboard acessível demais na rede
+
+Se o dashboard estiver escutando fora de `127.0.0.1`, trate como incidente de configuração.
+
+```bash
+# verificar serviço
+systemctl --user cat hermes-dashboard.service
+
+# o ExecStart deve manter --no-open e não deve usar --insecure por padrão
+# o host esperado é localhost
+
+# reiniciar após correção
+systemctl --user daemon-reload
+systemctl --user restart hermes-dashboard.service
+```
+
+Se houver necessidade de acesso remoto contínuo, use Tailscale. Não substitua esse controle por exposição direta da porta 9119.
 
 ---
 
