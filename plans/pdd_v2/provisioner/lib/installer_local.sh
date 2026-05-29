@@ -27,7 +27,7 @@ spinner_start() {
         time_str="${secs}s"
       fi
       printf '\r  %s %b %b(%s)%b ' \
-        "${SPINNER_FRAMES[$((i % ${#SPINNER_FRAMES[@]}))]]}" \
+        "${SPINNER_FRAMES[$((i % ${#SPINNER_FRAMES[@]}))]}" \
         "${DIM}${label}${NC}" \
         "${DIM}" "$time_str" "${NC}"
       i=$((i + 1))
@@ -40,7 +40,7 @@ spinner_start() {
 
 spinner_stop() {
   if [ -n "$SPINNER_PID" ]; then
-    kill "$SPINNER_PID" 2>/dev/null
+    kill "$SPINNER_PID" 2>/dev/null || true
     wait "$SPINNER_PID" 2>/dev/null || true
     SPINNER_PID=""
     printf '\r\033[K'  # clear spinner line
