@@ -152,6 +152,31 @@ show_banner() {
   [ "$WITH_PDD" = true ] && info "PDD: enabled${PDD_PHASE:+ (up to $PDD_PHASE)}" || info "PDD: disabled (golden image only)"
   [ "$DRY_RUN" = true ] && warn "DRY RUN — no changes will be made"
   echo ""
+
+  # Installation roadmap
+  echo -e "  ${DIM}┌─ Installation roadmap ────────────────────┐${NC}"
+  echo -e "  ${DIM}│${NC}  1. Preflight checks ${DIM}(system deps)${NC}        ${DIM}│${NC}"
+  if [ "$SKIP_INSTALL" = true ]; then
+    echo -e "  ${DIM}│${NC}  2. Hermes Agent ${DIM}(skip)${NC}                  ${DIM}│${NC}"
+  else
+    echo -e "  ${DIM}│${NC}  2. Hermes Agent ${DIM}(install + health)${NC}     ${DIM}│${NC}"
+  fi
+  if [ "$SKIP_AUTH" != true ]; then
+    echo -e "  ${DIM}│${NC}  3. LLM Authentication                   ${DIM}│${NC}"
+  else
+    echo -e "  ${DIM}│${NC}  3. LLM Authentication ${DIM}(skip)${NC}            ${DIM}│${NC}"
+  fi
+  if [ "$SKIP_GOLDEN_IMAGE" = true ]; then
+    echo -e "  ${DIM}│${NC}  4. Golden Image ${DIM}(skip)${NC}                  ${DIM}│${NC}"
+  else
+    echo -e "  ${DIM}│${NC}  4. Golden Image ${DIM}(skills, acervo, etc)${NC}  ${DIM}│${NC}"
+  fi
+  echo -e "  ${DIM}│${NC}  5. Verification                         ${DIM}│${NC}"
+  if [ "$WITH_PDD" = true ]; then
+    echo -e "  ${DIM}│${NC}  6. PDD Prompts ${DIM}(LLM-powered, ~5-15 min)${NC}${DIM}│${NC}"
+  fi
+  echo -e "  ${DIM}└───────────────────────────────────────────┘${NC}"
+  echo ""
 }
 
 # ─── Resolve Provisioner Directory ───────────────────────────────────────────
@@ -174,6 +199,7 @@ resolve_repo() {
 
   # 3. Download from GitHub
   step "Downloading Exocórtex from github.com/$REPO..."
+  info "Source: ${DIM}$TARBALL_URL${NC}"
   local tmpdir
   tmpdir=$(mktemp -d)
   trap "rm -rf '$tmpdir'" EXIT
@@ -186,7 +212,13 @@ resolve_repo() {
     return 0
   fi
 
+  info "Downloading tarball..."
   curl -fsSL "$TARBALL_URL" -o "$tmpdir/repo.tar.gz"
+  local archive_size
+  archive_size=$(du -h "$tmpdir/repo.tar.gz" 2>/dev/null | cut -f1)
+  log "Downloaded ${archive_size:-?}"
+
+  info "Extracting..."
   tar xzf "$tmpdir/repo.tar.gz" -C "$tmpdir"
   local extracted
   extracted=$(find "$tmpdir" -maxdepth 1 -type d -name "exocortex*" | head -1)
@@ -197,7 +229,7 @@ resolve_repo() {
   ARTIFACTS_DIR="$extracted/plans/pdd_v2/artifacts"
 
   [ -d "$INSTALL_DIR" ] || die "Provisioner not found in downloaded repo"
-  log "Downloaded and extracted"
+  log "Repository ready"
 }
 
 # ─── Main ────────────────────────────────────────────────────────────────────

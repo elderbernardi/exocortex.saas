@@ -151,3 +151,9 @@ Summary: Self-Repair Loop não necessário — zero falhas detectadas nos 7 smok
 [PDD-031] 2026-05-27T00:53:00-03:00 | Phase: P5 | Status: success
 Artifacts: SOUL.md; MEMORY.md; plans/pdd/phases/P5_VALIDATION.md; plans/pdd/phases/P6_PRODUCTION.md
 Summary: Graduação para P6_PRODUCTION. SOUL.md status: ready. Quality gate: active. Golden image pronta.
+
+[PDD-v2-004] 2026-05-28T20:00:34-03:00 | Phase: P1 | Status: success
+Intent: Instalar skills de logging/qualidade textual/qualidade visual/design tokens e atualizar SOUL com Values #6 e #7.
+Artifacts: /home/elder/.hermes/skills/exocortex/exocortex-prompt-log/SKILL.md; /home/elder/.hermes/skills/exocortex/stop-slop/SKILL.md; /home/elder/.hermes/skills/exocortex/taste-skill/SKILL.md; /home/elder/.hermes/skills/exocortex/taste-skill/gpt-taste.md; /home/elder/.hermes/skills/exocortex/taste-skill/brandkit.md; /home/elder/.hermes/skills/exocortex/taste-skill/brutalist.md; /home/elder/.hermes/skills/exocortex/exocortex-design-system/SKILL.md; /home/elder/.hermes/SOUL.md
+Learnings: Exigir formato de log com Intent/Artifacts/Learnings aumenta auditabilidade e reprodutibilidade de configuração PDD.
+Summary: 4 skills instaladas na ordem pedida, SOUL atualizado com Value #6 e #7, smoke tests executados.

@@ -790,3 +790,94 @@ success: bootstrap P1 executado com score esperado 1/5.
 success: SOUL.md completo para P1 Identity.
 
 ---
+
+---
+
+### [PDD-v2-001-bootstrap-rerun] 2026-05-28T19:55:02-03:00 | Phase: P1_IDENTITY | Prompt: Bootstrap Self-Test
+
+#### Actions
+- Installed skill from provided source file: /home/elder/projetos/pessoal/exocortex.saas/skills/exocortex/exocortex-self-test/SKILL.md
+- Installed/refreshed target skill: /home/elder/.hermes/skills/exocortex/exocortex-self-test/SKILL.md
+- Updated /home/elder/.hermes/SOUL.md Configuration State to `P1_IDENTITY`.
+- Executed self-test.
+
+#### Self-Test Result
+```
+🔍 EXOCÓRTEX SELF-TEST — Fase Atual: P1
+──────────────────────────────────────
+❌ Identity: SOUL.md ainda não contém #Identity, #Values e #Behavioral Boundaries do Exocórtex (apenas bootstrap + Configuration State)
+❌ Memory: MEMORY.md não localizado no perfil atual
+✅ Skills: exocortex-self-test instalado e ativo
+❌ Tools: não avaliadas nesta fase (condicional a P3)
+❌ Behavior: não avaliado nesta fase (condicional a P4)
+──────────────────────────────────────
+📊 Score: 1/5 checkpoints OK
+🔄 Próximo passo: Prompt 002
+```
+
+#### Evidence
+- Source/target SKILL.md SHA256 iguais: `8724dbbed817a1470c00b15c76f9a4fc9c11fa77ccc2aaaa84ff37fa8247471b`.
+- `/home/elder/.hermes/SOUL.md` contém `current_phase: P1_IDENTITY`.
+- `skills list` contém `exocortex-self-test`.
+
+
+### [PDD-v2-002-live] 2026-05-28T19:56:27-03:00 | Phase: P1_IDENTITY | Prompt: Core Identity
+
+#### Actions
+- Construído SOUL.md completo a partir do SOUL_SEED.
+- Preenchidas seções: Identity, Values (1-5), Communication Style, Behavioral Boundaries.
+- Mantida/atualizada seção Configuration State em P1_IDENTITY.
+- Atualizado prompts_executed para [001, 002].
+
+#### Evidence
+- Arquivo atualizado: /home/elder/.hermes/SOUL.md
+- Verificação de seções H1: 5/5 encontradas (Identity, Values, Communication Style, Behavioral Boundaries, Configuration State).
+
+#### Status
+success: SOUL.md completo para P1 Identity, com voz executiva e posicionamento explícito de extensão cognitiva (não chatbot).
+
+---
+
+### [PDD-v2-003-live] 2026-05-28T19:57:21-03:00 | Phase: P1_IDENTITY | Prompt: Behavioral Boundaries
+
+#### Actions
+- Refinado SOUL.md com Draft-First Protocol para ações irreversíveis.
+- Adicionados Vetor de Evolução (postura socrática, produto=conhecimento) e Vetor de Execução (postura especialista, produto=artefato).
+- Adicionados limites explícitos solicitados (3 itens).
+- Atualizado Configuration State: prompts_executed [001, 002, 003].
+
+#### Evidence
+- Arquivo atualizado: /home/elder/.hermes/SOUL.md
+- Subseções verificadas: Draft-First Protocol, Vetor de Evolução, Vetor de Execução, Limites explícitos (4/4).
+
+#### Status
+success: Behavioral Boundaries refinado conforme especificação do prompt.
+
+---
+
+### [PDD-v2-004-live] 2026-05-28T20:00:34-03:00 | Phase: P1_IDENTITY | Prompt: Prompt Log + Quality Skills
+
+#### Actions
+- Installed 4 skills in requested order:
+  1) exocortex-prompt-log
+  2) stop-slop
+  3) taste-skill (+ gpt-taste.md, brandkit.md, brutalist.md)
+  4) exocortex-design-system
+- Updated SOUL.md with Value #6 (Estética Funcional) and Value #7 (Anti-Slop Visual).
+- Updated Configuration State prompts_executed to [001, 002, 003, 004].
+
+#### Smoke Tests
+- exocortex-prompt-log: PASS (fields Intent, Artifacts, Learnings, Timestamp present; skill loads via skill_view)
+- stop-slop: PASS (35/50 threshold rule present; skill loads via skill_view)
+- taste-skill: PASS (SKILL.md + 3 sub-files present; skill loads via skill_view)
+- exocortex-design-system: PASS (cascade global→micro + integração taste-skill/brandkit documented; skill loads via skill_view)
+
+#### Evidence
+- `hermes skills list` shows all 4 as enabled local exocortex skills.
+- Files exist under /home/elder/.hermes/skills/exocortex/.
+- SOUL contains "Estética Funcional", "Anti-Slop Visual", "35/50" and "pre-flight check".
+
+#### Status
+success: instalação e smoke tests concluídos.
+
+---
