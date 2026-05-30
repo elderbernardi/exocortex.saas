@@ -65,3 +65,8 @@ Adotar as **mecânicas** da LLM Wiki mantendo a **ontologia** do Exocórtex:
 - Karpathy LLM Wiki: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 - Hermes Release: `docs/hermes-agent-kwon/hermes-agent/RELEASE_v0.8.0.md` (llm-wiki introduzida)
 - PRD §3.1: `docs/PRD/PRD_dev_v1.md` (7 Natures mapeadas ao Harness)
+
+
+## Atualização 2026-05-30
+
+ADR-006 define que a LLM Wiki nativa só integra o Acervo via adapter seguro.

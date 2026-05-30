@@ -1,6 +1,6 @@
 # ADR-003: Natures Híbridas (Arquivo → Diretório)
 
-> **Status:** Aceita
+> **Status:** Supersedida por ADR-007
 > **Data:** 2026-05-26
 > **Decisor:** @elder
 > **Contexto:** Sessão PDD P2_MEMORY — otimização de context loading
@@ -70,3 +70,8 @@ micro/{slug}/
 
 - LLM Wiki: `~/.hermes/skills/research/llm-wiki/SKILL.md` §Page Thresholds
 - Plano: `artifacts/plan_wiki_alignment.md` v3
+
+
+## Supersedida
+
+Em 2026-05-30, a Ontologia Multifocal v2 substituiu a mecânica de Natures como arquivos/diretórios. Natures permanecem como frontmatter semântico; diretórios funcionais passam a ser a estrutura operacional.

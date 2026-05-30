@@ -76,3 +76,8 @@ Natures são uma **classificação de dados**, não comportamentos distintos. De
 - Nature skills atuais: `~/.hermes/skills/exocortex/nature-*/SKILL.md`
 - ADR-003: Natures Híbridas (mecânica de promoção que entra no acervo-manager)
 - ADR-004: LLM Wiki Alignment (mecânicas wiki que a skill unificada implementa)
+
+
+## Atualização 2026-05-30
+
+ADR-007 atualiza o acervo-manager para operar diretórios funcionais + Natures no frontmatter.

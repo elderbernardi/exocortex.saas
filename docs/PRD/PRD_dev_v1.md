@@ -19,17 +19,16 @@ A persistência utiliza o paradigma de LLM OS (File System), organizado segundo 
 * /macro/ (O Macroverso): Identidade raiz, valores inegociáveis e skills globais. O Orquestrador lê esta base para parametrizar o Harness de todos os agentes subsequentes.
 * /micro/[dominio]/ (Os Microversos): O cenário e as tools específicas de um domínio.
 
-### 3.1. As 7 Naturezas Integradas ao Harness
+### 3.1. Ontologia Multifocal Integrada ao Harness
 
-Os artefatos mapeiam diretamente para capacidades técnicas do Hermes:
+O Acervo usa duas lentes simultâneas:
 
-1. 🏷️ Contexto: Injetado como contexto base no system_prompt.
-2. 📚 Conhecimento: Indexado no VectorDB para RAG orgânico.
-3. 📝 Instrução: Carregado como diretrizes condicionais de resposta.
-4. 🎭 Persona: Altera o modificador de comportamento do agente no Harness.
-5. ⚙️ Processo: Define Workflows (cadeias de tool calling forçadas).
-6. 🔧 Ferramenta: Ativa/Desativa conectores MCP e scripts nativos (ex: E2B).
-7. 🪞 Reflexão: Salvo via Self-Correction tools nativas do Hermes após um loop.
+1. Diretórios funcionais para o Hermes operar: `context/`, `knowledge/`, `contracts/`, `prompts/`, `skills/`, `workflows/`, `tools/`, `templates/`, `decisions/`, `reflections/`, `persona/`.
+2. Natures no frontmatter para manter semântica compreensível a leigos: contexto, conhecimento, instrucoes, processos, ferramentas, persona e reflexoes.
+
+As Natures não são mais diretórios primários. Elas classificam artefatos. O harness opera por diretórios funcionais e valida `kind`, `authority`, `operational_mode`, `scope_mode` e `stability`.
+
+Contratos bloqueantes vivem em `contracts/`. Prompts e skills vivem em diretórios próprios. Decisões arquiteturais vivem em `decisions/`. A LLM Wiki nativa só integra o Acervo via adapter seguro.
 
 ## 4. UX e Interfaces (Zero-Friction)
 

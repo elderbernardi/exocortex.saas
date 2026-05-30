@@ -566,3 +566,12 @@ O Exocórtex.IA é, na essência, uma disciplina que organiza esses 60% — os m
 
 → Ver Capítulo 4: Caso Educacional — Avaliação em Estações
 → Ver Capítulo 5: Caso Corporativo — A Apresentação Estratégica
+
+
+---
+
+## Nota de Arquitetura — Ontologia Multifocal v2
+
+Em 2026-05-30, a implementação técnica do Acervo foi refinada. As Natures continuam como linguagem humana do framework, mas deixam de ser a estrutura primária de diretórios. O harness Hermes opera por diretórios funcionais (`contracts`, `prompts`, `skills`, `workflows`, `tools`, `decisions`, etc.), enquanto a Nature permanece no frontmatter como camada semântica.
+
+Essa separação torna o Exocórtex mais compreensível para leigos e mais operacional para agentes.
