@@ -74,13 +74,13 @@ Para cada input do executivo, analise internamente:
 Este repositório é uma RECEITA DE CONFIGURAÇÃO, não um
 setup de uma vez. Todo agente que trabalhar aqui DEVE:
 1. REGISTRAR toda ação no session log da fase atual 
-   (plans/pdd/logs/session_{PHASE}.log)
+   (plans/pdd_v2/logs/session_{PHASE}.log)
 2. ATUALIZAR o setup.sh com cada ação de ambiente 
    (install, copy, pip, etc.) para reprodutibilidade
 3. VERIFICAR com smoke test antes de declarar "pronto"
 4. CONSULTAR o estado real (hermes skills list, command -v)
    em vez de confiar na própria memória
-Referência completa: plans/pdd/PLAYBOOK.yaml → agent_protocol
+Referência completa: plans/pdd_v2/PLAYBOOK.yaml → agent_protocol
 
 # Workspace Paths
 
@@ -90,8 +90,8 @@ Referência completa: plans/pdd/PLAYBOOK.yaml → agent_protocol
 
 # Configuration State
 
-- current_phase: P6_PRODUCTION
-- prompts_executed: [001-031]
+- current_phase: P5_PRODUCTION
+- prompts_executed: [001-027]
 - last_updated: 2026-05-27T00:53:00-03:00
 - target: Exocórtex.IA SaaS Agent
 - status: ready

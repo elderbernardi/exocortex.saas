@@ -30,17 +30,24 @@
 
 ## Inbox
 
-### MSG-001 | 2025-05-25T23:30
-- **From:** project-planner
+### MSG-002 | 2026-05-30T11:20
+- **From:** antigravity
 - **To:** ALL
 - **Priority:** P0
 - **Status:** PENDING
-- **Subject:** Plano PDD criado — estrutura de plans/ inicializada
-- **Body:** Criei a estrutura completa do plano PDD em `plans/pdd/`. Inclui 7 fases detalhadas (P0-P6), playbook YAML, e artefatos-semente (SOUL_SEED.md, SELF_TEST_SKILL.md). O plano é projetado para ser legível e executável por qualquer agente, incluindo agentes menos poderosos.
-- **Action Required:** Próximo agente que for executar deve: (1) ler `pdd/PLAN.md`, (2) verificar `STATUS.md`, (3) começar por P0_SETUP.md.
+- **Subject:** PDD v2 é agora o plano ativo — v1 é read-only
+- **Body:** O PDD v2 (`pdd_v2/PLAN.md`) substitui o v1 como plano ativo. Principais mudanças: 6 fases (P0-P5, era P0-P6), 27 prompts (era 31), drift audit em todas as fases, quality skills desde P1, MCPs movidos para BACKLOG. O provisioner (`pdd_v2/provisioner/`) é um pacote auto-contido para instalação automatizada. A retrospectiva completa está em `pdd_v2/RETROSPECTIVE.md`.
+- **Action Required:** Próximo agente que for executar deve: (1) ler `pdd_v2/PLAN.md`, (2) verificar `STATUS.md`, (3) para provisioning: ler `pdd_v2/provisioner/RUNBOOK.md`. **Não use mais referências a `pdd/` como plano ativo.**
 
 ---
 
 ## Archive
 
-_Nenhuma mensagem arquivada._
+### MSG-001 | 2025-05-25T23:30
+- **From:** project-planner
+- **To:** ALL
+- **Priority:** P0
+- **Status:** RESOLVED
+- **Subject:** Plano PDD v1 criado — estrutura de plans/ inicializada
+- **Body:** Criei a estrutura completa do plano PDD em `plans/pdd/`. Inclui 7 fases detalhadas (P0-P6), playbook YAML, e artefatos-semente (SOUL_SEED.md, SELF_TEST_SKILL.md). O plano é projetado para ser legível e executável por qualquer agente, incluindo agentes menos poderosos.
+- **Action Required:** ~~Próximo agente que for executar deve: (1) ler `pdd/PLAN.md`, (2) verificar `STATUS.md`, (3) começar por P0_SETUP.md.~~ **Superseded by MSG-002.** Use `pdd_v2/PLAN.md` como referência ativa.
