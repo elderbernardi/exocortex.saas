@@ -33,8 +33,9 @@ GRADUAÇÃO DO EXOCÓRTEX.IA
 
 2. setup.sh definitivo:
    - Garantir que setup.sh reproduz 100% do estado:
-     * 13 skills instaladas
+     * 14 skills core instaladas (+ `browser-use` quando disponível)
      * 4 camadas do acervo criadas
+     * Área operacional `_artifacts/` documentada para publicação de artefatos finais
      * Bundle e profiles configurados
      * SOUL.md com 7 Values
    - Testar: executar setup.sh em diretório limpo e comparar
@@ -62,7 +63,7 @@ RESULTADO:
 
 ## Estado Final Esperado
 
-### Skills (13 no bundle `exocortex-alpha`)
+### Skills (14 core + `browser-use` externa no bundle quando disponível)
 
 | # | Skill | Categoria | Fase |
 |---|---|---|---|
@@ -70,28 +71,37 @@ RESULTADO:
 | 2 | `exocortex-prompt-log` | Core | P1 |
 | 3 | `stop-slop` | Quality | P1 |
 | 4 | `taste-skill` (gpt-taste, brandkit, brutalist) | Quality | P1 |
-| 5 | `acervo-manager` | Memory | P2 |
-| 6 | `exocortex-new-microverso` | Memory | P2 |
-| 7 | `exocortex-draft-first` | Behavior | P3 |
-| 8 | `exocortex-vetor-ativo` | Behavior | P3 |
-| 9 | `exocortex-canvas` | Behavior | P3 |
-| 10 | `exocortex-briefing` | Behavior | P3 |
-| 11 | `exocortex-onboarding` | Behavior | P3 |
-| 12 | `exocortex-output-quality-gate` | Behavior | P3 |
-| 13 | `exocortex-tool-governance` | Behavior | P3 |
+| 5 | `exocortex-design-system` | Quality | P1 |
+| 6 | `acervo-manager` | Memory | P2 |
+| 7 | `exocortex-new-microverso` | Memory | P2 |
+| 8 | `exocortex-draft-first` | Behavior | P3 |
+| 9 | `exocortex-vetor-ativo` | Behavior | P3 |
+| 10 | `exocortex-canvas` | Behavior | P3 |
+| 11 | `exocortex-briefing` | Behavior | P3 |
+| 12 | `exocortex-onboarding` | Behavior | P3 |
+| 13 | `exocortex-output-quality-gate` | Behavior | P3 |
+| 14 | `exocortex-tool-governance` | Behavior | P3 |
+| 15 | `browser-use` | External | P3 |
+
+### Capacidade pós-graduação
+
+`personal-artifact-workspace` é extensão operacional pós-P5. Ela não altera o baseline histórico de 27 prompts, mas deve ser incorporada à próxima golden image/PDD v2.1 quando o provider Drive publicar com receipt válido em ambiente limpo.
 
 ### Profiles
 - `exec` — Vetor de Execução (agente especialista, artefato tangível)
 - `evol` — Vetor de Evolução (tutor socrático, expansão cognitiva)
 
-### Acervo (4 camadas)
+### Acervo (4 camadas + área operacional de artefatos)
 ```
 acervo/
 ├── macro/          # soul.md, valores.md, estilo.md
-├── global/         # index.md + Natures universais
+├── global/         # index.md + contratos/tools globais
 ├── micro/          # {slug}/ por domínio + _template/
-└── shared/         # cross-refs/, groups.md
+├── shared/         # cross-refs/, groups.md
+└── _artifacts/     # source/assets/exports/manifest/receipt de artefatos finais
 ```
+
+`_artifacts/` é operacional. O Acervo semântico registra decisões, contratos e páginas de conhecimento que apontam para `artifact_id` quando necessário.
 
 ### Ferramentas Opcionais (fora do bundle core)
 - `duckduckgo-search` — se disponível
@@ -126,8 +136,10 @@ acervo/
 │  Hermes-Alvo                │
 │  (Instância do Executivo)   │
 │                             │
-│  - 13 skills                │
-│  - 4 camadas de acervo      │
+│  - 14 core skills          │
+│  - browser-use se houver   │
+│  - 4 camadas de acervo     │
+│  - _artifacts operacional  │
 │  - 2 profiles               │
 │  - SOUL.md personalizado    │
 │  - Quality gates ativos     │
@@ -148,7 +160,8 @@ acervo/
 - [ ] Todos os testes de P4 re-executados e passando
 - [ ] self-test = 5/5
 - [ ] Drift audit = PASS
+- [ ] Addendum `ARTIFACT_WORKSPACE.md` revisado quando a instância precisar publicar artefatos finais
 
 ---
 
-> **Pós-P5:** Uso real. Integrações do BACKLOG conforme critérios de reavaliação.
+> **Pós-P5:** Uso real. Integrações do BACKLOG conforme critérios de reavaliação. Publicação de artefatos finais segue `ARTIFACT_WORKSPACE.md`: Drive como ferramenta, Acervo como fonte/manifesto/receipt, Draft-First para compartilhamento externo.

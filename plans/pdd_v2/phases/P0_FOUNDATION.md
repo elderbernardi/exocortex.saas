@@ -61,7 +61,7 @@ Espelho de `~/.hermes/acervo/`. Estrutura wiki com 4 camadas:
 - `evol/` — Vetor de Evolução (foco em compreensão)
 
 ### 6. `artifacts/skill-bundles/exocortex-alpha.yaml`
-Bundle principal com 15 skills core + 1 opcional (browser-use).
+Bundle principal com 14 skills core + `browser-use` como skill externa incluída quando disponível.
 
 ### 7. `artifacts/SOUL_SEED.md`
 Template de identidade. Base para o SOUL.md que será construído em P1.
@@ -80,7 +80,7 @@ HERMES_HOME=~/.hermes bash plans/pdd_v2/artifacts/setup.sh
 # Verificação:
 ls ~/.hermes/skills/exocortex/     # 15 skills
 ls ~/.hermes/acervo/               # macro/ global/ micro/ shared/
-cat ~/.hermes/skill-bundles/exocortex-alpha.yaml  # bundle com 15+1 skills
+cat ~/.hermes/skill-bundles/exocortex-alpha.yaml  # bundle com 14 core + browser-use externo quando disponível
 cat ~/.hermes/SOUL.md              # SOUL_SEED.md copiado
 ```
 

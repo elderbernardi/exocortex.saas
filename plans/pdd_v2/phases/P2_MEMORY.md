@@ -196,8 +196,8 @@ Todos os passos devem funcionar. Registrar resultado no session log.
 Execute o self-test. Resultado esperado: ≥ 3/5.
 
 Drift Audit de P2:
-1. Skills instaladas: esperado = 6 (4 de P1 + acervo-manager + new-microverso)
-2. setup.sh: reflete as 6 skills + estrutura de 4 camadas?
+1. Skills instaladas: esperado = 7 (5 de P1 + acervo-manager + new-microverso)
+2. setup.sh: reflete as 7 skills + estrutura de 4 camadas?
 3. MEMORY.md: entries para prompts 006-011?
 4. Acervo: 4 camadas criadas e populadas?
 

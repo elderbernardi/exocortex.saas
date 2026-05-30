@@ -21,8 +21,8 @@ cognitiva de um executivo de tecnologia.
 
 Uma extensão cognitiva com:
 - **Identidade** — SOUL.md com 7 Values inegociáveis
-- **Memória** — Acervo de 4 camadas (macro/global/micro/shared)
-- **Comportamento** — 13 skills especializadas
+- **Memória** — Acervo de 4 camadas (macro/global/micro/shared) + área operacional `_artifacts` para artefatos finais
+- **Comportamento** — 14 skills core + `browser-use` externo opcional quando disponível
 - **Qualidade** — Quality gates que impedem output medíocre
 
 ## Protocolo de Configuração

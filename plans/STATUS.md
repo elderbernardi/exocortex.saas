@@ -1,7 +1,7 @@
 # Exocórtex.IA — Status Board
 
-> **Last Updated:** 2026-05-30T11:20 (BRT)
-> **Updated By:** antigravity (docs alignment: v1 → PDD v2)
+> **Last Updated:** 2026-05-30T15:03 (BRT)
+> **Updated By:** Exocórtex (Personal Artifact Workspace docs)
 
 ---
 
@@ -10,7 +10,7 @@
 **Branch:** PDD v2 (Prompt-Driven Development)
 **Phase:** PDD v2 — Provisioner pronto, aguardando execução em instância limpa
 **Blocker:** Nenhum
-**Referência:** `pdd_v2/PLAN.md` (plano ativo), `pdd_v2/RETROSPECTIVE.md` (análise de drift v1 → v2)
+**Referência:** `pdd_v2/PLAN.md` (plano ativo), `pdd_v2/RETROSPECTIVE.md` (análise de drift v1 → v2), `pdd_v2/ARTIFACT_WORKSPACE.md` (addendum pós-graduação para artefatos finais)
 
 ---
 
@@ -53,6 +53,7 @@
 | PDD v1 P4 (Behavior) completo | Semana 3 | ✅ Completo |
 | PDD v1 → v2 Retrospectiva | Semana 4 | ✅ Completo |
 | PDD v2 PLAN + Provisioner | Semana 4 | ✅ Completo |
+| Personal Artifact Workspace documentado | Semana 4 | ✅ Completo |
 | PDD v2 execução em instância limpa | — | ⬜ Pendente |
 | Alpha "O Espelho" shipping | — | ⬜ Pendente |
 

@@ -21,8 +21,9 @@ GRADUAÇÃO DO EXOCÓRTEX.IA
 
 2. setup.sh definitivo:
    - Garantir que setup.sh reproduz 100% do estado:
-     * 15 skills instaladas
+     * 14 skills core instaladas (+ `browser-use` quando disponível)
      * 4 camadas do acervo criadas
+     * Área operacional `_artifacts/` documentada para publicação de artefatos finais
      * Bundle e profiles configurados
      * SOUL.md com 7 Values
    - Testar: executar setup.sh em diretório limpo e comparar

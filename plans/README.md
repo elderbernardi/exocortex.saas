@@ -18,6 +18,7 @@ plans/
 │   ├── RETROSPECTIVE.md         ← Análise de drift v1 → v2
 │   ├── DOCKER_TEST.md           ← Ambiente de teste Docker isolado
 │   ├── STYLE_SET_CHANGELOG.md   ← Changelog do design system visual
+│   ├── ARTIFACT_WORKSPACE.md    ← Addendum: publicação de artefatos finais no Drive via Acervo
 │   ├── phases/                  ← One file per phase (P0-P5)
 │   │   ├── P0_FOUNDATION.md
 │   │   ├── P1_IDENTITY.md
@@ -65,8 +66,9 @@ Start with `STATUS.md` for current progress, then read `pdd_v2/PLAN.md` (plano a
 2. **Read `COMMS.md`** for pending messages or instructions from other agents
 3. **Read `pdd_v2/PLAN.md`** for the active PDD plan (v1 is read-only history)
 4. **Check `KNOWLEDGE.md`** before researching something that may already be documented
-5. **Update `COMMS.md`** with findings or blockers for other agents
-6. **If provisioning:** Read `pdd_v2/provisioner/RUNBOOK.md`
+5. **For artifact publication:** read `pdd_v2/ARTIFACT_WORKSPACE.md` and the microverso `hermes-setup`
+6. **Update `COMMS.md`** with findings or blockers for other agents
+7. **If provisioning:** Read `pdd_v2/provisioner/RUNBOOK.md`
 
 > **⚠️ PDD v1 (`pdd/`) is frozen.** All active work uses `pdd_v2/`. See `pdd_v2/RETROSPECTIVE.md` for the rationale.
 

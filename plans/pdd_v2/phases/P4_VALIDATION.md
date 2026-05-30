@@ -114,8 +114,8 @@ PARTE 1 — Quality Gate:
 6. Critério: sem flags de defaults
 
 PARTE 2 — Drift Audit FINAL:
-1. Skills count: esperado = 13
-2. Bundle exocortex-alpha: contém todas as 13?
+1. Skills count: esperado = 14 core, ou 15 quando `browser-use` estiver disponível
+2. Bundle exocortex-alpha: contém todas as skills instaladas?
 3. Profiles exec/evol: funcionais?
 4. setup.sh: reproduz o estado completo?
 5. MEMORY.md: entries para TODOS os prompts (001-025)?

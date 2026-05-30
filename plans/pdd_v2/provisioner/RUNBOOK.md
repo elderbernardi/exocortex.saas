@@ -326,6 +326,36 @@ bash "$PROVISIONER_DIR/lib/drift_audit.sh" ALL
 
 ---
 
+## FASE 8: Capacidade pós-graduação — Artefatos finais (opcional)
+
+Esta fase não pertence ao baseline histórico de 27 prompts. Execute quando a instância precisa entregar documentos, PDFs, HTML, planilhas, imagens, slides, ZIPs ou relatórios em gateway local/remoto.
+
+Referência: `../ARTIFACT_WORKSPACE.md`.
+
+### Pré-check
+
+```bash
+python ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check
+```
+
+### Regras
+
+- Drive é ferramenta de publicação, não sincronização.
+- Acervo mantém fonte, assets, manifest e receipt.
+- Upload privado para o Drive do próprio usuário é entrega pessoal.
+- Link público, compartilhamento externo e envio exigem Draft-First.
+- Composio é fallback, não default.
+
+### Critério de habilitação na golden image futura
+
+- `personal-artifact-workspace` instalado.
+- `~/.hermes/acervo/_artifacts/` criado.
+- `artifact_publish.py` disponível.
+- Publicação de teste gera `receipt.google_drive.json`.
+- Falha de provider gera `receipt.google_drive.failed.json` sem segredos.
+
+---
+
 ## MODO DOCKER (variante)
 
 Se o humano escolheu Docker na Fase 1:

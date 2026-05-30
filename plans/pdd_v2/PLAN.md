@@ -7,6 +7,7 @@
 > **Metodologia:** Modelagem de configuração via prompts (evoluído de PDD)
 > **Target:** Instância Docker limpa do Hermes Agent → Exocórtex.IA
 > **Requisito:** `artifacts/` é autocontido — `setup.sh` provisiona sem dependências externas
+> **Addendum pós-graduação:** `ARTIFACT_WORKSPACE.md` registra a capacidade de publicar artefatos finais no Drive do usuário via Acervo + receipt local.
 
 ---
 
@@ -300,6 +301,7 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 1. **P5 = P6 do v1** (absorveu o estado final — P6 era redundante).
 2. **Golden image inclui setup.sh definitivo** que reproduz tudo.
 3. **BACKLOG_INTEGRATIONS.md** atualizado com estado final.
+4. **Personal Artifact Workspace** documentado como addendum pós-graduação: publicação de documentos, PDFs, planilhas, HTML, imagens e ZIPs no Drive privado do usuário, com fonte/assets/manifest/receipt no Acervo.
 
 ### Prompt
 
@@ -309,7 +311,7 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 
 ### Estado Final Esperado
 
-#### Skills (15 no bundle + 1 opcional)
+#### Skills (14 core + 1 externa no bundle quando disponível)
 
 | Skill | Categoria | Fase de Instalação |
 |---|---|---|
@@ -341,13 +343,28 @@ Estado final. O Hermes agora **é** o Exocórtex.IA e está pronto para uso real
 acervo/
 ├── macro/          # soul.md, valores.md, estilo.md
 │   └── assets/     # Logo, favicon, identidade visual
-├── global/         # index.md, DESIGN.md + Natures universais
+├── global/         # index.md, DESIGN.md + contratos/tools globais
 ├── micro/          # {slug}/ por domínio
 │   └── _template/  # Template de microverso (com DESIGN.md override)
-└── shared/         # cross-refs/, groups.md
+├── shared/         # cross-refs/, groups.md
+└── _artifacts/     # Pacotes operacionais de artefatos finais (source/assets/exports/manifest/receipt)
 ```
 
-→ Detalhes: `phases/P5_PRODUCTION.md`
+`_artifacts/` não substitui a ontologia do Acervo. Ele guarda pacotes de trabalho e publicação. Quando o artefato gerar conhecimento, decisão ou contrato, o microverso registra uma página semântica apontando para o `artifact_id`.
+
+#### Personal Artifact Workspace
+
+Capacidade pós-graduação documentada em `ARTIFACT_WORKSPACE.md`:
+
+- fontes em `source/`, preferencialmente Markdown;
+- assets relativos em `assets/`;
+- exports finais em `exports/`;
+- `manifest.json` como rastreabilidade local;
+- `receipt.{provider}.json` como prova de publicação;
+- Google Drive privado via OAuth local como provider inicial;
+- Draft-First para links públicos, compartilhamento externo e envio.
+
+→ Detalhes: `phases/P5_PRODUCTION.md` e `ARTIFACT_WORKSPACE.md`
 
 ---
 
@@ -413,6 +430,7 @@ v1 tinha 31 prompts. v2 reduz para 27 eliminando MCPs do fluxo principal e conso
 
 - `RETROSPECTIVE.md` — Análise de drift v1 → v2
 - `PLAYBOOK.yaml` — Protocolo de execução + agent_protocol
+- `ARTIFACT_WORKSPACE.md` — Addendum pós-graduação para publicação de artefatos finais no Drive do usuário
 - `plans/pdd/` — Plano v1 completo (read-only, referência histórica)
 - `docs/exocortex.ia/03_framework.md` — Framework conceitual
 - `.hermes/` — Artefatos de runtime do v1 (golden image atual)

@@ -69,7 +69,7 @@ Implementar as regras de negócio do Exocórtex como skills comportamentais.
 
 ### Prompt 020 — Bundle + Profiles
 **Artefatos:** `exocortex-alpha` bundle + profiles `exec`/`evol`
-**Bundle contém:** Todas as 13 skills (4 de P1 + 2 de P2 + 7 de P3)
+**Bundle contém:** 14 skills core (5 de P1 + 2 de P2 + 7 de P3) + `browser-use` como skill externa opcional, totalizando 15 entradas quando disponível
 **Profile `exec`:** Carrega bundle + ativa Vetor de Execução
 **Profile `evol`:** Carrega bundle + ativa Vetor de Evolução
 **Smoke test:** Ativar cada profile → verificar skills carregadas.
@@ -77,10 +77,10 @@ Implementar as regras de negócio do Exocórtex como skills comportamentais.
 ### Prompt 021 — P3 Checkpoint + Drift Audit
 **Verificações:**
 - self-test ≥ 4/5
-- Skills instaladas: esperado = 13 (4 de P1 + 2 de P2 + 7 de P3)
+- Skills instaladas: esperado = 14 core (5 de P1 + 2 de P2 + 7 de P3), ou 15 se `browser-use` estiver disponível no bundle
 - Bundle `exocortex-alpha` lista = skills instaladas
 - Profiles `exec` e `evol` funcionais
-- setup.sh reflete todas as 13 skills
+- setup.sh reflete todas as skills core e declara `browser-use` como externa/opcional
 - MEMORY.md tem entries para prompts 013-020
 - Configuration State → P4_VALIDATION
 
@@ -94,15 +94,17 @@ Implementar as regras de negócio do Exocórtex como skills comportamentais.
 | 2 | `exocortex-prompt-log` | Core | P1 |
 | 3 | `stop-slop` | Quality | P1 |
 | 4 | `taste-skill` | Quality | P1 |
-| 5 | `acervo-manager` | Memory | P2 |
-| 6 | `exocortex-new-microverso` | Memory | P2 |
-| 7 | `exocortex-draft-first` | Behavior | P3 |
-| 8 | `exocortex-vetor-ativo` | Behavior | P3 |
-| 9 | `exocortex-canvas` | Behavior | P3 |
-| 10 | `exocortex-briefing` | Behavior | P3 |
-| 11 | `exocortex-onboarding` | Behavior | P3 |
-| 12 | `exocortex-output-quality-gate` | Behavior | P3 |
-| 13 | `exocortex-tool-governance` | Behavior | P3 |
+| 5 | `exocortex-design-system` | Quality | P1 |
+| 6 | `acervo-manager` | Memory | P2 |
+| 7 | `exocortex-new-microverso` | Memory | P2 |
+| 8 | `exocortex-draft-first` | Behavior | P3 |
+| 9 | `exocortex-vetor-ativo` | Behavior | P3 |
+| 10 | `exocortex-canvas` | Behavior | P3 |
+| 11 | `exocortex-briefing` | Behavior | P3 |
+| 12 | `exocortex-onboarding` | Behavior | P3 |
+| 13 | `exocortex-output-quality-gate` | Behavior | P3 |
+| 14 | `exocortex-tool-governance` | Behavior | P3 |
+| 15 | `browser-use` | External | P3 |
 
 ---
 
@@ -110,7 +112,7 @@ Implementar as regras de negócio do Exocórtex como skills comportamentais.
 
 | Critério | Verificação |
 |---|---|
-| 7 skills comportamentais instaladas | `hermes skills list` retorna 13 total |
+| 7 skills comportamentais instaladas | `hermes skills list` retorna 14 core ou 15 com `browser-use` |
 | Bundle funcional | `exocortex-alpha` carrega todas |
 | Profiles funcionais | `exec` e `evol` ativam corretamente |
 | Testes comportamentais | 7 smoke tests passam |
