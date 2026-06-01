@@ -40,9 +40,8 @@ Use quando o Exocórtex precisar receber arquivo, áudio, imagem, ZIP, link ou t
 4. Extrair texto ou preview útil em `derived/`.
 5. Gerar `routing.json` com hipótese de microverso, diretório funcional e próxima ação.
 6. Responder ao usuário em linguagem curta: recebi, extraí, parece ser X, sugiro Y.
-7. Quando houver GUI, bot ou webhook, passar antes pelo control plane HTTP e não chamar a tool cognitiva direto do canal.
-8. Promover apenas se o material tiver valor cognitivo durável e escopo claro.
-9. Se virar saída final, encaminhar para o Personal Artifact Workspace.
+7. Promover apenas se o material tiver valor cognitivo durável e escopo claro.
+8. Se virar saída final, encaminhar para o Personal Artifact Workspace.
 
 ## Comandos mínimos
 
@@ -60,18 +59,3 @@ python ~/.hermes/acervo/global/tools/intake_ingest.py promote   --intake-id int_
 - manifesto e roteamento atualizados;
 - extração em `derived/` quando aplicável;
 - promoção semântica opcional com atualização de `index.md` e `log.md` do microverso alvo.
-
-
-## Control plane recomendado
-
-Camada de referência no projeto:
-
-```text
-apps/intake_control_plane/
-├── intake_http_server.py
-├── intake-envelope.schema.json
-├── dropzone-demo.html
-└── README.md
-```
-
-Essa camada materializa o desenho `USER -> GUI -> SERVER -> HERMES` sem inventar semântica nova. Ela só recebe, normaliza e invoca `intake_ingest.py`.

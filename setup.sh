@@ -202,6 +202,147 @@ EOF
   fi
 }
 
+enforce_mcp_baseline() {
+  if ! command -v hermes > /dev/null 2>&1; then
+    warn "hermes CLI ausente; não foi possível validar baseline MCP"
+    return 0
+  fi
+
+  if hermes mcp list 2>/dev/null | grep -q "composio"; then
+    if printf 'y\n' | hermes mcp remove composio > /dev/null 2>&1; then
+      log "MCP server 'composio' removido do baseline"
+    else
+      warn "Falha ao remover MCP server 'composio'"
+    fi
+  else
+    log "Baseline MCP OK: 'composio' já está ausente"
+  fi
+}
+
+setup_hindsight_local_docker() {
+  if [ "${EXOCORTEX_ENABLE_HINDSIGHT:-0}" != "1" ]; then
+    log "Hindsight local não ativado por default (use EXOCORTEX_ENABLE_HINDSIGHT=1)"
+    return 0
+  fi
+
+  if ! command -v docker > /dev/null 2>&1; then
+    warn "docker não encontrado; pulando setup local do Hindsight"
+    return 0
+  fi
+
+  local hs_dir="${EXOCORTEX_HINDSIGHT_DIR:-$HERMES_DIR/hindsight-local}"
+  local hs_data="$hs_dir/data"
+  local hs_compose="$hs_dir/docker-compose.yml"
+  local hs_env="$hs_dir/.env"
+  local hs_api_port="${EXOCORTEX_HINDSIGHT_API_PORT:-8888}"
+  local hs_ui_port="${EXOCORTEX_HINDSIGHT_UI_PORT:-9999}"
+
+  mkdir -p "$hs_data"
+
+  if [ "${EXOCORTEX_HINDSIGHT_RESET_DATA:-0}" = "1" ]; then
+    if [ "${EXOCORTEX_HINDSIGHT_CONFIRM_DELETE:-}" = "DELETE_HINDSIGHT_MEMORY" ]; then
+      warn "Confirmação recebida: limpando memória local Hindsight (data/)"
+      (cd "$hs_dir" && docker compose down > /dev/null 2>&1 || true)
+      rm -rf "$hs_data"
+      mkdir -p "$hs_data"
+      log "Memória local Hindsight removida e volume recriado"
+    else
+      warn "Reset solicitado sem confirmação explícita; memória preservada"
+      warn "Para excluir: EXOCORTEX_HINDSIGHT_RESET_DATA=1 EXOCORTEX_HINDSIGHT_CONFIRM_DELETE=DELETE_HINDSIGHT_MEMORY"
+    fi
+  fi
+
+  if [ ! -f "$hs_compose" ]; then
+    cat > "$hs_compose" <<EOF
+services:
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: exocortex-hindsight
+    restart: unless-stopped
+    ports:
+      - "${hs_api_port}:8888"
+      - "${hs_ui_port}:9999"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/home/hindsight/.pg0
+EOF
+    log "docker-compose do Hindsight criado em $hs_compose"
+  else
+    log "docker-compose do Hindsight preservado: $hs_compose"
+  fi
+
+  if [ ! -f "$hs_env" ]; then
+    cat > "$hs_env" <<'EOF'
+# Hindsight local docker env
+HINDSIGHT_API_LLM_PROVIDER=openai
+HINDSIGHT_API_LLM_API_KEY=CHANGE_ME
+# Exemplo opcional:
+# HINDSIGHT_API_LLM_MODEL=gpt-4o-mini
+EOF
+    log ".env do Hindsight criado em $hs_env"
+  else
+    log ".env do Hindsight preservado: $hs_env"
+  fi
+
+  if grep -q "CHANGE_ME" "$hs_env"; then
+    warn "Preencha HINDSIGHT_API_LLM_API_KEY em $hs_env antes de subir o Hindsight"
+    return 0
+  fi
+
+  (
+    cd "$hs_dir"
+    docker compose pull > /dev/null 2>&1 || true
+    docker compose up -d > /dev/null 2>&1
+  )
+
+  log "Hindsight local ativo: API http://localhost:${hs_api_port} | UI http://localhost:${hs_ui_port}"
+
+  mkdir -p "$HERMES_DIR/hindsight"
+  local template="$HERMES_DIR/acervo/micro/hermes-setup/templates/hindsight-config.local_embedded.json"
+  local target="$HERMES_DIR/hindsight/config.json"
+
+  if [ -f "$target" ]; then
+    log "Config Hindsight preservada: $target"
+  elif [ -f "$template" ]; then
+    cp "$template" "$target"
+    log "Template Hindsight copiado para $target"
+  else
+    warn "Template Hindsight não encontrado em $template"
+  fi
+
+  if [ -f "$target" ]; then
+    python3 - "$HERMES_DIR/config.yaml" "$target" <<'PY' >/dev/null 2>&1 || true
+import json
+import sys
+from pathlib import Path
+import yaml
+
+cfg = yaml.safe_load(Path(sys.argv[1]).read_text(encoding="utf-8")) or {}
+data = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+model = (cfg.get("model") or {}).get("default")
+base = (cfg.get("model") or {}).get("base_url")
+
+if data.get("llm_model") == "CHANGE_ME" and model:
+    data["llm_model"] = model
+if data.get("llm_base_url") == "CHANGE_ME" and base:
+    data["llm_base_url"] = base
+
+Path(sys.argv[2]).write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+PY
+  fi
+
+  if [ -f "$target" ] && grep -q "CHANGE_ME" "$target"; then
+    warn "Config Hindsight ainda contém CHANGE_ME em $target"
+    return 0
+  fi
+
+  hermes config set memory.provider hindsight >/dev/null 2>&1 || warn "Falha ao setar memory.provider=hindsight"
+  hermes config set memory.memory_enabled false >/dev/null 2>&1 || warn "Falha ao desativar memory.memory_enabled"
+  hermes config set memory.user_profile_enabled false >/dev/null 2>&1 || warn "Falha ao desativar memory.user_profile_enabled"
+  log "Memória simples local desativada; Hindsight configurado como provider"
+}
+
 mkdir -p "$(dirname "$LOG_FILE")"
 echo "# Setup Replay Log — $(date -Iseconds)" > "$LOG_FILE"
 echo "" >> "$LOG_FILE"
@@ -387,6 +528,12 @@ patch_google_drive_search
 
 # P3.8: NotebookLM CLI-first + MCP fallback
 configure_notebooklm
+
+# P3.9: Baseline MCP (sem Composio)
+enforce_mcp_baseline
+
+# P3.10: Hindsight local (Docker único + memória persistente)
+setup_hindsight_local_docker
 
 # =============================================================================
 # FASE P4: Skills de Comportamento
