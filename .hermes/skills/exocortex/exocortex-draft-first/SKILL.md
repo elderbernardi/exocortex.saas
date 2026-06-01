@@ -1,7 +1,7 @@
 ---
 name: exocortex-draft-first
 description: Interceptor de ações externas. Toda comunicação ou modificação fora do ambiente local é criada como rascunho para aprovação do executivo.
-version: 1.0.0
+version: 1.1.0
 category: exocortex
 metadata:
   hermes:
@@ -17,9 +17,10 @@ metadata:
 Ativar quando o agente for executar qualquer ação classificada como **Comunicação** ou **Criação externa** pela skill `exocortex-tool-governance`:
 - Enviar email, mensagem, notificação
 - Criar ou editar documento compartilhado (Google Docs, Drive, Notion)
-- Criar ou modificar evento de calendário
 - Publicar ou compartilhar conteúdo externamente
 - Qualquer tool call que transmita dados para fora do ambiente Hermes local
+
+**Escopo de exceção governada:** operações de agenda (calendar) seguem o protocolo específico de automação e podem executar sem draft quando houver gatilho explícito do executivo.
 
 ## Procedure
 
@@ -62,15 +63,16 @@ Quando o MCP de comunicação (ex: Google Workspace) não está integrado:
 
 ## Regras
 
-- **ZERO exceções** ao Draft-First para comunicações externas
-- Mesmo ações "urgentes" passam pelo draft — o executivo decide o que é urgente
+- Draft-First é obrigatório para comunicações externas e criação externa
+- Agenda (calendar) usa exceção governada quando houver gatilho explícito do executivo
+- Mesmo ações "urgentes" passam pelo draft quando não são agenda — o executivo decide o que é urgente
 - Drafts pendentes são incluídos no Morning Briefing
 - Se o executivo configurar auto-aprovação para um tipo específico (futuro), respeitar
 
 ## Verificação
 
 - [ ] Pedido de email gera DRAFT, não envia
-- [ ] Pedido de evento gera DRAFT com todos os campos
-- [ ] Resposta de aprovação dispara execução
+- [ ] Pedido de agenda com gatilho explícito executa atualização sem DRAFT
+- [ ] Pedido de comunicação não-agenda continua em DRAFT
 - [ ] Resposta de descarte confirma que nada foi enviado
 - [ ] Modo degradado gera texto copiável quando MCP ausente
