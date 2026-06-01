@@ -90,6 +90,11 @@ Regras de robustez:
 - Em ambiguidade (2+ candidatos fortes), pedir desambiguação curta.
 - Registrar sempre: `event_id`, operação, antes/depois, status final.
 
+### R9: Geração de slides e artefatos visuais
+- Para apresentações, usar `exocortex-slides` como skill padrão.
+- `claude-design` fica desabilitada para este fluxo operacional.
+- Exceções só com instrução explícita do executivo.
+
 ## Whitelist Padrão
 
 Skills do bundle `exocortex-alpha` são pré-autorizadas.
