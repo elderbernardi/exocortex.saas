@@ -99,7 +99,7 @@ python ~/.hermes/acervo/global/tools/artifact_publish.py init \
   --title "Título" \
   --microverso ensino \
   --source-md /caminho/source.md \
-  --drive-path "Exocortex/Ensino/2026/Aulas"
+  --drive-path "exocortex/ensino/2026/aulas"
 ```
 
 Publicar exports:
@@ -108,6 +108,8 @@ Publicar exports:
 python ~/.hermes/acervo/global/tools/artifact_publish.py publish \
   --artifact-dir ~/.hermes/acervo/_artifacts/{artifact_id}
 ```
+
+Regra operacional: publicação final não usa `google_api.py drive upload` direto. O publish resolve pasta e parent explícito, grava `receipt.google_drive.json` e evita upload na raiz do Drive.
 
 ## Troubleshooting registrado
 

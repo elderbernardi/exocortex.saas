@@ -93,6 +93,8 @@ Maximiza o Harness nativo do Hermes para manter a estabilidade.
 
 * Local File System I/O: Para gerir a LLM Wiki (read_file, write_file).
 * Docbrain (Ingestor Semântico CLI): Utiliza markitdown / llama liteparse chamado via shell nativo para converter PDFs em Markdown limpo para o Acervo.
+* Personal Intake Workspace: Usa `_inbox/` como área operacional para receber bruto, gerar manifesto, extrair texto e só então promover para o Acervo.
+* Intake Control Plane: Camada HTTP mínima entre GUI/gateway e Hermes para upload amigável, dropzone e normalização do `IntakeEnvelope`.
 * E2B Code Interpreter: Sandbox orgânica para dados complexos (Python).
 * Tavily / Brave API:Deep Research sem servidores extras.
 * Browser-Use (Playwright): Navegação dinâmica em sites.
@@ -104,6 +106,7 @@ Skills carregadas organicamente do Acervo.
 * Self-Critique & Refine: Usa o motor nativo do Hermes para autorreflexão.
 * Executive Summarizer: Padrão "Chain of Density".
 * Draft Generator: Boas práticas corporativas para vetor de execução.
+* Personal Intake Workspace: Skill transversal para intake multicanal, triagem cognitiva e promoção semântica posterior.
 
 ### Tier 3: Model Context Protocol (MCP Servers)
 
@@ -113,7 +116,7 @@ Skills carregadas organicamente do Acervo.
 
 ## 11. Estrutura de Dados do LLM Wiki (File System Paradigm)
 
-A topologia baseia-se em /macro para leitura global e /micro/[dominio] para escrita/leitura isolada, montados como volumes seguros no contêiner do Harness.
+A topologia baseia-se em /macro para leitura global e /micro/[dominio] para escrita/leitura isolada, montados como volumes seguros no contêiner do Harness. Como área operacional complementar, o sistema mantém `_inbox/` para ingestão crua e `_artifacts/` para saídas finais; nenhum dos dois substitui o Acervo semântico.
 
 ## 12. Modelagem de Dados e Contratos de API (JSON Schemas)
 

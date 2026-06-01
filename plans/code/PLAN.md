@@ -23,7 +23,7 @@ Esta branch é ativada quando o PDD Branch atinge seus limites — quando funcio
 | Epic | Escopo | Depende de PDD |
 |---|---|---|
 | E3 — Draft-First HITL Plugin | Approval API + Queue | P4 (skill como MVP) |
-| E4 — Multi-Tenant Control Plane | Provisioner Agent (dedicado, separado do tenant) + Registry | P6 (golden image) |
+| E4 — Multi-Tenant Control Plane | Provisioner Agent + Intake Control Plane + Registry | P6 (golden image) |
 | E5 — External Integration MCPs | Google Workspace, Corp Insights | P3 (tool governance) |
 | E6 — Cognitive Studio & HITL Cockpit | Next.js Web UI | E3 + E4 |
 
@@ -43,6 +43,6 @@ Esta branch é ativada quando o PDD Branch atinge seus limites — quando funcio
 
 ## Detalhamento
 
-_A ser expandido quando o PDD Alpha for validado e a transição para Code Branch for iniciada._
+Seed já implementada no projeto: `apps/intake_control_plane/` fornece um control plane local mínimo, contrato do `IntakeEnvelope` e dropzone demo. Na transição para Code Branch, esse seed pode ser migrado para FastAPI + persistência sem quebrar o contrato externo.
 
 Ver `../pdd/PLAN.md` para o plano ativo atual.

@@ -8,3 +8,7 @@
 - Added SCHEMA.md, index.md, log.md
 - Created groups.md with built-in aliases (ALL, CLIENTS, PROJECTS)
 - Created cross-refs/ directory
+
+## [2026-06-01] create | Frontend Slides ↔ Estúdio Criativo
+- Criada cross-ref `cross-refs/frontend-slides-estudio-criativo.md`.
+- Definida cooperação: Estúdio Criativo para direção de arte; Frontend Slides para apresentação/export.

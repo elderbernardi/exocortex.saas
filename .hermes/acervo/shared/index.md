@@ -2,7 +2,7 @@
 
 > Catálogo de cross-refs e recursos compartilhados entre Microversos.
 > Carregado quando tarefa cruza mais de 1 Microverso.
-> Last updated: 2026-05-26 | Total cross-refs: 0
+> Last updated: 2026-06-01 | Total cross-refs: 1
 
 ## Groups
 - [groups.md](groups.md) — Aliases de acesso (ALL, CLIENTS, PROJECTS)
@@ -11,6 +11,4 @@
 - [glossario.md](glossario.md) — Vocabulário comum entre domínios
 
 ## Cross-References
-<!-- Adicionar cross-refs aqui quando criadas. Exemplo:
-- [cliente-a--projeto-x--pricing.md](cross-refs/cliente-a--projeto-x--pricing.md) — Pricing compartilhado
--->
+- [frontend-slides-estudio-criativo.md](cross-refs/frontend-slides-estudio-criativo.md) — Cooperação entre renderer premium de apresentações e direção de arte do Estúdio Criativo.

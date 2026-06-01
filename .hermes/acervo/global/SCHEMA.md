@@ -1,50 +1,76 @@
-# Wiki Schema — Global (Operação Universal)
+# Wiki Schema — Global
 
 ## Domain
-Regras, processos, ferramentas e conhecimento que se aplicam a TODOS os Microversos.
-Esta camada NÃO é identidade (isso é macro/). É operação universal.
+Operação universal aplicável a todos os microversos.
 
 ## Type
 global
 
-## Loading Strategy
-- `index.md` é carregado no BOOT de toda sessão (junto com macro/)
-- Páginas individuais são carregadas SOB DEMANDA quando a tarefa precisa
-- NUNCA carregar tudo de uma vez — usar index para localizar
+## Ontology Model
+Este escopo usa a Ontologia Multifocal v2 do Acervo Cognitivo.
 
-## Conventions
-- File names: lowercase, hyphens, no spaces
-- YAML frontmatter obrigatório em toda página wiki
-- Tags devem constar na taxonomia abaixo
-- Nature como arquivo único até ~150 linhas; após, promover para diretório
-- Split de página wiki em ~200 linhas
+A estrutura de diretórios é funcional para o harness Hermes. As Natures continuam como vocabulário semântico no frontmatter, nos índices e no lint.
 
-## Frontmatter
+### Functional Directories
+- `context/` — contexto carregável do domínio.
+- `knowledge/` — fatos, conceitos, referências e métricas.
+- `contracts/` — regras, políticas e guardrails bloqueantes.
+- `prompts/` — prompts reutilizáveis e padrões de invocação.
+- `skills/` — skills Hermes ou especificações de skills do domínio.
+- `workflows/` — playbooks, checklists e rotas de tool calling.
+- `tools/` — ferramentas, MCPs, scripts e conectores.
+- `templates/` — modelos de documentos e artefatos.
+- `decisions/` — ADRs, decisões arquiteturais e escolhas reversíveis.
+- `reflections/` — lições aprendidas, pós-mortems e sínteses evolutivas.
+- `persona/` — tom, vocabulário e comportamento específico do domínio.
+
+### Nature Vocabulary
+- `contexto`: situação, cenário, prioridade, restrição local.
+- `conhecimento`: fatos, conceitos, decisões e referências.
+- `instrucoes`: contratos, regras, políticas e preferências normativas.
+- `processos`: workflows, prompts, skills, playbooks e procedimentos.
+- `ferramentas`: tools, MCPs, scripts e integrações.
+- `persona`: voz, estilo, público e comportamento.
+- `reflexoes`: aprendizados, revisões, hipóteses e sínteses.
+
+## Required Frontmatter v2
 ```yaml
 ---
-title: Título da Página
+title: Título Descritivo
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-nature: instrucoes | processos | ferramentas | conhecimento | reflexoes
-type: rule | workflow | tool | fact | lesson
-tags: [from taxonomy below]
-sources: [raw/documents/source.md]
+nature: contexto | conhecimento | instrucoes | processos | ferramentas | persona | reflexoes
+kind: context | fact | concept | decision | contract | rule | workflow | prompt | skill | tool | template | profile | lesson | event
+scope_mode: macro | global | micro | shared
+scope_slug: null
+applies_to: []
+authority: canonical | derived | draft | observed | external
+operational_mode: read_only | advisory | executable | blocking | template
+stability: experimental | active | stable | deprecated
+sources: []
+derived_from: []
 confidence: high | medium | low
+promotion_policy: none | candidate-global | candidate-shared | promoted
+upstream:
+  source_skill: null
+  assumed_version: null
+  coupling: none | adapter-only | direct
+tags: []
 ---
 ```
 
-## Tag Taxonomy
-- Scope: regra-global, workflow-global, tool-universal
-- Domain: comunicacao, qualidade, seguranca, compliance
-- Type: instrucao, processo, ferramenta, conhecimento, reflexao
+## Path Contracts
+- Arquivos em `contracts/` DEVEM usar `kind: contract | rule` e `operational_mode: blocking | advisory`.
+- Arquivos em `skills/` DEVEM usar `kind: skill` e `operational_mode: executable | advisory`.
+- Arquivos em `prompts/` DEVEM usar `kind: prompt`.
+- Arquivos em `decisions/` DEVEM usar `kind: decision`.
+- Arquivos em `tools/` DEVEM usar `kind: tool`.
+- `raw/` é imutável.
+- `_archive/` recebe conteúdo supersedido ou legado.
+- Wikilinks `[[page]]` são intra-microverso; cross-domain usa `shared/cross-refs/`.
 
-## Page Thresholds
-- Criar página: quando regra/processo é referenciado em 2+ Microversos
-- Promover Nature: quando arquivo ultrapassa ~150 linhas → converter para diretório
-- Split de página: quando ultrapassa ~200 linhas
-- Archive: quando conteúdo é supersedido → mover para _archive/
+## Legacy Policy
+Arquivos flat de Nature (`contexto.md`, `processos.md`, etc.) estão descontinuados. Conteúdo legado deve ser migrado para diretórios funcionais e o original arquivado em `_archive/legacy-flat-natures/`.
 
-## Update Policy
-- Alterações em global/ afetam TODOS os Microversos
-- Confirmar com o executivo antes de alterar regras globais
-- Logar toda alteração em log.md
+## LLM Wiki Adapter Policy
+A skill nativa `research/llm-wiki` é upstream mecânico. Ela nunca escreve diretamente neste escopo. Qualquer ingest, query ou lint vindo da LLM Wiki passa por `exocortex/acervo-llm-wiki-adapter` e depois por `exocortex/acervo-manager`.

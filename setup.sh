@@ -54,6 +54,154 @@ check_prereq() {
   command -v "$1" > /dev/null 2>&1 || fail "Pré-requisito ausente: $1"
 }
 
+patch_google_drive_search() {
+  local gapi="$HOME/.hermes/skills/productivity/google-workspace/scripts/google_api.py"
+
+  if [ ! -f "$gapi" ]; then
+    warn "google_api.py não encontrado em $gapi (patch Drive não aplicado)"
+    return 0
+  fi
+
+  local patch_status
+  patch_status=$(python3 - "$gapi" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+
+if "trashed = false" in text and "nextPageToken, files(" in text:
+    print("ALREADY")
+    raise SystemExit(0)
+
+pattern = r"def drive_search\(args\):\n(?:.*\n)*?\n\ndef drive_get\(args\):"
+replacement = '''def drive_search(args):
+    if args.max < 1:
+        print("ERROR: --max must be >= 1", file=sys.stderr)
+        sys.exit(1)
+
+    if args.raw_query:
+        query = args.query
+    else:
+        # Escape single quotes in Drive query literals and ignore trashed items by default.
+        escaped = args.query.replace("\\", "\\\\").replace("'", "\\'")
+        query = f"fullText contains '{escaped}' and trashed = false"
+
+    fields = "nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink)"
+    page_size = min(args.max, 1000)
+    files = []
+    page_token = None
+
+    if _gws_binary():
+        while len(files) < args.max:
+            params = {
+                "q": query,
+                "pageSize": min(page_size, args.max - len(files)),
+                "fields": fields,
+            }
+            if page_token:
+                params["pageToken"] = page_token
+            results = _run_gws(["drive", "files", "list"], params=params)
+            files.extend(results.get("files", []))
+            page_token = results.get("nextPageToken")
+            if not page_token:
+                break
+        print(json.dumps(files[: args.max], indent=2, ensure_ascii=False))
+        return
+
+    service = build_service("drive", "v3")
+    while len(files) < args.max:
+        results = service.files().list(
+            q=query,
+            pageSize=min(page_size, args.max - len(files)),
+            fields=fields,
+            pageToken=page_token,
+        ).execute()
+        files.extend(results.get("files", []))
+        page_token = results.get("nextPageToken")
+        if not page_token:
+            break
+    print(json.dumps(files[: args.max], indent=2, ensure_ascii=False))
+
+
+def drive_get(args):'''
+
+new_text, count = re.subn(pattern, replacement, text, flags=re.MULTILINE)
+if count != 1:
+    print("SKIP")
+    raise SystemExit(0)
+
+path.write_text(new_text, encoding="utf-8")
+print("PATCHED")
+PY
+)
+
+  case "$patch_status" in
+    ALREADY) log "Google Drive search hardening já presente" ;;
+    PATCHED) log "Google Drive search hardening aplicado" ;;
+    *) warn "Não foi possível aplicar patch automático de Drive (bloco não encontrado)" ;;
+  esac
+}
+
+configure_notebooklm() {
+  if ! command -v nlm > /dev/null 2>&1; then
+    if command -v uv > /dev/null 2>&1; then
+      log "Instalando nlm por fonte oficial: uv tool install notebooklm-mcp-cli"
+      uv tool install notebooklm-mcp-cli > /dev/null 2>&1 || {
+        warn "Falha ao instalar notebooklm-mcp-cli via uv"
+        return 0
+      }
+    else
+      warn "nlm CLI ausente e uv não disponível (instale uv e rode: uv tool install notebooklm-mcp-cli)"
+      return 0
+    fi
+  fi
+
+  log "NotebookLM CLI detectado: $(command -v nlm)"
+
+  if command -v notebooklm-mcp > /dev/null 2>&1; then
+    log "NotebookLM MCP detectado"
+  else
+    warn "notebooklm-mcp ausente; fallback MCP indisponível"
+  fi
+
+  if nlm login --check > /dev/null 2>&1; then
+    log "NotebookLM autenticado"
+  else
+    mkdir -p "$HERMES_DIR/reminders"
+    cat > "$HERMES_DIR/reminders/notebooklm-login.md" <<'EOF'
+# Pending NotebookLM login
+
+No terminal:
+
+```bash
+nlm login
+nlm login --check
+```
+
+Se precisar concluir via Telegram:
+1) O agente envia URL de autorização
+2) Você autoriza no navegador
+3) Cola a URL final completa no chat
+4) O agente conclui o exchange local
+EOF
+    warn "NotebookLM sem auth ativa; lembrete criado em $HERMES_DIR/reminders/notebooklm-login.md"
+  fi
+
+  if command -v hermes > /dev/null 2>&1 && command -v notebooklm-mcp > /dev/null 2>&1; then
+    if hermes mcp list 2>/dev/null | grep -q "notebooklm"; then
+      log "MCP server 'notebooklm' já configurado"
+    else
+      if printf 'y\n' | hermes mcp add notebooklm --command notebooklm-mcp > /dev/null 2>&1; then
+        log "MCP server 'notebooklm' configurado"
+      else
+        warn "Falha ao configurar MCP server 'notebooklm'"
+      fi
+    fi
+  fi
+}
+
 mkdir -p "$(dirname "$LOG_FILE")"
 echo "# Setup Replay Log — $(date -Iseconds)" > "$LOG_FILE"
 echo "" >> "$LOG_FILE"
@@ -85,6 +233,9 @@ LOCAL_SKILLS=(
   "stop-slop"
   "taste-skill"
   "exocortex-design-system"
+  "exocortex-google-drive-hardening"
+  "exocortex-notebooklm-knowledge-router"
+  "exocortex-notebooklm-operational-workflow"
 )
 
 for skill in "${LOCAL_SKILLS[@]}"; do
@@ -209,6 +360,34 @@ else
   fi
 fi
 
+# P3.6: Workspace skills (entrada/saída operacional)
+P3_WORKSPACE_SKILLS=(
+  "personal-artifact-workspace"
+  "personal-intake-workspace"
+  "exocortex-frontend-slides"
+)
+
+for skill in "${P3_WORKSPACE_SKILLS[@]}"; do
+  SKILL_SRC="$PROJECT_DIR/.hermes/skills/exocortex/$skill"
+  SKILL_DST="$SKILLS_DIR/exocortex/$skill"
+
+  if [ -d "$SKILL_DST" ]; then
+    log "Skill já instalada: $skill"
+  elif [ -d "$SKILL_SRC" ]; then
+    mkdir -p "$SKILL_DST"
+    cp -r "$SKILL_SRC"/* "$SKILL_DST/"
+    log "Skill instalada (local): $skill"
+  else
+    warn "Workspace skill source não encontrada: $SKILL_SRC"
+  fi
+done
+
+# P3.7: Hardening Google Drive search (escape + pagination + trashed=false)
+patch_google_drive_search
+
+# P3.8: NotebookLM CLI-first + MCP fallback
+configure_notebooklm
+
 # =============================================================================
 # FASE P4: Skills de Comportamento
 # =============================================================================
@@ -254,6 +433,12 @@ else
     --skill acervo-manager \
     --skill exocortex-new-microverso \
     --skill exocortex-tool-governance \
+    --skill exocortex-google-drive-hardening \
+    --skill exocortex-notebooklm-knowledge-router \
+    --skill exocortex-notebooklm-operational-workflow \
+    --skill personal-artifact-workspace \
+    --skill personal-intake-workspace \
+    --skill exocortex-frontend-slides \
     --skill stop-slop \
     --skill taste-skill \
     --skill duckduckgo-search \
@@ -266,7 +451,7 @@ else
     --skill exocortex-output-quality-gate \
     -d "Bundle principal do Exocórtex.IA — carrega todas as skills core, memória, qualidade, pesquisa e comportamento." \
     -i "Você é o Exocórtex.IA. Ao carregar este bundle, siga SOUL.md e todas as governance rules."
-  log "Bundle criado: exocortex-alpha (15 skills)"
+  log "Bundle criado: exocortex-alpha (21 skills)"
 fi
 
 # P3-CORE.2: Profile exec
@@ -339,4 +524,3 @@ command -v ddgs > /dev/null 2>&1 && echo "  ✓ ddgs" || echo "  ✗ ddgs"
 echo ""
 log "Setup completo. Revise $LOG_FILE para detalhes."
 echo ""
-

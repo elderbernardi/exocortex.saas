@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IntakeEnvelope",
+  "type": "object",
+  "required": [
+    "channel"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "dashboard",
+        "telegram_gateway",
+        "api_server",
+        "email_bridge",
+        "webhook",
+        "cli"
+      ]
+    },
+    "caption": {
+      "type": "string"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "document",
+        "image",
+        "audio",
+        "video",
+        "zip",
+        "link",
+        "text"
+      ]
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "session_ref": {
+      "type": "string"
+    },
+    "microverso_hint": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "additionalProperties": true
+}

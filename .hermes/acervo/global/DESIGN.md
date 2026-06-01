@@ -1,14 +1,14 @@
 ---
 version: alpha
-name: Exocórtex Executive Style
-description: Tokens visuais do executivo. Aplicado a artefatos visuais sob demanda.
+name: Identidade Visual Global — IFSul
+description: Tokens visuais globais (padrão institucional IFSul) para artefatos gerados pelo Exocórtex.
 colors:
-  primary: "#1a73e8"
-  secondary: "#34a853"
-  accent: "#fbbc04"
-  neutral: "#f8f9fa"
-  dark: "#202124"
-  danger: "#ea4335"
+  primary: "#2f9e41"          # IFSul verde
+  secondary: "#1d7a2d"        # IFSul verde escuro
+  accent: "#cd191e"           # IFSul vermelho (destaque/ênfase)
+  neutral: "#f8f9fa"          # superfícies neutras
+  dark: "#202124"             # texto/contraste
+  danger: "#cd191e"           # estados críticos (alinha com vermelho institucional)
 typography:
   h1:
     fontFamily: Inter
@@ -40,7 +40,7 @@ spacing:
   xl: 48px
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
+    backgroundColor: "{colors.secondary}"
     textColor: "#FFFFFF"
     rounded: "{rounded.sm}"
     padding: 12px
@@ -53,7 +53,7 @@ components:
     padding: "{spacing.lg}"
   alert-danger:
     backgroundColor: "#fce8e6"
-    textColor: "#a50e0e"
+    textColor: "{colors.danger}"
     rounded: "{rounded.sm}"
   alert-success:
     backgroundColor: "#e6f4ea"
@@ -69,27 +69,27 @@ components:
     rounded: "{rounded.md}"
   badge:
     backgroundColor: "{colors.accent}"
-    textColor: "{colors.dark}"
+    textColor: "#FFFFFF"
     rounded: "{rounded.lg}"
 ---
 
 ## Overview
 
-Sistema visual para artefatos gerados pelo Exocórtex em nome do executivo.
-Valores iniciais são placeholders genéricos — personalizar via `brandkit`
-quando o executivo decidir definir identidade visual própria.
+Sistema visual global para artefatos gerados pelo Exocórtex.
+Baseado na identidade institucional do IFSul (verde + vermelho), com tipografia neutra.
+Overrides por microverso continuam permitidos (cascade global  micro).
 
 Estes tokens são carregados sob demanda pela skill `exocortex-design-system`
 quando uma tarefa produz output visual (relatórios, dashboards, decks, etc.).
 
 ## Colors
 
-- **Primary (#1a73e8):** Ações, links, headings de destaque.
-- **Secondary (#34a853):** Sucesso, métricas positivas, confirmações.
-- **Accent (#fbbc04):** Alertas, destaques, badges, atenção.
-- **Neutral (#f8f9fa):** Fundos, superfícies, cards.
-- **Dark (#202124):** Texto principal, contraste alto.
-- **Danger (#ea4335):** Erros, alertas críticos, ações destrutivas.
+- **Primary ({colors.primary}):** Verde institucional IFSul. Chamadas visuais, títulos, ênfase.
+- **Secondary ({colors.secondary}):** Verde escuro. CTA sólido (botões), estados de foco.
+- **Accent ({colors.accent}):** Vermelho institucional. Destaques, marcações e ênfase.
+- **Neutral ({colors.neutral}):** Fundos e superfícies.
+- **Dark ({colors.dark}):** Texto principal e contraste.
+- **Danger ({colors.danger}):** Estados críticos/erro (alinha com vermelho institucional).
 
 ## Typography
 
@@ -104,13 +104,17 @@ Border radius conservador: sm (4px) para botões, md (8px) para cards.
 
 ## Components
 
-- `button-primary` — Ação principal com cor primária e hover para dark.
+- `button-primary` — Ação principal em **verde escuro** (`{colors.secondary}`) para garantir contraste WCAG AA com texto branco.
 - `card` — Container de conteúdo com fundo branco e padding generoso.
 - `alert-danger` / `alert-success` — Feedback visual para estados.
+- `badge` — Destaque pontual em **vermelho** (`{colors.accent}`) com texto branco.
 
 ## Do's and Don'ts
 
 - **Do:** Usar token references (`{colors.primary}`) em novos componentes.
-- **Do:** Manter contraste WCAG AA (4.5:1) em texto sobre fundo.
+- **Do:** Manter contraste WCAG AA (4.5:1) em texto sobre fundo (lint obrigatório quando mexer em tokens).
+- **Do:** Usar `colors.accent` (vermelho) para **destaque pontual/ênfase** quando necessário — não confundir com estado de erro.
+- **Do:** Reservar `colors.danger` + `alert-danger` para **erro/estado crítico**.
 - **Don't:** Adicionar cores ad-hoc fora da paleta sem justificativa.
+- **Don't:** Tratar todo vermelho como erro — aqui ele também é semântica de marcação/ênfase.
 - **Don't:** Usar mais de 2 font families no mesmo artefato.
