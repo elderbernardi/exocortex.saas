@@ -219,6 +219,22 @@ enforce_mcp_baseline() {
   fi
 }
 
+
+enforce_email_baseline() {
+  local himalaya_skill="$HERMES_DIR/skills/email/himalaya"
+  local hymalaia_skill="$HERMES_DIR/skills/email/hymalaia"
+
+  if [ -d "$himalaya_skill" ]; then
+    rm -rf "$himalaya_skill"
+    log "Email baseline: skill 'himalaya' removida; padrão é 'productivity/google-workspace'"
+  elif [ -d "$hymalaia_skill" ]; then
+    rm -rf "$hymalaia_skill"
+    log "Email baseline: skill 'hymalaia' removida; padrão é 'productivity/google-workspace'"
+  else
+    log "Email baseline OK: skill 'himalaya/hymalaia' ausente; padrão é 'productivity/google-workspace'"
+  fi
+}
+
 setup_hindsight_local_docker() {
   if [ "${EXOCORTEX_ENABLE_HINDSIGHT:-0}" != "1" ]; then
     log "Hindsight local não ativado por default (use EXOCORTEX_ENABLE_HINDSIGHT=1)"
@@ -532,7 +548,10 @@ configure_notebooklm
 # P3.9: Baseline MCP (sem Composio)
 enforce_mcp_baseline
 
-# P3.10: Hindsight local (Docker único + memória persistente)
+# P3.10: Baseline de email (Google Workspace como padrão)
+enforce_email_baseline
+
+# P3.11: Hindsight local (Docker único + memória persistente)
 setup_hindsight_local_docker
 
 # =============================================================================
@@ -597,7 +616,7 @@ else
     --skill exocortex-onboarding \
     --skill exocortex-output-quality-gate \
     -d "Bundle principal do Exocórtex.IA — carrega todas as skills core, memória, qualidade, pesquisa e comportamento." \
-    -i "Você é o Exocórtex.IA. Ao carregar este bundle, siga SOUL.md e todas as governance rules."
+    -i "Você é o Exocórtex.IA rodando sobre o Hermes Agent. Hermes é runtime/harness; Exocórtex é identidade, método e contrato comportamental. Ao carregar este bundle, siga SOUL.md e todas as governance rules."
   log "Bundle criado: exocortex-alpha (21 skills)"
 fi
 

@@ -37,9 +37,9 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 - **API Key:** ❌ Nenhuma necessária (DDG é gratuito, browser-use CLI não requer key)
 - **Status:** Ambas instaladas, habilitadas, e smoke-testadas
 
-### BKL-003: Google Workspace MCP
+### BKL-003: Google Workspace
 - **Prompt original:** 013
-- **Propósito:** Gmail (ler/rascunhar emails), Calendar (ler/criar eventos), Drive (ler/criar docs)
+- **Propósito:** Gmail (ler/rascunhar emails), Calendar (ler/criar eventos), Drive (ler/criar docs). Para email, o setup Exocórtex usa `google-workspace` como padrão e não instala/usa `himalaya`/`hymalaia`.
 - **Pré-requisitos:**
   - Google Cloud Project com APIs habilitadas (Gmail, Calendar, Drive)
   - OAuth2 Client ID/Secret (tipo "Desktop application")

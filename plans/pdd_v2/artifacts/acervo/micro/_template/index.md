@@ -27,3 +27,6 @@
 
 ## Estilo Visual (Opcional)
 - [DESIGN.md](DESIGN.md) — Override visual. Herda `global/DESIGN.md`. Apenas deltas. Requer `extends: global` no frontmatter.
+
+## Contratos operacionais
+- `contracts/exocortex-hermes-identity.md` — contrato local de identidade Exocórtex sobre Hermes.

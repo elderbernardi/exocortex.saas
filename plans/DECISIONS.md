@@ -151,3 +151,19 @@
   - ✅ Agente dedicado (qualquer CLI) pode executar o RUNBOOK
   - ✅ Suporte a Docker para teste isolado
   - ⚠️ Pacote precisa ser mantido em sincronia com mudanças nos artifacts
+
+---
+
+## Proposed Decisions
+
+### ADR-013: Approval-gate Draft-First como fronteira operacional do Exocórtex
+- **Date:** 2026-06-01
+- **Status:** Proposed
+- **Context:** O Draft-First hoje depende mais de regra textual do que de enforcement operacional. Isso permite drift entre o draft aprovado e a ação realmente emitida, sobretudo em fluxos com múltiplos canais, cron, background jobs, anexos e links.
+- **Decision:** Introduzir um approval-gate transacional entre produção interna e emissão externa. A aprovação humana deve ficar vinculada ao payload exato do draft por fingerprint, invalidando a aprovação quando canal, destinatário, corpo, anexos, links ou tipo de efeito externo mudarem.
+- **Consequences:**
+  - ✅ Reduz drift entre intenção, draft aprovado e efeito externo
+  - ✅ Preserva cron e background jobs até a fronteira de staging privado
+  - ✅ Cria trilha auditável com fingerprint, estado e receipt
+  - ⚠️ Exige ledger de aprovação e taxonomia de side effects por ferramenta
+  - ⚠️ Ainda depende de decisão futura sobre ponto de interceptação: plugin Hermes, server, ou combinação dos dois

@@ -19,3 +19,6 @@
 
 ## Reflexões
 <!-- Lições transversais — ordenar alfabeticamente -->
+
+## Contratos operacionais
+- `contracts/exocortex-hermes-identity-contract.md` — contrato bloqueante de identidade Exocórtex sobre Hermes.

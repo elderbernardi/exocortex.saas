@@ -1,7 +1,7 @@
 # Exocórtex.IA — Status Board
 
-> **Last Updated:** 2026-05-30T15:03 (BRT)
-> **Updated By:** Exocórtex (Personal Artifact Workspace docs)
+> **Last Updated:** 2026-06-03T12:44:55-03:00
+> **Updated By:** Exocórtex (TODO mission-control personalizado)
 
 ---
 
@@ -64,6 +64,15 @@
 | ID | Question | Owner | Status |
 |---|---|---|---|
 | Q001 | Docker base image para tenant: usar imagem oficial do Hermes ou build custom? | @elder | ⬜ Aberta |
+| Q002 | Como modelar um approval-gate/Draft-First com enforcement real no harness sem quebrar cron, background jobs e staging privado? | @elder | ⬜ Aberta |
+
+## Pending TODOs
+
+- [ ] Modelar um gateway de aprovação vinculado a draft/fingerprint para efeitos externos do Exocórtex.
+- [ ] Decidir como esse gateway conversa com decisões futuras de harness, inclusive implantação do Exocórtex para operar bem sobre o Hermes.
+- [ ] Definir a fronteira entre staging privado permitido e emissão externa bloqueada por aprovação.
+- [ ] Usar `plans/approval-gate/IMPLEMENTATION_PLAN.md` como base de retomada e decisão arquitetural da v1.
+- [ ] Implantar um Mission Control personalizado para o Exocórtex, integrado com UI de chat e arquivos, priorizando soluções prontas e consolidadas na comunidade em vez de construir UI própria do zero.
 
 ---
 

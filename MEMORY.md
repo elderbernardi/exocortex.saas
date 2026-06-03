@@ -157,3 +157,9 @@ Intent: Instalar skills de logging/qualidade textual/qualidade visual/design tok
 Artifacts: /home/elder/.hermes/skills/exocortex/exocortex-prompt-log/SKILL.md; /home/elder/.hermes/skills/exocortex/stop-slop/SKILL.md; /home/elder/.hermes/skills/exocortex/taste-skill/SKILL.md; /home/elder/.hermes/skills/exocortex/taste-skill/gpt-taste.md; /home/elder/.hermes/skills/exocortex/taste-skill/brandkit.md; /home/elder/.hermes/skills/exocortex/taste-skill/brutalist.md; /home/elder/.hermes/skills/exocortex/exocortex-design-system/SKILL.md; /home/elder/.hermes/SOUL.md
 Learnings: Exigir formato de log com Intent/Artifacts/Learnings aumenta auditabilidade e reprodutibilidade de configuração PDD.
 Summary: 4 skills instaladas na ordem pedida, SOUL atualizado com Value #6 e #7, smoke tests executados.
+
+[PDD-v2-IDENTITY-HERMES-RUNTIME] 2026-06-01T21:06:19-03:00 | Phase: P6_PRODUCTION | Status: success
+Intent: Fixar identidade operacional: Exocórtex.IA rodando sobre Hermes Agent, sem inversão Hermes→Exocórtex.
+Artifacts: SOUL.md; ~/.hermes/SOUL.md; ~/.hermes/profiles/exec/SOUL.md; ~/.hermes/profiles/evol/SOUL.md; .hermes/profiles/*/SOUL.md; plans/pdd_v2/artifacts/SOUL_SEED.md; plans/pdd_v2/artifacts/profiles/*/SOUL.md; ~/.hermes/acervo/global/contracts/exocortex-hermes-identity-contract.md; contratos locais em todos os microversos; setup.sh.
+Learnings: Modelos mais simples aderem melhor quando a relação identidade/runtime aparece como contrato curto e bloqueante em SOUL, perfis e Acervo.
+Summary: Identidade Exocórtex sobre Hermes aplicada aos perfis, microversos e projetos de setup Hermes; canary exec/evol passou mencionando Exocórtex.IA rodando sobre Hermes Agent.

@@ -118,6 +118,21 @@ PY
   esac
 }
 
+enforce_email_baseline() {
+  local himalaya_skill="$HERMES_HOME/skills/email/himalaya"
+  local hymalaia_skill="$HERMES_HOME/skills/email/hymalaia"
+
+  if [ -d "$himalaya_skill" ]; then
+    rm -rf "$himalaya_skill"
+    log "Email baseline: skill 'himalaya' removida; padrão é 'productivity/google-workspace'"
+  elif [ -d "$hymalaia_skill" ]; then
+    rm -rf "$hymalaia_skill"
+    log "Email baseline: skill 'hymalaia' removida; padrão é 'productivity/google-workspace'"
+  else
+    log "Email baseline OK: skill 'himalaya/hymalaia' ausente; padrão é 'productivity/google-workspace'"
+  fi
+}
+
 echo ""
 echo "╔═══════════════════════════════════════════════╗"
 echo "║   Exocórtex.IA — PDD v2 Setup                ║"
@@ -207,6 +222,12 @@ fi
 # =============================================================================
 info "Aplicando hardening de Google Drive search..."
 patch_google_drive_search
+
+# =============================================================================
+# Step 5.2: Baseline de email
+# =============================================================================
+info "Aplicando baseline de email: Google Workspace como padrão..."
+enforce_email_baseline
 
 # =============================================================================
 # Step 6: Identidade (SOUL_SEED)

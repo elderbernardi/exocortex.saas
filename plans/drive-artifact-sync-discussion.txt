@@ -1,0 +1,235 @@
+Discussão guardada — sincronização Drive/artefatos para drafts editáveis
+Data: 2026-06-02T10:32:27-03:00
+Local desta nota: /home/elder/projetos/pessoal/exocortex.saas/plans/drive-artifact-sync-discussion.txt
+
+Contexto
+
+O problema discutido: usuários do Exocórtex precisam editar arquivos de draft quando o Hermes/Exocórtex roda em servidor remoto. Hoje o Drive serve como plataforma de entrega, mas não há sincronização. A ideia desejada é sincronizar somente artefatos, preservando persistência e coerência entre a fonte canônica do Exocórtex e o documento que o usuário manipula.
+
+Tese principal
+
+Não sincronizar o Acervo inteiro com o Drive.
+
+Criar um ciclo de artefato vivo:
+
+1. Exocórtex gera uma fonte local canônica.
+2. Publica uma superfície editável conhecida pelo usuário.
+3. Usuário edita.
+4. Exocórtex importa somente aquele artefato.
+5. Calcula diff.
+6. Apresenta revisão/aceite.
+7. Promove a versão aceita para fonte canônica.
+8. Atualiza manifesto/receipt/metadados operacionais.
+
+Drive/Docs deve ser superfície de edição e entrega. O Acervo continua sendo fonte cognitiva e reprodutível.
+
+Opção recomendada para MVP
+
+Google Docs privado como superfície humana de edição.
+
+Fluxo do usuário:
+
+"Aqui está o documento: [link privado do Google Docs]. Edite se necessário. Quando terminar, diga: importar alterações."
+
+Depois que o usuário pedir importação:
+
+1. Exocórtex baixa/exporta a versão atual do Google Docs.
+2. Compara contra source/source.md.
+3. Gera diff textual.
+4. Apresenta resumo das mudanças.
+5. Pergunta se deve aceitar como nova fonte canônica.
+6. Após aprovação, atualiza o pacote local do artefato.
+
+Por que esse caminho faz sentido:
+
+- Google Docs é interface conhecida.
+- Funciona em desktop e mobile.
+- O Google resolve edição concorrente via OT.
+- Não exige instalar nada no computador do usuário.
+- Mantém Draft-First: criar documento privado para edição é entrega pessoal; compartilhar/publicar/enviar continua exigindo aprovação explícita.
+
+Opções avaliadas
+
+1. Google Docs como editor humano
+Melhor MVP. Interface conhecida, boa experiência mobile, histórico de versão e colaboração nativa. O Exocórtex importa artefatos vinculados, não sincroniza o Drive inteiro.
+
+2. Google Docs com seções ancoradas / named ranges
+Melhor para documentos estruturados: ofícios, relatórios, planos, atas. O Exocórtex só escreve/importa regiões controladas. Permite preservar notas e edições livres do usuário.
+
+3. Drive como pasta de artefatos editáveis
+Mais simples. Publica .md, .docx ou draft.md no Drive e importa depois. Funciona como fallback, mas oferece menos controle semântico.
+
+4. Inbox de revisões
+Usuário devolve o arquivo revisado. Robusto e universal. Serve quando OAuth/API falha ou quando o usuário edita fora do Drive.
+
+5. Editor web próprio do Exocórtex
+Melhor produto futuro. Controle total de metadados, diff, autosave, estrutura e UX. Exige desenvolvimento de interface, autenticação e isolamento.
+
+6. VS Code remoto / code-server
+Bom para usuários técnicos e artefatos em Markdown, HTML, código e slides. Ruim para usuário comum.
+
+7. OnlyOffice/Collabora self-hosted
+Alternativa sem Google, com interface tipo Word e callbacks de salvamento. Operação mais pesada.
+
+8. Git como camada de verdade
+Excelente para código, templates, decks HTML e materiais versionáveis. Não é ideal para usuário leigo.
+
+9. Comandos dentro do documento
+Usuário escreve blocos especiais no próprio documento:
+
+[EXO]
+Reescreva esta seção com tom mais institucional.
+Preserve os três exemplos.
+[/EXO]
+
+Boa evolução para o Google Docs MVP. Comentários do Google Docs podem ser explorados depois, se a API/wrapper suportar leitura adequada.
+
+Discussão posterior: problema dos arquivos de sync
+
+O ponto levantado: criar mais arquivos como sync.json pode ser confundido como conteúdo e atrapalhar o contexto do Exocórtex.
+
+Conclusão: metadados operacionais de sync devem existir, mas ficar invisíveis ao contexto cognitivo por padrão.
+
+Separar três classes:
+
+1. Conteúdo cognitivo
+Exemplo: source/source.md, páginas semânticas do microverso, decisões importantes.
+
+2. Metadado operacional
+Exemplo: estado de sincronização, locks, eventos, diffs, revision_id, doc_id.
+
+3. Recibo/auditoria
+Exemplo: receipt.google_drive.json, manifest.json, hashes, links publicados.
+
+Estrutura ajustada para MVP
+
+~/.hermes/acervo/_artifacts/{artifact_id}/
+├── source/
+│   └── source.md
+├── exports/
+├── assets/
+├── manifest.json
+├── receipt.google_drive.json
+└── _ops/
+    ├── sync.json
+    ├── locks.json
+    ├── events.log
+    └── diffs/
+
+Regra:
+
+- source/ entra em contexto quando o agente precisa trabalhar no conteúdo.
+- manifest.json entra só quando a tarefa exige rastreabilidade.
+- _ops/ nunca entra em contexto normal.
+- _ops/ só entra quando a tarefa é sincronizar, importar alterações, debugar Drive, resolver conflito ou auditar versão.
+
+Alternativa futura: registry operacional central
+
+Em vez de _ops/ por artefato, criar:
+
+~/.hermes/acervo/_ops/artifact-sync/
+├── index.sqlite
+├── events.log
+└── snapshots/
+
+Ou:
+
+~/.hermes/acervo/_ops/artifact_registry.sqlite
+
+Tabelas sugeridas:
+
+artifacts
+- artifact_id
+- title
+- microverso
+- status
+- source_path
+- current_hash
+
+external_surfaces
+- artifact_id
+- provider
+- doc_id
+- drive_file_id
+- web_view_link
+- remote_revision_id
+- remote_modified_time
+- last_imported_at
+
+sync_events
+- event_id
+- artifact_id
+- event_type
+- old_hash
+- new_hash
+- remote_revision_id
+- created_at
+
+Comparação
+
+_ops/ dentro do artefato:
+- mais simples;
+- bom para MVP;
+- auditável por pasta;
+- risco baixo se o context loader ignorar _ops/.
+
+Registry central:
+- mais limpo;
+- melhor para SaaS e múltiplos usuários;
+- permite consultar “quais docs estão pendentes?”;
+- exige mais disciplina de migração/backup.
+
+Recomendação final para continuar
+
+Fase 1:
+
+- Google Docs privado como editor.
+- Artifact package como fonte operacional.
+- _ops/sync.json por artefato.
+- Importação sob demanda: “importar alterações”.
+- Diff textual.
+- Aceite manual para promover fonte canônica.
+- Loader/context builder ignora _ops/, sync.json, locks.json, events.log e diffs/ por padrão.
+
+Fase 2:
+
+- Drive changes.watch + changes.list.
+- Estado remote_changed automático.
+- Snapshots em source/revisions/ ou _ops/snapshots/.
+- Bloco “Notas para o Exocórtex”.
+
+Fase 3:
+
+- Named ranges ou âncoras por seção.
+- Merge parcial.
+- Comandos [EXO] dentro do documento.
+
+Fase 4:
+
+- Editor web próprio.
+- Yjs/CRDT se for preciso colaboração real-time fora do Google Docs.
+- Painel de coerência entre fonte local, documento externo e publicação final.
+
+Regra de ouro
+
+Se um arquivo não melhora a resposta cognitiva do agente, ele não entra em contexto. Ele pode existir para operação, auditoria e sincronização, mas fica fora da janela mental.
+
+Decisão prática registrada
+
+Não criar sync.json na raiz do artefato.
+Criar _ops/sync.json no MVP.
+Configurar/convencionar o loader para ignorar _ops/ e arquivos operacionais salvo pedido explícito.
+Expor ao agente um resumo computado quando necessário, não JSON cru.
+Migrar para registry SQLite quando houver múltiplos usuários ou muitos artefatos vivos.
+
+Arquivos relacionados já existentes nesta sessão
+
+Brainstorm completo:
+/home/elder/projetos/pessoal/exocortex.saas/plans/remote-draft-editing-brainstorm.md
+
+Esta nota resumida:
+/home/elder/projetos/pessoal/exocortex.saas/plans/drive-artifact-sync-discussion.txt
+
+Observação
+
+A skill personal-artifact-workspace já contém referência ao padrão remote-draft-editing-sync.md e à regra de Drive como superfície editável por artefato. Esta nota existe como memória simples em TXT para retomada em outra sessão.
