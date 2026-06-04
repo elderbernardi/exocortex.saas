@@ -1,0 +1,10 @@
+{
+  "session_id": "019e8e5d-b79f-7da2-bf14-72671b42fefa",
+  "native_session_id": "019e8e5d-b79f-7da2-bf14-72671b42fefa",
+  "started_at": "2026-06-03T16:42:51.101Z",
+  "cwd": "/home/elder/projetos/pessoal/exocortex.saas",
+  "pid": 713441,
+  "platform": "linux",
+  "pid_start_ticks": 19061879,
+  "pid_cmdline": "/home/elder/.npm/_npx/c8ab89660c602c20/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex"
+}
