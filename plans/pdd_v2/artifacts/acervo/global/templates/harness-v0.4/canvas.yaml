@@ -1,0 +1,61 @@
+canvas_id: canvas_YYYYMMDD_HHMMSS_slug
+focus: ""
+original_input_summary: ""
+vector: evolucao  # evolucao|execucao|manutencao
+intent_type: explorar  # explorar|decidir|produzir|revisar|manter|publicar|ingestao|outro
+
+user_intention:
+  explicit: ""
+  inferred: ""
+  confidence: medium  # high|medium|low
+
+dominant_entity:
+  type: none  # task|artifact|microverso|decision|routine|inbox|none
+  id: null
+  inferred: true
+
+task_candidate:
+  title: ""
+  persist: false
+  reason: ""
+
+microversos:
+  primary: null
+  related: []
+
+artifacts:
+  existing: []
+  expected: []
+
+decisions:
+  pending: []
+  touched: []
+  resolved: []
+
+personas:
+  suggested: []
+  explicit: []
+  evaluators: []
+
+gaps: []
+dependencies: []
+risks: []
+
+promotion_candidates:
+  microverso_context: []
+  knowledge: []
+  decisions: []
+  reflections: []
+  skills: []
+
+approval:
+  required: false
+  reason: null
+
+evaluation:
+  required: false
+  reason: null
+  evaluator_personas: []
+  apply_mode: suggest  # suggest|auto-incorporate|ask-user
+
+next_moves: []

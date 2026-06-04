@@ -1,0 +1,19 @@
+description: "Vetor de Manutenção — modo zelador. Revisa pendências, valida manifests, audita links, limpa inbox, preserva saúde dos microversos. Roda em background via cron/rotinas."
+description_auto: false
+bundle: exocortex-alpha
+skills:
+- acervo-manager
+- acervo-llm-wiki-adapter
+- exocortex-new-microverso
+- exocortex-base-microverso-setup
+- exocortex-operational-memory
+- exocortex-prompt-log
+- exocortex-self-test
+- exocortex-kanban-backlog
+- personal-artifact-workspace
+- personal-intake-workspace
+- exocortex-output-quality-gate
+- exocortex-tool-governance
+- exocortex-vetor-ativo
+- exocortex-canvas
+- stop-slop

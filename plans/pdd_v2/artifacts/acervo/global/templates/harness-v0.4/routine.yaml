@@ -1,0 +1,25 @@
+routine_id: rtn_slug
+name: ""
+vector: manutencao
+status: active  # active|paused|archived
+persona: sindico
+
+scope:
+  microversos: []
+  tasks: []
+  artifacts: []
+
+objective: ""
+triggers: []
+outputs: []
+
+permissions:
+  can_modify_acervo: false
+  can_create_reports: true
+  can_publish: false
+  requires_user_approval_for_external_action: true
+
+state_path: state.json
+log_path: log.md
+created_at: null
+updated_at: null

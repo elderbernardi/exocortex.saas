@@ -1,0 +1,11 @@
+automation_id: auto_slug
+name: ""
+status: active  # active|paused|archived
+schedule: ""
+routine_id: null
+persona: sindico
+prompt: ""
+deliver: origin
+requires_approval_for_external_action: true
+created_at: null
+updated_at: null

@@ -1,0 +1,40 @@
+{
+  "artifact_id": "art_YYYYMMDD_HHMMSS_slug",
+  "canonical_slug": "slug",
+  "friendly_name": "",
+  "publication_names": {},
+  "title": "",
+  "status": "draft",
+  "artifact_type": "document",
+  "source_type": "markdown",
+  "task_id": null,
+  "primary_microverso": null,
+  "related_microversos": [],
+  "scope": "micro",
+  "owner": {
+    "type": "task",
+    "id": null
+  },
+  "personas_involved": [],
+  "semantic_links": [],
+  "source_path": "source/source.md",
+  "exports": [],
+  "evaluation": {
+    "status": "pending",
+    "personas": [],
+    "reports": [],
+    "incorporated_suggestions": [],
+    "pending_suggestions": []
+  },
+  "publication": {
+    "drive": {
+      "status": "not_published",
+      "receipt_path": null
+    }
+  },
+  "provenance": {
+    "created_by": "exocortex",
+    "created_at": null,
+    "origin": "conversation"
+  }
+}

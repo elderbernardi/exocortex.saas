@@ -1,20 +1,27 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Exocórtex.IA — PDD v2 Setup Script (Semente)
+# Exocórtex.IA — Candidate-Release Setup Script (Camada 1 + 2)
 # =============================================================================
-# Script de reprodução: provisiona um Hermes limpo com configuração Exocórtex v2.
+# Provisiona infraestrutura (Camada 1) e identidade (Camada 2) do Exocórtex
+# sobre Hermes Agent, seguindo ADR-010 (layered deployment).
 #
 # Uso:
-#   HERMES_HOME=/path/to/hermes bash setup.sh
+#   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 #
 # Requer:
-#   - HERMES_HOME definido (diretório do Hermes alvo)
+#   - HERMES_HOME definido (runtime do Hermes)
+#   - EXOCORTEX_HOME definido (workspace cognitivo, default: ~/exocortex)
 #   - Este script rodado a partir do diretório plans/pdd_v2/artifacts/
+#
+# Ref: docs/ADR/ADR-010-layered-deployment.md
+#      micro/hermes-setup/decisions/hermes-runtime-cwd-exocortex-home.md
 # =============================================================================
 
 set -euo pipefail
 
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
+ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 RED='\033[0;31m'
@@ -133,27 +140,242 @@ enforce_email_baseline() {
   fi
 }
 
+enforce_mcp_baseline() {
+  if ! command -v hermes >/dev/null 2>&1; then
+    warn "hermes CLI não encontrado; pulando baseline MCP"
+    return 0
+  fi
+  if hermes mcp list 2>/dev/null | grep -q "composio"; then
+    if printf 'y\n' | hermes mcp remove composio >/dev/null 2>&1; then
+      log "MCP baseline: 'composio' removido"
+    else
+      warn "Falha ao remover MCP server 'composio'"
+    fi
+  else
+    log "MCP baseline OK: 'composio' já ausente"
+  fi
+}
+
+setup_hindsight_local_docker() {
+  if [ "${EXOCORTEX_ENABLE_HINDSIGHT:-0}" != "1" ]; then
+    info "Hindsight local não ativado por default"
+    info "  Para configurar: EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh"
+    return 0
+  fi
+  if ! command -v docker >/dev/null 2>&1; then
+    warn "docker não encontrado; instale Docker e rode novamente"
+    return 0
+  fi
+  local hs_dir="${EXOCORTEX_HINDSIGHT_DIR:-$HERMES_HOME/hindsight-local}"
+  local hs_data="$hs_dir/data"
+  local hs_compose="$hs_dir/docker-compose.yml"
+  local hs_env="$hs_dir/.env"
+  local hs_api_port="${EXOCORTEX_HINDSIGHT_API_PORT:-8888}"
+  local hs_ui_port="${EXOCORTEX_HINDSIGHT_UI_PORT:-9999}"
+  mkdir -p "$hs_data"
+  if [ "${EXOCORTEX_HINDSIGHT_RESET_DATA:-0}" = "1" ]; then
+    if [ "${EXOCORTEX_HINDSIGHT_CONFIRM_DELETE:-}" = "DELETE_HINDSIGHT_MEMORY" ]; then
+      warn "Confirmado: removendo memória local Hindsight (data/)"
+      (cd "$hs_dir" && docker compose down >/dev/null 2>&1 || true)
+      rm -rf "$hs_data"
+      mkdir -p "$hs_data"
+      log "Memória local removida e volume recriado"
+    else
+      warn "Reset solicitado, mas sem confirmação explícita"
+      info "  Use: EXOCORTEX_HINDSIGHT_CONFIRM_DELETE=DELETE_HINDSIGHT_MEMORY"
+    fi
+  fi
+  if [ ! -f "$hs_compose" ]; then
+    cat > "$hs_compose" <<EOF
+services:
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: exocortex-hindsight
+    restart: unless-stopped
+    ports:
+      - "${hs_api_port}:8888"
+      - "${hs_ui_port}:9999"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/home/hindsight/.pg0
+EOF
+    log "Hindsight docker-compose criado em $hs_compose"
+  else
+    log "Hindsight docker-compose preservado: $hs_compose"
+  fi
+  if [ ! -f "$hs_env" ]; then
+    cat > "$hs_env" <<'EOF'
+HINDSIGHT_API_LLM_PROVIDER=openai
+HINDSIGHT_API_LLM_API_KEY=CHANGE_ME
+EOF
+    log "Hindsight .env template criado em $hs_env"
+  else
+    log "Hindsight .env preservado: $hs_env"
+  fi
+  if grep -q "CHANGE_ME" "$hs_env"; then
+    warn "Preencha HINDSIGHT_API_LLM_API_KEY em $hs_env antes de subir o serviço"
+    return 0
+  fi
+  (cd "$hs_dir" && docker compose pull >/dev/null 2>&1 || true && docker compose up -d >/dev/null 2>&1)
+  log "Hindsight local ativo (API: :${hs_api_port}, UI: :${hs_ui_port})"
+}
+
+configure_docbrain_engine() {
+  local docbrain_dir="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/projetos/pessoal/projetob/docbrain}"
+  local repo="https://github.com/ProjetoBB/docBrainBB.git"
+  if ! command -v git >/dev/null 2>&1; then
+    warn "git não encontrado; pulando clone do DocBrain"
+    return 0
+  fi
+  if ! command -v npm >/dev/null 2>&1; then
+    warn "npm não encontrado; pulando setup do DocBrain"
+    return 0
+  fi
+  mkdir -p "$(dirname "$docbrain_dir")"
+  if [ ! -d "$docbrain_dir/.git" ]; then
+    info "Clonando DocBrain em $docbrain_dir"
+    git clone "$repo" "$docbrain_dir" >/dev/null 2>&1 || {
+      warn "Falha ao clonar DocBrain"
+      return 0
+    }
+  else
+    log "Repositório DocBrain encontrado: $docbrain_dir"
+  fi
+  (cd "$docbrain_dir" && git pull --ff-only origin main >/dev/null 2>&1 || true && npm install >/dev/null 2>&1 || true && npm run build >/dev/null 2>&1 || true)
+  log "DocBrain dependências/build verificados"
+  if [ -n "${OPENROUTER_API_KEY:-}" ] || [ -n "${DOCBRAIN_LLM_API_KEY:-}" ]; then
+    log "Key LLM disponível para DocBrain"
+  else
+    mkdir -p "$HERMES_HOME/reminders"
+    cat > "$HERMES_HOME/reminders/docbrain-llm-key.md" <<'EOF'
+# Pending DocBrain LLM key
+DocBrain is installed, but no LLM key was available during setup.
+Configure OPENROUTER_API_KEY in the Hermes environment.
+EOF
+    info "Sem key LLM; lembrete criado em $HERMES_HOME/reminders/docbrain-llm-key.md"
+  fi
+}
+
+configure_notebooklm_integration() {
+  if ! command -v nlm >/dev/null 2>&1; then
+    if command -v uv >/dev/null 2>&1; then
+      info "Instalando nlm via uv tool install notebooklm-mcp-cli"
+      uv tool install notebooklm-mcp-cli >/dev/null 2>&1 || {
+        warn "Falha ao instalar notebooklm-mcp-cli via uv"
+        return 0
+      }
+    else
+      warn "nlm CLI não encontrado. Instale com: uv tool install notebooklm-mcp-cli"
+      return 0
+    fi
+  fi
+  log "nlm CLI disponível: $(command -v nlm)"
+  if nlm login --check >/dev/null 2>&1; then
+    log "nlm autenticado"
+  else
+    mkdir -p "$HERMES_HOME/reminders"
+    cat > "$HERMES_HOME/reminders/notebooklm-login.md" <<'EOF'
+# Pending NotebookLM login
+nlm CLI instalado mas autenticação não está ativa.
+No terminal: nlm login && nlm login --check
+EOF
+    warn "nlm sem auth ativa; lembrete criado"
+  fi
+  if command -v hermes >/dev/null 2>&1 && command -v notebooklm-mcp >/dev/null 2>&1; then
+    if hermes mcp list 2>/dev/null | grep -q "notebooklm"; then
+      log "MCP server 'notebooklm' já configurado"
+    else
+      printf 'y\n' | hermes mcp add notebooklm --command notebooklm-mcp >/dev/null 2>&1 && \
+        log "MCP server 'notebooklm' adicionado" || \
+        warn "Falha ao adicionar MCP server 'notebooklm'"
+    fi
+  fi
+}
+
+configure_context7_mcp() {
+  if ! command -v hermes >/dev/null 2>&1; then
+    warn "hermes CLI não encontrado; pulando context7 MCP"
+    return 0
+  fi
+  if hermes mcp list 2>/dev/null | grep -q "context7"; then
+    log "MCP server 'context7' já configurado"
+    return 0
+  fi
+  if [ -z "${CONTEXT7_API_KEY:-}" ]; then
+    mkdir -p "$HERMES_HOME/reminders"
+    cat > "$HERMES_HOME/reminders/context7-api-key.md" <<'EOF'
+# Pending Context7 API Key
+
+Context7 MCP não foi configurado porque CONTEXT7_API_KEY não estava definida.
+Context7 fornece documentação atualizada de tech stacks (Next.js, React, etc.).
+
+Para configurar:
+1. Obtenha uma API key em https://context7.com
+2. Execute: CONTEXT7_API_KEY=<key> bash setup.sh
+   ou configure manualmente: hermes mcp add context7 --command "npx -y @context7/mcp" --env CONTEXT7_API_KEY=<key>
+EOF
+    info "CONTEXT7_API_KEY não definida; lembrete criado"
+    info "  Context7 pode ser adicionado depois: hermes mcp add context7 --command 'npx -y @context7/mcp'"
+    return 0
+  fi
+  printf 'y\n' | hermes mcp add context7 \
+    --command "npx -y @context7/mcp" \
+    --env "CONTEXT7_API_KEY=${CONTEXT7_API_KEY}" \
+    >/dev/null 2>&1 && \
+    log "MCP server 'context7' adicionado (documentação de tech stacks)" || \
+    warn "Falha ao adicionar MCP server 'context7'"
+}
+
 echo ""
 echo "╔═══════════════════════════════════════════════╗"
-echo "║   Exocórtex.IA — PDD v2 Setup                ║"
+echo "║   Exocórtex.IA — Candidate-Release Setup     ║"
 echo "╚═══════════════════════════════════════════════╝"
 echo ""
 
-info "HERMES_HOME: $HERMES_HOME"
-info "ARTIFACTS:   $SCRIPT_DIR"
+info "HERMES_HOME:    $HERMES_HOME"
+info "EXOCORTEX_HOME: $EXOCORTEX_HOME"
+info "ACERVO:         $ACERVO"
+info "ARTIFACTS:      $SCRIPT_DIR"
 
 # =============================================================================
-# Step 1: Criar estrutura base
+# Step 1: Criar estrutura base (Camada 1 — Infraestrutura)
 # =============================================================================
-info "Criando estrutura base..."
+info "[Camada 1] Criando estrutura base..."
 
+# Runtime Hermes
 mkdir -p "$HERMES_HOME/skills/exocortex"
-mkdir -p "$HERMES_HOME/acervo"/{macro/assets,global,micro/_template,shared/cross-refs}
 mkdir -p "$HERMES_HOME/profiles"
 mkdir -p "$HERMES_HOME/skill-bundles"
 mkdir -p "$HERMES_HOME/memories"
 
-log "Estrutura de diretórios criada"
+# Workspace Exocórtex
+mkdir -p "$EXOCORTEX_HOME"
+
+# Acervo 4 camadas + diretórios funcionais v0.4
+mkdir -p "$ACERVO/macro/assets"
+mkdir -p "$ACERVO/global"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+mkdir -p "$ACERVO/micro/_template"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+mkdir -p "$ACERVO/shared"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive,cross-refs}
+
+# Diretórios operacionais v0.4 (harness canônico)
+mkdir -p "$ACERVO/_tasks"
+mkdir -p "$ACERVO/_routines"
+mkdir -p "$ACERVO/_automations"
+mkdir -p "$ACERVO/_inbox"/{incoming,processing,promoted,_archive}
+mkdir -p "$ACERVO/_artifacts/items"
+mkdir -p "$ACERVO/_artifacts/views"/{by_microverso,by_task,by_status,by_type}
+mkdir -p "$ACERVO/_artifacts/_ops"
+mkdir -p "$ACERVO/global/templates/harness-v0.4"
+mkdir -p "$ACERVO/global/tools/harness"
+
+# Compatibilidade: symlink se acervo não está em ~/.hermes
+if [ "$ACERVO" != "$HERMES_HOME/acervo" ] && [ ! -e "$HERMES_HOME/acervo" ]; then
+  ln -s "$ACERVO" "$HERMES_HOME/acervo" 2>/dev/null || true
+  log "Symlink de compatibilidade: $HERMES_HOME/acervo -> $ACERVO"
+fi
+
+log "Estrutura de diretórios criada (runtime + workspace + v0.4 operacional)"
 
 # =============================================================================
 # Step 2: Copiar skills
@@ -177,18 +399,34 @@ else
 fi
 
 # =============================================================================
-# Step 3: Copiar acervo
+# Step 3: Copiar acervo (para ACERVO, não HERMES_HOME/acervo)
 # =============================================================================
 info "Instalando acervo..."
 
 ACERVO_SRC="$SCRIPT_DIR/acervo"
-ACERVO_DST="$HERMES_HOME/acervo"
 
 if [ -d "$ACERVO_SRC" ]; then
-  cp -r "$ACERVO_SRC"/* "$ACERVO_DST/" 2>/dev/null || true
-  log "Acervo: $(find "$ACERVO_DST" -type f 2>/dev/null | wc -l) arquivos"
+  rsync -a --exclude '__pycache__' "$ACERVO_SRC/" "$ACERVO/" 2>/dev/null || cp -r "$ACERVO_SRC"/* "$ACERVO/" 2>/dev/null || true
+  log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
 else
   fail "Acervo source não encontrado: $ACERVO_SRC"
+fi
+
+# Instalar templates canônicos v0.4
+TEMPLATES_SRC="$SCRIPT_DIR/acervo/global/templates/harness-v0.4"
+TEMPLATES_DST="$ACERVO/global/templates/harness-v0.4"
+if [ -d "$TEMPLATES_SRC" ]; then
+  cp -r "$TEMPLATES_SRC"/* "$TEMPLATES_DST/" 2>/dev/null || true
+  log "Templates v0.4: $(ls -1 "$TEMPLATES_DST" 2>/dev/null | wc -l) arquivos"
+fi
+
+# Instalar ferramentas determinísticas do harness
+TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools/harness"
+TOOLS_DST="$ACERVO/global/tools/harness"
+if [ -d "$TOOLS_SRC" ]; then
+  cp -r "$TOOLS_SRC"/* "$TOOLS_DST/" 2>/dev/null || true
+  chmod +x "$TOOLS_DST"/*.py 2>/dev/null || true
+  log "Harness tools: $(ls -1 "$TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
 fi
 
 # =============================================================================
@@ -224,10 +462,13 @@ info "Aplicando hardening de Google Drive search..."
 patch_google_drive_search
 
 # =============================================================================
-# Step 5.2: Baseline de email
+# Step 5.2: Baselines de segurança
 # =============================================================================
 info "Aplicando baseline de email: Google Workspace como padrão..."
 enforce_email_baseline
+
+info "Aplicando baseline MCP: removendo composio..."
+enforce_mcp_baseline
 
 # =============================================================================
 # Step 6: Identidade (SOUL_SEED)
@@ -238,11 +479,45 @@ if [ -f "$SCRIPT_DIR/SOUL_SEED.md" ]; then
 fi
 
 # =============================================================================
-# Step 7: Verificação
+# Step 7: Integrações (Hindsight, DocBrain, NotebookLM)
+# =============================================================================
+info "Verificando integrações..."
+
+info "Hindsight (memória operacional via Docker/ghcr.io)..."
+setup_hindsight_local_docker
+
+info "DocBrain (parser engine via GitHub clone)..."
+configure_docbrain_engine
+
+info "NotebookLM (CLI + MCP)..."
+configure_notebooklm_integration
+
+info "Context7 (documentação de tech stacks via MCP)..."
+configure_context7_mcp
+
+# =============================================================================
+# Step 8: Verificação de keys
+# =============================================================================
+info "Verificando keys de API..."
+if [ -n "${OPENROUTER_API_KEY:-}" ]; then
+  log "OPENROUTER_API_KEY definida"
+else
+  warn "OPENROUTER_API_KEY não definida — DocBrain e LLM routing podem falhar"
+fi
+if [ -n "${CONTEXT7_API_KEY:-}" ]; then
+  log "CONTEXT7_API_KEY definida"
+else
+  info "CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)"
+fi
+
+# =============================================================================
+# Step 9: Verificação Final
 # =============================================================================
 echo ""
-info "=== VERIFICAÇÃO ==="
+info "=== VERIFICAÇÃO FINAL ==="
 echo ""
+
+ERRORS=0
 
 echo "Skills instaladas:"
 SKILL_COUNT=0
@@ -250,24 +525,85 @@ for d in "$SKILLS_DST"/*/; do
   [ -d "$d" ] && echo "  ✓ $(basename "$d")" && SKILL_COUNT=$((SKILL_COUNT + 1))
 done
 echo "  Total: $SKILL_COUNT"
+
+EXPECTED_SKILLS=(
+  "acervo-manager" "acervo-llm-wiki-adapter" "exocortex-new-microverso" "exocortex-prompt-log"
+  "exocortex-self-test" "stop-slop" "taste-skill" "browser-use" "exocortex-design-system"
+  "exocortex-notebooklm-knowledge-router" "exocortex-notebooklm-operational-workflow"
+  "exocortex-draft-first" "exocortex-vetor-ativo" "exocortex-canvas" "exocortex-briefing"
+  "exocortex-onboarding" "exocortex-output-quality-gate" "exocortex-tool-governance"
+  "personal-artifact-workspace" "personal-intake-workspace" "exocortex-operational-memory"
+  "exocortex-base-microverso-setup" "exocortex-kanban-backlog" "exocortex-slides"
+)
+MISSING_SKILLS=()
+for skill in "${EXPECTED_SKILLS[@]}"; do
+  if [ ! -f "$SKILLS_DST/$skill/SKILL.md" ]; then
+    MISSING_SKILLS+=("$skill")
+  fi
+done
+if [ ${#MISSING_SKILLS[@]} -gt 0 ]; then
+  warn "Skills faltando: ${MISSING_SKILLS[*]}"
+  ERRORS=$((ERRORS + ${#MISSING_SKILLS[@]}))
+else
+  log "Todas as ${#EXPECTED_SKILLS[@]} skills esperadas presentes"
+fi
 echo ""
 
-echo "Acervo (4 camadas):"
+echo "Acervo (4 camadas + v0.4 funcionais):"
 for layer in macro global micro shared; do
-  count=$(find "$ACERVO_DST/$layer" -type f 2>/dev/null | wc -l)
-  echo "  $layer/: $count arquivos"
+  if [ -d "$ACERVO/$layer" ]; then
+    count=$(find "$ACERVO/$layer" -type f 2>/dev/null | wc -l)
+    echo "  ✓ $layer/: $count arquivos"
+  else
+    echo "  ✗ $layer/ (MISSING)"
+    ERRORS=$((ERRORS + 1))
+  fi
 done
 echo ""
 
+echo "Diretórios operacionais v0.4:"
+for opdir in _tasks _routines _automations _inbox _artifacts; do
+  if [ -d "$ACERVO/$opdir" ]; then
+    echo "  ✓ $opdir/"
+  else
+    echo "  ✗ $opdir/ (MISSING)"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+echo ""
+
+echo "Templates v0.4:"
+ls "$ACERVO/global/templates/harness-v0.4/" 2>/dev/null | while read -r t; do echo "  ✓ $t"; done
+echo ""
+
+echo "Harness tools:"
+ls "$ACERVO/global/tools/harness/"*.py 2>/dev/null | while read -r t; do echo "  ✓ $(basename "$t")"; done
+echo ""
+
 echo "Profiles:"
-ls "$PROFILES_DST/" 2>/dev/null | while read -r p; do echo "  ✓ $p"; done
+echo "  ✓ default (exec+evol unificado — SOUL.md com vetor-ativo)"
+if [ -f "$PROFILES_DST/manut/profile.yaml" ]; then
+  echo "  ✓ manut (background/zelador)"
+else
+  echo "  ✗ manut (MISSING)"
+  ERRORS=$((ERRORS + 1))
+fi
 echo ""
 
-echo "Bundles:"
-ls "$BUNDLES_DST/" 2>/dev/null | while read -r b; do echo "  ✓ $b"; done
-echo ""
+if [ -f "$HERMES_HOME/SOUL.md" ]; then
+  log "SOUL.md presente"
+else
+  warn "SOUL.md ausente em $HERMES_HOME"
+  ERRORS=$((ERRORS + 1))
+fi
 
-# Verificar hermes CLI
+if [ -f "$BUNDLES_DST/exocortex-alpha.yaml" ]; then
+  log "Bundle exocortex-alpha.yaml presente"
+else
+  warn "Bundle manifest ausente"
+  ERRORS=$((ERRORS + 1))
+fi
+
 if command -v hermes > /dev/null 2>&1; then
   log "hermes CLI: $(hermes --version 2>/dev/null | head -1)"
 else
@@ -275,7 +611,20 @@ else
 fi
 
 echo ""
-echo "╔═══════════════════════════════════════════════╗"
-echo "║   Setup PDD v2 completo.                     ║"
-echo "╚═══════════════════════════════════════════════╝"
+if [ $ERRORS -eq 0 ]; then
+  echo "╔═══════════════════════════════════════════════╗"
+  echo "║   ✅ Setup Candidate-Release completo.        ║"
+  echo "║   Zero erros.                                 ║"
+  echo "╚═══════════════════════════════════════════════╝"
+else
+  echo "╔═══════════════════════════════════════════════╗"
+  echo "║   ⚠ Setup concluído com $ERRORS erro(s).       ║"
+  echo "╚═══════════════════════════════════════════════╝"
+fi
+echo ""
+info "Runtime Hermes:      $HERMES_HOME"
+info "Workspace Exocórtex: $EXOCORTEX_HOME"
+info "Acervo canônico:     $ACERVO"
+info "Profiles:            default (interativo) + manut (background)"
+info "Uso:                 hermes (default) | hermes -p manut"
 echo ""

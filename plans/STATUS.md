@@ -1,16 +1,16 @@
 # Exocórtex.IA — Status Board
 
-> **Last Updated:** 2026-06-03T12:44:55-03:00
-> **Updated By:** Exocórtex (TODO mission-control personalizado)
+> **Last Updated:** 2026-06-03T16:30:00-03:00
+> **Updated By:** Exocórtex.IA sobre Hermes Agent (consolidação candidate-release)
 
 ---
 
-## 🔴 Current Focus
+## 🟢 Current Focus
 
-**Branch:** PDD v2 (Prompt-Driven Development)
-**Phase:** PDD v2 — Provisioner pronto, aguardando execução em instância limpa
-**Blocker:** Nenhum
-**Referência:** `pdd_v2/PLAN.md` (plano ativo), `pdd_v2/RETROSPECTIVE.md` (análise de drift v1 → v2), `pdd_v2/ARTIFACT_WORKSPACE.md` (addendum pós-graduação para artefatos finais)
+**Branch:** main
+**Phase:** Consolidação candidate-release em execução — decisões D000-D007 resolvidas
+**Referência:** `docs/ADR/ADR-010-layered-deployment.md`, `docs/ADR/ADR-011-consolidation-decisions.md`
+**Progresso:** Infraestrutura (Camada 1) criada — templates v0.4, scripts, setup.sh atualizado
 
 ---
 
@@ -19,24 +19,36 @@
 | Branch | Status | Current Phase | Next Action |
 |---|---|---|---|
 | **PDD v1** | ✅ Concluído (read-only) | P6 (final v1) | Referência histórica — ver `pdd/PLAN.md` |
-| **PDD v2** | 🟢 Ativo | Provisioner pronto | Executar PDD v2 em instância limpa (Docker ou local) |
-| **Code** | ⚪ Não iniciado | — | Depende de validação do PDD v2 na Alpha |
+| **PDD v2** | 🟡 Papel redefinido (checklist) | ADR-010: PDD = validação | Serve como checklist, não como blueprint |
+| **main** | 🟢 Ativo | Candidate-release em execução | Completar Fase 3 (Identidade) e Fase 4 (Verificação) |
+| **Code** | ⚪ Não iniciado | — | Após candidate-release validado |
 
 ---
 
-## Fases PDD v2
+## Modelo de Deployment (ADR-010)
 
-> Estrutura reduzida: 6 fases (P0-P5, era P0-P6 no v1), 27 prompts (era 31).
-> Drift audit obrigatório em todas as fases. Quality skills desde P1.
+> Abordagem em 3 camadas, cada uma independente.
 
-| Fase | Nome | Prompts | Gate | Descrição |
-|------|------|---------|------|-----------|
-| **P0** | Foundation | 0 (manual) | artifacts + setup.sh | Pré-requisitos, agent_protocol, golden image semente |
-| **P1** | Identity | 001–005 | self-test ≥ 2/5 | SOUL.md, quality skills (stop-slop + taste-skill) |
-| **P2** | Memory | 006–012 | self-test ≥ 3/5 | Acervo 4 camadas, acervo-manager unificado |
-| **P3** | Behavior | 013–021 | self-test ≥ 4/5 | Skills de negócio, bundle, profiles (sem MCPs) |
-| **P4** | Validation | 022–026 | self-test = 5/5 | Smoke tests, quality gate, drift audit final |
-| **P5** | Production | 027 | GRADUATION | Golden image final, estado PRODUCTION |
+| Camada | Responsabilidade | Frequência | Status |
+|--------|-----------------|------------|--------|
+| **1 — Infraestrutura** | Diretórios, skills, templates, scripts, bundles | Uma vez por instância | 🟢 Criada |
+| **2 — Identidade** | SOUL.md, personas, valores, quality skills | Uma vez por instância | 🟡 Em andamento |
+| **3 — Evolução** | Hindsight, memória, personalização contínua | Contínua | ⬜ Pós-release |
+
+---
+
+## Decisões Consolidadas (ADR-011)
+
+| ID | Decisão | Resolução |
+|----|---------|-----------|
+| D000 | Deployment | Camadas (ADR-010) |
+| D001 | PDD como checklist | ✅ Aceita |
+| D002 | Rotinas/Automações | ✅ Criar _routines/_automations |
+| D003 | Personas | ✅ Híbrido SOUL.md + templates + script |
+| D004 | Setup-Plan vs PDD | ✅ Resolvido por ADR-010 |
+| D005 | Scripts | ✅ 3 críticos agora, 5 pós-release |
+| D006 | Memória | ✅ Camada 3 com Hindsight |
+| D007 | Backlog | ✅ Adiar pós-release |
 
 ---
 
@@ -46,15 +58,16 @@
 |---|---|---|
 | Plano PDD v1 aprovado | Semana 1 | ✅ Completo |
 | Hermes clonado e funcional | Semana 1 | ✅ Completo |
-| PDD v1 P0 (Setup) completo | Semana 1 | ✅ Completo |
-| PDD v1 P1 (Identity) completo | Semana 2 | ✅ Completo |
-| PDD v1 P2 (Memory) completo | Semana 2 | ✅ Completo |
-| PDD v1 P3 (Tools) completo | Semana 3 | ✅ Completo |
-| PDD v1 P4 (Behavior) completo | Semana 3 | ✅ Completo |
+| PDD v1 completo (P0-P6) | Semana 3 | ✅ Completo |
 | PDD v1 → v2 Retrospectiva | Semana 4 | ✅ Completo |
 | PDD v2 PLAN + Provisioner | Semana 4 | ✅ Completo |
 | Personal Artifact Workspace documentado | Semana 4 | ✅ Completo |
-| PDD v2 execução em instância limpa | — | ⬜ Pendente |
+| **Consolidação: inventário + matriz** | Semana 5 | ✅ Completo |
+| **Consolidação: decisões D000-D007** | Semana 5 | ✅ Completo |
+| **Consolidação: ADRs 010-011** | Semana 5 | ✅ Completo |
+| **Consolidação: templates + scripts v0.4** | Semana 5 | ✅ Completo |
+| **Consolidação: setup.sh atualizado** | Semana 5 | ✅ Completo |
+| Candidate-release verificado (drift audit) | — | 🟡 Em andamento |
 | Alpha "O Espelho" shipping | — | ⬜ Pendente |
 
 ---
@@ -63,16 +76,10 @@
 
 | ID | Question | Owner | Status |
 |---|---|---|---|
-| Q001 | Docker base image para tenant: usar imagem oficial do Hermes ou build custom? | @elder | ⬜ Aberta |
-| Q002 | Como modelar um approval-gate/Draft-First com enforcement real no harness sem quebrar cron, background jobs e staging privado? | @elder | ⬜ Aberta |
-
-## Pending TODOs
-
-- [ ] Modelar um gateway de aprovação vinculado a draft/fingerprint para efeitos externos do Exocórtex.
-- [ ] Decidir como esse gateway conversa com decisões futuras de harness, inclusive implantação do Exocórtex para operar bem sobre o Hermes.
-- [ ] Definir a fronteira entre staging privado permitido e emissão externa bloqueada por aprovação.
-- [ ] Usar `plans/approval-gate/IMPLEMENTATION_PLAN.md` como base de retomada e decisão arquitetural da v1.
-- [ ] Implantar um Mission Control personalizado para o Exocórtex, integrado com UI de chat e arquivos, priorizando soluções prontas e consolidadas na comunidade em vez de construir UI própria do zero.
+| Q001 | Docker vs nativo: o target é ~/exocortex nativo? | @elder | ⬜ Aberta |
+| Q002 | Approval-gate transacional: quando implementar? | @elder | ⬜ Aberta (proposta em hermes-setup/decisions/) |
+| Q003 | Profile Manutenção: criar `manut` ou sub-modo? | @elder | ⬜ Aberta |
+| Q004 | Estúdio criativo: entra no candidate-release? | @elder | ⬜ Aberta |
 
 ---
 
@@ -81,5 +88,5 @@
 | Risk | Impact | Mitigation |
 |---|---|---|
 | Hermes API muda upstream | Médio | Versionamento por tag, não por branch `main` |
-| Prompt playbook não replicável | Alto | Self-test em todo checkpoint + Provisioner Agent (dedicado) + Drift Audit v2 |
+| Prompt playbook não replicável | Alto | ADR-010: PDD como checklist + Camada 1 setup.sh |
 | sqlite-vec limites de escala | Baixo (Alpha) | Migração Qdrant planejada para Beta |

@@ -1,0 +1,46 @@
+task_id: task_YYYYMMDD_slug
+title: ""
+status: candidate  # implicit|candidate|registered|active|blocked|ready|completed|maintained|archived
+vector: execucao   # evolucao|execucao|manutencao
+
+primary_microverso: null
+related_microversos: []
+
+canvas_path: canvas.yaml
+
+personas:
+  owner: null
+  reviewers: []
+  evaluators: []
+
+artifacts: []
+routines: []
+automations: []
+
+decisions:
+  pending: []
+  resolved: []
+
+inbox_items: []
+
+approval:
+  required: false
+  reason: null
+
+evaluation:
+  required: false
+  reason: null
+  status: not_applicable  # not_applicable|pending|completed|skipped
+
+state_cycle:
+  lifecycle_state: candidate
+  maintenance_state: never_reviewed
+  content_hash: null
+  last_reviewed_hash: null
+  last_reviewed_at: null
+  last_user_touch_at: null
+  last_user_touch_session_id: null
+  skip_maintenance_if_hash_unchanged: true
+
+created_at: null
+updated_at: null
