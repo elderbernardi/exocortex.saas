@@ -61,6 +61,41 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 - **Reavaliar quando:** Debugging complexo, multi-tenant, ou SLA de performance.
 - **Prioridade:** Baixa
 
+### BKL-005: Harness Tools (5 scripts pós-RC)
+- **Origem:** ADR-011 D005
+- **Propósito:** Complementar os 3 scripts core (register_task, init_artifact, validate_manifest) com 5 scripts de manutenção e avaliação
+- **Scripts:**
+  1. `run_persona_evaluation.py` — orquestra geração de pareceres por personas do Canvas
+  2. `generate_artifact_views.py` — gera views indexadas (by_microverso, by_task, by_status, by_type)
+  3. `compute_task_state_hash.py` — hash determinístico do estado de uma tarefa
+  4. `scan_maintenance_recommendations.py` — varredura de saúde dos microversos
+  5. `sindico_maintenance_report.py` — relatório consolidado de manutenção
+- **Dependência:** Profile `manut` usa scan/sindico para rotinas automáticas
+- **Prioridade:** Média (instalação orgânica — o RC funciona sem eles, mas o ciclo completo precisa)
+- **Reavaliar quando:** Primeira rotina `manut` configurada
+
+### BKL-006: Approval-Gate Plugin (pre_tool_call)
+- **Origem:** F11 da curadoria, card kanban `t_86183f68`
+- **Propósito:** Gateway de aprovação transacional — verifica fingerprint do draft antes de executar ações externas
+- **Implementação:** Plugin Hermes `pre_tool_call` (~30 linhas)
+- **Dependência:** Requer `exocortex-draft-first` skill (já presente)
+- **Prioridade:** Média (segurança extra — o Draft-First Protocol no SOUL.md já é a primeira camada)
+- **Reavaliar quando:** Ações externas frequentes (email, deploy, publicação)
+
+### BKL-007: Context7 API Key
+- **Origem:** Configuração MCP do setup.sh
+- **Propósito:** Documentação atualizada de tech stacks (Next.js, React, etc.) via MCP
+- **API Key:** `CONTEXT7_API_KEY` (obter em https://context7.com)
+- **Setup:** Reminder criado em `$HERMES_HOME/reminders/context7-api-key.md` se ausente
+- **Prioridade:** Baixa (opcional — útil para tarefas de desenvolvimento)
+
+### BKL-008: Microversos Base Adicionais (patch system)
+- **Origem:** Decisão do executivo (2026-06-04)
+- **Propósito:** Sistema de patches para inserir microversos universais alinhados ao Exocórtex
+- **Exemplos candidatos:** Finanças pessoais, Saúde, Projetos, etc. (executivo informará)
+- **Implementação:** Diretório `patches/microversos/` no instalador, aplicados pelo setup.sh
+- **Prioridade:** Média (pós-RC, design iterativo)
+
 ---
 
 ## Resumo de Keys Necessárias
@@ -70,6 +105,8 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 | ~~`BRAVE_API_KEY` ou `TAVILY_API_KEY`~~ | ~~Web Search~~ | ~~Sim~~ | ~~Média~~ → **Resolvido (DDG + browser-use)** |
 | Google OAuth2 (Client ID + Secret) | Gmail/Calendar/Drive | N/A (acesso à conta do executivo) | Alta |
 | OTLP endpoint (opcional) | Observability remota | Depende do provider | Baixa |
+| `CONTEXT7_API_KEY` (opcional) | Tech stack docs via MCP | Sim | Baixa |
+| `OPENROUTER_API_KEY` | DocBrain + LLM routing | Sim (limites) | Alta |
 
 ---
 
@@ -79,3 +116,4 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 |---|---|
 | 2026-05-26 | Criado. MCPs 011-014 diferidos de P3 para backlog. Análise de dependência confirmou zero bloqueios para P4-P5. |
 | 2026-05-26 | BKL-002 resolvido. Instaladas skills `duckduckgo-search` + `browser-use`. Zero API keys necessárias. |
+| 2026-06-04 | BKL-005/006/007/008 adicionados. Harness tools, approval-gate, context7, microversos base. |
