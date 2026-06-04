@@ -1,0 +1,118 @@
+# =============================================================================
+# Exocórtex.IA — Dockerfile para FULL-RUN do Setup
+# =============================================================================
+# Diferente do dry-run: instala dependências reais, clona repos, testa MCPs.
+# API keys passadas como variáveis de runtime (não baked na imagem).
+#
+# Uso:
+#   docker build -t exocortex-fullrun -f Dockerfile.fullrun .
+#   docker run --rm \
+#     -e OPENROUTER_API_KEY=sk-or-v1-... \
+#     -e EXOCORTEX_ENABLE_HINDSIGHT=0 \
+#     exocortex-fullrun
+# =============================================================================
+
+FROM ubuntu:24.04
+
+LABEL maintainer="exocortex" \
+      description="Full-run environment for Exocórtex setup.sh validation"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ─── Dependências de SO (completas) ────────────────────────────────────────
+# Primeiro: ca-certificates (necessário para HTTPS/NodeSource)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Node.js 20 LTS via binário oficial (NodeSource scripts deprecated)
+RUN NODE_VERSION=20.20.2 && \
+    DPKG_ARCH=$(dpkg --print-architecture) && \
+    case "$DPKG_ARCH" in amd64) ARCH=x64;; arm64) ARCH=arm64;; *) ARCH=$DPKG_ARCH;; esac && \
+    curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${ARCH}.tar.xz" \
+      -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm /tmp/node.tar.xz && \
+    node --version && npm --version
+
+# Restante das dependências
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    git \
+    wget \
+    rsync \
+    python3 \
+    python3-pip \
+    python3-venv \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# ─── Instalar uv (para nlm CLI) ───────────────────────────────────────────
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
+
+# ─── Criar usuário não-root ────────────────────────────────────────────────
+RUN useradd -m -s /bin/bash testuser
+USER testuser
+WORKDIR /home/testuser
+
+ENV PATH="/home/testuser/.local/bin:/usr/local/bin:$PATH"
+
+# ─── Simular hermes CLI (stub funcional) ───────────────────────────────────
+RUN mkdir -p /home/testuser/.hermes/skills/exocortex \
+             /home/testuser/.hermes/profiles \
+             /home/testuser/.hermes/skill-bundles \
+             /home/testuser/.hermes/reminders \
+             /home/testuser/bin
+
+# Stub mais realista — registra operações
+RUN cat > /home/testuser/bin/hermes <<'STUB'
+#!/usr/bin/env bash
+LOG="/home/testuser/.hermes/hermes-stub.log"
+echo "[$(date +%T)] hermes $*" >> "$LOG"
+case "$1" in
+  --version) echo "hermes-stub 0.1.0 (full-run)" ;;
+  mcp)
+    case "$2" in
+      list) cat /home/testuser/.hermes/mcp-registry.txt 2>/dev/null ;;
+      add)
+        echo "$3" >> /home/testuser/.hermes/mcp-registry.txt
+        echo "Added MCP server: $3"
+        ;;
+      remove)
+        if grep -q "$3" /home/testuser/.hermes/mcp-registry.txt 2>/dev/null; then
+          sed -i "/$3/d" /home/testuser/.hermes/mcp-registry.txt
+          echo "Removed: $3"
+        else
+          echo "Not found: $3"
+        fi
+        ;;
+    esac ;;
+  skill)
+    case "$2" in
+      list) ls /home/testuser/.hermes/skills/exocortex/ 2>/dev/null ;;
+      disable) echo "Disabled: $3" ;;
+    esac ;;
+  profile)
+    case "$2" in
+      create) mkdir -p "/home/testuser/.hermes/profiles/$3" && echo "Profile created: $3" ;;
+    esac ;;
+  *) echo "hermes-stub: $*" ;;
+esac
+STUB
+RUN chmod +x /home/testuser/bin/hermes
+RUN touch /home/testuser/.hermes/mcp-registry.txt
+
+ENV PATH="/home/testuser/bin:$PATH"
+ENV HERMES_HOME="/home/testuser/.hermes"
+ENV EXOCORTEX_HOME="/home/testuser/exocortex"
+
+# ─── Copiar artifacts do instalador ────────────────────────────────────────
+COPY --chown=testuser:testuser plans/pdd_v2/artifacts/ /home/testuser/installer/
+
+# ─── Entrypoint: full-run com verificação detalhada ────────────────────────
+COPY --chown=testuser:testuser scripts/docker-fullrun-entrypoint.sh /home/testuser/entrypoint.sh
+RUN chmod +x /home/testuser/entrypoint.sh
+
+CMD ["/home/testuser/entrypoint.sh"]

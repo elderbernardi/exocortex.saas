@@ -222,7 +222,7 @@ EOF
 }
 
 configure_docbrain_engine() {
-  local docbrain_dir="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/projetos/pessoal/projetob/docbrain}"
+  local docbrain_dir="${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}"
   local repo="https://github.com/ProjetoBB/docBrainBB.git"
   if ! command -v git >/dev/null 2>&1; then
     warn "git não encontrado; pulando clone do DocBrain"
@@ -527,13 +527,29 @@ done
 echo "  Total: $SKILL_COUNT"
 
 EXPECTED_SKILLS=(
-  "acervo-manager" "acervo-llm-wiki-adapter" "exocortex-new-microverso" "exocortex-prompt-log"
-  "exocortex-self-test" "stop-slop" "taste-skill" "browser-use" "exocortex-design-system"
+  # Core
+  "exocortex-self-test" "exocortex-prompt-log" "exocortex-onboarding"
+  # Quality
+  "stop-slop" "taste-skill" "exocortex-design-system" "exocortex-output-quality-gate"
+  # Memory
+  "acervo-manager" "acervo-llm-wiki-adapter" "exocortex-new-microverso"
+  "exocortex-base-microverso-setup" "exocortex-operational-memory"
+  # Behavior
+  "exocortex-draft-first" "exocortex-vetor-ativo" "exocortex-canvas"
+  "exocortex-briefing" "exocortex-tool-governance" "exocortex-kanban-backlog"
+  # Workspace
+  "personal-artifact-workspace" "personal-intake-workspace"
+  # Production
+  "exocortex-slides" "gerador-oficios"
+  # Integration
+  "codex-harness" "codex-integration" "codex-ops-hermes" "docbrain-cli-api"
   "exocortex-notebooklm-knowledge-router" "exocortex-notebooklm-operational-workflow"
-  "exocortex-draft-first" "exocortex-vetor-ativo" "exocortex-canvas" "exocortex-briefing"
-  "exocortex-onboarding" "exocortex-output-quality-gate" "exocortex-tool-governance"
-  "personal-artifact-workspace" "personal-intake-workspace" "exocortex-operational-memory"
-  "exocortex-base-microverso-setup" "exocortex-kanban-backlog" "exocortex-slides"
+  # Platform
+  "google-drive-direct-api" "hermes-mcp-oauth-integrations" "hermes-surface-architecture"
+  # External
+  "browser-use"
+  # Assessment
+  "technical-repo-fit-assessment"
 )
 MISSING_SKILLS=()
 for skill in "${EXPECTED_SKILLS[@]}"; do
