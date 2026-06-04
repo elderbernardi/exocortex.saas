@@ -55,9 +55,55 @@ case "$OS" in
 esac
 info "Sistema: $OS_NAME ($(uname -m))"
 
-# ─── Step 2: Check dependencies ─────────────────────────────────────────────
+# ─── Step 2: Check and install dependencies ─────────────────────────────────
 info "Verificando dependências..."
 
+# Detect package manager
+PKG_MGR=""
+if command -v apt-get >/dev/null 2>&1; then
+  PKG_MGR="apt"
+elif command -v brew >/dev/null 2>&1; then
+  PKG_MGR="brew"
+elif command -v dnf >/dev/null 2>&1; then
+  PKG_MGR="dnf"
+elif command -v pacman >/dev/null 2>&1; then
+  PKG_MGR="pacman"
+fi
+
+# sudo helper: use sudo only if not root
+SUDO=""
+if [ "$(id -u)" -ne 0 ]; then
+  if command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+  fi
+fi
+
+install_packages() {
+  local pkgs=("$@")
+  if [ ${#pkgs[@]} -eq 0 ]; then return 0; fi
+
+  info "Instalando: ${pkgs[*]}..."
+  case "$PKG_MGR" in
+    apt)
+      $SUDO apt-get update -qq >/dev/null 2>&1
+      $SUDO apt-get install -y -qq "${pkgs[@]}" >/dev/null 2>&1
+      ;;
+    brew)
+      brew install "${pkgs[@]}" >/dev/null 2>&1
+      ;;
+    dnf)
+      $SUDO dnf install -y -q "${pkgs[@]}" >/dev/null 2>&1
+      ;;
+    pacman)
+      $SUDO pacman -S --noconfirm "${pkgs[@]}" >/dev/null 2>&1
+      ;;
+    *)
+      fail "Gerenciador de pacotes não detectado. Instale manualmente: ${pkgs[*]}"
+      ;;
+  esac
+}
+
+# Check core deps
 MISSING_DEPS=()
 for cmd in git curl rsync; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
@@ -65,18 +111,28 @@ for cmd in git curl rsync; do
   fi
 done
 
-if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
-  fail "Dependências faltando: ${MISSING_DEPS[*]}
-  Instale com:
-    Ubuntu/Debian: sudo apt-get install -y ${MISSING_DEPS[*]}
-    macOS:         brew install ${MISSING_DEPS[*]}"
+# Check Python 3
+PYTHON_PKGS=()
+if ! command -v python3 >/dev/null 2>&1; then
+  case "$PKG_MGR" in
+    apt) PYTHON_PKGS=(python3 python3-pip python3-venv) ;;
+    brew) PYTHON_PKGS=(python@3.11) ;;
+    dnf) PYTHON_PKGS=(python3 python3-pip) ;;
+    pacman) PYTHON_PKGS=(python python-pip) ;;
+  esac
 fi
 
-# Python 3 check
-if ! command -v python3 >/dev/null 2>&1; then
-  fail "Python 3 não encontrado. Instale Python 3.11+:
-    Ubuntu/Debian: sudo apt-get install -y python3 python3-pip python3-venv
-    macOS:         brew install python@3.11"
+# Install if anything is missing
+if [ ${#MISSING_DEPS[@]} -gt 0 ] || [ ${#PYTHON_PKGS[@]} -gt 0 ]; then
+  ALL_PKGS=("${MISSING_DEPS[@]}" "${PYTHON_PKGS[@]}")
+  install_packages "${ALL_PKGS[@]}"
+
+  # Verify after install
+  for cmd in git curl rsync python3; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+      fail "$cmd não encontrado após instalação. Instale manualmente."
+    fi
+  done
 fi
 
 log "Dependências OK (git, curl, rsync, python3)"
