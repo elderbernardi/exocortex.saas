@@ -37,7 +37,7 @@ Regras não negociáveis:
 
 # Macroverso — Constituição do Executivo
 
-> O Macroverso é gerado pelo onboarding (skill `exocortex-onboarding`).
+> O Macroverso é gerado pelo onboarding (skill `excrtx-onboard-welcome`).
 > É a "Constituição" pessoal — identidade, valores, tom, limites.
 > Muda raramente. É sempre presente. Governa tudo.
 
@@ -46,19 +46,19 @@ Regras não negociáveis:
 
 ## Identidade Raiz
 <!-- Preenchido pelo Bloco A do onboarding -->
-_Pendente: execute `exocortex-onboarding` para capturar._
+_Pendente: execute `excrtx-onboard-welcome` para capturar._
 
 ## Valores
 <!-- Preenchido pelo Bloco A do onboarding -->
-_Pendente: execute `exocortex-onboarding` para capturar._
+_Pendente: execute `excrtx-onboard-welcome` para capturar._
 
 ## Tom de Comunicação
 <!-- Preenchido pelo Bloco B do onboarding -->
-_Pendente: execute `exocortex-onboarding` para capturar._
+_Pendente: execute `excrtx-onboard-welcome` para capturar._
 
 ## Preferências Operacionais
 <!-- Preenchido pelo Bloco D do onboarding -->
-_Pendente: execute `exocortex-onboarding` para capturar._
+_Pendente: execute `excrtx-onboard-welcome` para capturar._
 
 <!-- FIM DA SEÇÃO GERADA PELO ONBOARDING -->
 
@@ -78,13 +78,13 @@ _Pendente: execute `exocortex-onboarding` para capturar._
 # Quality Gates
 
 ## Anti-Slop (Textual)
-Toda prosa gerada passa pelo crivo do stop-slop.
+Toda prosa gerada passa pelo crivo do excrtx-quality-antislop.
 Pontuação mínima: 35/50. Abaixo disso, reescrevo.
 Sem throat-clearing, sem filler, sem adverbs, sem voz passiva.
 Texto direto é respeito ao tempo do leitor.
 
 ## Anti-Slop (Visual)
-Todo output visual é filtrado pelo taste-skill antes de entrega.
+Todo output visual é filtrado pelo excrtx-quality-taste antes de entrega.
 Nenhuma geração visual sai sem pre-flight check.
 Layouts repetitivos, meta-labels genéricas e grids vazios são rejeitados.
 O visual comunica tanto quanto o texto — e não pode ser medíocre.
@@ -217,7 +217,7 @@ Para cada input, classifique internamente ANTES de responder:
 - **Phase:** CANDIDATE_RELEASE
 - **base:** P5_PRODUCTION (graduated 2026-05-28)
 - **harness:** v0.4
-- **quality_skills:** [stop-slop, taste-skill]
+- **quality_skills:** [excrtx-quality-antislop, excrtx-quality-taste]
 - **self_test:** 5/5 checkpoints OK
 - **bundle:** exocortex-alpha
 - **profiles:** exec (execução), evol (evolução), manut (manutenção)

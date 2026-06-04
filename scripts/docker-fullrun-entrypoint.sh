@@ -29,6 +29,11 @@ if [ -n "${CONTEXT7_API_KEY:-}" ]; then
 else
   echo "CONTEXT7_API_KEY:   NOT SET"
 fi
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
+  echo "TELEGRAM_BOT_TOKEN: SET (masked)"
+else
+  echo "TELEGRAM_BOT_TOKEN: NOT SET"
+fi
 
 echo ''
 echo '=== Running setup.sh ==='
@@ -119,6 +124,61 @@ echo ''
 
 echo '--- nlm CLI ---'
 which nlm 2>/dev/null && nlm --version 2>/dev/null || echo 'nlm: NOT INSTALLED (expected if uv not available)'
+echo ''
+
+echo '--- RC2: WELCOME.md ---'
+if [ -f /home/testuser/exocortex/acervo/global/knowledge/WELCOME.md ]; then
+  echo "  ✓ WELCOME.md present ($(wc -l < /home/testuser/exocortex/acervo/global/knowledge/WELCOME.md) lines)"
+else
+  echo "  ✗ WELCOME.md MISSING"
+fi
+echo ''
+
+echo '--- RC2: microverso.yaml (Estúdio Criativo) ---'
+if [ -f /home/testuser/exocortex/acervo/micro/estudio-criativo/microverso.yaml ]; then
+  echo "  ✓ microverso.yaml present"
+  grep 'name:' /home/testuser/exocortex/acervo/micro/estudio-criativo/microverso.yaml | head -1
+else
+  echo "  ✗ microverso.yaml MISSING"
+fi
+echo ''
+
+echo '--- RC2: Telegram/Google reminders ---'
+for reminder in telegram-setup google-credentials; do
+  if [ -f "/home/testuser/.hermes/reminders/${reminder}.md" ]; then
+    echo "  ✓ ${reminder}.md reminder created"
+  else
+    echo "  • ${reminder}.md not created (may be OK if creds provided)"
+  fi
+done
+echo ''
+
+echo '--- RC2: Skill naming convention ---'
+OLD_STYLE=$(find /home/testuser/.hermes/skills/exocortex -mindepth 1 -maxdepth 1 -type d ! -name 'excrtx-*' 2>/dev/null | wc -l)
+NEW_STYLE=$(find /home/testuser/.hermes/skills/exocortex -mindepth 1 -maxdepth 1 -type d -name 'excrtx-*' 2>/dev/null | wc -l)
+echo "  excrtx-* skills: $NEW_STYLE"
+echo "  non-excrtx-* skills: $OLD_STYLE"
+if [ "$OLD_STYLE" -gt 0 ]; then
+  echo "  ✗ STALE: old-style skill names detected!"
+  find /home/testuser/.hermes/skills/exocortex -mindepth 1 -maxdepth 1 -type d ! -name 'excrtx-*' -printf '    %f\n'
+else
+  echo "  ✓ All skills follow excrtx-* convention"
+fi
+echo ''
+
+echo '--- RC2: Zero stale references in key files ---'
+STALE=0
+for pattern in acervo-manager stop-slop taste-skill codex-harness exocortex-onboarding personal-artifact-workspace browser-use; do
+  if grep -rq "$pattern" /home/testuser/.hermes/skill-bundles/ /home/testuser/.hermes/profiles/ /home/testuser/.hermes/SOUL.md 2>/dev/null; then
+    echo "  ✗ Stale: $pattern"
+    STALE=$((STALE + 1))
+  fi
+done
+if [ $STALE -eq 0 ]; then
+  echo "  ✓ Zero stale references in bundle/profile/SOUL"
+else
+  echo "  ✗ $STALE stale reference patterns found"
+fi
 echo ''
 
 echo '=== FULL-RUN COMPLETE ==='

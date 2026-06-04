@@ -9,54 +9,56 @@ instruction: >-
   Manutenção antes de responder.
 skills:
   # ── Core: identidade e contrato ──────────────────────────────────────
-  - exocortex-self-test
-  - exocortex-prompt-log
-  - exocortex-onboarding
+  - excrtx-assess-selftest
+  - excrtx-harness-promptlog
+  - excrtx-onboard-welcome
+  - excrtx-onboard-interview
 
   # ── Quality: anti-slop e estética ────────────────────────────────────
-  - stop-slop
-  - taste-skill
-  - exocortex-design-system
-  - exocortex-output-quality-gate
+  - excrtx-quality-antislop
+  - excrtx-quality-taste
+  - excrtx-quality-designsys
+  - excrtx-quality-gate
 
   # ── Memory: acervo e microversos ─────────────────────────────────────
-  - acervo-manager
-  - acervo-llm-wiki-adapter
-  - exocortex-new-microverso
-  - exocortex-base-microverso-setup
-  - exocortex-operational-memory
+  - excrtx-memory-manager
+  - excrtx-memory-wikiadapt
+  - excrtx-memory-newmicro
+  - excrtx-memory-mvsetup
+  - excrtx-memory-mvinstall
+  - excrtx-memory-opsmemory
 
   # ── Behavior: vetores, canvas e governança ───────────────────────────
-  - exocortex-draft-first
-  - exocortex-vetor-ativo
-  - exocortex-canvas
-  - exocortex-briefing
-  - exocortex-tool-governance
-  - exocortex-kanban-backlog
+  - excrtx-govern-draftfirst
+  - excrtx-behavior-vetor
+  - excrtx-behavior-canvas
+  - excrtx-behavior-briefing
+  - excrtx-govern-tools
+  - excrtx-harness-kanban
 
   # ── Workspace: artefatos e intake ────────────────────────────────────
-  - personal-artifact-workspace
-  - personal-intake-workspace
+  - excrtx-produce-artifacts
+  - excrtx-memory-intake
 
   # ── Production: slides e ofícios ─────────────────────────────────────
-  - exocortex-slides
-  - gerador-oficios
+  - excrtx-produce-slides
+  - excrtx-produce-oficios
 
   # ── Integration: codex, docbrain, notebooklm ────────────────────────
-  - codex-harness
-  - codex-integration
-  - codex-ops-hermes
-  - docbrain-cli-api
-  - exocortex-notebooklm-knowledge-router
-  - exocortex-notebooklm-operational-workflow
+  - excrtx-harness-core
+  - excrtx-harness-codexint
+  - excrtx-harness-hermesops
+  - excrtx-integrate-docbrain
+  - excrtx-integrate-nlmroute
+  - excrtx-integrate-nlmops
 
   # ── Platform: drive, mcp, hermes surface ─────────────────────────────
-  - google-drive-direct-api
-  - hermes-mcp-oauth-integrations
-  - hermes-surface-architecture
+  - excrtx-integrate-gdrive
+  - excrtx-integrate-oauth
+  - excrtx-harness-surfaces
 
   # ── External: requerem tooling no host ───────────────────────────────
-  - browser-use
+  - excrtx-integrate-browser
 
   # ── Assessment: análise técnica ──────────────────────────────────────
-  - technical-repo-fit-assessment
+  - excrtx-assess-repofit

@@ -412,6 +412,16 @@ else
   fail "Acervo source não encontrado: $ACERVO_SRC"
 fi
 
+# Verificar WELCOME.md
+WELCOME_SRC="$ACERVO_SRC/global/knowledge/WELCOME.md"
+if [ -f "$WELCOME_SRC" ]; then
+  mkdir -p "$ACERVO/global/knowledge"
+  cp "$WELCOME_SRC" "$ACERVO/global/knowledge/WELCOME.md"
+  log "WELCOME.md instalado em acervo/global/knowledge/"
+else
+  warn "WELCOME.md não encontrado em $WELCOME_SRC"
+fi
+
 # Instalar templates canônicos v0.4
 TEMPLATES_SRC="$SCRIPT_DIR/acervo/global/templates/harness-v0.4"
 TEMPLATES_DST="$ACERVO/global/templates/harness-v0.4"
@@ -511,6 +521,79 @@ else
 fi
 
 # =============================================================================
+# Step 8.1: Verificação de Telegram token
+# =============================================================================
+info "Verificando Telegram gateway..."
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
+  log "TELEGRAM_BOT_TOKEN definida"
+  if command -v hermes >/dev/null 2>&1; then
+    if hermes gateway list 2>/dev/null | grep -q "telegram"; then
+      log "Gateway Telegram já configurado"
+    else
+      hermes gateway setup telegram --token "${TELEGRAM_BOT_TOKEN}" >/dev/null 2>&1 && \
+        log "Gateway Telegram configurado com token" || \
+        warn "Falha ao configurar gateway Telegram"
+    fi
+  fi
+else
+  mkdir -p "$HERMES_HOME/reminders"
+  cat > "$HERMES_HOME/reminders/telegram-setup.md" <<'EOF'
+# Configuração do Telegram pendente
+
+O Telegram é o gateway recomendado para começar.
+
+## Como configurar:
+1. Abra @BotFather no Telegram
+2. Envie /newbot e siga as instruções
+3. Copie o token fornecido
+4. Execute: TELEGRAM_BOT_TOKEN="seu_token" bash setup.sh
+   ou: hermes gateway setup telegram --token "seu_token"
+EOF
+  info "TELEGRAM_BOT_TOKEN não definida; reminder criado"
+  info "  Configure depois: TELEGRAM_BOT_TOKEN=<token> bash setup.sh"
+fi
+
+# =============================================================================
+# Step 8.2: Verificação de Google credentials
+# =============================================================================
+info "Verificando Google credentials..."
+GOOGLE_CREDS_OK=false
+if [ -f "$HOME/.config/gcloud/application_default_credentials.json" ]; then
+  GOOGLE_CREDS_OK=true
+  log "Google Application Default Credentials encontradas"
+elif [ -n "${GOOGLE_APPLICATION_CREDENTIALS:-}" ] && [ -f "${GOOGLE_APPLICATION_CREDENTIALS}" ]; then
+  GOOGLE_CREDS_OK=true
+  log "Google credentials via GOOGLE_APPLICATION_CREDENTIALS"
+elif command -v gcloud >/dev/null 2>&1; then
+  if gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>/dev/null | grep -q "@"; then
+    GOOGLE_CREDS_OK=true
+    log "Google auth ativa via gcloud CLI"
+  fi
+fi
+
+if ! $GOOGLE_CREDS_OK; then
+  mkdir -p "$HERMES_HOME/reminders"
+  cat > "$HERMES_HOME/reminders/google-credentials.md" <<'EOF'
+# Google Credentials pendentes
+
+Para integração com Gmail, Calendar e Drive (Draft-First Protocol):
+
+## Opção 1: Application Default Credentials
+```bash
+gcloud auth application-default login
+```
+
+## Opção 2: Service Account
+Exporte GOOGLE_APPLICATION_CREDENTIALS apontando para o JSON da service account.
+
+## Opção 3: OAuth2 Client
+Crie um OAuth2 Client ID no Google Cloud Console (tipo Desktop).
+EOF
+  warn "Google credentials não encontradas; reminder criado"
+  info "  Configure: gcloud auth application-default login"
+fi
+
+# =============================================================================
 # Step 9: Verificação Final
 # =============================================================================
 echo ""
@@ -527,29 +610,29 @@ done
 echo "  Total: $SKILL_COUNT"
 
 EXPECTED_SKILLS=(
-  # Core
-  "exocortex-self-test" "exocortex-prompt-log" "exocortex-onboarding"
+  # Core + Onboard
+  "excrtx-assess-selftest" "excrtx-harness-promptlog" "excrtx-onboard-welcome" "excrtx-onboard-interview"
   # Quality
-  "stop-slop" "taste-skill" "exocortex-design-system" "exocortex-output-quality-gate"
+  "excrtx-quality-antislop" "excrtx-quality-taste" "excrtx-quality-designsys" "excrtx-quality-gate"
   # Memory
-  "acervo-manager" "acervo-llm-wiki-adapter" "exocortex-new-microverso"
-  "exocortex-base-microverso-setup" "exocortex-operational-memory"
-  # Behavior
-  "exocortex-draft-first" "exocortex-vetor-ativo" "exocortex-canvas"
-  "exocortex-briefing" "exocortex-tool-governance" "exocortex-kanban-backlog"
+  "excrtx-memory-manager" "excrtx-memory-wikiadapt" "excrtx-memory-newmicro"
+  "excrtx-memory-mvsetup" "excrtx-memory-mvinstall" "excrtx-memory-opsmemory"
+  # Behavior + Govern
+  "excrtx-govern-draftfirst" "excrtx-behavior-vetor" "excrtx-behavior-canvas"
+  "excrtx-behavior-briefing" "excrtx-govern-tools" "excrtx-harness-kanban"
   # Workspace
-  "personal-artifact-workspace" "personal-intake-workspace"
+  "excrtx-produce-artifacts" "excrtx-memory-intake"
   # Production
-  "exocortex-slides" "gerador-oficios"
+  "excrtx-produce-slides" "excrtx-produce-oficios"
   # Integration
-  "codex-harness" "codex-integration" "codex-ops-hermes" "docbrain-cli-api"
-  "exocortex-notebooklm-knowledge-router" "exocortex-notebooklm-operational-workflow"
+  "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops" "excrtx-integrate-docbrain"
+  "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops"
   # Platform
-  "google-drive-direct-api" "hermes-mcp-oauth-integrations" "hermes-surface-architecture"
+  "excrtx-integrate-gdrive" "excrtx-integrate-oauth" "excrtx-harness-surfaces"
   # External
-  "browser-use"
+  "excrtx-integrate-browser"
   # Assessment
-  "technical-repo-fit-assessment"
+  "excrtx-assess-repofit"
 )
 MISSING_SKILLS=()
 for skill in "${EXPECTED_SKILLS[@]}"; do

@@ -94,6 +94,14 @@ case "$1" in
       list) ls /home/testuser/.hermes/skills/exocortex/ 2>/dev/null ;;
       disable) echo "Disabled: $3" ;;
     esac ;;
+  gateway)
+    case "$2" in
+      list) cat /home/testuser/.hermes/gateway-registry.txt 2>/dev/null ;;
+      setup)
+        echo "$3" >> /home/testuser/.hermes/gateway-registry.txt
+        echo "Gateway configured: $3"
+        ;;
+    esac ;;
   profile)
     case "$2" in
       create) mkdir -p "/home/testuser/.hermes/profiles/$3" && echo "Profile created: $3" ;;

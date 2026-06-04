@@ -33,8 +33,8 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 - **Prompt original:** 012
 - **Resolução (2026-05-26):** Instaladas duas skills complementares:
   - `duckduckgo-search` (Skills Hub oficial) — busca rápida, zero API key, CLI `ddgs`
-  - `browser-use` (skill local) — automação de Chromium para pesquisa profunda
-- **API Key:** ❌ Nenhuma necessária (DDG é gratuito, browser-use CLI não requer key)
+  - `excrtx-integrate-browser` (skill local) — automação de Chromium para pesquisa profunda
+- **API Key:** ❌ Nenhuma necessária (DDG é gratuito, excrtx-integrate-browser CLI não requer key)
 - **Status:** Ambas instaladas, habilitadas, e smoke-testadas
 
 ### BKL-003: Google Workspace
@@ -78,7 +78,7 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 - **Origem:** F11 da curadoria, card kanban `t_86183f68`
 - **Propósito:** Gateway de aprovação transacional — verifica fingerprint do draft antes de executar ações externas
 - **Implementação:** Plugin Hermes `pre_tool_call` (~30 linhas)
-- **Dependência:** Requer `exocortex-draft-first` skill (já presente)
+- **Dependência:** Requer `excrtx-govern-draftfirst` skill (já presente)
 - **Prioridade:** Média (segurança extra — o Draft-First Protocol no SOUL.md já é a primeira camada)
 - **Reavaliar quando:** Ações externas frequentes (email, deploy, publicação)
 
@@ -102,7 +102,7 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 
 | Key | Para quê | Free tier? | Prioridade |
 |---|---|---|---|
-| ~~`BRAVE_API_KEY` ou `TAVILY_API_KEY`~~ | ~~Web Search~~ | ~~Sim~~ | ~~Média~~ → **Resolvido (DDG + browser-use)** |
+| ~~`BRAVE_API_KEY` ou `TAVILY_API_KEY`~~ | ~~Web Search~~ | ~~Sim~~ | ~~Média~~ → **Resolvido (DDG + excrtx-integrate-browser)** |
 | Google OAuth2 (Client ID + Secret) | Gmail/Calendar/Drive | N/A (acesso à conta do executivo) | Alta |
 | OTLP endpoint (opcional) | Observability remota | Depende do provider | Baixa |
 | `CONTEXT7_API_KEY` (opcional) | Tech stack docs via MCP | Sim | Baixa |
@@ -115,5 +115,5 @@ Reavaliar este backlog quando qualquer condição for verdadeira:
 | Data | Ação |
 |---|---|
 | 2026-05-26 | Criado. MCPs 011-014 diferidos de P3 para backlog. Análise de dependência confirmou zero bloqueios para P4-P5. |
-| 2026-05-26 | BKL-002 resolvido. Instaladas skills `duckduckgo-search` + `browser-use`. Zero API keys necessárias. |
+| 2026-05-26 | BKL-002 resolvido. Instaladas skills `duckduckgo-search` + `excrtx-integrate-browser`. Zero API keys necessárias. |
 | 2026-06-04 | BKL-005/006/007/008 adicionados. Harness tools, approval-gate, context7, microversos base. |

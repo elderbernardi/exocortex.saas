@@ -1,0 +1,42 @@
+# microverso.yaml — manifesto de um microverso empacotado
+# Ref: ADR-016 (Microverso Package Format)
+
+apiVersion: excrtx/v1
+kind: Microverso
+metadata:
+  name: estudio-criativo
+  version: 1.0.0
+  description: "Microverso para produção criativa — slides, apresentações, design thinking, artefatos visuais e documentos com estética."
+  author: exocortex-team
+  tags: [criativo, design, slides, produção, apresentações]
+
+# Dependências
+requires:
+  skills:
+    - excrtx-produce-slides       # Geração de slides e apresentações
+    - excrtx-quality-designsys    # Design system e tokens visuais
+    - excrtx-behavior-canvas      # Canvas cognitivo para planejamento
+    - excrtx-quality-antislop     # Filtro anti-slop textual
+    - excrtx-quality-taste        # Filtro anti-slop visual
+  python_packages:
+    - python-pptx>=0.6.21         # Geração de .pptx
+  node_packages: []
+  mcps: []
+
+# Estrutura (relativa ao diretório do pacote)
+tree:
+  contracts/: "Contratos de produção criativa"
+  workflows/: "Workflows de produção (slides, docs, design)"
+  templates/: "Templates reutilizáveis (apresentações, documentos)"
+  persona/: "Personas criativas (designer, diretor de arte, editor)"
+  prompts/: "Prompts testados para produção criativa"
+  knowledge/: "Base de conhecimento (design principles, tipografia, cor)"
+  decisions/: "ADRs locais do microverso"
+  reflections/: "Meta-reflexões sobre processos criativos"
+  tools/: "Scripts utilitários (converters, validators)"
+  skills/: "Skills locais do microverso (se houver)"
+
+# Hooks (opcionais)
+hooks: {}
+  # post_install: "scripts/post_install.sh"
+  # validate: "scripts/validate.sh"
