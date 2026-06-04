@@ -20,7 +20,6 @@ upstream:
   coupling: none
 tags: [exocortex, hermes, setup, harness, canvas, tasks, artifacts, evaluation]
 ---
-
 # Plano de Setup Hermes — Harness Exocórtex v0.4
 
 > Para Hermes/Exocórtex: este workflow transforma a arquitetura `micro/harness-project/knowledge/exocortex-harness-v0.4/` em trilha de implementação reproduzível.
@@ -94,26 +93,27 @@ acervo/global/templates/exocortex-harness-v0.4/
 Ajustar ou criar skills para refletir v0.4:
 
 1. `exocortex-vetor-ativo`
-   - Vetores: Evolução, Execução, Manutenção.
 
+   - Vetores: Evolução, Execução, Manutenção.
 2. `exocortex-canvas`
+
    - Canvas como abstração da intenção.
    - Tarefa dominante/latente.
    - Campo `evaluation`.
    - Persistência em `canvas.yaml` quando tarefa for registrada.
-
 3. `personal-artifact-workspace`
+
    - Modelo 2 com `_artifacts/items/`.
    - Inbox separado.
    - Friendly filenames.
    - Avaliação por personas.
    - Pergunta de publicação quando ready/approved.
-
 4. `exocortex-output-quality-gate`
+
    - Separar Quality Gate de Avaliação.
    - Quality Gate como piso mínimo.
-
 5. Nova skill candidata: `exocortex-harness-v0.4`
+
    - Procedimento de ponta a ponta.
 
 ## Etapa 4 — Criar ferramentas mínimas
@@ -206,21 +206,22 @@ Gera relatório de manutenção:
 Rotinas iniciais recomendadas:
 
 1. `rtn_weekly_pending_decisions`
+
    - Persona: Síndico
    - Frequência: semanal
    - Output: relatório de decisões pendentes
-
 2. `rtn_artifact_quality_audit`
+
    - Persona: Auditor
    - Frequência: semanal
    - Output: artefatos sem receipt/hash/avaliação
-
 3. `rtn_inbox_triage`
-   - Persona: Arquivista
-   - Frequência: sob demanda ou diária se inbox compartilhado for usado
-   - Output: sugestões de promoção para tarefa/microverso/artefato
 
+   - Persona: Arquivista
+   - Frequência: sob demanda ou diária se inbox compartilhado for usadoa
+   - Output: sugestões de promoção para tarefa/microverso/artefato
 4. `rtn_ready_artifact_publication_prompt`
+
    - Persona: Operador
    - Gatilho: artefato status `ready|approved`
    - Output: pergunta ao usuário sobre publicação
@@ -262,7 +263,6 @@ Estado v0.4:
 ```text
 /home/elder/.hermes/acervo/micro/harness-project/knowledge/exocortex-harness-v0.4/README.md
 ```
-
 
 ## Critérios adicionais incorporados dos TODOs
 
