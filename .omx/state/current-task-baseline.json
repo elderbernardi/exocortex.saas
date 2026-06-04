@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "branch_name": "main",
+      "worktree_path": "/home/elder/projetos/pessoal/exocortex.saas",
+      "status": "active",
+      "created_at": "2026-05-27T03:58:42.788Z",
+      "updated_at": "2026-05-30T19:24:50.004Z"
+    }
+  ]
+}
