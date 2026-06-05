@@ -11,7 +11,7 @@ triggers:
   - "screenshot page"
   - "extract from page"
 priority: P2
-setup: scripts/excrtx-integrate-browser.sh
+setup: scripts/browser-use.sh
 ---
 
 # Browser-Use CLI Skill
@@ -25,30 +25,30 @@ This skill requires external tools. The wrapper script **auto-installs** everyth
 | Dependency | How it's resolved | Manual fallback |
 |---|---|---|
 | `uv` | Must be pre-installed | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| `excrtx-integrate-browser` CLI | Auto-installed via `uv tool install --python 3.13 excrtx-integrate-browser` | Same command |
-| Chromium browser | Auto-downloaded via `excrtx-integrate-browser install` | `~/.local/bin/excrtx-integrate-browser install` |
-| System libs (fonts, etc.) | Needs `sudo` — may fail silently | `sudo ~/.local/bin/excrtx-integrate-browser install` |
+| `browser-use` CLI | Auto-installed via `uv tool install --python 3.13 browser-use` | Same command |
+| Chromium browser | Auto-downloaded via `browser-use install` | `~/.local/bin/browser-use install` |
+| System libs (fonts, etc.) | Needs `sudo` — may fail silently | `sudo ~/.local/bin/browser-use install` |
 | `OPENROUTER_API_KEY` | Required only for Python Agent mode | Set in `.env` or shell |
 
-> **⚠️ PATH caveat:** The `mise` shim resolves `excrtx-integrate-browser` to Python 3.14 (asyncio incompatible). **Always invoke via the wrapper script or `~/.local/bin/excrtx-integrate-browser`**, never the bare command.
+> **⚠️ PATH caveat:** The `mise` shim may resolve `browser-use` to Python 3.14 (asyncio incompatible). **Always invoke via the wrapper script or `~/.local/bin/browser-use`**, never an unverified shim.
 
 ### First-time run
 
 ```bash
 # The wrapper handles everything — just run it:
-.agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh open https://example.com
+skills/excrtx-integrate-browser/scripts/browser-use.sh open https://example.com
 ```
 
 On first execution it will:
 1. Verify `uv` exists
-2. Install `excrtx-integrate-browser` CLI (pinned to Python 3.13)
+2. Install `browser-use` CLI (pinned to Python 3.13)
 3. Download Chromium if missing
 4. Forward your command
 
 ## Quick Start Workflow
 
 ```bash
-BU=".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh"
+BU="skills/excrtx-integrate-browser/scripts/browser-use.sh"
 
 # 1. Navigate
 $BU open <url>
@@ -123,7 +123,7 @@ $BU close
 
 ### Research Pattern
 ```bash
-BU=".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh"
+BU="skills/excrtx-integrate-browser/scripts/browser-use.sh"
 $BU open https://example.com/search
 $BU state
 $BU input 3 "search query"
@@ -137,7 +137,7 @@ $BU close
 
 ### Form Fill Pattern
 ```bash
-BU=".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh"
+BU="skills/excrtx-integrate-browser/scripts/browser-use.sh"
 $BU open https://example.com/form
 $BU state
 $BU input 1 "John Doe"
@@ -151,7 +151,7 @@ $BU close
 
 ### Data Extraction Pattern
 ```bash
-BU=".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh"
+BU="skills/excrtx-integrate-browser/scripts/browser-use.sh"
 $BU open https://example.com/data
 $BU state
 $BU get html --selector "table"
