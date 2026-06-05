@@ -1,0 +1,33 @@
+slug: exocortex-ops
+name: Exocortex Ops
+type: domain
+description: Setup, operação, manutenção, diagnóstico e evolução do Exocórtex.IA sobre Hermes Agent.
+created: 2026-06-05
+status: active
+canonical: true
+scope:
+  layer: micro
+  mode: ops
+owners:
+  - Exocórtex.IA
+contracts:
+  draft_first_required_for:
+    - setup_sh
+    - profiles
+    - skills_install
+    - mcp_changes
+    - cron_changes
+    - provider_changes
+    - external_actions
+natures:
+  - context
+  - knowledge
+  - contracts
+  - prompts
+  - skills
+  - workflows
+  - tools
+  - templates
+  - decisions
+  - reflections
+  - persona

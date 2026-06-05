@@ -356,6 +356,8 @@ mkdir -p "$EXOCORTEX_HOME"
 mkdir -p "$ACERVO/macro/assets"
 mkdir -p "$ACERVO/global"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
 mkdir -p "$ACERVO/micro/_template"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+mkdir -p "$ACERVO/micro/exocortex-ops"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+mkdir -p "$ACERVO/micro/exocortex-ops/_meta"/{snapshots,drafts,indices}
 mkdir -p "$ACERVO/shared"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive,cross-refs}
 
 # Diretórios operacionais v0.4 (harness canônico)
@@ -405,8 +407,39 @@ info "Instalando acervo..."
 
 ACERVO_SRC="$SCRIPT_DIR/acervo"
 
+copy_acervo_seed() {
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a \
+      --exclude '__pycache__' \
+      --exclude 'micro/exocortex-ops/***' \
+      "$ACERVO_SRC/" "$ACERVO/"
+  else
+    warn "rsync não encontrado; cópia genérica do Acervo pulada para evitar overwrite acidental"
+  fi
+}
+
+provision_exocortex_ops_seed() {
+  local ops_src="$ACERVO_SRC/micro/exocortex-ops"
+  local ops_dst="$ACERVO/micro/exocortex-ops"
+
+  mkdir -p "$ops_dst"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+  mkdir -p "$ops_dst/_meta"/{snapshots,drafts,indices}
+
+  if [ -d "$ops_src" ]; then
+    if command -v rsync >/dev/null 2>&1; then
+      rsync -a --ignore-existing --exclude '__pycache__' "$ops_src/" "$ops_dst/"
+      log "Microverso base exocortex-ops instalado/preservado"
+    else
+      warn "rsync não encontrado; exocortex-ops seed não copiado para evitar overwrite acidental"
+    fi
+  else
+    warn "Microverso base exocortex-ops source não encontrado: $ops_src"
+  fi
+}
+
 if [ -d "$ACERVO_SRC" ]; then
-  rsync -a --exclude '__pycache__' "$ACERVO_SRC/" "$ACERVO/" 2>/dev/null || cp -r "$ACERVO_SRC"/* "$ACERVO/" 2>/dev/null || true
+  copy_acervo_seed
+  provision_exocortex_ops_seed
   log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
 else
   fail "Acervo source não encontrado: $ACERVO_SRC"
@@ -655,6 +688,45 @@ for layer in macro global micro shared; do
     echo "  ✓ $layer/: $count arquivos"
   else
     echo "  ✗ $layer/ (MISSING)"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+echo ""
+
+echo "Microverso base exocortex-ops:"
+if [ -d "$ACERVO/micro/exocortex-ops" ]; then
+  echo "  ✓ micro/exocortex-ops/"
+else
+  echo "  ✗ micro/exocortex-ops/ (MISSING)"
+  ERRORS=$((ERRORS + 1))
+fi
+EXPECTED_OPS_FILES=(
+  "microverso.yaml"
+  "_meta/SCHEMA.md"
+  "_meta/index.md"
+  "_meta/log.md"
+  "contracts/operating-boundaries.md"
+  "contracts/profile-isolation.md"
+  "contracts/canonical-path-policy.md"
+  "contracts/draftfirst-change-policy.md"
+  "contracts/secret-handling-policy.md"
+  "contracts/memory-authority-policy.md"
+  "contracts/runtime-verification-policy.md"
+  "contracts/rollback-policy.md"
+  "workflows/setup-change-draftfirst.md"
+  "workflows/runtime-drift-audit.md"
+  "workflows/self-check.md"
+  "workflows/base-microverse-provisioning.md"
+  "workflows/post-change-validation.md"
+  "knowledge/runtime-map.md"
+  "knowledge/profile-registry.md"
+  "knowledge/mcp-registry.md"
+  "knowledge/cron-registry.md"
+  "knowledge/version-matrix.md"
+)
+for f in "${EXPECTED_OPS_FILES[@]}"; do
+  if [ ! -f "$ACERVO/micro/exocortex-ops/$f" ]; then
+    echo "  ✗ micro/exocortex-ops/$f (MISSING)"
     ERRORS=$((ERRORS + 1))
   fi
 done
