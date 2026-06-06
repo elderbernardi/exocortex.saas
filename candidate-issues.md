@@ -1,8 +1,31 @@
 # Candidate Issues — consolidação inicial
 
-> Status: rascunho local para triagem manual posterior no GitHub.
+> Status: ✅ **PROMOVIDAS** em 2026-06-06. Todas as candidatas foram processadas.
 > Origem: notas soltas desta sessão, links enviados pelo executivo e screenshot operacional.
-> Objetivo: transformar o backlog bruto em issues já classificadas, com recorte inicial, contexto e critério de aceite.
+>
+> **Resultado da promoção:**
+> - **5 complementaram issues existentes:** #3, #9, #11
+> - **10 issues novas criadas:** #22–#31
+> - **1 descartada:** §16 (Imagem: codex) — removida por ambiguidade
+>
+> | Candidata | Ação | Issue |
+> |---|---|---|
+> | §1 Hermes Workspace | Complemento | [#3](https://github.com/elderbernardi/exocortex.saas/issues/3) |
+> | §2 Hermes Desktop | Complemento | [#3](https://github.com/elderbernardi/exocortex.saas/issues/3) |
+> | §3 Syncthing | Nova | [#22](https://github.com/elderbernardi/exocortex.saas/issues/22) |
+> | §4 Terrarium | Nova | [#23](https://github.com/elderbernardi/exocortex.saas/issues/23) |
+> | §5 Firecrawl | Complemento | [#9](https://github.com/elderbernardi/exocortex.saas/issues/9) |
+> | §6 gcloud | Nova | [#24](https://github.com/elderbernardi/exocortex.saas/issues/24) |
+> | §7 Hindsight | Nova | [#25](https://github.com/elderbernardi/exocortex.saas/issues/25) |
+> | §8 Multiagentes | Nova | [#26](https://github.com/elderbernardi/exocortex.saas/issues/26) |
+> | §9 Namespace drift | Nova | [#27](https://github.com/elderbernardi/exocortex.saas/issues/27) |
+> | §10 Ruído UI web | Complemento | [#3](https://github.com/elderbernardi/exocortex.saas/issues/3) |
+> | §11 Telegram sudo | Nova | [#28](https://github.com/elderbernardi/exocortex.saas/issues/28) |
+> | §12 Roteador modelos | Nova | [#29](https://github.com/elderbernardi/exocortex.saas/issues/29) |
+> | §13 ring-2.6-1t:free | Nova | [#30](https://github.com/elderbernardi/exocortex.saas/issues/30) |
+> | §14 Reddit learnings | Nova | [#31](https://github.com/elderbernardi/exocortex.saas/issues/31) |
+> | §15 DocBrain drift | Complemento | [#11](https://github.com/elderbernardi/exocortex.saas/issues/11) |
+
 
 ## Convenção sugerida de classificação
 
@@ -20,18 +43,22 @@
 - **Fonte:** https://hermes-workspace.com/
 
 ### Título sugerido
+
 Documentar Hermes Workspace e definir onde ele entra no fluxo do Exocórtex
 
 ### Contexto
+
 Precisamos avaliar o papel do Hermes Workspace dentro do pacote `exocortex.saas`: o que ele resolve, onde complementa o runtime Hermes, quais dependências exige e como isso deve aparecer em docs, features e setup.
 
 ### Escopo inicial
+
 - Ler e resumir o Hermes Workspace
 - Mapear relação com Hermes Dashboard / Web UI / artifacts
 - Definir se entra como integração oficial, opcional ou apenas referência
 - Atualizar documentação canônica se a integração fizer sentido
 
 ### Critérios de aceite
+
 - Há nota técnica objetiva com prós, contras e encaixe arquitetural
 - Há decisão explícita: adotar, adiar ou rejeitar
 - Se adotado, há ponto de entrada claro em docs/setup
@@ -46,18 +73,22 @@ Precisamos avaliar o papel do Hermes Workspace dentro do pacote `exocortex.saas`
 - **Fonte:** https://hermes-agent.nousresearch.com/docs/user-guide/desktop
 
 ### Título sugerido
+
 Adicionar suporte documental ao Hermes Desktop e clarificar seu papel no setup do Exocórtex
 
 ### Contexto
+
 O projeto já documenta várias superfícies do Hermes, mas falta explicitar como o modo Desktop se encaixa no fluxo operacional do Exocórtex, quando preferi-lo e quais trade-offs ele traz frente ao dashboard/web/CLI.
 
 ### Escopo inicial
+
 - Extrair capabilities e limitações do modo Desktop
 - Comparar com CLI e dashboard atual
 - Atualizar README/FEATURES/setup se houver lacuna
 - Registrar quando usar Desktop e quando não usar
 
 ### Critérios de aceite
+
 - A documentação cita Hermes Desktop de forma consistente
 - O papel do Desktop no stack fica claro
 - Não há ambiguidade entre dashboard, web UI e Desktop
@@ -72,18 +103,22 @@ O projeto já documenta várias superfícies do Hermes, mas falta explicitar com
 - **Fonte:** https://syncthing.net/
 
 ### Título sugerido
+
 Avaliar Syncthing como alternativa ao Google Drive para sincronização de artefatos e drafts
 
 ### Contexto
+
 Há interesse em uma alternativa ao Drive. O ponto não é só sync de arquivos, mas entender se Syncthing serve para drafts editáveis, transporte entre máquinas e artefatos locais sem quebrar a separação entre Acervo, superfícies externas e receipts.
 
 ### Escopo inicial
+
 - Comparar Syncthing vs Drive no modelo do Exocórtex
 - Identificar riscos de sincronizar conteúdo cognitivo indevidamente
 - Definir se serve para artifacts, drafts, inbox ou apenas transporte local
 - Registrar limites de segurança, conflito e versionamento
 
 ### Critérios de aceite
+
 - Existe avaliação comparativa objetiva
 - Há recomendação de uso ou rejeição por caso de uso
 - Se aprovado, existe proposta de fluxo operacional compatível com `excrtx-produce-artifacts`
@@ -98,18 +133,22 @@ Há interesse em uma alternativa ao Drive. O ponto não é só sync de arquivos,
 - **Fonte:** https://github.com/terion-name/terrarium
 
 ### Título sugerido
+
 Avaliar Terrarium e decidir se ele agrega valor real ao ambiente local do Exocórtex
 
 ### Contexto
+
 O link foi marcado como candidato a documentação/integração. Falta definir se o Terrarium resolve um problema real do `exocortex.saas` ou se é apenas ferramenta interessante sem encaixe imediato.
 
 ### Escopo inicial
+
 - Entender o produto e seu modelo operacional
 - Mapear ganhos potenciais para isolamento, ambiente local ou workflow
 - Comparar com o que já existe no setup atual
 - Registrar decisão de adoção ou descarte
 
 ### Critérios de aceite
+
 - Existe análise curta e verificável
 - Há decisão explícita com justificativa
 - Se adotado, há plano mínimo de integração documental/técnica
@@ -123,18 +162,22 @@ O link foi marcado como candidato a documentação/integração. Falta definir s
 - **Área:** `integration`, `hermes`
 
 ### Título sugerido
+
 Instalar/configurar Firecrawl localmente e documentar o fluxo operacional no Exocórtex
 
 ### Contexto
+
 O setup do Firecrawl está pendente. Isso precisa sair do estado implícito e virar procedimento reproduzível: dependências, autenticação, forma de chamada e onde ele entra no stack de coleta/pesquisa.
 
 ### Escopo inicial
+
 - Instalar ou preparar setup local do Firecrawl
 - Validar funcionamento mínimo
 - Registrar pré-requisitos e pitfalls
 - Atualizar docs/skills relevantes
 
 ### Critérios de aceite
+
 - O setup pode ser reproduzido em outra máquina
 - Há smoke test mínimo documentado
 - O papel do Firecrawl no ecossistema fica claro
@@ -148,18 +191,22 @@ O setup do Firecrawl está pendente. Isso precisa sair do estado implícito e vi
 - **Área:** `google`, `integration`
 
 ### Título sugerido
+
 Instalar `gcloud` e fechar o fluxo de autenticação Google usado pelo Exocórtex
 
 ### Contexto
+
 Foi identificado que `gcloud` não está instalado, bloqueando ou degradando o login Google. Isso impacta especialmente Google Workspace e qualquer fluxo que dependa de credenciais locais coerentes.
 
 ### Escopo inicial
+
 - Instalar `gcloud`
 - Validar login/autenticação local
 - Verificar compatibilidade com as skills de Google Workspace
 - Atualizar docs de setup para evitar drift futuro
 
 ### Critérios de aceite
+
 - `gcloud` está disponível e funcional
 - O fluxo de login Google está documentado
 - O caminho recomendado no projeto bate com o runtime real
@@ -173,18 +220,22 @@ Foi identificado que `gcloud` não está instalado, bloqueando ou degradando o l
 - **Área:** `memory`, `hermes`
 
 ### Título sugerido
+
 Configurar Hindsight como memory provider padrão e documentar credenciais no setup
 
 ### Contexto
+
 Foi anotado que Hindsight não está configurado e que o projeto deveria usar `hermes config set memory.provider hindsight`, seguido de configuração em `.hermes/.env`.
 
 ### Escopo inicial
+
 - Validar suporte a Hindsight no ambiente atual
 - Configurar provider de memória
 - Registrar variáveis/credenciais exigidas
 - Atualizar setup e documentação operacional
 
 ### Critérios de aceite
+
 - O provider ativo pode ser verificado no runtime
 - O caminho de configuração está documentado
 - Não há instruções contraditórias entre docs e ambiente real
@@ -198,18 +249,22 @@ Foi anotado que Hindsight não está configurado e que o projeto deveria usar `h
 - **Área:** `hermes`, `exocortex`
 
 ### Título sugerido
+
 Documentar a habilitação de multiagentes e definir seu papel no harness do Exocórtex
 
 ### Contexto
+
 Foi anotado que a `multiagents skill` já foi habilitada. Falta verificar o que isso altera no comportamento esperado, quais workflows passam a existir e como evitar sobreposição com mecanismos nativos de delegação.
 
 ### Escopo inicial
+
 - Auditar o que foi habilitado de fato
 - Mapear diferenças entre skill, tool de delegação e profiles
 - Documentar casos de uso válidos e armadilhas
 - Atualizar README/FEATURES/skills, se necessário
 
 ### Critérios de aceite
+
 - Está claro o que foi habilitado e por quê
 - Há recomendação de uso e não uso
 - Não sobra ambiguidade entre multiagent skill e delegação nativa
@@ -223,18 +278,22 @@ Foi anotado que a `multiagents skill` já foi habilitada. Falta verificar o que 
 - **Área:** `exocortex`, `hermes`
 
 ### Título sugerido
+
 Corrigir inconsistência entre `Skills list exocortex` e o namespace canônico `excrtx`
 
 ### Contexto
+
 Foi anotado que o Hermes está usando “Skills list exocortex” e que talvez o namespace correto devesse aparecer como `excrtx`. Isso sugere drift de nomenclatura, packaging ou documentação.
 
 ### Escopo inicial
+
 - Auditar nomes de skill no repositório, setup e runtime
 - Verificar aliases, paths de instalação e listagem final
 - Corrigir docs/scripts que induzem nomenclatura errada
 - Garantir consistência entre catálogo, install e uso real
 
 ### Critérios de aceite
+
 - A listagem final de skills usa a convenção decidida
 - Docs, scripts e runtime convergem
 - O usuário não encontra dois nomes concorrentes para a mesma família
@@ -248,18 +307,22 @@ Foi anotado que o Hermes está usando “Skills list exocortex” e que talvez o
 - **Área:** `ui`, `hermes`, `exocortex`
 
 ### Título sugerido
+
 Limpar a saída do setup final e reduzir ruído operacional exposto na UI web
 
 ### Contexto
+
 Foi registrado que o setup final deveria omitir mais “saída suja” na UI web. Isso aponta problema de acabamento: logs, mensagens intermediárias ou detalhes internos vazando para a superfície de uso.
 
 ### Escopo inicial
+
 - Identificar exatamente quais saídas poluem a UI
 - Separar log operacional de output voltado ao usuário
 - Ajustar scripts/templates/superfícies para reduzir ruído
 - Preservar depuração sem degradar a experiência principal
 
 ### Critérios de aceite
+
 - A UI web fica mais limpa em fluxos comuns
 - Logs úteis continuam disponíveis fora da superfície principal
 - O setup final não expõe barulho desnecessário ao operador
@@ -273,18 +336,22 @@ Foi registrado que o setup final deveria omitir mais “saída suja” na UI web
 - **Área:** `telegram`, `hermes`, `infra`
 
 ### Título sugerido
+
 Mapear comportamento do gateway Telegram com `sudo` e com múltiplas instâncias Hermes na mesma máquina
 
 ### Contexto
+
 Há uma dúvida operacional crítica: como fica o Telegram quando o processo roda com `sudo` e quando existem múltiplos Hermes/perfis/instâncias no mesmo host. Isso pode afetar isolamento, roteamento, credenciais e estado do gateway.
 
 ### Escopo inicial
+
 - Testar ou documentar impacto de `sudo`
 - Entender onde o estado do gateway fica armazenado
 - Mapear riscos de conflito entre instâncias/perfis
 - Propor recomendação operacional segura
 
 ### Critérios de aceite
+
 - Há resposta clara para o cenário com `sudo`
 - Há orientação explícita para múltiplos Hermes na mesma máquina
 - Os riscos de colisão de estado ficam documentados
@@ -298,12 +365,15 @@ Há uma dúvida operacional crítica: como fica o Telegram quando o processo rod
 - **Área:** `models`, `integration`
 
 ### Título sugerido
+
 Criar roteador determinístico de modelos free do OpenRouter usando ranking externo e fallback por competência
 
 ### Contexto
+
 Foi pedido um software/skill que use apenas modelos free do OpenRouter, com fallback por ordem de competência, usando o ranking já pronto do “fox in the box” no GitHub. A implementação deve fazer parsing sem LLM e setar o modelo automaticamente.
 
 ### Escopo inicial
+
 - Encontrar e fixar a fonte canônica do ranking
 - Definir parser determinístico, sem LLM
 - Mapear estratégia de fallback por competência/capacidade
@@ -311,6 +381,7 @@ Foi pedido um software/skill que use apenas modelos free do OpenRouter, com fall
 - Documentar atualização e critérios de refresh do ranking
 
 ### Critérios de aceite
+
 - O ranking é obtido/parsiado sem LLM
 - O sistema decide ordem de fallback de forma reprodutível
 - O modelo ativo pode ser configurado automaticamente
@@ -326,18 +397,22 @@ Foi pedido um software/skill que use apenas modelos free do OpenRouter, com fall
 - **Fonte:** https://openrouter.ai/inclusionai/ring-2.6-1t:free
 
 ### Título sugerido
+
 Avaliar `inclusionai/ring-2.6-1t:free` para uso no stack de modelos gratuitos
 
 ### Contexto
+
 O modelo foi indicado como candidato. Antes de entrar no roteamento automático, precisamos classificá-lo: chat, tool use, custo/limites, contexto, qualidade e posição relativa frente às outras opções free.
 
 ### Escopo inicial
+
 - Levantar capacidades declaradas
 - Testar encaixe no papel de modelo principal ou fallback
 - Registrar limitações relevantes
 - Indicar posição no ranking local
 
 ### Critérios de aceite
+
 - Há ficha objetiva do modelo
 - Existe recomendação clara de uso, fallback ou descarte
 - O modelo não entra no stack por impressão informal
@@ -355,18 +430,22 @@ O modelo foi indicado como candidato. Antes de entrar no roteamento automático,
   - `docs/research/reddit/hermesagent-one-month-lessons.md`
 
 ### Título sugerido
+
 Converter aprendizados de usuários do Hermes em decisões e documentação acionável no Exocórtex
 
 ### Contexto
+
 Já existe material consolidado no repositório com lições de uso real do Hermes. O próximo passo é decidir o que deve virar documentação oficial, backlog, guardrail de setup ou anti-pattern explícito.
 
 ### Escopo inicial
+
 - Ler os links e confrontar com a pesquisa já salva
 - Extrair aprendizados aplicáveis ao Exocórtex
 - Promover o que for estrutural para docs, setup ou skills
 - Registrar o que fica só como observação de pesquisa
 
 ### Critérios de aceite
+
 - Os achados relevantes viram ação ou documentação concreta
 - Anti-patterns importantes ficam explicitados
 - O material não fica perdido apenas em pesquisa bruta
@@ -381,18 +460,22 @@ Já existe material consolidado no repositório com lições de uso real do Herm
 - **Fonte operacional:** screenshot desta sessão
 
 ### Título sugerido
+
 Resolver drift do DocBrain entre skill, documentação, reminder e runtime
 
 ### Contexto
+
 O screenshot indica um problema real de governança operacional: a skill/documentação aponta para um path canônico desatualizado, existe uma cópia alternativa em `/home/elder/projetos/projetob/docbrain` com comando `api` fora do contrato esperado e o reminder de credenciais/chave está stale.
 
 ### Escopo inicial
+
 - Definir qual instância do DocBrain é a canônica
 - Auditar paths, scripts e comandos aceitos
 - Corrigir reminder/credenciais/documentação
 - Alinhar runtime real com o contrato documentado
 
 ### Critérios de aceite
+
 - Existe uma única referência canônica para DocBrain
 - Skill, docs e runtime convergem
 - O reminder deixa de apontar para estado obsoleto
@@ -400,36 +483,15 @@ O screenshot indica um problema real de governança operacional: a skill/documen
 
 ---
 
-## 16) Clarificar o item “Imagem: codex” e transformá-lo em decisão acionável
-
-- **Tipo:** `research`
-- **Prioridade:** `P3`
-- **Área:** `models`, `ui`
-
-### Título sugerido
-Esclarecer o significado operacional de “Imagem: codex” no backlog desta sessão
-
-### Contexto
-A anotação “Imagem: codex” foi registrada, mas ainda não está semanticamente clara o suficiente para implementação direta. Pode ser referência a visual, branding, screenshot, modelo ou fluxo envolvendo Codex.
-
-### Escopo inicial
-- Recuperar o contexto exato do item
-- Definir se é tema visual, integração, branding ou modelo
-- Reescrever em formato implementável
-
-### Critérios de aceite
-- O item deixa de ser ambíguo
-- Vira issue concreta ou é descartado com justificativa
-
----
-
 ## Ordem sugerida de ataque
 
 ### P0
+
 1. Corrigir drift operacional do DocBrain
 2. Construir roteador determinístico de modelos free do OpenRouter
 
 ### P1
+
 3. Setup local do Firecrawl
 4. Instalar `gcloud` e fechar login Google
 5. Configurar Hindsight como memory provider
@@ -439,6 +501,7 @@ A anotação “Imagem: codex” foi registrada, mas ainda não está semanticam
 9. Avaliar Syncthing como alternativa ao Drive
 
 ### P2
+
 10. Documentar Hermes Workspace
 11. Documentar Hermes Desktop
 12. Avaliar Terrarium
@@ -447,6 +510,7 @@ A anotação “Imagem: codex” foi registrada, mas ainda não está semanticam
 15. Avaliar `inclusionai/ring-2.6-1t:free`
 
 ### P3
+
 16. Clarificar “Imagem: codex”
 
 ---
