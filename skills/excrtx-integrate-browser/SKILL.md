@@ -1,6 +1,7 @@
 ---
 name: excrtx-integrate-browser
 description: Autonomous browser automation via CLI. Navigate, interact, extract data from web pages. Use when agents need to perform web research, fill forms, scrape content, or automate browser-based workflows.
+version: 1.0.0
 triggers:
   - "browse"
   - "open website"

@@ -11,12 +11,23 @@
 ## Fluxo mínimo recomendado
 
 ```bash
+nlm --version
 nlm login --check
 nlm notebook create "<tema>"
 nlm research start "<tema e foco>" --source web --mode fast --notebook-id <id> --auto-import
 nlm source list <id> --full
 nlm notebook query <id> "<pergunta principal>" --json
 ```
+
+## Troubleshooting observado no runtime
+
+- Se `nlm login --check` retornar `HTTP 400 Bad Request`, não assumir imediatamente que o MCP está saudável só porque `hermes mcp test notebooklm` conecta.
+- `hermes mcp test` confirma transporte stdio e descoberta de tools; não valida operação autenticada.
+- Ordem recomendada de reparo:
+  1. recarregar tokens locais;
+  2. repetir `nlm login --check`;
+  3. refazer `nlm login`;
+  4. se a CLI estiver defasada em relação ao release atual, atualizar `notebooklm-mcp-cli` pela via oficial (`uv tool upgrade notebooklm-mcp-cli`).
 
 ## Regra de ingestão quando não há fontes
 

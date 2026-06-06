@@ -1,6 +1,7 @@
 ---
 name: excrtx-integrate-oauth
 description: Configure and validate remote MCP servers in Hermes when the provider uses HTTP transport plus OAuth, then document the integration cleanly for future reuse.
+version: 1.0.0
 triggers:
   - User wants to connect Hermes to a remote MCP server over HTTP.
   - Provider docs mention OAuth or PKCE instead of static headers.

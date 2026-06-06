@@ -13,13 +13,13 @@ https://github.com/ProjetoBB/docBrainBB.git
 ## Default install path
 
 ```bash
-${EXOCORTEX_DOCBRAIN_DIR:-$HOME/projetos/pessoal/projetob/docbrain}
+${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}
 ```
 
 ## Install sequence
 
 ```bash
-DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/projetos/pessoal/projetob/docbrain}"
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
 mkdir -p "$(dirname "$DOCBRAIN_DIR")"
 
 if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
@@ -66,7 +66,8 @@ DocBrain is installed, but no main Hermes LLM key was available during setup.
 When the key exists, configure it as OPENROUTER_API_KEY in the Hermes environment. DocBrain will reuse it automatically.
 
 Validation:
-cd "$HOME/projetos/pessoal/projetob/docbrain"
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api health --output json
 EOF
 ```
@@ -80,11 +81,11 @@ When documenting or changing DocBrain setup, update all three layers:
    - `docs/CLI-API-CONTRACT.md`
    - `docs/EXOCORTEX-INSTALLATION.md`
 2. Hermes local skill:
-   - `~/.hermes/skills/exocortex/docbrain-cli-api/SKILL.md`
+   - `~/.hermes/skills/exocortex/excrtx-integrate-docbrain/SKILL.md`
 3. Setup microverso in the Acervo:
-   - `~/.hermes/acervo/micro/hermes-setup/tools/docbrain-cli-api.md`
+   - `~/.hermes/acervo/micro/hermes-setup/tools/excrtx-integrate-docbrain.md`
    - `~/.hermes/acervo/micro/hermes-setup/workflows/install-docbrain-parser-engine.md`
-   - `~/.hermes/acervo/micro/hermes-setup/skills/docbrain-cli-api.md`
+   - `~/.hermes/acervo/micro/hermes-setup/skills/excrtx-integrate-docbrain.md`
    - update `index.md`, `log.md`, and `workflows/replicable-exocortex-setup.md`
 
 The Acervo setup microverso is not optional: it is the reproducibility record for future Exocortex installs.

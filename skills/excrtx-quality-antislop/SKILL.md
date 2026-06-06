@@ -1,6 +1,7 @@
 ---
 name: excrtx-quality-antislop
 description: Remove AI writing patterns from prose. Use when drafting, editing, or reviewing text to eliminate predictable AI tells.
+version: 1.0.0
 metadata:
   hermes:
     tags: [exocortex, quality, anti-slop, writing]

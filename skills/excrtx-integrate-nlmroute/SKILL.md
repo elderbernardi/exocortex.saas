@@ -45,9 +45,12 @@ Evitar:
 
 1. Garantir runtime oficial:
    - `nlm` e `notebooklm-mcp` instalados por fonte oficial (`notebooklm-mcp-cli`).
+   - validar também `nlm --version` para detectar cliente muito defasado antes de gastar tempo com auth.
 2. Validar auth:
    - `nlm login --check`
-   - se falhar: `nlm login` (com suporte remoto via Telegram se necessário).
+   - se falhar com `HTTP 400`, tratar como problema de credencial expirada ou cliente incompatível com o backend atual.
+   - ordem de recuperação: `refresh_auth`/reload local de tokens → `nlm login` → upgrade oficial do pacote se o cliente estiver defasado.
+   - após qualquer reparo, repetir `nlm login --check` antes de seguir.
 3. Resolver notebook alvo:
    - usar notebook existente do tema ou criar novo.
 4. Ingestão de fontes:
@@ -70,8 +73,20 @@ Verificação:
 ```bash
 command -v nlm
 command -v notebooklm-mcp
+nlm --version
 nlm login --check
 ```
+
+## Troubleshooting rápido
+
+- `nlm login --check` com `HTTP 400 Bad Request`:
+  1. recarregar tokens locais (`refresh_auth` no MCP ou fluxo equivalente);
+  2. repetir `nlm login --check`;
+  3. se persistir, executar novo `nlm login`;
+  4. se o cliente estiver defasado em relação ao release atual, atualizar por `uv tool upgrade notebooklm-mcp-cli` e revalidar.
+- `hermes mcp test notebooklm` passar, mas operações reais falharem:
+  - isso valida só transporte/descoberta de tools; não prova auth funcional.
+  - confirmar auth com `nlm login --check` ou uma operação real (`notebook_list`) antes de declarar o stack saudável.
 
 ## Resultado mínimo esperado em qualquer entrega
 

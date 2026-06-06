@@ -35,10 +35,12 @@ for arg in "$@"; do
     --no-repair) export NO_REPAIR=1 ;;
     --no-issues) export NO_ISSUES=1 ;;
     --no-sync)   export NO_SYNC=1 ;;
+    --no-smoke)  export NO_SMOKE=1 ;;
     --skip-api)  export SKIP_API=1 ;;
     --fast-fail) export FAST_FAIL=1 ;;
+    --verbose|-v) export VERBOSE=1 ;;
     --help|-h)
-      echo "Uso: bash $0 [--no-repair] [--no-issues] [--no-sync] [--skip-api] [--fast-fail]"
+      echo "Uso: bash $0 [--no-repair] [--no-issues] [--no-sync] [--no-smoke] [--skip-api] [--fast-fail] [--verbose]"
       exit 0
       ;;
     *) echo "Flag desconhecida: $arg"; exit 1 ;;
@@ -60,9 +62,11 @@ echo -e "  EXOCORTEX_HOME: ${EXOCORTEX_HOME}"
 echo -e "  ACERVO:         ${ACERVO}"
 echo -e "  Modelo:         ${HARNESS_MODEL}"
 echo -e "  Repair:         $([ "$NO_REPAIR" = "1" ] && echo "desabilitado" || echo "habilitado")"
+echo -e "  Smoke tests:    $([ "${NO_SMOKE:-0}" = "1" ] && echo "desabilitado" || echo "habilitado")"
 echo -e "  Issues:         $([ "$NO_ISSUES" = "1" ] && echo "desabilitado" || echo "habilitado")"
 echo -e "  Sync:           $([ "$NO_SYNC" = "1" ] && echo "desabilitado" || echo "habilitado")"
 echo -e "  Skip API:       $([ "$SKIP_API" = "1" ] && echo "sim" || echo "não")"
+echo -e "  Verbose:        $([ "${VERBOSE:-0}" = "1" ] && echo "sim" || echo "não")"
 echo ""
 
 # --- Pré-verificações ---
@@ -74,6 +78,9 @@ if [ ! -d "$SKILLS_DST" ]; then
   echo -e "${_RED}✗ Skills dir não existe: $SKILLS_DST${_NC}"
   exit 1
 fi
+
+# Resolve hermes binary path
+can_invoke_hermes && echo -e "  Hermes CLI:     ${_GREEN}${HERMES_BIN}${_NC}" || echo -e "  Hermes CLI:     ${_YELLOW}não disponível${_NC}"
 
 # =============================================================================
 # FASE 1 — Verificação Determinística (bash puro)
@@ -105,26 +112,45 @@ if $FAST_FAIL_TRIGGERED; then
 fi
 
 # =============================================================================
-# FASE 2 — Smoke Test + Auto-Repair (Hermes headless)
+# FASE 2 — Smoke Tests (Hermes headless verifica features que passaram)
+# =============================================================================
+if [ "${NO_SMOKE:-0}" != "1" ]; then
+  echo ""
+  echo -e "${_BOLD}═══ FASE 2 — Smoke Tests via Hermes ═══${_NC}"
+
+  smoke_count=0
+  smoke_total=${#SMOKE_PROMPTS_MAP[@]}
+  for feature_id in $(echo "${!SMOKE_PROMPTS_MAP[@]}" | tr ' ' '\n' | sort); do
+    smoke_count=$((smoke_count + 1))
+    _log "  ${_DIM}[$smoke_count/$smoke_total]${_NC}"
+    run_smoke_test "$feature_id" "${SMOKE_PROMPTS_MAP[$feature_id]}"
+  done
+
+  echo ""
+  echo -e "${_BOLD}═══ Fase 2 completa ($smoke_count smoke tests) ═══${_NC}"
+else
+  echo ""
+  echo -e "${_GRAY}Fase 2 (smoke tests) pulada (--no-smoke)${_NC}"
+fi
+
+# =============================================================================
+# FASE 3 — Auto-Repair (Hermes headless conserta features que falharam)
 # =============================================================================
 if [ "$NO_REPAIR" != "1" ] && [ ${#FAILED_FEATURES[@]} -gt 0 ]; then
   echo ""
-  echo -e "${_BOLD}═══ FASE 2 — Auto-Repair via Hermes ═══${_NC}"
+  echo -e "${_BOLD}═══ FASE 3 — Auto-Repair via Hermes ═══${_NC}"
 
   if can_invoke_hermes; then
     echo -e "  Hermes disponível. Modelo: ${HARNESS_MODEL}"
     echo -e "  Features para reparar: ${FAILED_FEATURES[*]}"
     echo ""
 
-    # Copy array to iterate (since repair modifies FAILED_FEATURES)
     local_fails=("${FAILED_FEATURES[@]}")
 
     for feature_id in "${local_fails[@]}"; do
-      # Collect error details for this feature
       error_desc="Feature $feature_id falhou nos checks determinísticos"
       invoke_hermes_repair "$feature_id" "$error_desc" || true
 
-      # Run regression if repaired
       for repaired in "${REPAIRED_FEATURES[@]}"; do
         if [ "$repaired" = "$feature_id" ]; then
           run_regression "$feature_id"
@@ -140,16 +166,16 @@ if [ "$NO_REPAIR" != "1" ] && [ ${#FAILED_FEATURES[@]} -gt 0 ]; then
 else
   if [ "$NO_REPAIR" = "1" ]; then
     echo ""
-    echo -e "${_GRAY}Fase 2 pulada (--no-repair)${_NC}"
+    echo -e "${_GRAY}Fase 3 (auto-repair) pulada (--no-repair)${_NC}"
   fi
   DEFINITIVE_FAILS=("${FAILED_FEATURES[@]}")
 fi
 
 # =============================================================================
-# FASE 3 — Relatório + Issues + Sync
+# FASE 4 — Relatório + Issues + Sync
 # =============================================================================
 echo ""
-echo -e "${_BOLD}═══ FASE 3 — Relatório ═══${_NC}"
+echo -e "${_BOLD}═══ FASE 4 — Relatório ═══${_NC}"
 
 # Gerar relatório
 generate_report

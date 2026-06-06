@@ -16,12 +16,6 @@ metadata:
 
 DocBrain is the local document parser engine for Exocortex intake workflows. Hermes consumes it through a machine-readable CLI API, not through an HTTP service.
 
-The current canonical workspace is:
-
-```bash
-/home/elder/projetos/pessoal/projetob/docbrain
-```
-
 The repository is:
 
 ```bash
@@ -43,6 +37,29 @@ Do not use the human `docbrain ingest` command for Hermes automation unless the 
 ## Key Policy
 
 DocBrain must reuse the main Hermes LLM key when possible.
+
+## Workspace Resolution
+
+Do not assume the documented path is the live runtime path.
+Before the first DocBrain action in a task, resolve the workspace by testing candidate directories and preferring the first one that passes the CLI API health check.
+
+Recommended resolution order:
+
+1. `$EXOCORTEX_DOCBRAIN_DIR` when explicitly set;
+2. the current local tool copy used by Exocortex/Hermes workflows;
+3. the documented canonical repository clone;
+4. any other known DocBrain checkout the operator asked you to use.
+
+Validation rule:
+
+- a workspace is valid only if `npm run --silent cli -- api health --output json` returns `ok=true` and `api_version=docbrain.cli.v1`;
+- if a checkout exists but the `api` command is missing or returns a different contract, treat that checkout as stale for Hermes automation and keep searching;
+- only after resolving the workspace should you run parse or query commands.
+
+Reminder hygiene:
+
+- if a reminder file says the LLM key is missing, verify the live environment before trusting the reminder;
+- stale reminders should not override a live environment that already exposes `DOCBRAIN_LLM_API_KEY` or `OPENROUTER_API_KEY`.
 
 Preferred environment variable:
 
@@ -69,10 +86,11 @@ ${HERMES_HOME:-$HOME/.hermes}/reminders/docbrain-llm-key.md
 
 ## Health Check
 
-Run before the first DocBrain action in a task:
+Run before the first DocBrain action in a task, after resolving the workspace:
 
 ```bash
-cd /home/elder/projetos/pessoal/projetob/docbrain
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api health --output json
 ```
 
@@ -87,7 +105,8 @@ Expected:
 Default Hermes call:
 
 ```bash
-cd /home/elder/projetos/pessoal/projetob/docbrain
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api parse create \
   --input /abs/path/document.pdf \
   --include document,job,sections,tables \
@@ -108,7 +127,8 @@ Defaults for agents:
 Use stdin for complex requests:
 
 ```bash
-cd /home/elder/projetos/pessoal/projetob/docbrain
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 printf '%s' "$REQUEST_JSON" | npm run --silent cli -- api parse create --request -
 ```
 
@@ -123,7 +143,7 @@ Payload shape:
   "llm": "auto",
   "citation": "Documento recebido pelo intake",
   "tags": ["intake"],
-  "project_root": "/home/elder/projetos/pessoal/projetob/docbrain"
+  "project_root": "${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
 }
 ```
 
@@ -163,7 +183,7 @@ npm run --silent cli -- api parse revisions --document-id 'sha256:...'
 Clone and configure DocBrain during setup:
 
 ```bash
-DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/projetos/pessoal/projetob/docbrain}"
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
 mkdir -p "$(dirname "$DOCBRAIN_DIR")"
 
 if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
@@ -183,7 +203,8 @@ If `OPENROUTER_API_KEY` exists in the Hermes environment, DocBrain will reuse it
 Use this test command in the current environment:
 
 ```bash
-cd /home/elder/projetos/pessoal/projetob/docbrain
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 npx vitest run --pool=forks
 npm run lint
 npm run build
@@ -194,6 +215,8 @@ The default `npm test` can stall under Node v25 due to Vitest's default pool. Us
 Manual JSON check:
 
 ```bash
+DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api health --output json > /tmp/docbrain-health.json
 node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('/tmp/docbrain-health.json','utf8')); if(j.ok!==true || j.api_version!=='docbrain.cli.v1') process.exit(1);"
 ```

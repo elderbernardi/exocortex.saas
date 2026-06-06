@@ -452,6 +452,7 @@ test_EX28() {
   check_frontmatter "$skill" "name" "description" "version"
   check_no_skill_deps
   check_tool_in_path "uv"
+  check_tool_in_path "notebooklm-mcp"
 
   if command -v nlm >/dev/null 2>&1; then
     log_check_pass "nlm CLI disponível"

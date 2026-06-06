@@ -1,6 +1,7 @@
 ---
 name: excrtx-harness-surfaces
 description: Decide, explain, and package Hermes user-facing surfaces (gateways, web UI, dashboard, TUI, embedded chat) for low-friction delivery, especially when the operator and end user are different people.
+version: 1.0.0
 ---
 
 # Hermes Surface Architecture
