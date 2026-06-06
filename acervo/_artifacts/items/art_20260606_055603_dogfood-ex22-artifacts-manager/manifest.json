@@ -1,0 +1,40 @@
+{
+  "artifact_id": "art_20260606_055603_dogfood-ex22-artifacts-manager",
+  "canonical_slug": "dogfood-ex22-artifacts-manager",
+  "friendly_name": "Dogfood EX22 Artifacts Manager",
+  "publication_names": {},
+  "title": "Dogfood EX22 Artifacts Manager",
+  "status": "draft",
+  "artifact_type": "document",
+  "source_type": "markdown",
+  "task_id": null,
+  "primary_microverso": "exocortex-ops",
+  "related_microversos": [],
+  "scope": "micro",
+  "owner": {
+    "type": "microverso",
+    "id": "exocortex-ops"
+  },
+  "personas_involved": [],
+  "semantic_links": [],
+  "source_path": "source/source.md",
+  "exports": [],
+  "evaluation": {
+    "status": "pending",
+    "personas": [],
+    "reports": [],
+    "incorporated_suggestions": [],
+    "pending_suggestions": []
+  },
+  "publication": {
+    "drive": {
+      "status": "not_published",
+      "receipt_path": null
+    }
+  },
+  "provenance": {
+    "created_by": "exocortex",
+    "created_at": "2026-06-06T05:56:03.682789+00:00",
+    "origin": "conversation"
+  }
+}
