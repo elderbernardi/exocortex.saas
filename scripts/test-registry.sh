@@ -87,13 +87,32 @@ test_EX6() {
   CURRENT_FEATURE_NAME="Canvas Cognitivo"
   CURRENT_FEATURE_CATEGORY="Behavior & Governance"
   local skill="excrtx-behavior-canvas"
+  local skill_file="$SKILLS_DST/$skill/SKILL.md"
 
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
   check_skill_dep "excrtx-behavior-vetor"
   check_no_tool_deps
 
-  SMOKE_PROMPT="Verifique se o Canvas extrai ponteiros de um input complexo de teste."
+  if grep -q 'Microverso não é sala\. A tarefa é a sala\.' "$skill_file"; then
+    log_check_pass "Canvas preserva distinção: Microverso ≠ sala; tarefa = sala"
+  else
+    log_check_fail "Canvas não declara explicitamente que Microverso não é sala"
+  fi
+
+  if grep -q 'macroverso.status' "$skill_file"; then
+    log_check_pass "Canvas exige status explícito do Macroverso"
+  else
+    log_check_fail "Canvas não exige status explícito do Macroverso"
+  fi
+
+  if grep -q 'microversos.sharing_constraints' "$skill_file" && grep -q 'allow > deny' "$skill_file"; then
+    log_check_pass "Canvas modela sharing constraints com precedência allow > deny"
+  else
+    log_check_fail "Canvas não modela adequadamente sharing constraints allow/deny"
+  fi
+
+  SMOKE_PROMPT="Teste a feature EX-06 Canvas Cognitivo com este input: 'Cruze os microversos gabinete e juridico para redigir um ofício, mas jurídico tem deny: [ALL] e allow: [gabinete].' Verifique se a resposta explicita: (1) macroverso.status, (2) microverso principal, (3) microverso secundário, (4) tarefa como sala operacional, (5) sharing constraint com precedência allow > deny. Se todos aparecerem, responda SMOKE_OK; senão, SMOKE_FAIL com o que faltou."
 }
 
 test_EX7() {

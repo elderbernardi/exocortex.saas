@@ -39,7 +39,11 @@ When the tutor explains vectors, prefer operational mini-flows:
 - promoção de memória
 - resultado
 
-When the tutor explains Microversos, prefer the same operational structure:
+When the tutor explains Microversos, make two distinctions explicit before the operational structure:
+- Microversos are not rooms; they are living semantic and operational entities
+- The task is the operational room where one primary Microverso anchors and secondary Microversos may support
+
+Then prefer the same operational structure:
 - pedido
 - ativação de scope
 - proteção de contexto
@@ -63,7 +67,7 @@ When the tutor gives examples, prefer this shape:
 - weak: "quero entender melhor esse problema"
 - strong: "no microverso vestibular-2026, investigue os padrões de atraso e, se a lição for local, promova para o próprio microverso; se for transversal, promova para global"
 
-The point of the example is not the task itself. The point is to show that Microverso changes memory, scope, language, tools, and output quality.
+The point of the example is not the task itself. The point is to show that Microverso changes memory, scope, language, tools, output quality, and sharing constraints across domains.
 
 3. Transition to constitutional onboarding
 - After the user understands the system, collect identity, values, tone, limits, and operational preferences.

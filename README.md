@@ -21,8 +21,8 @@ graph TD
 Toda a informação e tomada de decisão no framework são organizadas em três níveis de profundidade:
 
 *   **🏛️ Macroverso (Quem você é):** É a "Constituição" pessoal do executivo. Define a identidade de raiz, os valores inegociáveis, o tom de comunicação e os limites pessoais. É gerado na sessão de onboarding inicial (`excrtx-onboard-welcome`) e muda raramente. Governa tudo.
-*   **🌍 Microverso (Onde você está):** São os domínios isolados de atuação. Representa projetos, disciplinas, clientes ou áreas específicas (como um "microverso de finanças" ou "microverso de engenharia"). Cada domínio tem suas próprias polaroids contextuais, regras e ferramentas específicas.
-*   **🎯 Tarefa (O que precisa ser feito):** É a unidade de execução pontual e acionável. Toda tarefa deve rodar sob as diretrizes do Macroverso e o contexto do Microverso ativo. Isso garante que os resultados gerados não sejam respostas genéricas de IA, mas sim entregas personalizadas com a sua voz e método.
+*   **🌍 Microverso (Quem ancora e apoia a tarefa):** São entidades semânticas e operacionais autocontidas. Representam projetos, disciplinas, clientes ou áreas específicas (como um "microverso de finanças" ou "microverso de engenharia"). Um Microverso principal ancora a tarefa; Microversos secundários podem apoiar quando a tarefa cruza domínios. Cada um preserva suas próprias regras, memória, ferramentas e restrições de compartilhamento.
+*   **🎯 Tarefa (A sala operacional aberta agora):** É a unidade de execução pontual e acionável. A tarefa é o espaço operacional em que um ou mais Microversos entram em jogo sob as diretrizes do Macroverso. Isso permite shared e cross-domain sem colapsar fronteiras, mantendo a entrega personalizada com a sua voz e método.
 
 ---
 

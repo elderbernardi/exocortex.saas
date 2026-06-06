@@ -189,7 +189,7 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 
 | Campo | Detalhe |
 |---|---|
-| **Funcionalidade** | Extrai estrutura implícita de cada input: foco principal, lacunas de informação, persona sugerida e tipo de ação necessária. Funciona como raio-X do pedido antes de processar. Harness v0.4. |
+| **Funcionalidade** | Extrai a estrutura implícita de cada input e ancora a tarefa na tríade Macroverso → Microversos → Tarefa. Resolve o microverso principal, microversos de apoio, lacunas e restrições de compartilhamento antes de processar. Funciona como raio-X do pedido antes de agir. Harness v0.4. |
 | **Como usar** | Automático. Roda internamente em conjunto com o classificador de vetor. |
 | **Instalação** | `setup.sh` copia skill. |
 | **Dependências de Skills** | `excrtx-behavior-vetor` |
