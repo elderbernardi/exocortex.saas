@@ -1,0 +1,96 @@
+EXOCORTEX ASCII IDENTITY — PATH B / TERMINAL-NATIVE
+
+Referência adquirida
+- Hermes Agent, no docs oficial, usa interface dark com acento âmbar/dourado.
+- O wordmark "Hermes Agent" aparece limpo, sem distorção, em sans branca de peso médio/semibold.
+- O símbolo do Hermes é ilustrativo e monocromático; ele não deve contaminar a marca do Exocortex.
+
+Decisão de direção
+- O Exocortex não deve parecer um diagrama.
+- O Exocortex não deve competir com o símbolo figurativo do Hermes.
+- O Exocortex deve parecer infraestrutura cognitiva: seco, preciso, terminal-native.
+- Em ASCII, o caminho profissional é wordmark tipográfico + lockup disciplinado.
+
+Estratégia semântica
+- "exo" = camada externa, prótese cognitiva, extensão.
+- "[cortex]" = núcleo vivo, contexto, memória, pensamento.
+- Os colchetes fazem o papel visual da extensão envolvendo o córtex.
+- Isso produz uma marca que já carrega a filosofia no próprio nome.
+
+PALETA PROPOSTA — distinta de Hermes
+- Dark background: #0B1116
+- Dark surface:    #101A22
+- Core accent:     #62E6FF
+- Deep accent:     #1AA7C8
+- Light text:      #EAF7FB
+- Muted text:      #89A3AE
+- Light background:#F5FBFD
+- Light text:      #10212B
+
+Não usar
+- dourado / âmbar / amarelo Hermes como cor principal do Exocortex
+- roxo-azul genérico de IA
+- blocos pesados tipo figlet para a assinatura principal
+
+01. PRIMARY LOCKUP
+
+  exo[cortex]
+  powered by Hermes Agent
+
+Uso
+- docs
+- splash discreto
+- header de app
+- about screen
+
+Racional
+- minimalista
+- memorável
+- filosófico sem explicar demais
+- Hermes fica limpo na segunda linha, como assinatura de runtime
+
+02. INLINE LOCKUP
+
+  exo[cortex] :: powered by Hermes Agent
+
+Uso
+- barras superiores
+- footer de desktop
+- CLI header
+- telas de loading
+
+03. FRAMED TERMINAL LOCKUP
+
+  [ exo[cortex] ]
+    powered by Hermes Agent
+
+Uso
+- hero de terminal
+- README blocks
+- startup banner curto
+
+04. MICRO MARK
+
+  [cx]
+
+Uso
+- canto de janela
+- prompt prefix
+- badge pequeno
+- marcador de seção
+
+Sistema recomendado
+- marca principal: 01
+- versão inline: 02
+- micro marca: 04
+
+Regras de estilo
+- "exo[cortex]" em mono ou grotesk técnica com aparência seca
+- "powered by Hermes Agent" sem distorção, em estilo limpo, title case
+- se houver composição visual rica, Hermes Agent entra como assinatura, nunca como título dominante
+- manter muito espaço em volta; o vazio aqui vale mais que ornamentação
+
+Aplicação sugerida
+- Dark mode: exo[cortex] em #62E6FF, powered by em #89A3AE
+- Light mode: exo[cortex] em #1AA7C8 ou #10212B, powered by em #5C7480
+- Se usar cursor/animation, animar só o colchete direito ] ou um sublinhado curto; nunca a frase Hermes Agent

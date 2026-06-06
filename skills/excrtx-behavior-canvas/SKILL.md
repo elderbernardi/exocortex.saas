@@ -10,7 +10,7 @@ metadata:
 
 # Canvas Cognitivo — Extrator de Ponteiros (v0.4)
 
-> Todo input do executivo carrega informação implícita. O Canvas extrai essa estrutura para que outras skills operem com contexto rico.
+> Todo input do executivo carrega informação implícita. O Canvas extrai essa estrutura para que outras skills operem com contexto rico, ancorando a tarefa no Macroverso e nos Microversos corretos.
 
 ## Trigger
 
@@ -20,10 +20,21 @@ Ativar em inputs complexos (mais de uma frase, ou que envolvam múltiplos domín
 
 ### 1. Parsing Silencioso
 
+Antes de resumir o pedido, resolver a tríade estrutural:
+
+- **Macroverso** = quem fala e quais limites/valores governam
+- **Microversos** = entidades semânticas e operacionais vivas que ancoram e apoiam a tarefa
+- **Tarefa** = a sala operacional concreta onde a execução acontece
+
+Microverso não é sala. A tarefa é a sala. O Canvas deve preservar essa distinção.
+
 Para cada input complexo, extrair internamente:
 
 | Campo | Pergunta | Exemplo |
 |---|---|---|
+| `macroverso.status` | O Macroverso está resolvido, parcial ou placeholder? | `resolved` / `partial` / `placeholder` / `missing` |
+| `macroverso.sources` | Em que arquivos o Macroverso foi lido? | `["acervo/macro/soul.md"]` |
+| `macroverso.constraints` | Que valores, tom ou limites afetam esta tarefa? | `["draft-first", "tom direto"]` |
 | `focus` | O que o executivo quer resolver? | "Renegociar contrato com Cliente Alfa" |
 | `intent_type` | explorar, decidir, produzir, revisar, manter, publicar, outro? | "produzir" |
 | `user_intention.explicit` | O que foi dito literalmente? | "Preciso do relatório final" |
@@ -31,8 +42,12 @@ Para cada input complexo, extrair internamente:
 | `user_intention.confidence` | Quão segura é a inferência? | high / medium / low |
 | `dominant_entity` | Que entidade central domina? | task / artifact / microverso / decision / routine / inbox / none |
 | `gaps` | Que informações estão faltando para agir? | "Não sei o histórico de renovações anteriores" |
-| `microversos.primary` | Qual microverso ativar? | "cliente-alfa" (se existir no acervo) |
-| `microversos.related` | Outros microversos envolvidos? | ["financeiro", "juridico"] |
+| `microversos.status` | O conjunto de microversos foi resolvido ou segue ambíguo? | `resolved` / `ambiguous` / `none` |
+| `microversos.primary` | Qual microverso ancora a tarefa? | "cliente-alfa" (se existir no acervo) |
+| `microversos.related` | Que microversos apoiam a tarefa? | ["financeiro", "juridico"] |
+| `microversos.rationale` | Por que esse arranjo foi escolhido? | "cliente-alfa é o domínio principal; jurídico só valida cláusulas" |
+| `microversos.sharing_constraints` | Que restrições de compartilhamento precisam ser respeitadas com base nas regras allow/deny dos microversos? | `["deny: ALL + allow: [microverse_x] => compartilhável só com microverse_x"]` |
+| `task.anchor` | Como a tarefa foi ancorada na tríade? | "Ofício ancorado em gabinete, com apoio de jurídico" |
 | `urgency` | Há pressão de tempo? | "reunião amanhã" → alta |
 | `dependencies` | O output depende de algo externo? | "Preciso dos dados financeiros antes" |
 | `risks` | Riscos identificados? | "Deadline pode ser irrealista" |
@@ -55,14 +70,16 @@ Campos adicionais para interação com o harness:
 
 O Canvas NÃO é apresentado ao executivo (a menos que ele peça). Ele serve para:
 
-1. **Alimentar o `excrtx-behavior-vetor`** com vetor (evolucao/execucao/manutencao)
-2. **Ativar o microverso correto** via `microversos.primary`
-3. **Buscar no acervo** as informações que preencham os `gaps`
-4. **Priorizar** com base em `urgency`
-5. **Alertar sobre `dependencies`** que bloqueiam a ação
-6. **Registrar tarefa** quando `task_candidate.persist = true`
-7. **Solicitar avaliação** quando `evaluation.required = true`
-8. **Promover conhecimento** quando `promotion_candidates` não vazio
+1. **Declarar o estado do Macroverso** antes de qualquer inferência substantiva
+2. **Ancorar a tarefa** em um microverso principal e zero ou mais secundários
+3. **Alimentar o `excrtx-behavior-vetor`** com vetor (evolucao/execucao/manutencao)
+4. **Buscar no acervo** as informações que preencham os `gaps`
+5. **Priorizar** com base em `urgency`
+6. **Alertar sobre `dependencies`** que bloqueiam a ação
+7. **Respeitar restrições de compartilhamento** entre microversos em tarefas cross-domain, usando as regras de sharing de cada microverso e a precedência `allow > deny`
+8. **Registrar tarefa** quando `task_candidate.persist = true`
+9. **Solicitar avaliação** quando `evaluation.required = true`
+10. **Promover conhecimento** quando `promotion_candidates` não vazio
 
 ### 4. Quando Expor o Canvas
 
@@ -76,7 +93,10 @@ Formato de exposição:
 🧠 **Canvas Cognitivo**
 ┌─────────────────────────────────────
 │ Foco: {focus}
-│ Microverso: {microversos.primary}
+│ Macroverso: {macroverso.status}
+│ Microverso âncora: {microversos.primary}
+│ Microversos de apoio: {microversos.related}
+│ Tarefa: {task.anchor}
 │ Vetor: {intent_type}
 │ Entidade dominante: {dominant_entity}
 │ 
@@ -108,10 +128,15 @@ O template canônico está em `$ACERVO/global/templates/harness-v0.4/canvas.yaml
 ### 6. Multi-microverso
 
 Quando o input envolve múltiplos domínios:
-1. Identificar todos os microversos relevantes
-2. Buscar informações em cada um (respeitando scope/firewall)
-3. Consolidar no Canvas com referência cruzada
-4. Se houver conflito de interesses, alertar o executivo
+1. Identificar o microverso principal que ancora a tarefa
+2. Identificar os microversos secundários que só apoiam a tarefa
+3. Buscar informações em cada um, respeitando scope/firewall e regras locais de compartilhamento
+4. Consolidar no Canvas apenas a interseção útil para a tarefa
+5. Se houver conflito de interesses ou de acesso, alertar o executivo
+
+Ao resolver sharing constraints, aplicar a regra de ouro já definida em `shared/knowledge/groups.md`:
+- `allow` SEMPRE sobrescreve `deny`
+- exemplo: `deny: [ALL]` + `allow: [microverse_x]` significa que o microverso só pode ser compartilhado com `microverse_x`
 
 ## Regras
 
@@ -119,11 +144,17 @@ Quando o input envolve múltiplos domínios:
 - Nunca inventar informações para preencher gaps — marcar como "desconhecido"
 - Atualizar o Canvas se o executivo fornecer informações novas durante a conversa
 - O Canvas persiste durante a conversa; pode ser salvo como canvas.yaml em _tasks/ quando gera tarefa
+- Nunca tratar Microverso como sala; a sala é a tarefa
+- Em tarefa cross-domain, sempre declarar microverso principal, microversos de apoio e restrições de compartilhamento
+- Se `macroverso.status` estiver `placeholder` ou `missing`, declarar isso explicitamente no Canvas
 
 ## Verificação
 
 - [ ] Input complexo gera Canvas com pelo menos 4 campos preenchidos
-- [ ] Microverso sugerido corresponde ao domínio do input
+- [ ] Macroverso tem status explícito
+- [ ] Microverso principal corresponde ao domínio âncora do input
+- [ ] Microversos de apoio só entram quando a tarefa exige cruzamento
+- [ ] Restrições de compartilhamento foram consideradas em tarefas cross-domain
 - [ ] Gaps são identificados corretamente (não fabricados)
 - [ ] Canvas é exposto quando input é ambíguo
 - [ ] Multi-microverso funciona com referência cruzada

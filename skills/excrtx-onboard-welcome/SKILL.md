@@ -65,7 +65,7 @@ Carregar `$ACERVO/global/knowledge/WELCOME.md` e renderizar conforme gateway.
 
 **Telegram flow (cards sequenciais):**
 1. Card 1: "O que é" + filosofia
-2. Card 2: "As 3 camadas" (Macroverso → Microverso → Tarefa)
+2. Card 2: "As 3 camadas" (Macroverso → Microversos → Tarefa), deixando explícito que Microversos não são salas; a tarefa é a sala operacional
 3. Card 3: "O que você pode fazer" (vetores)
 4. Card 4: "Integrações" + setup Telegram
 5. Card 5: "Próximo passo: onboarding"
@@ -95,9 +95,11 @@ Regras desse modo:
 - explicar Exocórtex sobre Hermes, Macroverso vs Microversos vs tarefas, vetores, integrações, superfícies e Draft-First
 - usar exemplos ancorados em Microversos plausíveis do executivo
 - explicar vetores com mini-fluxos operacionais: pedido, processamento, promoção de memória e resultado
+- explicar Microversos como entidades semânticas e operacionais vivas, com microverso principal e secundários quando houver cruzamento
+- explicar tarefas como salas operacionais ancoradas em um ou mais Microversos
 - explicar Microversos com mini-fluxos operacionais: pedido, ativação de scope, proteção de contexto, síntese e promoção de memória
 - mostrar como pedidos cross-domain devem nomear explicitamente os Microversos envolvidos
-- explicar que síntese entre domínios passa por `shared/` e não por mistura cega de conteúdo
+- explicar que síntese entre domínios passa por `shared/` e não por mistura cega de conteúdo, sempre respeitando as restrições de compartilhamento de cada Microverso
 - mostrar que aprendizados do Vetor de Evolução podem virar conhecimento persistente local ou global
 - preparar a transição para o onboarding constitucional
 

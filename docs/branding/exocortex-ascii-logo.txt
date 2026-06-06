@@ -1,0 +1,55 @@
+EXOCORTEX ASCII LOGO STUDY
+
+Princípios usados
+- 100% ASCII: funciona em terminal, web e desktop sem depender de Unicode.
+- Alto contraste sem preenchimento pesado: segura bem em tema dark e clear.
+- Geometria de console: caixas, trilhas e barramentos conversam com Hermes.
+- Filosofia embutida: memória, contexto e execução orbitando um núcleo operacional.
+
+01. Principal — lockup horizontal
+
+    .---------------------------------.
+    |  [ ]====[##]====[ ]             |
+    |   |       ||       |            |
+    |   +-------++-------+            |
+    '----------- EXOCORTEX -----------'
+
+Leitura
+- [ ] externos = extensões cognitivas / lóbulos / superfícies
+- [##] central = núcleo operacional
+- || e ++ = barramento de contexto e execução
+
+02. Compacta — header de app / splash / CLI
+
+    [ ]====[##]====[ ]  EXOCORTEX
+       \      ||      /
+        '-----++-----'
+
+03. Sigil — avatar pequeno / badge / canto de janela
+
+       .-----.   
+    .-'  |  '-. 
+   / [ ]-+-[ ] \
+   \ [ ]-+-[ ] /
+    '-.  | .-' 
+       '--+'   
+
+04. Console badge — versão mais Hermes-like
+
+    +--------------------------------+
+    | exocortex :: cognitive runtime |
+    | [mem]---[ctx]---[exec]---[act] |
+    +--------------------------------+
+
+Recomendação
+- Produto / landing / docs: usar 01
+- Janela desktop / painel / CLI: usar 02
+- Favicon textual / badge / marcador: usar 03
+- Tela de diagnóstico / about / startup: usar 04
+
+Observações de implementação
+- Fonte ideal: monospace neutra (JetBrains Mono, IBM Plex Mono, Fira Code, Geist Mono)
+- Não aplicar bold artificial. O desenho já tem contraste suficiente.
+- Em dark mode, usar foreground puro ou quase puro.
+- Em clear mode, evitar cinza claro; usar preto ou grafite.
+- Se quiser animação, pulse só o [##] ou o barramento ||.

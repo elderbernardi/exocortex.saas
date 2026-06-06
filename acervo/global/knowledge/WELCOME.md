@@ -25,21 +25,21 @@ O Exocórtex organiza sua relação com a IA em três camadas concêntricas:
 
 Sua identidade, seus valores, seu tom, seus limites. As "tatuagens" que não mudam entre sessões. São as leis que governam todas as suas interações — sua Constituição pessoal.
 
-### 🌍 Microverso — Onde você está agora
+### 🌍 Microverso — Que entidades ancoram e apoiam esta tarefa
 
-O domínio, o público, as ferramentas, os pares. As "polaroids" que mudam conforme o projeto ou contexto. Cada projeto, cada disciplina, cada área de atuação pode ter seu próprio Microverso.
+O domínio, o público, as ferramentas, os pares, as regras de acesso e as fronteiras daquele contexto. Cada projeto, cada disciplina, cada área de atuação pode ter seu próprio Microverso.
 
-Microverso não é uma pasta bonita. É o recorte operacional que evita mistura de contexto.
+Microverso não é uma sala. Não é uma pasta bonita. É uma entidade semântica e operacional viva, autocontida, que ancora ou apoia tarefas sem deixar contexto vazar.
 
 - Se você está tratando de vestibular, ativa o microverso `vestibular-2026`.
 - Se está preparando algo institucional, ativa o microverso `gabinete`.
 - Se está mexendo no próprio sistema, ativa o microverso `exocortex-ops`.
 
-Isso muda o que entra em jogo: histórico, documentos, decisões, templates, ferramentas e linguagem daquele domínio.
+Isso muda o que entra em jogo: histórico, documentos, decisões, templates, ferramentas, linguagem e restrições de compartilhamento daquele domínio.
 
-### 🎯 Tarefa — O que precisa ser feito
+### 🎯 Tarefa — Que sala operacional precisa ser aberta agora
 
-O pedido concreto, ancorado nas duas camadas anteriores. Quando uma tarefa opera com Macroverso e Microverso definidos, o resultado deixa de ser genérico e passa a carregar a sua marca.
+O pedido concreto, ancorado nas duas camadas anteriores. A tarefa é a sala operacional em que um ou mais Microversos entram em jogo: um Microverso principal ancora, outros secundários podem apoiar. Quando a tarefa nasce com essas âncoras explícitas, o resultado deixa de ser genérico e passa a carregar a sua marca.
 
 ---
 
@@ -107,7 +107,7 @@ Os vetores se alternam. Você pode começar em Evolução, descobrir um padrão,
 
 ## Como usar Microversos na prática
 
-Pense assim: o Macroverso diz quem está falando. O Microverso diz em qual sala entramos.
+Pense assim: o Macroverso diz quem está falando. Os Microversos dizem quais entidades vivas ancoram e apoiam a tarefa. A tarefa é a sala operacional que abrimos para agir.
 
 Você não precisa pedir isso de forma técnica. Basta ancorar o pedido no contexto certo.
 
@@ -124,7 +124,7 @@ Use quando a tarefa pertence com clareza a um domínio.
 
 Mini-fluxo:
 - pedido: "no microverso gabinete, rascunhe o ofício para a reunião de terça"
-- ativação de scope: o Exocórtex entra no microverso certo e deixa os outros fora do centro da tarefa
+- ativação de scope: o Exocórtex ancora a tarefa no microverso principal e deixa os outros fora do centro da tarefa
 - proteção de contexto: restringe busca, histórico, linguagem, templates e decisões ao domínio ativo
 - síntese: monta a resposta com o material relevante daquele espaço
 - promoção de memória: se surgir um novo padrão, processo ou regra local, isso volta para o próprio microverso
@@ -137,12 +137,12 @@ Use quando a resposta mora na interseção entre dois ou mais domínios.
 
 Mini-fluxo:
 - pedido: "cruze vestibular e gabinete para montar o calendário das visitas"
-- ativação de scope: o Exocórtex abre apenas os microversos envolvidos no cruzamento
+- ativação de scope: o Exocórtex define um microverso principal para ancorar a tarefa e abre apenas os microversos secundários estritamente necessários ao cruzamento
 - proteção de contexto: separa o que pertence a cada domínio antes de combinar qualquer coisa
 - síntese: junta só o ponto de interseção da tarefa, não o conteúdo inteiro dos dois lados
-- promoção de memória: se o cruzamento gerar uma ponte recorrente, registra essa relação em `shared/`
+- promoção de memória: se o cruzamento gerar uma ponte recorrente, registra essa relação em `shared/`, respeitando as regras de compartilhamento de cada microverso
 
-Na arquitetura do acervo, a síntese cross-domain vive em `shared/`. A verdade de cada domínio continua no microverso de origem.
+Na arquitetura do acervo, a síntese cross-domain vive em `shared/`. A verdade de cada domínio continua no microverso de origem. Cruzamento não dissolve fronteiras: cada microverso mantém suas próprias regras de compartilhamento e restrição.
 
 ### Como o Exocórtex protege contra poluição de contexto
 
@@ -163,6 +163,8 @@ O Exocórtex protege isso de quatro formas:
 2. só cruza microversos quando você pede ou quando a tarefa exige
 3. guarda relações entre domínios em `shared/`, sem copiar tudo de um lado para o outro
 4. mantém regras globais em `global/` apenas quando elas valem para todo o sistema
+
+Em resumo: Microversos são universos autocontidos; tarefas são as salas operacionais onde esses universos se encontram sob regras explícitas.
 
 Resultado: mais contexto quando precisa, menos ruído quando não precisa.
 
