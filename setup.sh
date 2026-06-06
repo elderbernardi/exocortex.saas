@@ -799,3 +799,14 @@ info "Acervo canônico:     $ACERVO"
 info "Profiles:            default (interativo) + manut (background)"
 info "Uso:                 hermes (default) | hermes -p manut"
 echo ""
+
+# =============================================================================
+# Step 10: Verificação pós-provisionamento
+# =============================================================================
+info "Iniciando verificação pós-provisionamento..."
+if [ -x "$SCRIPT_DIR/scripts/post-provisioning-verify.sh" ]; then
+  bash "$SCRIPT_DIR/scripts/post-provisioning-verify.sh" || \
+    warn "Verificação pós-provisionamento reportou falhas (veja relatório no Acervo)"
+else
+  warn "Script de verificação não encontrado: $SCRIPT_DIR/scripts/post-provisioning-verify.sh"
+fi
