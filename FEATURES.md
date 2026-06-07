@@ -481,7 +481,7 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 |---|---|
 | **Funcionalidade** | Harness caseiro para operar Codex CLI com rastreabilidade e verificação leve. Captura evidência local (JSON) em disco via wrapper Python. Scripts: `run_codex_with_learning.py` (runner) e `review_latest_run.py` (review). |
 | **Como usar** | Chamado internamente por `excrtx-harness-codexint`. Runner em `~/.hermes/scripts/codex_learning/`. |
-| **Instalação** | `setup.sh` copia skill. |
+| **Instalação** | `setup.sh` copia a skill, provisiona `~/.hermes/scripts/codex_learning/` e cria `~/.hermes/codex-learning/{runs,events,reviews}`. |
 | **Dependências de Skills** | Nenhuma |
 | **Dependências de Tools** | Codex CLI, Python 3.11+ |
 

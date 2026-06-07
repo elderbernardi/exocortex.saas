@@ -317,14 +317,14 @@ def probe_feature_environment(root: Path, feature_id: str) -> list[dict[str, Any
             }
         )
     elif feature_id == "EX-33":
-        run_wrapper = Path.home() / ".hermes" / "scripts" / "codex_learning" / "run_codex_with_learning.py"
-        review_wrapper = Path.home() / ".hermes" / "scripts" / "codex_learning" / "review_latest_run.py"
-        learning_dir = Path.home() / ".hermes" / "codex-learning"
+        run_wrapper = hermes_home() / "scripts" / "codex_learning" / "run_codex_with_learning.py"
+        review_wrapper = hermes_home() / "scripts" / "codex_learning" / "review_latest_run.py"
+        learning_dir = hermes_home() / "codex-learning"
         events.append(
             {
                 "tool": "terminal",
                 "probe": "ex33_codex_harness_wrappers",
-                "command": "test -f ~/.hermes/scripts/codex_learning/run_codex_with_learning.py && test -f ~/.hermes/scripts/codex_learning/review_latest_run.py",
+                "command": "test -f $HERMES_HOME/scripts/codex_learning/run_codex_with_learning.py && test -f $HERMES_HOME/scripts/codex_learning/review_latest_run.py",
                 "approval_explicit": True,
                 "run_wrapper": str(run_wrapper),
                 "run_wrapper_exists": run_wrapper.is_file(),
