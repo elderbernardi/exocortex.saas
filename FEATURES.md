@@ -397,7 +397,7 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 |---|---|
 | **Funcionalidade** | Opera Google Drive via API direta (sem Composio) com foco em robustez de busca e validação. Complementa as skills nativas do Hermes com hardening: filtro `trashed = false`, paginação com `nextPageToken`, campos expandidos (`id, name, mimeType, modifiedTime, webViewLink`), suporte a `--raw-query`. |
 | **Como usar** | Ativado quando tarefas envolvem busca, leitura ou escrita no Drive. |
-| **Instalação** | `setup.sh` aplica patch em `google_api.py` do Hermes via `patch_google_drive_search()`. Composio removido pelo baseline MCP (`enforce_mcp_baseline()`). Himalaya removido pelo baseline de email (`enforce_email_baseline()`). |
+| **Instalação** | `setup.sh` aplica patch em `google_api.py` do Hermes via `patch_google_drive_search()`. O driver runtime esperado fica em `$HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py` (fallback observado: `$HERMES_HOME/hermes-agent/skills/productivity/google-workspace/scripts/google_api.py`). Composio removido pelo baseline MCP (`enforce_mcp_baseline()`). Himalaya removido pelo baseline de email (`enforce_email_baseline()`). |
 | **Dependências de Skills** | Google Workspace nativa do Hermes (H-07) |
 | **Dependências de Tools** | Google Credentials (ADC ou gcloud auth) |
 

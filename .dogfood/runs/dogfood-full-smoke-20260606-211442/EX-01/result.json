@@ -1,0 +1,19 @@
+{
+  "feature_id": "EX-01",
+  "status": "PARTIAL",
+  "risk": "P2",
+  "summary": "Cenário registrado; execução conversacional real pendente.",
+  "criteria": [
+    {
+      "criterion": "Cenário possui transcript e trace locais.",
+      "met": true,
+      "evidence": "arquivos locais criados no run."
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": null
+}

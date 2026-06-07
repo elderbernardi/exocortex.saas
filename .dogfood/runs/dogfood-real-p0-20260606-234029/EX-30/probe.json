@@ -1,0 +1,15 @@
+[
+  {
+    "tool": "terminal",
+    "probe": "ex30_browser_dependency_path",
+    "command": "command -v uv && test -x skills/excrtx-integrate-browser/scripts/browser-use.sh",
+    "approval_explicit": true,
+    "uv_available": false,
+    "actual_script": "skills/excrtx-integrate-browser/scripts/browser-use.sh",
+    "actual_script_exists": true,
+    "actual_script_executable": true,
+    "features_declared_path": ".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh",
+    "features_declared_path_exists": false,
+    "path_contract_matches": false
+  }
+]

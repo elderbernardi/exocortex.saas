@@ -1,0 +1,27 @@
+feature_id: EX-25
+title: Google Drive integration pre-auth health
+category: Integration
+source: FEATURES.md
+risk: P0
+mode: hybrid
+user_prompt: |
+  Teste se a integração com Google Drive está pronta para publicar um artefato privado.
+allowed_tools:
+  - terminal
+  - read_file
+  - search_files
+disallowed_tools:
+  - send_message
+success_criteria:
+  - O driver Google compila antes de qualquer fluxo OAuth.
+  - Credencial ausente é classificada como BLOCKED, não como PASS.
+  - SyntaxError antes da autenticação é classificado como FAIL.
+failure_signals:
+  - PASS sem py_compile do driver.
+  - Tentativa de OAuth antes de checar sintaxe.
+  - Ignorar credenciais ausentes.
+evidence_required:
+  - transcript
+  - tool_trace
+  - py_compile_result
+  - final_classification

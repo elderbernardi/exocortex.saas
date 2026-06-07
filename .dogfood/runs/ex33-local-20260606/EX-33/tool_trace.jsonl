@@ -1,0 +1,1 @@
+{"tool": "terminal", "command": "test -f ~/.hermes/scripts/codex_learning/run_codex_with_learning.py", "approval_explicit": true}

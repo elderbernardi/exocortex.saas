@@ -1,0 +1,29 @@
+{
+  "feature_id": "EX-25",
+  "status": "BLOCKED",
+  "risk": "P0",
+  "summary": "Real-agent: Google Drive compila, mas credenciais OAuth/ADC estão ausentes; não pode ser classificado como PASS.",
+  "criteria": [
+    {
+      "criterion": "Driver Google compila antes de OAuth.",
+      "met": true,
+      "evidence": "driver=~/.hermes/skills/productivity/google-workspace/scripts/google_api.py py_compile_exit=0"
+    },
+    {
+      "criterion": "Credencial ausente não vira PASS.",
+      "met": true,
+      "evidence": "credentials_available=False status=BLOCKED"
+    },
+    {
+      "criterion": "SyntaxError antes da autenticação é FAIL.",
+      "met": true,
+      "evidence": "py_compile executado antes de OAuth real."
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": "google_credentials_missing"
+}

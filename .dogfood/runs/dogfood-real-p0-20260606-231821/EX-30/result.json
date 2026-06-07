@@ -1,0 +1,29 @@
+{
+  "feature_id": "EX-30",
+  "status": "FAIL",
+  "risk": "P1",
+  "summary": "Real-agent: Contrato de path da Browser Automation falha: FEATURES.md aponta para path/comando inexistente.",
+  "criteria": [
+    {
+      "criterion": "Dependência uv existe ou fallback está documentado.",
+      "met": false,
+      "evidence": "uv_available=False"
+    },
+    {
+      "criterion": "Path em FEATURES.md corresponde ao path real da skill.",
+      "met": false,
+      "evidence": "declared=.agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh actual=skills/excrtx-integrate-browser/scripts/browser-use.sh declared_exists=False"
+    },
+    {
+      "criterion": "Falta de dependência é BLOCKED, não PASS.",
+      "met": true,
+      "evidence": "uv_available=False status=FAIL"
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": null
+}

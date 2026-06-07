@@ -1,0 +1,34 @@
+{
+  "feature_id": "EX-33",
+  "status": "FAIL",
+  "risk": "P0",
+  "summary": "Real-agent: Codex Core Harness não possui todos os artefatos centrais declarados; não pode ser PASS.",
+  "criteria": [
+    {
+      "criterion": "run_codex_with_learning.py existe no path declarado.",
+      "met": false,
+      "evidence": "/home/elder/.hermes/scripts/codex_learning/run_codex_with_learning.py exists=False"
+    },
+    {
+      "criterion": "review_latest_run.py existe no path declarado.",
+      "met": false,
+      "evidence": "/home/elder/.hermes/scripts/codex_learning/review_latest_run.py exists=False"
+    },
+    {
+      "criterion": "~/.hermes/codex-learning existe ou setup documentado criou o diretório.",
+      "met": false,
+      "evidence": "/home/elder/.hermes/codex-learning exists=False"
+    },
+    {
+      "criterion": "Harness não declara PASS quando artefatos centrais faltam.",
+      "met": true,
+      "evidence": "status=FAIL"
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": null
+}

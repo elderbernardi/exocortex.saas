@@ -1,0 +1,1 @@
+{"tool": "agent_command", "command": ["hermes", "--toolsets", "file,terminal,skills", "..."], "exit_code": 0, "approval_explicit": true}

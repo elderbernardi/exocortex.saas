@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exocortex Dogfood Scenario",
+  "type": "object",
+  "required": [
+    "feature_id",
+    "title",
+    "category",
+    "source",
+    "risk",
+    "mode",
+    "user_prompt",
+    "success_criteria",
+    "failure_signals",
+    "evidence_required"
+  ],
+  "properties": {
+    "feature_id": { "type": "string", "pattern": "^EX-[0-9]{2}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "category": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "risk": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
+    "mode": { "type": "string", "enum": ["conversational", "deterministic", "hybrid"] },
+    "user_prompt": { "type": "string", "minLength": 1 },
+    "success_criteria": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "failure_signals": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "evidence_required": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  }
+}

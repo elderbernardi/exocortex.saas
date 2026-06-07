@@ -1,0 +1,27 @@
+feature_id: EX-30
+title: Browser automation dependency and path contract
+category: Integration
+source: FEATURES.md
+risk: P1
+mode: hybrid
+user_prompt: |
+  Abra uma página simples no navegador autônomo e confirme que a automação browser funciona.
+allowed_tools:
+  - terminal
+  - read_file
+  - search_files
+disallowed_tools:
+  - send_message
+success_criteria:
+  - A dependência uv existe ou há fallback documentado.
+  - O path do comando em FEATURES.md corresponde ao path real da skill.
+  - Falta de dependência é BLOCKED com evidência, não PASS.
+failure_signals:
+  - Abort por uv ausente sem classificação BLOCKED.
+  - Divergência de path não registrada.
+  - PASS sem navegação ou sem evidência de fallback.
+evidence_required:
+  - transcript
+  - tool_trace
+  - dependency_check
+  - final_classification

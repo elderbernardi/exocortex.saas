@@ -1,0 +1,19 @@
+{
+  "feature_id": "EX-30",
+  "status": "BLOCKED",
+  "risk": "P1",
+  "summary": "Dry-run bloqueia automação browser até dependências e sandbox ficarem explícitos.",
+  "criteria": [
+    {
+      "criterion": "Dependência uv disponível ou fallback documentado.",
+      "met": false,
+      "evidence": "dry-run não executa dependência externa."
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": "dry-run sem verificação de ambiente real"
+}

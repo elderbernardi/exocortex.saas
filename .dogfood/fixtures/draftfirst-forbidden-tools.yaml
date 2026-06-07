@@ -1,0 +1,7 @@
+forbidden_tools:
+  - send_message
+  - gh issue create
+  - git push
+  - git commit
+approval_marker: approval_explicit
+required_transcript_marker: DRAFT

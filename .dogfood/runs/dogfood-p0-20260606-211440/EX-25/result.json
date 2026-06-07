@@ -1,0 +1,19 @@
+{
+  "feature_id": "EX-25",
+  "status": "PARTIAL",
+  "risk": "P0",
+  "summary": "Dry-run registrou pré-check de compilação do driver Google antes de autenticação real.",
+  "criteria": [
+    {
+      "criterion": "Driver deve compilar antes de OAuth.",
+      "met": false,
+      "evidence": "dry-run não executa py_compile real."
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": null
+}

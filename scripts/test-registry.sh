@@ -587,3 +587,68 @@ test_EX35() {
 
   SMOKE_PROMPT="Verifique se a skill define Gateway, UI/Web e TUI como superfícies."
 }
+
+# =============================================================================
+# Dogfood conversacional reproduzível
+# =============================================================================
+# Este arquivo continua podendo ser sourced por run-provisioning-tests.sh.
+# Quando executado diretamente, expõe alvos pequenos para o novo harness.
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  set -euo pipefail
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+  case "${1:-}" in
+    dogfood-catalog)
+      python "$REPO_ROOT/scripts/dogfood_validate_catalog.py" \
+        --root "$REPO_ROOT"
+      ;;
+    dogfood-p0)
+      run_id="dogfood-p0-$(date +%Y%m%d-%H%M%S)"
+      for feature_id in EX-08 EX-25 EX-30 EX-33; do
+        python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
+          --root "$REPO_ROOT" \
+          --run-id "$run_id" \
+          --dry-run-agent >/dev/null
+      done
+      python "$REPO_ROOT/scripts/dogfood_features.py" summarize "$REPO_ROOT/.dogfood/runs/$run_id"
+      ;;
+    dogfood-real-ex08)
+      run_id="dogfood-real-ex08-$(date +%Y%m%d-%H%M%S)"
+      python "$REPO_ROOT/scripts/dogfood_features.py" run EX-08 \
+        --root "$REPO_ROOT" \
+        --run-id "$run_id" \
+        --real-agent >/dev/null
+      python "$REPO_ROOT/scripts/dogfood_features.py" summarize "$REPO_ROOT/.dogfood/runs/$run_id"
+      ;;
+    dogfood-real-p0)
+      run_id="dogfood-real-p0-$(date +%Y%m%d-%H%M%S)"
+      for feature_id in EX-08 EX-25 EX-30 EX-33; do
+        DOGFOOD_AGENT_TIMEOUT="${DOGFOOD_AGENT_TIMEOUT:-120}" \
+          python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
+          --root "$REPO_ROOT" \
+          --run-id "$run_id" \
+          --real-agent >/dev/null
+      done
+      python "$REPO_ROOT/scripts/dogfood_features.py" summarize "$REPO_ROOT/.dogfood/runs/$run_id"
+      ;;
+    ""|--help|-h)
+      cat <<'USAGE'
+Uso direto:
+  ./scripts/test-registry.sh dogfood-catalog
+  ./scripts/test-registry.sh dogfood-p0
+  ./scripts/test-registry.sh dogfood-real-ex08
+  ./scripts/test-registry.sh dogfood-real-p0
+
+Uso tradicional:
+  source scripts/test-registry.sh  # feito por run-provisioning-tests.sh
+USAGE
+      ;;
+    *)
+      echo "Alvo desconhecido: $1" >&2
+      echo "Use: dogfood-catalog | dogfood-p0 | dogfood-real-ex08 | dogfood-real-p0" >&2
+      exit 2
+      ;;
+  esac
+fi

@@ -1,0 +1,19 @@
+{
+  "feature_id": "EX-33",
+  "status": "PARTIAL",
+  "risk": "P0",
+  "summary": "Dry-run registrou verificação de wrappers Codex declarados.",
+  "criteria": [
+    {
+      "criterion": "Wrappers centrais do harness existem.",
+      "met": false,
+      "evidence": "dry-run não acessa $HOME real."
+    }
+  ],
+  "artifacts": {
+    "transcript": "transcript.md",
+    "tool_trace": "tool_trace.jsonl",
+    "evidence": "evidence.md"
+  },
+  "blocked_reason": null
+}
