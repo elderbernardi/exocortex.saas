@@ -236,6 +236,8 @@ Ao final, o Exocórtex gera seu **SOUL.md personalizado** — a Constituição q
 
 Quando estiver pronto, diga: **"vamos começar o onboarding"** ou use o comando `/xc onboard`.
 
+Se o contexto for contingência operacional de modelo, você também pode acionar `/xc imbroke` para forçar o roteamento de emergência via OpenRouter free.
+
 ---
 
 > *A qualidade do que sai é proporcional à qualidade do que entra. Não existe atalho para isso. O Exocórtex é a disciplina que organiza a entrada — os 60% de pensamento que precedem os 40% de interação.*

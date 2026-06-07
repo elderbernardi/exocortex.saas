@@ -133,6 +133,29 @@ TELEGRAM_BOT_TOKEN="seu_token_do_telegram" curl -fsSL https://raw.githubusercont
 VERSION=v1.0.0-rc2 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 ```
 
+### Seleção de contingência de modelos gratuitos do OpenRouter
+Esse roteamento **não é default**.
+
+Ele só entra em ação quando você aciona explicitamente o modo de contingência:
+- via setup: `bash setup.sh --imbroke`
+- via comando operacional do Exocórtex: `/xc imbroke`
+- via script direto: `python scripts/openrouter_free_model_router.py --imbroke --format text`
+
+Quando ativado, `scripts/openrouter_free_model_router.py` passa a:
+- listar os modelos com `pricing.prompt == 0` e `pricing.completion == 0` no catálogo público do OpenRouter;
+- cruzar os candidatos com o benchmark público `fox-in-the-box-ai/hermes-best-models`;
+- usar uma cobertura secundária para modelos `unscored` com base em metadados públicos do catálogo OpenRouter;
+- calcular um `intelligence_index` determinístico com foco em task completion + agentic reasoning;
+- aplicar `model.provider=openrouter` e `model.default=<melhor_free>` no Hermes **somente** em modo `--imbroke` com `--apply`;
+- gravar a cadeia de fallback em `~/.hermes/model-routing/openrouter-free-models.json`.
+
+Execução manual:
+```bash
+python scripts/openrouter_free_model_router.py --format text
+python scripts/openrouter_free_model_router.py --imbroke --format text
+python scripts/openrouter_free_model_router.py --imbroke --apply --format json
+```
+
 ---
 
 ## 🚀 Como Usar no Dia a Dia

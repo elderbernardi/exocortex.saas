@@ -598,6 +598,7 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 | Email | Remove skill `himalaya`/`hymalaia` | Padrão: Google Workspace |
 | MCP | Remove server `composio` | API direta preferida |
 | Drive | Patch em `google_api.py` | Paginação + filtro trashed |
+| LLM Routing | Executa `openrouter_free_model_router.py` somente quando acionado com `--imbroke` ou `/xc imbroke` | Selecionar o melhor modelo gratuito do OpenRouter com fallback determinístico sem virar default |
 
 ### Variáveis de Ambiente
 

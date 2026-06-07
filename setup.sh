@@ -7,6 +7,10 @@
 #
 # Uso:
 #   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
+#   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --imbroke
+#
+# Flags:
+#   --imbroke   Ativa explicitamente o modo de contingência OpenRouter free
 #
 # Requer:
 #   - HERMES_HOME definido (runtime do Hermes)
@@ -23,6 +27,22 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
 ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IMBROKE_MODE=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --imbroke)
+      IMBROKE_MODE=1
+      ;;
+    -h|--help)
+      sed -n '1,22p' "$0"
+      exit 0
+      ;;
+    *)
+      fail "Flag não suportada: $arg"
+      ;;
+  esac
+done
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -334,6 +354,41 @@ EOF
     warn "Falha ao adicionar MCP server 'context7'"
 }
 
+configure_openrouter_free_router() {
+  local router_script="$SCRIPT_DIR/scripts/openrouter_free_model_router.py"
+  local report_path="$HERMES_HOME/model-routing/openrouter-free-models.json"
+
+  if [ ! -f "$router_script" ]; then
+    warn "Roteador OpenRouter free não encontrado: $router_script"
+    return 0
+  fi
+  if ! command -v python3 >/dev/null 2>&1; then
+    warn "python3 não encontrado; pulando roteador OpenRouter free"
+    return 0
+  fi
+
+  if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+    info "OPENROUTER_API_KEY ausente; gerando ranking de contingência sem aplicar provider/model"
+    if python3 "$router_script" --imbroke --report-path "$report_path" --format text >/dev/null 2>&1; then
+      log "Ranking OpenRouter free gerado em $report_path"
+    else
+      warn "Falha ao gerar ranking OpenRouter free"
+    fi
+    return 0
+  fi
+
+  if ! command -v hermes >/dev/null 2>&1; then
+    warn "hermes CLI não encontrado; roteador OpenRouter free não pode aplicar config"
+    return 0
+  fi
+
+  if python3 "$router_script" --imbroke --apply --report-path "$report_path" --format text >/dev/null 2>&1; then
+    log "Roteador OpenRouter free aplicado; relatório em $report_path"
+  else
+    warn "Falha ao configurar roteador OpenRouter free"
+  fi
+}
+
 echo ""
 echo "╔═══════════════════════════════════════════════╗"
 echo "║   Exocórtex.IA — Candidate-Release Setup     ║"
@@ -558,6 +613,16 @@ if [ -n "${CONTEXT7_API_KEY:-}" ]; then
   log "CONTEXT7_API_KEY definida"
 else
   info "CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)"
+fi
+
+# =============================================================================
+# Step 8.0: Roteador determinístico de modelos free do OpenRouter
+# =============================================================================
+if [ "$IMBROKE_MODE" = "1" ]; then
+  info "Modo --imbroke ativo: configurando roteador OpenRouter free..."
+  configure_openrouter_free_router
+else
+  info "Modo OpenRouter free desativado por default; use --imbroke para acionar a contingência"
 fi
 
 # =============================================================================
