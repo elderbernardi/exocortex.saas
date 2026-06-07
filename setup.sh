@@ -45,6 +45,7 @@ patch_google_drive_search() {
 
   local patch_status
   patch_status=$(python3 - "$gapi" <<'PY'
+import py_compile
 import re
 import sys
 from pathlib import Path
@@ -52,12 +53,8 @@ from pathlib import Path
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 
-if "trashed = false" in text and "nextPageToken, files(" in text:
-    print("ALREADY")
-    raise SystemExit(0)
-
 pattern = r"def drive_search\(args\):\n(?:.*\n)*?\n\ndef drive_get\(args\):"
-replacement = '''def drive_search(args):
+replacement = r'''def drive_search(args):
     if args.max < 1:
         print("ERROR: --max must be >= 1", file=sys.stderr)
         sys.exit(1)
@@ -66,7 +63,7 @@ replacement = '''def drive_search(args):
         query = args.query
     else:
         # Escape single quotes in Drive query literals and ignore trashed items by default.
-        escaped = args.query.replace("\\", "\\\\").replace("'", "\\'")
+        escaped = args.query.replace('\\\\', '\\\\\\\\').replace("'", "\\\\'")
         query = f"fullText contains '{escaped}' and trashed = false"
 
     fields = "nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink)"
@@ -112,6 +109,16 @@ new_text, count = re.subn(pattern, replacement, text, flags=re.MULTILINE)
 if count != 1:
     print("SKIP")
     raise SystemExit(0)
+
+if new_text == text:
+    try:
+        py_compile.compile(str(path), doraise=True)
+    except py_compile.PyCompileError:
+        print("SKIP")
+        raise SystemExit(0)
+    else:
+        print("ALREADY")
+        raise SystemExit(0)
 
 path.write_text(new_text, encoding="utf-8")
 print("PATCHED")
