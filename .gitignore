@@ -1,1 +1,5 @@
 .secrets
+.dogfood/runs/
+skills/*/.runtime/
+*.pyc
+__pycache__/
