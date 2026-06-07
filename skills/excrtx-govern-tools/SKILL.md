@@ -18,7 +18,8 @@ metadata:
 |---|---|---|
 | **Internos** | file_read, file_write, terminal, hermes-cli | Uso livre. Logar apenas em ações destrutivas (delete, overwrite). |
 | **Pesquisa** | duckduckgo-search, excrtx-integrate-browser, arxiv | Uso livre. Logar query + nº de resultados. |
-| **Comunicação** | email (futuro), calendar (futuro), messaging | **Draft-First obrigatório.** Jamais enviar sem aprovação. |
+| **Entrega ao executivo** | `send_message` para o próprio usuário no home channel | Pode executar sem DRAFT quando for self-delivery operacional, com destinatário inequívoco e sem representar fala do executivo para terceiros. |
+| **Comunicação para terceiros** | email, calendar, messaging, comentário, DM, post | **Draft-First obrigatório.** Jamais enviar sem aprovação pós-DRAFT. |
 | **Criação externa** | Google Docs, Drive, compartilhamentos | **Draft-First obrigatório.** Criar como rascunho local primeiro. |
 | **Configuração** | hermes skills install, pip install, mcp add | **Aprovação obrigatória.** Logar no session log. Atualizar setup.sh. |
 
@@ -36,13 +37,28 @@ Toda tool call que modifique estado externo DEVE ser logada:
 [TOOL] {timestamp} | {tool_name} | {action} | {target} | {result}
 ```
 
-### R3: Draft-First para Comunicações
-Tools de comunicação (email, calendar, messaging) NUNCA executam diretamente.
-Fluxo:
+### R3: Governança de entrega e comunicação
+Antes de usar uma tool de comunicação, classificar o ato:
+
+1. **Self-delivery operacional**
+   - Destinatário: o próprio executivo
+   - Canal: home channel dele
+   - Natureza: entrega operacional do sistema, recibo, teste técnico explícito ou envio do próprio output de volta ao operador
+   - Política: pode executar sem DRAFT
+
+2. **Comunicação para terceiros**
+   - Qualquer destinatário que não seja inequivocamente o próprio executivo
+   - Qualquer canal compartilhado, grupo ou superfície pública
+   - Qualquer texto que represente fala do executivo para terceiros
+   - Política: Draft-First obrigatório
+
+Fluxo para casos com Draft-First:
 1. Gerar rascunho localmente
 2. Apresentar ao executivo
 3. Executivo aprova → executar
 4. Executivo rejeita → descartar ou revisar
+
+Na dúvida sobre destinatário, canal ou efeito social, tratar como comunicação para terceiros.
 
 ### R4: Sandbox por Microverso
 Quando operando dentro de um microverso, tools devem respeitar o escopo:
@@ -66,6 +82,6 @@ Qualquer skill fora do bundle requer menção explícita do executivo.
 | Tool/Ação | Motivo |
 |---|---|
 | `rm -rf` em qualquer path | Destruição irreversível |
-| Envio direto de email/mensagem | Viola Draft-First |
+| Envio direto de email/mensagem para terceiros sem aprovação pós-DRAFT | Viola Draft-First |
 | Instalação de packages do sistema (`apt`, `brew`) | Requer aprovação manual |
 | Acesso a dados de outros tenants | Violação de isolamento |
