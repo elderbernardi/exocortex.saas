@@ -44,6 +44,53 @@ SECONDARY_KEYWORDS: tuple[tuple[str, float], ...] = (
     ("multimodal", 2.0),
 )
 
+RATING_SCALE = 10.0  # Escala 1-10
+MIN_RATING = 1.0
+MAX_RATING = 10.0
+
+
+def convert_to_10_scale(intelligence_index: float | None, secondary_index: float | None) -> float:
+    """Converte intelligence/secondary index (0-100) para escala 1-10."""
+    raw_index = None
+    if intelligence_index is not None:
+        raw_index = intelligence_index
+    elif secondary_index is not None:
+        raw_index = secondary_index
+    
+    if raw_index is None:
+        return MIN_RATING
+    
+    # Mapeia 0-100 para 1-10
+    rating = round(raw_index / 10.0, 1)
+    return max(MIN_RATING, min(MAX_RATING, rating))
+
+
+def get_warning(rating: float) -> tuple[str, str, str]:
+    """Retorna (emoji, status, mensagem) baseado na classificação."""
+    if rating >= 8.0:
+        return ("🟢", "[OK]", "Aproveite, bom modelo gratuito ativo!")
+    elif rating >= 5.0:
+        return ("🟡", "[ALERTA]", "Cuidado: este modelo pode ignorar algumas regras e alucinar eventualmente. Revise outputs críticos.")
+    else:
+        return ("🔴", "[PERIGO]", "Modelo de baixa capacidade. Recomenda-se revisar tudo e avaliar resultados com cautela.\n🔴 [PERIGO] Cuidado com operações que resultem em alteração no sistema.")
+
+
+def format_transparency_response(model: RankedModel) -> str:
+    """Formata resposta de transparência (100% determinística)."""
+    rating = convert_to_10_scale(model.intelligence_index, model.secondary_index)
+    source = "fox" if model.benchmarked else model.secondary_source or SECONDARY_SOURCE_NAME
+    emoji, status, message = get_warning(rating)
+    
+    lines = [
+        f"Modelo selecionado: {model.id}",
+        "✅ Gratuito (custo zero)",
+        f"✅ Classificação: {rating}/10 (baseado em benchmarks globais)",
+        f"📊 Fonte: {source}",
+        "",
+        f"{emoji} {status} {message}",
+    ]
+    return "\n".join(lines)
+
 
 @dataclass
 class RankedModel:
@@ -330,11 +377,23 @@ def format_text(payload: dict[str, Any]) -> str:
     lines.append(f"Benchmark primário: {payload['fox_metrics_source']}")
     lines.append(f"Cobertura secundária: {payload['secondary_source']}")
     lines.append("")
+    
+    # Adiciona classificação 1-10 e warning
+    rating = convert_to_10_scale(selected['intelligence_index'], selected['secondary_index'])
+    source = "fox" if selected['benchmarked'] else selected.get('secondary_source', SECONDARY_SOURCE_NAME)
+    emoji, status, message = get_warning(rating)
+    
+    lines.append(f"Classificação: {rating}/10")
+    lines.append(f"Fonte: {source}")
+    lines.append(f"{emoji} {status} {message}")
+    lines.append("")
+    
     lines.append("Fallback chain:")
     for idx, item in enumerate(payload["ranked_free_models"], start=1):
-        source = "fox" if item["benchmarked"] else item["secondary_source"]
+        source = "fox" if item["benchmarked"] else item.get("secondary_source", SECONDARY_SOURCE_NAME)
+        item_rating = convert_to_10_scale(item['intelligence_index'], item['secondary_index'])
         lines.append(
-            f"{idx}. {item['id']} | intelligence={item['intelligence_index']} | secondary={item['secondary_index']} | pass_rate={item['pass_rate']} | context={item['context_length']} | {source}"
+            f"{idx}. {item['id']} | rating={item_rating}/10 | intelligence={item['intelligence_index']} | secondary={item['secondary_index']} | pass_rate={item['pass_rate']} | context={item['context_length']} | {source}"
         )
     return "\n".join(lines)
 
