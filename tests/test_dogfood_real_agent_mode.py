@@ -163,6 +163,39 @@ class DogfoodRealAgentModeTest(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL")
         self.assertIn("path", result["summary"])
 
+    def test_ex30_probe_uses_canonical_browser_wrapper_path(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "repo"
+            script = root / "skills" / "excrtx-integrate-browser" / "scripts" / "browser-use.sh"
+            script.parent.mkdir(parents=True)
+            script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            script.chmod(0o755)
+
+            probe = probe_feature_environment(root, "EX-30")[0]
+
+            self.assertEqual(probe["actual_script"], "skills/excrtx-integrate-browser/scripts/browser-use.sh")
+            self.assertTrue(probe["features_declared_path_exists"])
+            self.assertTrue(probe["path_contract_matches"])
+
+    def test_ex30_probe_detects_skill_local_uv_runtime(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "repo"
+            script = root / "skills" / "excrtx-integrate-browser" / "scripts" / "browser-use.sh"
+            local_uv = root / "skills" / "excrtx-integrate-browser" / ".runtime" / "uv" / "uv"
+            script.parent.mkdir(parents=True)
+            local_uv.parent.mkdir(parents=True)
+            script.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            local_uv.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+            script.chmod(0o755)
+            local_uv.chmod(0o755)
+
+            probe = probe_feature_environment(root, "EX-30")[0]
+
+            self.assertTrue(probe["local_uv_available"])
+            self.assertTrue(probe["uv_available"])
+            self.assertEqual(probe["local_uv"], "skills/excrtx-integrate-browser/.runtime/uv/uv")
+
+
     def test_ex33_real_agent_probe_fails_when_wrappers_missing(self):
         result = classify_agent_transcript(
             {"feature_id": "EX-33", "risk": "P0"},

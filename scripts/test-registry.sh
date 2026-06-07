@@ -511,13 +511,22 @@ test_EX30() {
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
   check_no_skill_deps
-  check_tool_in_path "uv"
 
   local browser_script="$SKILLS_DST/$skill/scripts/browser-use.sh"
+  local browser_runtime="$SKILLS_DST/$skill/.runtime"
+  local browser_uv="$browser_runtime/uv/uv"
   if [ -f "$browser_script" ]; then
     check_script_executable "$browser_script" "browser-use.sh"
   else
     log_check_fail "Script browser-use.sh ausente"
+  fi
+
+  if command -v uv >/dev/null 2>&1; then
+    log_check_pass "uv disponível no PATH ($(command -v uv))"
+  elif [ -x "$browser_uv" ]; then
+    log_check_pass "uv disponível no runtime local da skill ($browser_uv)"
+  else
+    log_check_fail "uv ausente no PATH e no runtime local da Browser Automation ($browser_uv)"
   fi
 
   SMOKE_PROMPT="Verifique se browser-use.sh responde a 'state' sem erro fatal."

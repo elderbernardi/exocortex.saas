@@ -299,15 +299,25 @@ def probe_feature_environment(root: Path, feature_id: str) -> list[dict[str, Any
         events.append(event)
     elif feature_id == "EX-30":
         actual_script = root / "skills" / "excrtx-integrate-browser" / "scripts" / "browser-use.sh"
-        declared_path = ".agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh"
+        runtime_root = actual_script.parent.parent / ".runtime"
+        local_uv = runtime_root / "uv" / "uv"
+        local_browser_bin = runtime_root / "bin" / "browser-use"
+        declared_path = "skills/excrtx-integrate-browser/scripts/browser-use.sh"
         declared_script = root / declared_path
+        local_uv_available = local_uv.is_file() and os.access(local_uv, os.X_OK)
         events.append(
             {
                 "tool": "terminal",
                 "probe": "ex30_browser_dependency_path",
-                "command": "command -v uv && test -x skills/excrtx-integrate-browser/scripts/browser-use.sh",
+                "command": "test -x skills/excrtx-integrate-browser/scripts/browser-use.sh && { command -v uv >/dev/null 2>&1 || test -x skills/excrtx-integrate-browser/.runtime/uv/uv; }",
                 "approval_explicit": True,
-                "uv_available": command_available("uv"),
+                "system_uv_available": command_available("uv"),
+                "local_uv": str(local_uv.relative_to(root)),
+                "local_uv_available": local_uv_available,
+                "uv_available": command_available("uv") or local_uv_available,
+                "runtime_root": str(runtime_root.relative_to(root)),
+                "local_browser_bin": str(local_browser_bin.relative_to(root)),
+                "local_browser_bin_exists": local_browser_bin.is_file(),
                 "actual_script": str(actual_script.relative_to(root)),
                 "actual_script_exists": actual_script.is_file(),
                 "actual_script_executable": os.access(actual_script, os.X_OK),

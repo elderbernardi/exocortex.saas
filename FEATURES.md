@@ -446,8 +446,8 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 | Campo | Detalhe |
 |---|---|
 | **Funcionalidade** | Automação autônoma de browser via CLI. Navega, interage, extrai dados de páginas web. Sessões persistentes para iteração rápida. Comandos: `open`, `state`, `click`, `input`, `scroll`, `screenshot`, `tab`, `close`. Modo Agent com Python para fluxos complexos. |
-| **Como usar** | Usar wrapper: `.agent/skills/excrtx-integrate-browser/scripts/excrtx-integrate-browser.sh open <url>`. Sempre rodar `state` antes de interagir (para obter índices de elementos). |
-| **Instalação** | Auto-install no primeiro uso via `uv tool install --python 3.13 excrtx-integrate-browser`. Chromium baixado via `excrtx-integrate-browser install`. |
+| **Como usar** | Usar wrapper: `skills/excrtx-integrate-browser/scripts/browser-use.sh open <url>`. Sempre rodar `state` antes de interagir (para obter índices de elementos). |
+| **Instalação** | `setup.sh` provisiona runtime local em `excrtx-integrate-browser/.runtime/`. Se `uv` estiver ausente no PATH, instala `uv` dentro do path da skill e usa esse runtime para instalar `browser-use` (`uv tool install --python 3.13 browser-use`) e baixar Chromium. O wrapper também consegue auto-reparar esse runtime no primeiro uso. |
 | **Dependências de Skills** | Nenhuma |
 | **Dependências de Tools** | `uv`, Python 3.13, Chromium, `OPENROUTER_API_KEY` (para Agent mode) |
 
