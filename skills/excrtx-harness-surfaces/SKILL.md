@@ -206,6 +206,33 @@ Pitfalls:
 
 Reference: `references/exocortex-home-layout.md`.
 
+## Opt-in contingency surfaces
+
+When introducing a fallback, degraded, or budget-emergency mode, do not make the mode default just because it is operationally useful.
+
+Use this rule:
+- normal path stays the default
+- contingency path is explicit and opt-in
+- CLI flag and chat command should mirror the same intent
+
+Preferred packaging pattern:
+- CLI activation via a named flag such as `--imbroke`
+- chat/gateway activation via a parallel operational command such as `/xc imbroke`
+- write/apply actions must require the explicit contingency activation, not merely the presence of credentials or a provider key
+- read-only/reporting may run without activation when the goal is inspection rather than switching modes
+
+Why:
+- preserves the main product posture
+- prevents fallback logic from silently replacing the intended primary path
+- makes emergency behavior easy to invoke without normalizing it as baseline behavior
+
+Pitfalls:
+- do not auto-enable a fallback provider during setup just because `OPENROUTER_API_KEY` or equivalent credentials exist
+- do not let `--apply` or equivalent write actions run unless the contingency flag is present
+- do not document a chat command without mirroring it in the CLI/API surface; operator and gateway semantics should stay aligned
+
+Reference: `references/contingency-surface-activation.md`.
+
 ## Local CLI APIs for sibling engines
 
 When Hermes will operate a sibling local project as an engine, do not default to HTTP just because the word “API” appears. If Hermes and the engine share a workspace and the interaction is local, prefer a machine-oriented CLI API:

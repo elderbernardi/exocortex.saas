@@ -28,8 +28,10 @@ This subproject contains **Hermes Agent runtime configuration files**. The follo
 - `SOUL_SEED.md` — Agent identity and behavioral contract
 - `FEATURES.md` — 35-feature catalog (EX-01 to EX-35)
 - `BACKLOG_TEMPLATE.md` — Deferred integrations backlog
-- `.hermes/` — Full Hermes runtime artifacts (acervo, profiles, skills, skill-bundles)
-- `skills/` — 35 skill directories (excrtx-* naming)
+- `acervo/` — Acervo seed (synced from ~/exocortex/acervo)
+- `skills/` — 37 skill directories (excrtx-* naming)
+- `profiles/` — Hermes profiles (manut)
+- `skill-bundles/` — Bundle definitions
 - `install.sh` / `setup.sh` — Automated provisioning scripts
 
 **These files must NOT be modified to conform to the monorepo harness.** They follow Hermes conventions and are managed separately.

@@ -21,17 +21,17 @@ setup: scripts/browser-use.sh
 
 ## 🔧 Setup & Dependencies
 
-This skill requires external tools. The wrapper script **auto-installs** everything on first run, and `setup.sh` can pre-provision the same runtime in the skill path.
+This skill requires external tools. The wrapper script **auto-installs** everything on first run.
 
 | Dependency | How it's resolved | Manual fallback |
 |---|---|---|
-| `uv` | Auto-installed into the skill-local runtime when absent | `curl -LsSf https://astral.sh/uv/install.sh \| env UV_INSTALL_DIR="<skill>/.runtime/uv" sh` |
-| `browser-use` CLI | Auto-installed via `uv tool install --python 3.13 browser-use` into `<skill>/.runtime/bin/` | Same command with `UV_TOOL_DIR` / `UV_TOOL_BIN_DIR` pointed at the runtime |
-| Chromium browser | Auto-downloaded via `browser-use install` into `<skill>/.runtime/ms-playwright/` | `<skill>/.runtime/bin/browser-use install` |
-| System libs (fonts, etc.) | Needs `sudo` — may fail silently | `sudo <skill>/.runtime/bin/browser-use install` |
-| `OPENROUTER_API_KEY` | Reused automatically from Hermes `.env` by the wrapper; mapped to browser-use's OpenAI-compatible env when needed | Set in Hermes `.env` or shell |
+| `uv` | Must be pre-installed | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| `browser-use` CLI | Auto-installed via `uv tool install --python 3.13 browser-use` | Same command |
+| Chromium browser | Auto-downloaded via `browser-use install` | `~/.local/bin/browser-use install` |
+| System libs (fonts, etc.) | Needs `sudo` — may fail silently | `sudo ~/.local/bin/browser-use install` |
+| `OPENROUTER_API_KEY` | Required only for Python Agent mode | Set in `.env` or shell |
 
-> **⚠️ PATH caveat:** The `mise` shim may resolve `browser-use` to Python 3.14 (asyncio incompatible). **Always invoke via the wrapper script or the skill-local runtime binary**, never an unverified shim.
+> **⚠️ PATH caveat:** The `mise` shim may resolve `browser-use` to Python 3.14 (asyncio incompatible). **Always invoke via the wrapper script or `~/.local/bin/browser-use`**, never an unverified shim.
 
 ### First-time run
 
@@ -41,9 +41,9 @@ skills/excrtx-integrate-browser/scripts/browser-use.sh open https://example.com
 ```
 
 On first execution it will:
-1. Reuse the skill-local `uv` runtime when present, otherwise install it into `.runtime/uv`
-2. Install `browser-use` CLI (pinned to Python 3.13) into `.runtime/bin`
-3. Download Chromium into `.runtime/ms-playwright` if missing
+1. Verify `uv` exists
+2. Install `browser-use` CLI (pinned to Python 3.13)
+3. Download Chromium if missing
 4. Forward your command
 
 ## Quick Start Workflow
@@ -160,6 +160,17 @@ $BU eval "JSON.stringify([...document.querySelectorAll('tr')].map(r => [...r.cel
 $BU close
 ```
 
+## Contract Hygiene
+
+- **Canonical wrapper path:** `skills/excrtx-integrate-browser/scripts/browser-use.sh`
+- Keep this exact path synchronized across:
+  - `SKILL.md` examples and `setup:` frontmatter
+  - feature catalogs such as `FEATURES.md`
+  - dogfood probes / smoke tests
+- If docs point to a different executable path than the file that actually exists, classify it as a **contract failure** first. Do not hide it behind a dependency failure.
+- Once the path contract matches, missing prerequisites like `uv` should downgrade the feature to **BLOCKED**, not **FAIL**.
+- Session-specific evidence and reproduction notes live in `references/ex30-path-contract.md`.
+
 ## Rules
 
 1. **Always `state` first** — Get element indices before interacting
@@ -167,6 +178,7 @@ $BU close
 3. **Use `wait`** — Dynamic pages need explicit waits before extraction
 4. **Screenshot for verification** — Save screenshots to prove task completion
 5. **One session at a time** — Don't overlap browser sessions
+6. **Verify contract + dependency separately** — first confirm the documented wrapper path exists and matches the real script, then test prerequisites such as `uv` and Chromium
 
 ## LLM Agent Usage (Python)
 

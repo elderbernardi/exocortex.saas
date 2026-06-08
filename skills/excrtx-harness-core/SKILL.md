@@ -22,16 +22,10 @@ Ne3o e9 uma skill de *learning*; e9 um harness de execue7e3o + evideancia.
 
 ## Artefatos (local)
 
-Padrão recomendado: usar o wrapper em `~/.hermes/scripts/codex_learning/` que grava em:
+Padre3o recomendado: usar o wrapper em `~/.hermes/scripts/codex_learning/` que grava em:
 
 - `~/.hermes/codex-learning/runs/*.json`
 - `~/.hermes/codex-learning/events/*.json`
-- `~/.hermes/codex-learning/reviews/*.md`
-
-Provisionamento esperado:
-- `setup.sh` deve copiar `scripts/codex_learning/run_codex_with_learning.py` para `~/.hermes/scripts/codex_learning/`
-- `setup.sh` deve copiar `scripts/codex_learning/review_latest_run.py` para `~/.hermes/scripts/codex_learning/`
-- `setup.sh` deve criar `~/.hermes/codex-learning/{runs,events,reviews}`
 
 ## Modos
 
@@ -87,3 +81,4 @@ python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py \
 ## Refereancias
 
 - `references/codex-cli-gotchas.md` (gotchas + sinais em stderr + como interpretar)
+- `references/harness-truth-contract.md` (checklist para alinhar promessas da feature, arquivos reais, `setup.sh`, `HERMES_HOME` e dogfood antes de declarar PASS)

@@ -64,10 +64,18 @@ Quando o executivo pedir uma ação externa, classificar antes de executar:
 
 | Resposta do Executivo | Ação |
 |---|---|
-| Aprovação ("ok", "envia", "pode mandar") | Executar via tool (quando integrado) ou confirmar envio |
+| Aprovação ("ok", "envia", "pode mandar") | Executar via tool **somente no escopo exato do draft aprovado** |
 | Edição ("mude o tom", "adicione X") | Revisar rascunho, apresentar nova versão |
 | Descarte ("não", "cancela", "deixa") | Descartar, confirmar que nada foi enviado |
 | Silêncio (sem resposta) | Manter em fila, lembrar no próximo briefing |
+
+**Regra de escopo após aprovação**
+- Aprovação não autoriza publicar toda a working tree por arrasto.
+- Se houver mudanças locais não relacionadas, o draft deve explicitar isso antes da aprovação.
+- Depois da aprovação, stage/commit/push devem ser seletivos por unidade lógica; o restante vira uma segunda publicação, com sua própria validação.
+- Em fechamento de issue, fechar apenas depois que o commit/push correspondente estiver publicado.
+
+Referência operacional: `references/mixed-working-tree-selective-publication.md`
 
 ### 4. Regime por categoria
 

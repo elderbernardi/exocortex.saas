@@ -72,6 +72,32 @@ Se uma tool falhar, o agente DEVE:
 2. Nunca tentar auto-reparar com outra tool sem informar
 3. Sugerir alternativas
 
+### R6: Mudanças de configuração com efeito colateral exigem ambiente isolado de validação
+Quando a tarefa altera automações que chamam CLIs de configuração (`hermes config set`, setup scripts, provisionadores, roteadores de provider/model, wrappers que escrevem estado), validar em duas camadas antes de declarar pronto:
+
+1. **Teste isolado com binário fake no PATH**
+   - Criar diretório temporário.
+   - Injetar um shim executável (`hermes`, ou outro CLI-alvo) no `PATH` para registrar argumentos em arquivo.
+   - Rodar o script real contra esse ambiente e verificar as chamadas exatas emitidas.
+   - Objetivo: provar intenção de mutação sem tocar no runtime principal.
+
+2. **Smoke real somente leitura, quando houver fonte externa**
+   - Se a lógica depende de API pública/catálogo remoto, executar um smoke contra a fonte real.
+   - Preferir modo que gere relatório/artifact sem aplicar mutação real quando isso bastar para validar ranking/seleção.
+
+3. **Cobrir fixtures + edge cases que apareceram no smoke**
+   - Se o smoke revelar bug de parsing/tempo/formato, congelar isso em teste unitário imediatamente.
+   - Exemplo de classe de bug: comparação entre datetime sem timezone e datetime com timezone.
+
+4. **Só então integrar no setup/provisionamento**
+   - Depois de provar o script isoladamente, plugar no `setup.sh`/provisionador e adicionar teste textual ou estrutural que confirme a chamada no fluxo de instalação.
+
+Esse padrão é obrigatório para evitar travar ou contaminar o agente principal durante validação de automações de configuração.
+
+## Support files
+
+- `references/config-mutation-isolated-validation.md` — padrão de validação isolada para scripts que aplicam configuração via CLI, com shim no PATH, smoke real sem mutação e promoção imediata de bugs encontrados para testes.
+
 ## Whitelist Padrão
 
 Skills do bundle `exocortex-alpha` são pré-autorizadas.
