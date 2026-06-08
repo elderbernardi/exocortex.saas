@@ -211,9 +211,106 @@ def select_and_format_model():
 
 **Solução:** Adicionado ao SKILL.md a ordem de prioridade explícita.
 
-## 6. Relacionado
+## 6. Circuit Breaker — Algoritmos
+
+### select_with_failover()
+
+Seleciona o melhor modelo disponível, pulando modelos em estado de falha.
+
+```python
+def select_with_failover(ranked, failed_models):
+    """
+    Percorre ranking ordenado e retorna o primeiro modelo que:
+    - NÃO está em failed_models, OU
+    - Está em failed_models mas cooldown_until < now
+    
+    Se TODOS falharam:
+    - Retorna o modelo cujo cooldown_until é o mais próximo de expirar
+      (mais provável de ter se recuperado)
+    """
+    for model in ranked:
+        if is_model_available(model.id, failed_models):
+            return model
+    
+    # Fallback: cooldown mais próximo de expirar
+    return min(ranked, key=lambda m: failed_models[m.id].get("cooldown_until", "9999"))
+```
+
+### is_model_available()
+
+```python
+def is_model_available(model_id, failed_models):
+    """
+    True se:
+    - model_id não está em failed_models, OU
+    - now >= cooldown_until (cooldown expirou)
+    """
+    if model_id not in failed_models:
+        return True
+    deadline = parse_iso(failed_models[model_id]["cooldown_until"])
+    return now >= deadline
+```
+
+### guard_check()
+
+```python
+def guard_check():
+    """
+    1. Lê model.provider via hermes config get
+    2. Se provider != "openrouter":
+       - Cancela todos os crons (recovery + watchdog)
+       - Remove sentinel file
+       - Imprime notificação AUTO-OFF
+       - Return False (imbroke desligado)
+    3. Se provider == "openrouter" ou indeterminado:
+       - Return True (imbroke continua ativo)
+    
+    Chamado por:
+    - Watchdog cron (a cada 5 min)
+    - Toda operação do circuit breaker (mark-failed, recover)
+    """
+```
+
+### Transições de Estado
+
+```
+INATIVO ──(--activate)──→ ATIVO
+  ↑                          │
+  │                          ├──(--mark-failed)──→ FAILOVER
+  │                          │                        │
+  │                          ├──(cron --recover)──────┘
+  │                          │
+  ├──(--deactivate)──────────┘
+  ├──(guard: provider mudou)─┘
+```
+
+### Exemplo: Fluxo de Failover Completo
+
+1. **Ativação**: `--imbroke --activate`
+   - Sentinel criado com `previous_provider=anthropic`
+   - Modelo selecionado: `kimi-k2.6:free` (9.2/10)
+   - Watchdog cron iniciado (a cada 5 min)
+
+2. **Falha**: `--mark-failed kimi-k2.6:free --fail-reason rate_limit`
+   - `kimi-k2.6:free` adicionado a `failed_models` com `cooldown_until = now + 30min`
+   - `select_with_failover()` → `gpt-oss-120b:free` (8.4/10)
+   - `hermes config set model.default gpt-oss-120b:free`
+   - Recovery cron agendado: `hermes cron create "in 30m"`
+
+3. **Recovery** (30 min depois): `--recover`
+   - `kimi-k2.6:free` cooldown expirou → removido de `failed_models`
+   - `select_with_failover()` → `kimi-k2.6:free` (9.2/10) — modelo original volta!
+   - `hermes config set model.default kimi-k2.6:free`
+
+4. **Guard** (executivo troca provider): `hermes config set model.provider openai`
+   - Watchdog detecta: `model.provider = openai ≠ openrouter`
+   - Cancela crons, remove sentinel
+   - NÃO restaura config (troca foi intencional)
+
+## 7. Relacionado
 
 - **Issue #48:** [Feature][EX-48] Modo imbroke: classificar modelos 1-10 com transparência
 - **Script:** `scripts/openrouter_free_model_router.py`
 - **Skill original:** `skills/excrtx-harness-imbroke/SKILL.md`
 - **Benchmark source:** fox-in-the-box-ai/hermes-best-models
+- **Sentinel:** `~/.hermes/model-routing/imbroke-state.json`

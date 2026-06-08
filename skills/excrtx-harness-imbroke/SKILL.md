@@ -15,8 +15,52 @@ tags: [exocortex, openrouter, imbroke, deterministic, rating, warnings]
 
 # excrtx-harness-imbroke
 
-Use esta skill quando o executivo ativar o modo imbroke ou solicitar classificação
-de modelos gratuitos do OpenRouter em escala 1-10.
+## ⚡ Instruções para o Agente (OBRIGATÓRIO)
+
+**TODAS as ações são executadas via script Python determinístico.**
+**NÃO use `hermes config set` manualmente. NÃO tente formatar saída com LLM.**
+
+O script fica em: `scripts/openrouter_free_model_router.py` (relativo ao workdir do exocortex.saas).
+
+### Quando o executivo pedir para ATIVAR imbroke:
+
+```bash
+cd /home/elder/projetos/projetob/exocortex.saas && python3 scripts/openrouter_free_model_router.py --imbroke --activate
+```
+
+**O que o script faz automaticamente:**
+- Consulta APIs (OpenRouter + fox benchmarks)
+- Seleciona o melhor modelo gratuito por rating
+- Configura `model.provider`, `model.default` e `fallback_providers` no Hermes
+- Inicia watchdog cron para auto-desativação se provider mudar
+- Retorna output formatado com rating, warnings, e status
+
+**Copie a saída do script para o executivo. Não reformate.**
+
+### Quando o executivo pedir para DESATIVAR imbroke:
+
+```bash
+cd /home/elder/projetos/projetob/exocortex.saas && python3 scripts/openrouter_free_model_router.py --deactivate
+```
+
+### Quando o executivo pedir STATUS:
+
+```bash
+cd /home/elder/projetos/projetob/exocortex.saas && python3 scripts/openrouter_free_model_router.py --status
+```
+
+### Quando o executivo pedir para VER o ranking (sem ativar):
+
+```bash
+cd /home/elder/projetos/projetob/exocortex.saas && python3 scripts/openrouter_free_model_router.py --format text
+```
+
+### IMPORTANTE: A troca de modelo exige nova sessão
+
+Após ativar ou desativar, avise o executivo:
+> "A troca de modelo exige uma nova sessão do Hermes (`/new`). Esta sessão continua com o modelo anterior."
+
+---
 
 ## Visão Geral
 
@@ -38,6 +82,8 @@ Modelo selecionado (ex: moonshotai/kimi-k2.6:free)
 Classificação (sem LLM) → Conversão matemática (intelligence/10)
                      ↓
 Apresentação (sem LLM) → Formatação determinística + Warnings
+                     ↓
+Fallback chain → fallback_providers configurado no Hermes para failover nativo
 ```
 
 ## Implementação
@@ -165,23 +211,82 @@ Para rating < 5, SEMPRE avise sobre:
 
 ## Arquivos Relacionados
 
-- `scripts/openrouter_free_model_router.py` — Script principal de seleção
+- `scripts/openrouter_free_model_router.py` — Script principal de seleção e circuit breaker
 - `skills/excrtx-harness-imbroke/SKILL.md` — Skill original do modo imbroke
 - `~/.hermes/model-routing/openrouter-free-models.json` — Cache de modelos
+- `~/.hermes/model-routing/imbroke-state.json` — Sentinel de estado (circuit breaker)
+
+## Circuit Breaker (Auto-Failover)
+
+Quando um modelo gratuito falha em runtime (rate limit, timeout, API error),
+o failover acontece em **duas camadas**:
+
+### Camada 1: Fallback nativo do Hermes (intra-sessão)
+
+Ao ativar o imbroke, o script configura `fallback_providers` no `config.yaml`
+com TODOS os modelos do ranking (exceto o primário). O Hermes usa essa lista
+nativamente via `try_activate_fallback()`:
+
+```
+kimi-k2.6:free (primário) → falha
+  → gpt-oss-120b:free (fallback 1) → falha
+    → nemotron-3-super-120b (fallback 2) → OK ✅
+```
+
+**Este é o mecanismo que age dentro da sessão ativa.**
+Não requer nenhum script externo — o Hermes faz sozinho.
+
+### Camada 2: Circuit breaker persistente (cross-sessão)
+
+Para persistir estado entre sessões (ex: modelo continua falhando após restart):
+
+1. **Sentinel** — `imbroke-state.json` controla ativação/desativação
+2. **Failover** — `--mark-failed` registra falha e ativa próximo elegível
+3. **Cron Recovery** — Após cooldown (30 min default), reavalia modelo
+4. **Guard Tripwire** — Watchdog detecta se provider mudou externamente
+
+### Guard Tripwire (Auto-desativação)
+
+Se o executivo ou outro agente trocar o provider externamente:
+```bash
+hermes config set model.provider openai
+# → Watchdog detecta em ≤5min e auto-desativa imbroke
+```
+
+O guard NÃO restaura a config anterior (a troca foi intencional).
+Ele apenas limpa o sentinel e os crons.
+
+### Overhead quando inativo
+
+**Zero.** Sem sentinel = sem crons = sem processos periódicos.
+
+### CLI Completa
+
+| Flag | Ação |
+|---|---|
+| `--imbroke --activate` | Ativa modo com circuit breaker |
+| `--deactivate` | Desativa e restaura config anterior |
+| `--status` | Mostra estado atual |
+| `--mark-failed <id>` | Registra falha e failover |
+| `--fail-reason <r>` | Motivo da falha |
+| `--cooldown <seg>` | Override do cooldown (default: 1800) |
+| `--recover` | Reavalia (chamado pelo cron) |
+| `--guard` | Verifica provider (chamado pelo watchdog) |
 
 ## Checklist de Implementação
 
-- [ ] `compute_rating()` implementado em `openrouter_free_model_router.py`
-- [ ] `get_warning()` implementado
-- [ ] `format_response()` implementado
-- [ ] Script retorna rating 1-10 na saída `--format text`
-- [ ] Warnings exibidos conforme faixas
-- [ ] Documentado em `skills/excrtx-harness-imbroke/SKILL.md`
-- [ ] Testado com modelos em diferentes faixas
+- [x] `compute_rating()` implementado em `openrouter_free_model_router.py`
+- [x] `get_warning()` implementado
+- [x] `format_response()` implementado
+- [x] Script retorna rating 1-10 na saída `--format text`
+- [x] Warnings exibidos conforme faixas
+- [x] Circuit breaker: sentinel, failover, recovery, guard
+- [x] Testes automatizados (22 testes)
+- [x] Documentado em `skills/excrtx-harness-imbroke/SKILL.md`
 
 ## References
 
-- `references/algorithms.md` — Algoritmos detalhados de rating e warnings, com exemplos e pitfalls da sessão
+- `references/algorithms.md` — Algoritmos detalhados de rating, warnings e circuit breaker
 - Issue #48: [Feature][EX-48] Modo imbroke: classificar modelos 1-10 com transparência
 - Benchmark source: fox-in-the-box-ai/hermes-best-models
 - OpenRouter catalog: https://openrouter.ai/api/v1/models

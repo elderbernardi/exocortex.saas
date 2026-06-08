@@ -482,10 +482,17 @@ configure_openrouter_free_router() {
     return 0
   fi
 
-  if python3 "$router_script" --imbroke --apply --report-path "$report_path" --format text >/dev/null 2>&1; then
-    log "Roteador OpenRouter free aplicado; relatório em $report_path"
+  # Use --activate for full circuit breaker setup (sentinel + watchdog cron)
+  if python3 "$router_script" --imbroke --activate --report-path "$report_path" --format text >/dev/null 2>&1; then
+    log "Roteador OpenRouter free ativado com circuit breaker; relatório em $report_path"
   else
-    warn "Falha ao configurar roteador OpenRouter free"
+    # Fallback to legacy --apply if --activate fails (e.g., hermes cron unavailable)
+    warn "Falha no --activate; tentando --apply legado"
+    if python3 "$router_script" --imbroke --apply --report-path "$report_path" --format text >/dev/null 2>&1; then
+      log "Roteador OpenRouter free aplicado (modo legado); relatório em $report_path"
+    else
+      warn "Falha ao configurar roteador OpenRouter free"
+    fi
   fi
 }
 

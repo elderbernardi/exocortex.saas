@@ -10,6 +10,13 @@ Secondary coverage signal for models not present in fox:
 This router is intentionally *not* a default mode. It becomes actionable only
 when the caller opts into emergency mode via ``--imbroke``. In that mode the
 script may also apply the selected model to Hermes config with ``--apply``.
+
+Circuit breaker (imbroke mode):
+- Sentinel file tracks activation state, previous config, and failed models.
+- When a model fails, the next eligible model is auto-selected and a recovery
+  cron is scheduled to re-evaluate after a cooldown period.
+- A watchdog cron periodically checks if the provider changed externally;
+  if so, imbroke mode auto-deactivates (guard tripwire).
 """
 
 from __future__ import annotations
@@ -21,10 +28,13 @@ import subprocess
 import sys
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+# Ensure ~/.local/bin is in PATH so the 'hermes' command can be found
+local_bin = str(Path.home() / ".local" / "bin")
+if local_bin not in os.environ.get("PATH", ""):
+    os.environ["PATH"] = f"{os.environ.get('PATH', '')}{os.path.pathsep}{local_bin}"
 
 DEFAULT_OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
 DEFAULT_FOX_METRICS_INDEX_URL = (
@@ -47,6 +57,11 @@ SECONDARY_KEYWORDS: tuple[tuple[str, float], ...] = (
 RATING_SCALE = 10.0  # Escala 1-10
 MIN_RATING = 1.0
 MAX_RATING = 10.0
+
+# Circuit breaker defaults
+DEFAULT_COOLDOWN_SECONDS = 1800  # 30 minutes
+WATCHDOG_INTERVAL_MINUTES = 5
+IMBROKE_PROVIDER = "openrouter"
 
 
 def convert_to_10_scale(intelligence_index: float | None, secondary_index: float | None) -> float:
@@ -143,9 +158,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--imbroke", action="store_true", help="Ativa o modo de emergência OpenRouter free.")
     parser.add_argument("--apply", action="store_true", help="Aplica provider/model no Hermes local.")
     parser.add_argument("--report-path", help="Caminho opcional para gravar o relatório JSON completo.")
+    # Circuit breaker flags
+    parser.add_argument("--activate", action="store_true", help="Entra no modo imbroke: salva config atual, aplica melhor free, inicia watchdog.")
+    parser.add_argument("--deactivate", action="store_true", help="Sai do modo imbroke: restaura config anterior, remove sentinel e crons.")
+    parser.add_argument("--status", action="store_true", help="Mostra estado do modo imbroke.")
+    parser.add_argument("--mark-failed", metavar="MODEL_ID", help="Registra modelo como falho e ativa failover.")
+    parser.add_argument("--fail-reason", default="unknown", help="Motivo da falha (rate_limit, timeout, api_error).")
+    parser.add_argument("--cooldown", type=int, default=DEFAULT_COOLDOWN_SECONDS, help=f"Cooldown em segundos antes de reavaliar (default: {DEFAULT_COOLDOWN_SECONDS}).")
+    parser.add_argument("--recover", action="store_true", help="Reavalia modelos após cooldown (chamado pelo cron de recovery).")
+    parser.add_argument("--guard", action="store_true", help="Verifica se provider mudou externamente (chamado pelo watchdog cron).")
     args = parser.parse_args()
     if args.apply and not args.imbroke:
         parser.error("--apply exige --imbroke. O roteador não é modo default.")
+    if args.activate and not args.imbroke:
+        parser.error("--activate exige --imbroke. O roteador não é modo default.")
     return args
 
 
@@ -301,19 +327,28 @@ def rank_models(openrouter_payload: dict[str, Any], fox_metrics: dict[str, Any],
     return ranked
 
 
-def default_report_path() -> Path:
-    hermes_home = Path(Path.home(), ".hermes")
-    env_home = Path(Path.cwd())
+def _hermes_home() -> Path:
+    """Resolve HERMES_HOME directory."""
     if os.environ.get("HERMES_HOME"):
-        hermes_home = Path(os.environ["HERMES_HOME"]).expanduser()
-    elif env_home.name == ".hermes":
-        hermes_home = env_home
-    return hermes_home / "model-routing" / "openrouter-free-models.json"
+        return Path(os.environ["HERMES_HOME"]).expanduser()
+    env_home = Path(Path.cwd())
+    if env_home.name == ".hermes":
+        return env_home
+    return Path(Path.home(), ".hermes")
+
+
+def default_report_path() -> Path:
+    return _hermes_home() / "model-routing" / "openrouter-free-models.json"
+
+
+def default_state_path() -> Path:
+    """Path to imbroke sentinel file."""
+    return _hermes_home() / "model-routing" / "imbroke-state.json"
 
 
 def apply_selected_model(model_id: str) -> None:
     commands = [
-        ["hermes", "config", "set", "model.provider", "openrouter"],
+        ["hermes", "config", "set", "model.provider", IMBROKE_PROVIDER],
         ["hermes", "config", "set", "model.default", model_id],
     ]
     for cmd in commands:
@@ -330,6 +365,821 @@ def apply_selected_model(model_id: str) -> None:
             )
 
 
+def _hermes_config_get(key: str) -> str | None:
+    """Read a Hermes config value.
+
+    Tries ``hermes config get <key>`` first. If that subcommand is unavailable
+    (the real Hermes CLI uses ``config show`` but has no ``get``), falls back to
+    reading ``config.yaml`` directly.
+    """
+    # Try CLI first
+    try:
+        result = subprocess.run(
+            ["hermes", "config", "get", key],
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip() or None
+    except FileNotFoundError:
+        pass
+
+    # Fallback: read config.yaml directly
+    config_path = _hermes_home() / "config.yaml"
+    if not config_path.is_file():
+        return None
+    try:
+        import yaml  # noqa: delayed import — only needed for fallback
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    except Exception:
+        # If yaml is not available, parse the key manually for simple dotted keys
+        try:
+            return _parse_yaml_key_simple(config_path, key)
+        except Exception:
+            return None
+    # Resolve dotted key: "model.provider" → config["model"]["provider"]
+    parts = key.split(".")
+    node: Any = config
+    for part in parts:
+        if isinstance(node, dict):
+            node = node.get(part)
+        else:
+            return None
+    return str(node) if node is not None else None
+
+
+def _parse_yaml_key_simple(config_path: Path, key: str) -> str | None:
+    """Minimal YAML parser for simple dotted keys like 'model.provider'.
+
+    Works without PyYAML by doing basic text parsing of well-formatted YAML.
+    Only handles top-level dict with one level of nesting.
+    """
+    parts = key.split(".")
+    if len(parts) != 2:
+        return None
+    section, field = parts
+    lines = config_path.read_text(encoding="utf-8").splitlines()
+    in_section = False
+    for line in lines:
+        stripped = line.rstrip()
+        # Check for top-level key (no leading whitespace)
+        if not stripped.startswith(" ") and not stripped.startswith("\t"):
+            if stripped.startswith(f"{section}:"):
+                in_section = True
+                continue
+            elif in_section and ":" in stripped:
+                in_section = False
+        elif in_section:
+            # Indented line within section
+            trimmed = stripped.lstrip()
+            if trimmed.startswith(f"{field}:"):
+                value = trimmed[len(f"{field}:"):].strip()
+                # Remove quotes if present
+                if (value.startswith("'") and value.endswith("'")) or \
+                   (value.startswith('"') and value.endswith('"')):
+                    value = value[1:-1]
+                return value if value else None
+    return None
+
+
+def _get_current_fallback_providers() -> list[dict[str, str]]:
+    """Read the current fallback_providers list from config.yaml."""
+    config_path = _hermes_home() / "config.yaml"
+    if not config_path.is_file():
+        return []
+    try:
+        import yaml
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        fb = config.get("fallback_providers", [])
+        if isinstance(fb, list):
+            return [e for e in fb if isinstance(e, dict) and "provider" in e and "model" in e]
+        return []
+    except ImportError:
+        return []
+    except Exception:
+        return []
+
+
+def _hermes_config_set(key: str, value: str) -> bool:
+    """Set a Hermes config value. Returns True on success."""
+    try:
+        result = subprocess.run(
+            ["hermes", "config", "set", key, value],
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
+
+
+def _set_fallback_providers(fallback_list: list[dict[str, str]]) -> bool:
+    """Write fallback_providers and fallback_model as proper YAML lists in config.yaml.
+
+    ``hermes config set`` serializes lists as strings, which breaks the
+    agent's fallback chain parsing. We edit config.yaml directly instead.
+    """
+    config_path = _hermes_home() / "config.yaml"
+    if not config_path.is_file():
+        return False
+    try:
+        import yaml
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        config["fallback_providers"] = fallback_list
+        config["fallback_model"] = fallback_list
+        config_path.write_text(
+            yaml.dump(config, default_flow_style=False, allow_unicode=True),
+            encoding="utf-8",
+        )
+        return True
+    except ImportError:
+        # Fallback without PyYAML: write minimal YAML snippets
+        return _set_fallback_providers_manual(config_path, fallback_list)
+    except Exception:
+        return False
+
+
+def _set_fallback_providers_manual(config_path: Path, fallback_list: list[dict[str, str]]) -> bool:
+    """Write fallback_providers and fallback_model without PyYAML — text-based replacement."""
+    try:
+        text = config_path.read_text(encoding="utf-8")
+        lines = text.splitlines(keepends=True)
+        new_lines: list[str] = []
+        skip_block = False
+        inserted_providers = False
+        inserted_model = False
+        for line in lines:
+            stripped = line.lstrip()
+            if skip_block:
+                # Skip continuation lines (indented or list items)
+                if line.startswith(" ") or line.startswith("\t") or stripped.startswith("-"):
+                    continue
+                skip_block = False
+
+            if stripped.startswith("fallback_providers:"):
+                skip_block = True
+                # Write new value
+                if not fallback_list:
+                    new_lines.append("fallback_providers: []\n")
+                else:
+                    new_lines.append("fallback_providers:\n")
+                    for fb in fallback_list:
+                        new_lines.append(f"- provider: {fb['provider']}\n")
+                        new_lines.append(f"  model: {fb['model']}\n")
+                inserted_providers = True
+                continue
+            elif stripped.startswith("fallback_model:"):
+                skip_block = True
+                # Write new value
+                if not fallback_list:
+                    new_lines.append("fallback_model: []\n")
+                else:
+                    new_lines.append("fallback_model:\n")
+                    for fb in fallback_list:
+                        new_lines.append(f"- provider: {fb['provider']}\n")
+                        new_lines.append(f"  model: {fb['model']}\n")
+                inserted_model = True
+                continue
+
+            new_lines.append(line)
+
+        if not inserted_providers:
+            # Key didn't exist — append
+            if not fallback_list:
+                new_lines.append("fallback_providers: []\n")
+            else:
+                new_lines.append("fallback_providers:\n")
+                for fb in fallback_list:
+                    new_lines.append(f"- provider: {fb['provider']}\n")
+                    new_lines.append(f"  model: {fb['model']}\n")
+        if not inserted_model:
+            # Key didn't exist — append
+            if not fallback_list:
+                new_lines.append("fallback_model: []\n")
+            else:
+                new_lines.append("fallback_model:\n")
+                for fb in fallback_list:
+                    new_lines.append(f"- provider: {fb['provider']}\n")
+                    new_lines.append(f"  model: {fb['model']}\n")
+
+        config_path.write_text("".join(new_lines), encoding="utf-8")
+        return True
+    except Exception:
+        return False
+
+
+def _build_imbroke_hint(model_id: str, rating: float) -> str:
+    """Build the prompt hint notifying the agent it is in imbroke mode."""
+    return f"[IMBROKE MODE] Sistema operando em contingência de modelos gratuitos. Modelo atual ativo: {model_id} (Classificação: {rating}/10)."
+
+
+def _set_environment_hint(hint: str | None) -> bool:
+    """Set the agent.environment_hint config value.
+
+    Tries to write directly using PyYAML if available. Falls back to running
+    ``hermes config set agent.environment_hint "<hint>"``.
+    """
+    config_path = _hermes_home() / "config.yaml"
+    if not config_path.is_file():
+        return False
+    try:
+        import yaml
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        if "agent" not in config:
+            config["agent"] = {}
+        if isinstance(config["agent"], dict):
+            if hint is None:
+                if "environment_hint" in config["agent"]:
+                    del config["agent"]["environment_hint"]
+            else:
+                config["agent"]["environment_hint"] = hint
+        config_path.write_text(
+            yaml.dump(config, default_flow_style=False, allow_unicode=True),
+            encoding="utf-8",
+        )
+        return True
+    except ImportError:
+        # Fallback to hermes config set agent.environment_hint
+        if hint is None:
+            return _hermes_config_set("agent.environment_hint", "")
+        return _hermes_config_set("agent.environment_hint", hint)
+    except Exception:
+        return False
+
+
+def _hermes_cron_create(
+    schedule: str, script_path: str, name: str, *, repeat: int | None = None,
+) -> str | None:
+    """Create a Hermes cron job. Returns job ID or None.
+
+    Uses ``--no-agent --script`` so the job runs as a plain script without
+    involving the LLM, which is essential for deterministic circuit breaker
+    operations.
+    """
+    cmd = [
+        "hermes", "cron", "create", schedule,
+        "--script", script_path,
+        "--no-agent",
+        "--name", name,
+    ]
+    if repeat is not None:
+        cmd.extend(["--repeat", str(repeat)])
+    try:
+        result = subprocess.run(
+            cmd,
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        if result.returncode == 0:
+            # Parse "Created job: <id>" or similar output
+            for line in result.stdout.strip().splitlines():
+                stripped = line.strip()
+                if ":" in stripped:
+                    # e.g. "Created job: c7716265f273"
+                    return stripped.split(":", 1)[1].strip()
+                elif stripped:
+                    return stripped
+        return None
+    except FileNotFoundError:
+        return None
+
+
+def _hermes_cron_remove(cron_id: str) -> bool:
+    """Remove a Hermes cron job."""
+    try:
+        result = subprocess.run(
+            ["hermes", "cron", "remove", cron_id],
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        )
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Sentinel state management
+# ──────────────────────────────────────────────────────────────────────────────
+
+def load_imbroke_state(state_path: Path) -> dict[str, Any] | None:
+    """Load sentinel state. Returns None if sentinel does not exist."""
+    if not state_path.is_file():
+        return None
+    try:
+        return json.loads(state_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def save_imbroke_state(state_path: Path, state: dict[str, Any]) -> None:
+    """Persist sentinel state to disk."""
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def is_imbroke_active(state_path: Path) -> bool:
+    """Check if imbroke mode is active."""
+    state = load_imbroke_state(state_path)
+    return state is not None and state.get("active", False)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Circuit breaker
+# ──────────────────────────────────────────────────────────────────────────────
+
+def is_model_available(model_id: str, failed_models: dict[str, Any]) -> bool:
+    """True if model is not failed or its cooldown has expired."""
+    if model_id not in failed_models:
+        return True
+    cooldown_until = failed_models[model_id].get("cooldown_until")
+    if not cooldown_until:
+        return False
+    try:
+        deadline = datetime.fromisoformat(cooldown_until.replace("Z", "+00:00"))
+        return datetime.now(timezone.utc) >= deadline
+    except (ValueError, TypeError):
+        return False
+
+
+def select_with_failover(ranked: list[RankedModel], failed_models: dict[str, Any]) -> RankedModel:
+    """Select the best available model, skipping those in failed state."""
+    for model in ranked:
+        if is_model_available(model.id, failed_models):
+            return model
+    # All models failed — pick the one whose cooldown expires soonest
+    if ranked:
+        def _cooldown_sort(m: RankedModel) -> str:
+            entry = failed_models.get(m.id, {})
+            return entry.get("cooldown_until", "9999")
+        return min(ranked, key=_cooldown_sort)
+    raise RuntimeError("Nenhum modelo disponível no ranking.")
+
+
+def _cleanup_expired_failures(state: dict[str, Any]) -> list[str]:
+    """Remove expired failures from state. Returns list of cleared model IDs."""
+    failed = state.get("failed_models", {})
+    now = datetime.now(timezone.utc)
+    cleared: list[str] = []
+    for model_id in list(failed.keys()):
+        cooldown_until = failed[model_id].get("cooldown_until")
+        if cooldown_until:
+            try:
+                deadline = datetime.fromisoformat(cooldown_until.replace("Z", "+00:00"))
+                if now >= deadline:
+                    del failed[model_id]
+                    cleared.append(model_id)
+            except (ValueError, TypeError):
+                del failed[model_id]
+                cleared.append(model_id)
+    return cleared
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Guard tripwire
+# ──────────────────────────────────────────────────────────────────────────────
+
+def guard_check(state_path: Path) -> bool:
+    """Check if provider is still openrouter. Auto-deactivate if not.
+
+    Returns True if imbroke is still active, False if it was deactivated.
+    """
+    state = load_imbroke_state(state_path)
+    if state is None or not state.get("active"):
+        return False
+
+    current_provider = _hermes_config_get("model.provider")
+    if current_provider is None:
+        # Cannot determine provider — keep imbroke active (fail-safe)
+        return True
+
+    if current_provider.strip().lower() == IMBROKE_PROVIDER:
+        return True
+
+    # Provider changed externally — auto-deactivate
+    _cancel_all_crons(state)
+    previous_hint = state.get("previous_environment_hint")
+    _set_environment_hint(previous_hint)
+    if state_path.is_file():
+        state_path.unlink()
+
+    print(format_guard_notification(current_provider.strip()))
+    return False
+
+
+def _cancel_all_crons(state: dict[str, Any]) -> None:
+    """Cancel recovery and watchdog crons if they exist."""
+    for key in ("recovery_cron_id", "watchdog_cron_id"):
+        cron_id = state.get(key)
+        if cron_id:
+            _hermes_cron_remove(cron_id)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Deterministic notification formatting
+# ──────────────────────────────────────────────────────────────────────────────
+
+def format_failover_notification(
+    failed_model: str, reason: str, new_model: RankedModel, cooldown: int,
+) -> str:
+    """Format failover notification (100% deterministic)."""
+    rating = convert_to_10_scale(new_model.intelligence_index, new_model.secondary_index)
+    source = "fox" if new_model.benchmarked else new_model.secondary_source or SECONDARY_SOURCE_NAME
+    emoji, status, message = get_warning(rating)
+    cooldown_min = cooldown // 60
+    lines = [
+        f"⚠️ [FAILOVER] Modelo {failed_model} marcado como falho ({reason})",
+        f"🔄 Alternando para: {new_model.id}",
+        f"✅ Classificação: {rating}/10 (baseado em benchmarks globais)",
+        f"📊 Fonte: {source}",
+        f"⏱️ Recovery agendado: reavaliação em {cooldown_min} min",
+        "",
+        f"{emoji} {status} {message}",
+    ]
+    return "\n".join(lines)
+
+
+def format_recovery_notification(
+    model: RankedModel, restored: bool, still_failed: list[str],
+    next_recovery_min: int | None,
+) -> str:
+    """Format recovery notification (100% deterministic)."""
+    rating = convert_to_10_scale(model.intelligence_index, model.secondary_index)
+    source = "fox" if model.benchmarked else model.secondary_source or SECONDARY_SOURCE_NAME
+    emoji, status, message = get_warning(rating)
+    lines = ["🔄 [RECOVERY] Reavaliação de modelos concluída"]
+    if restored:
+        lines.append(f"✅ Modelo restaurado: {model.id} ({rating}/10)")
+    else:
+        lines.append(f"✅ Mantendo: {model.id} ({rating}/10)")
+    lines.append(f"📊 Fonte: {source}")
+    if still_failed:
+        lines.append(f"⚠️ Modelos ainda indisponíveis: {', '.join(still_failed)}")
+    if next_recovery_min is not None:
+        lines.append(f"⏱️ Próxima reavaliação em {next_recovery_min} min")
+    lines.extend(["", f"{emoji} {status} {message}"])
+    return "\n".join(lines)
+
+
+def format_guard_notification(new_provider: str) -> str:
+    """Format guard auto-deactivation notification (100% deterministic)."""
+    current_model = _hermes_config_get("model.default") or "desconhecido"
+    lines = [
+        "🔌 [AUTO-OFF] Modo imbroke desativado automaticamente",
+        f"📡 Provider alterado para: {new_provider}",
+        f"🔄 Modelo ativo: {current_model}",
+        "🧹 Crons de recovery/watchdog removidos",
+        "✅ Configuração anterior não restaurada (nova seleção manual detectada)",
+    ]
+    return "\n".join(lines)
+
+
+def format_activate_notification(model: RankedModel, previous_provider: str, previous_model: str) -> str:
+    """Format activation notification (100% deterministic)."""
+    rating = convert_to_10_scale(model.intelligence_index, model.secondary_index)
+    source = "fox" if model.benchmarked else model.secondary_source or SECONDARY_SOURCE_NAME
+    emoji, status, message = get_warning(rating)
+    lines = [
+        "🟢 [IMBROKE] Modo imbroke ativado",
+        f"💾 Config anterior salva: {previous_provider}/{previous_model}",
+        f"🔄 Modelo selecionado: {model.id}",
+        f"✅ Classificação: {rating}/10 (baseado em benchmarks globais)",
+        f"📊 Fonte: {source}",
+        "👁️ Watchdog ativo (verifica provider a cada 5 min)",
+        "",
+        f"{emoji} {status} {message}",
+    ]
+    return "\n".join(lines)
+
+
+def format_deactivate_notification(previous_provider: str, previous_model: str) -> str:
+    """Format deactivation notification (100% deterministic)."""
+    return "\n".join([
+        "🔴 [IMBROKE OFF] Modo imbroke desativado",
+        f"🔄 Config restaurada: {previous_provider}/{previous_model}",
+        "🧹 Crons de recovery/watchdog removidos",
+        "✅ Provider/modelo anterior restaurados",
+    ])
+
+
+def format_status(state: dict[str, Any] | None) -> str:
+    """Format status output (100% deterministic)."""
+    if state is None or not state.get("active"):
+        return "ℹ️ Modo imbroke: INATIVO"
+    failed = state.get("failed_models", {})
+    lines = [
+        "ℹ️ Modo imbroke: ATIVO",
+        f"📅 Ativado em: {state.get('activated_at', '?')}",
+        f"💾 Config anterior: {state.get('previous_provider', '?')}/{state.get('previous_model', '?')}",
+        f"🔄 Modelo atual: {state.get('current_model', '?')}",
+        f"📊 Rating atual: {state.get('current_rating', '?')}/10",
+    ]
+    if failed:
+        lines.append(f"❌ Modelos falhos ({len(failed)}):")
+        for model_id, info in failed.items():
+            lines.append(f"   - {model_id}: {info.get('reason', '?')} (até {info.get('cooldown_until', '?')})")
+    else:
+        lines.append("✅ Nenhum modelo em estado de falha")
+    lines.append(f"🔁 Recovery cron: {state.get('recovery_cron_id') or 'nenhum'}")
+    lines.append(f"👁️ Watchdog cron: {state.get('watchdog_cron_id') or 'nenhum'}")
+    return "\n".join(lines)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# High-level operations
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _script_path() -> str:
+    """Absolute path of this script (for cron prompts)."""
+    return str(Path(__file__).resolve())
+
+
+def _ensure_cron_scripts() -> tuple[str, str]:
+    """Create wrapper scripts under ~/.hermes/scripts/ for cron jobs.
+
+    Returns (guard_script_name, recovery_script_name) — just filenames,
+    since ``hermes cron create --script`` expects paths relative to
+    ``~/.hermes/scripts/``.
+    """
+    scripts_dir = _hermes_home() / "scripts"
+    scripts_dir.mkdir(parents=True, exist_ok=True)
+    router = _script_path()
+
+    guard_name = "imbroke-guard.sh"
+    guard_script = scripts_dir / guard_name
+    guard_script.write_text(
+        f"#!/usr/bin/env bash\npython3 {router} --guard\n",
+        encoding="utf-8",
+    )
+    guard_script.chmod(guard_script.stat().st_mode | 0o755)
+
+    recovery_name = "imbroke-recovery.sh"
+    recovery_script = scripts_dir / recovery_name
+    recovery_script.write_text(
+        f"#!/usr/bin/env bash\npython3 {router} --recover\n",
+        encoding="utf-8",
+    )
+    recovery_script.chmod(recovery_script.stat().st_mode | 0o755)
+
+    return guard_name, recovery_name
+
+
+def do_activate(args: argparse.Namespace) -> int:
+    """Activate imbroke mode."""
+    state_path = default_state_path()
+    if is_imbroke_active(state_path):
+        state = load_imbroke_state(state_path)
+        print(format_status(state))
+        print("\n⚠️ Modo imbroke já está ativo. Use --deactivate primeiro para resetar.")
+        return 0
+
+    # Capture current config
+    previous_provider = _hermes_config_get("model.provider") or "unknown"
+    previous_model = _hermes_config_get("model.default") or "unknown"
+    previous_hint = _hermes_config_get("agent.environment_hint")
+
+    # Capture current fallback_providers for later restoration
+    previous_fallback = _get_current_fallback_providers()
+
+    # Build ranking and select best
+    payload = build_payload(args)
+    ranked = payload["_ranked_models"]
+    selected = ranked[0]
+
+    # Apply primary model
+    apply_selected_model(selected.id)
+
+    # Configure Hermes native fallback chain with remaining ranked models
+    # so Hermes auto-switches on model failure (rate_limit, 503, etc.)
+    fallback_chain = [
+        {"provider": "openrouter", "model": m.id}
+        for m in ranked[1:]  # all ranked models except the selected primary
+    ]
+    _set_fallback_providers(fallback_chain)
+
+    # Set imbroke environment hint
+    rating = convert_to_10_scale(selected.intelligence_index, selected.secondary_index)
+    _set_environment_hint(_build_imbroke_hint(selected.id, rating))
+
+    # Create wrapper scripts and schedule watchdog cron
+    guard_script, _recovery_script = _ensure_cron_scripts()
+    watchdog_id = _hermes_cron_create(
+        f"every {WATCHDOG_INTERVAL_MINUTES}m",
+        guard_script,
+        "imbroke-watchdog",
+    )
+
+    # Save sentinel
+    state: dict[str, Any] = {
+        "active": True,
+        "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "previous_provider": previous_provider,
+        "previous_model": previous_model,
+        "previous_fallback_providers": previous_fallback,
+        "previous_environment_hint": previous_hint,
+        "current_model": selected.id,
+        "current_rating": rating,
+        "fallback_chain": [m.id for m in ranked[1:]],
+        "failed_models": {},
+        "recovery_cron_id": None,
+        "watchdog_cron_id": watchdog_id,
+    }
+    save_imbroke_state(state_path, state)
+
+    # Write report
+    report_path = Path(args.report_path).expanduser() if args.report_path else default_report_path()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_payload = {k: v for k, v in payload.items() if k != "_ranked_models"}
+    report_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    n_fb = len(fallback_chain)
+    print(format_activate_notification(selected, previous_provider, previous_model))
+    if n_fb:
+        print(f"🔄 Fallback chain configurada ({n_fb} modelos alternativos)")
+    return 0
+
+
+def do_deactivate(_args: argparse.Namespace) -> int:
+    """Deactivate imbroke mode and restore previous config."""
+    state_path = default_state_path()
+    state = load_imbroke_state(state_path)
+    if state is None or not state.get("active"):
+        print("ℹ️ Modo imbroke já está inativo.")
+        return 0
+
+    previous_provider = state.get("previous_provider", "unknown")
+    previous_model = state.get("previous_model", "unknown")
+    previous_hint = state.get("previous_environment_hint")
+
+    # Restore previous config
+    _hermes_config_set("model.provider", previous_provider)
+    _hermes_config_set("model.default", previous_model)
+    _set_environment_hint(previous_hint)
+
+    # Restore previous fallback_providers
+    previous_fallback = state.get("previous_fallback_providers", [])
+    _set_fallback_providers(previous_fallback if isinstance(previous_fallback, list) else [])
+
+    # Cancel crons
+    _cancel_all_crons(state)
+
+    # Remove sentinel
+    if state_path.is_file():
+        state_path.unlink()
+
+    print(format_deactivate_notification(previous_provider, previous_model))
+    return 0
+
+
+def do_status(_args: argparse.Namespace) -> int:
+    """Show imbroke status."""
+    state_path = default_state_path()
+    state = load_imbroke_state(state_path)
+    print(format_status(state))
+    return 0
+
+
+def do_mark_failed(args: argparse.Namespace) -> int:
+    """Mark a model as failed and failover to the next one."""
+    state_path = default_state_path()
+
+    # Guard check first
+    if not guard_check(state_path):
+        return 1
+
+    state = load_imbroke_state(state_path)
+    if state is None or not state.get("active"):
+        print("❌ Modo imbroke não está ativo. Use --imbroke --activate primeiro.", file=sys.stderr)
+        return 1
+
+    model_id = args.mark_failed
+    reason = args.fail_reason
+    cooldown = args.cooldown
+    now = datetime.now(timezone.utc)
+    cooldown_until = (now + timedelta(seconds=cooldown)).isoformat().replace("+00:00", "Z")
+
+    # Register failure
+    failed_models = state.setdefault("failed_models", {})
+    entry = failed_models.get(model_id, {})
+    failed_models[model_id] = {
+        "failed_at": now.isoformat().replace("+00:00", "Z"),
+        "reason": reason,
+        "cooldown_until": cooldown_until,
+        "attempts": entry.get("attempts", 0) + 1,
+    }
+
+    # Build ranking and select next available
+    payload = build_payload(args)
+    ranked = payload["_ranked_models"]
+    selected = select_with_failover(ranked, failed_models)
+
+    # Apply new model
+    apply_selected_model(selected.id)
+
+    # Schedule recovery cron (cancel previous if exists)
+    old_recovery = state.get("recovery_cron_id")
+    if old_recovery:
+        _hermes_cron_remove(old_recovery)
+    cooldown_min = max(1, cooldown // 60)
+    _guard_script, recovery_script = _ensure_cron_scripts()
+    recovery_id = _hermes_cron_create(
+        f"{cooldown_min}m",
+        recovery_script,
+        "imbroke-recovery",
+        repeat=1,
+    )
+
+    # Update state
+    rating = convert_to_10_scale(selected.intelligence_index, selected.secondary_index)
+    _set_environment_hint(_build_imbroke_hint(selected.id, rating))
+    state["current_model"] = selected.id
+    state["current_rating"] = rating
+    state["recovery_cron_id"] = recovery_id
+    save_imbroke_state(state_path, state)
+
+    # Write report
+    report_path = default_report_path()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_payload = {k: v for k, v in payload.items() if k != "_ranked_models"}
+    report_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print(format_failover_notification(model_id, reason, selected, cooldown))
+    return 0
+
+
+def do_recover(args: argparse.Namespace) -> int:
+    """Recovery: re-evaluate models after cooldown."""
+    state_path = default_state_path()
+
+    # Guard check first
+    if not guard_check(state_path):
+        return 0  # Guard deactivated imbroke — not an error
+
+    state = load_imbroke_state(state_path)
+    if state is None or not state.get("active"):
+        return 0
+
+    previous_model = state.get("current_model")
+
+    # Clean expired failures
+    cleared = _cleanup_expired_failures(state)
+    failed_models = state.get("failed_models", {})
+    still_failed = list(failed_models.keys())
+
+    # Re-rank and select best available
+    payload = build_payload(args)
+    ranked = payload["_ranked_models"]
+    selected = select_with_failover(ranked, failed_models)
+
+    model_changed = selected.id != previous_model
+    if model_changed:
+        apply_selected_model(selected.id)
+
+    # Schedule next recovery if there are still failed models
+    old_recovery = state.get("recovery_cron_id")
+    if old_recovery:
+        _hermes_cron_remove(old_recovery)
+
+    next_recovery_min: int | None = None
+    recovery_id: str | None = None
+    if still_failed:
+        cooldown_min = max(1, args.cooldown // 60)
+        next_recovery_min = cooldown_min
+        _guard_script, recovery_script = _ensure_cron_scripts()
+        recovery_id = _hermes_cron_create(
+            f"{cooldown_min}m",
+            recovery_script,
+            "imbroke-recovery",
+            repeat=1,
+        )
+
+    # Update state
+    rating = convert_to_10_scale(selected.intelligence_index, selected.secondary_index)
+    _set_environment_hint(_build_imbroke_hint(selected.id, rating))
+    state["current_model"] = selected.id
+    state["current_rating"] = rating
+    state["recovery_cron_id"] = recovery_id
+    save_imbroke_state(state_path, state)
+
+    restored = model_changed and selected.id != previous_model
+    print(format_recovery_notification(selected, restored, still_failed, next_recovery_min))
+    return 0
+
+
+def do_guard(_args: argparse.Namespace) -> int:
+    """Guard check — called by watchdog cron."""
+    state_path = default_state_path()
+    state = load_imbroke_state(state_path)
+
+    if state is None or not state.get("active"):
+        # Imbroke not active — self-remove watchdog if possible
+        watchdog_id = (state or {}).get("watchdog_cron_id")
+        if watchdog_id:
+            _hermes_cron_remove(watchdog_id)
+        return 0
+
+    if not guard_check(state_path):
+        # Guard deactivated imbroke — notification already printed
+        return 0
+
+    return 0
+
+
 def build_payload(args: argparse.Namespace) -> dict[str, Any]:
     openrouter_payload = load_json_source(args.openrouter_models_source)
     if args.fox_metrics_source:
@@ -342,8 +1192,13 @@ def build_payload(args: argparse.Namespace) -> dict[str, Any]:
     if not ranked:
         raise RuntimeError("Nenhum modelo gratuito elegível foi encontrado no catálogo do OpenRouter.")
 
-    selected = ranked[0]
-    return {
+    # Check circuit breaker for model selection
+    state_path = default_state_path()
+    state = load_imbroke_state(state_path)
+    failed_models = (state or {}).get("failed_models", {})
+    selected = select_with_failover(ranked, failed_models) if failed_models else ranked[0]
+
+    payload: dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "mode": "imbroke" if args.imbroke else "report-only",
         "openrouter_models_source": args.openrouter_models_source,
@@ -364,7 +1219,10 @@ def build_payload(args: argparse.Namespace) -> dict[str, Any]:
         "ranked_free_models": [item.to_dict() for item in ranked],
         "benchmarked_count": sum(1 for item in ranked if item.benchmarked),
         "unbenchmarked_count": sum(1 for item in ranked if not item.benchmarked),
+        # Internal: not serialized in report but used by do_activate/do_mark_failed
+        "_ranked_models": ranked,
     }
+    return payload
 
 
 def format_text(payload: dict[str, Any]) -> str:
@@ -400,6 +1258,24 @@ def format_text(payload: dict[str, Any]) -> str:
 
 def main() -> int:
     args = parse_args()
+
+    # Circuit breaker commands (no ranking needed)
+    if args.status:
+        return do_status(args)
+    if args.deactivate:
+        return do_deactivate(args)
+    if args.guard:
+        return do_guard(args)
+
+    # Commands that need ranking
+    if args.activate:
+        return do_activate(args)
+    if args.mark_failed:
+        return do_mark_failed(args)
+    if args.recover:
+        return do_recover(args)
+
+    # Legacy flow (ranking + optional apply)
     payload = build_payload(args)
 
     if args.apply:
@@ -408,10 +1284,12 @@ def main() -> int:
     report_path = Path(args.report_path).expanduser() if args.report_path else (default_report_path() if args.apply else None)
     if report_path:
         report_path.parent.mkdir(parents=True, exist_ok=True)
-        report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        report_payload = {k: v for k, v in payload.items() if k != "_ranked_models"}
+        report_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if args.format == "json":
-        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        output = {k: v for k, v in payload.items() if k != "_ranked_models"}
+        print(json.dumps(output, ensure_ascii=False, indent=2))
     else:
         print(format_text(payload))
     return 0
