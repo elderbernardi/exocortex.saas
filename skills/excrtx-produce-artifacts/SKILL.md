@@ -102,7 +102,7 @@ Exceções aceitas:
 6. Copiar assets necessários para `assets/` com paths relativos.
 7. Exportar formatos finais para `exports/`.
 8. Validar exports antes de publicar: arquivo existe, tamanho maior que zero, MIME coerente e hash SHA-256 registrado.
-9. Aplicar quality gates: excrtx-quality-antislop para prosa final; design/taste gate para visual.
+9. Aplicar o Quality Gate Unificado (`excrtx-quality-gate`): toda prosa final do artefato deve passar pelo gate de anti-slop (`excrtx-quality-antislop`); todo componente visual deve passar pelo gate de taste (`excrtx-quality-taste`). Correções de falhas no gate devem ser feitas pelo próprio executor antes de entregar.
 9.1. Quando Canvas/manifest exigir avaliação, gerar pareceres em `evaluations/` com personas relevantes, incluindo Cientista para claims factuais/metodológicos e Professor para materiais didáticos.
 10. Gerar ou atualizar `manifest.json` com hash, MIME, tamanho, fonte, exports e destino.
 11. Publicar exports no Drive privado do usuário via provider configurado.

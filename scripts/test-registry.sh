@@ -201,6 +201,45 @@ test_EX49() {
     Se todos estiverem presentes, responda SMOKE_OK."
 }
 
+test_EX52() {
+  CURRENT_FEATURE_NAME="Quality Gate Enforced"
+  CURRENT_FEATURE_CATEGORY="Quality Gates"
+  local skill="excrtx-quality-gate"
+
+  check_skill_exists "$skill"
+  check_frontmatter "$skill" "name" "description" "version"
+
+  # 1. Check if production skills exist and mention quality-gate
+  for prod_skill in excrtx-produce-artifacts excrtx-produce-slides excrtx-produce-oficios; do
+    if [ -f "$SKILLS_DST/$prod_skill/SKILL.md" ]; then
+      if grep -q "excrtx-quality-gate" "$SKILLS_DST/$prod_skill/SKILL.md"; then
+        log_check_pass "Skill '$prod_skill' cita o quality gate"
+      else
+        log_check_fail "Skill '$prod_skill' não cita o quality gate"
+      fi
+    else
+      log_check_fail "Skill de produção '$prod_skill' ausente"
+    fi
+  done
+
+  # 2. Check if validator has check_antislop and check_taste
+  local validator="$ACERVO/global/tools/harness/validate_artifact_manifest.py"
+  if [ -f "$validator" ]; then
+    if grep -q "def check_antislop" "$validator" && grep -q "def check_taste" "$validator"; then
+      log_check_pass "Validator contém heurísticas de antislop e taste"
+    else
+      log_check_fail "Validator ausente de heurísticas de antislop ou taste"
+    fi
+  else
+    log_check_fail "Validator validate_artifact_manifest.py ausente"
+  fi
+
+  SMOKE_PROMPT="Teste a feature EX-52 Quality Gate Enforced:
+    1. O manifest validator rejeita prosa com anti-slop score < 35?
+    2. O manifest validator rejeita visual com layout/meta-labels de template?
+    Se todos estiverem presentes, responda SMOKE_OK."
+}
+
 # --- 3. Memory & Acervo ---
 
 test_EX11() {
@@ -654,6 +693,33 @@ test_EX48() {
   SMOKE_PROMPT="Verifique o status do modo imbroke e garanta que o rating na escala 1-10 e warnings correspondentes são exibidos."
 }
 
+test_EX50() {
+  CURRENT_FEATURE_NAME="Hermes Tool Development"
+  CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
+  local skill="excrtx-harness-tooldev"
+
+  check_skill_exists "$skill"
+  check_frontmatter "$skill" "name" "description" "version"
+  check_no_skill_deps
+  check_no_tool_deps
+
+  SMOKE_PROMPT="Verifique se a skill de desenvolvimento de tools do Hermes está documentada no SKILL.md."
+}
+
+test_EX51() {
+  CURRENT_FEATURE_NAME="Estendendo o Hermes Agent"
+  CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
+  local skill="excrtx-hermes-extensions"
+
+  check_skill_exists "$skill"
+  check_frontmatter "$skill" "name" "description" "version"
+  check_no_skill_deps
+  check_no_tool_deps
+  check_file_exists "$SKILLS_DST/$skill/references/slash-command-dispatch-debug.md" "Debug guide para slash commands"
+
+  SMOKE_PROMPT="Verifique se a skill de extensões do Hermes possui o guia de depuração de slash commands."
+}
+
 # =============================================================================
 # Dogfood conversacional reproduzível
 # =============================================================================
@@ -672,7 +738,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-p0)
       run_id="dogfood-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48; do
+      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48 EX-49 EX-50 EX-52; do
         python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \
           --run-id "$run_id" \
@@ -690,7 +756,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-real-p0)
       run_id="dogfood-real-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48; do
+      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48 EX-49 EX-50 EX-52; do
         DOGFOOD_AGENT_TIMEOUT="${DOGFOOD_AGENT_TIMEOUT:-120}" \
           python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \

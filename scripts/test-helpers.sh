@@ -136,6 +136,9 @@ declare -A FEATURE_SKILL_MAP=(
   ["EX-35"]="excrtx-harness-surfaces"
   ["EX-48"]="excrtx-harness-imbroke"
   ["EX-49"]="excrtx-behavior-accuracy"
+  ["EX-50"]="excrtx-harness-tooldev"
+  ["EX-51"]="excrtx-hermes-extensions"
+  ["EX-52"]="excrtx-quality-gate"
 )
 
 # =============================================================================

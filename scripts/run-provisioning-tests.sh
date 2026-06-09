@@ -90,8 +90,7 @@ echo -e "${_BOLD}═══ FASE 1 — Verificação Determinística ═══${_
 
 FAST_FAIL_TRIGGERED=false
 
-for i in $(seq 1 35); do
-  id=$(printf "EX-%02d" "$i")
+for id in $(seq -f "EX-%02g" 1 35) EX-48 EX-49 EX-50 EX-51 EX-52; do
   if ! run_feature_test "$id"; then
     if [ "$FAST_FAIL" = "1" ]; then
       FAST_FAIL_TRIGGERED=true
@@ -193,7 +192,7 @@ fi
 
 # Sync reparos para o repositório
 if [ "$NO_SYNC" != "1" ] && [ ${#REPAIRED_FEATURES[@]} -gt 0 ]; then
-  local sync_script="$SCRIPT_DIR/sync-repairs-to-repo.sh"
+  sync_script="$SCRIPT_DIR/sync-repairs-to-repo.sh"
   if [ -x "$sync_script" ]; then
     echo ""
     echo -e "  ${_CYAN}Sincronizando reparos para o repositório...${_NC}"

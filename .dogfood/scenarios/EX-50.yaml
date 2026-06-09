@@ -1,0 +1,16 @@
+feature_id: EX-50
+title: Hermes Tool Development
+category: Harness & Infrastructure
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Mostre como criar uma nova ferramenta no Hermes.
+allowed_tools:
+  - terminal
+success_criteria:
+  - Guia de criação de ferramentas é exibido ou retornado.
+failure_signals:
+  - Resposta incorreta ou vazia.
+evidence_required:
+  - transcript

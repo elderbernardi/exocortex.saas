@@ -143,3 +143,4 @@ O orquestrador então:
 - [ ] Documentação técnica (ADR, README, SKILL.md) NÃO é filtrada
 - [ ] Falha 2x → orquestrador recebe sinalização, não corrige
 - [ ] Orquestrador devolve ao executor com feedback, não reescreve
+- [ ] O harness `validate_artifact_manifest.py` audita o pacote de artefatos rejeitando prosa com slop (score < 35) ou visual com meta-labels.

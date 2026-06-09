@@ -109,3 +109,11 @@ Após gerar um ofício, logar no `micro/gabinete/log.md`:
 ```
 ## [YYYY-MM-DD] oficio | OFÍCIO Nº {numero}/{ano} — {assunto resumido}
 ```
+
+## Quality Gate
+
+Antes de entregar, aplique o Quality Gate Unificado (`excrtx-quality-gate`) como passo final obrigatório:
+- A prosa do ofício deve passar pelo gate de anti-slop (`excrtx-quality-antislop`).
+- A redação oficial do gabinete deve ser extremamente formal e polida, sem qualquer uso de linguagem neutra, adjetivações vazias, ou palavras de enchimento.
+- A conformidade do texto será auditada pelo harness de verificação (`validate_artifact_manifest.py`).
+

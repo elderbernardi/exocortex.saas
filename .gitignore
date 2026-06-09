@@ -5,3 +5,4 @@ skills/*/.runtime/
 __pycache__/
 .hermes/
 .tmp/
+.agents

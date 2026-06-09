@@ -328,9 +328,9 @@ Use os arquivos em `references/upstream-frontend-slides/` como referência opera
 
 ## Quality Gate
 
-Antes de entregar:
+Antes de entregar, aplique o Quality Gate Unificado (`excrtx-quality-gate`) como passo final obrigatório:
 
-- aplicar `excrtx-quality-taste`;
+- aplicar `excrtx-quality-taste` para validar a interface/visual e `excrtx-quality-antislop` para prosa;
 - verificar contraste e hierarquia visual;
 - verificar stage 16:9 em desktop e viewport estreita;
 - verificar ausência de overflow e sobreposição;

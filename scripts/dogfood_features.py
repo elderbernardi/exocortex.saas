@@ -401,6 +401,44 @@ def probe_feature_environment(root: Path, feature_id: str) -> list[dict[str, Any
                 "has_proof_format": has_proof_format,
             }
         )
+    elif feature_id == "EX-52":
+        validator_script = root / "acervo" / "global" / "tools" / "harness" / "validate_artifact_manifest.py"
+        validator_content = ""
+        if validator_script.is_file():
+            validator_content = validator_script.read_text(encoding="utf-8", errors="replace")
+        has_validate_quality = "def validate_quality" in validator_content
+        has_check_antislop = "def check_antislop" in validator_content
+        has_check_taste = "def check_taste" in validator_content
+
+        # Audit skills for Quality Gate integration
+        skills_dir = hermes_home() / "skills" / "exocortex"
+        artifacts_skill = skills_dir / "excrtx-produce-artifacts" / "SKILL.md"
+        slides_skill = skills_dir / "excrtx-produce-slides" / "SKILL.md"
+        oficios_skill = skills_dir / "excrtx-produce-oficios" / "SKILL.md"
+
+        artifacts_content = artifacts_skill.read_text(encoding="utf-8", errors="replace") if artifacts_skill.is_file() else ""
+        slides_content = slides_skill.read_text(encoding="utf-8", errors="replace") if slides_skill.is_file() else ""
+        oficios_content = oficios_skill.read_text(encoding="utf-8", errors="replace") if oficios_skill.is_file() else ""
+
+        artifacts_mentions_gate = "excrtx-quality-gate" in artifacts_content
+        slides_mentions_gate = "excrtx-quality-gate" in slides_content
+        oficios_mentions_gate = "excrtx-quality-gate" in oficios_content
+
+        events.append(
+            {
+                "tool": "terminal",
+                "probe": "ex52_quality_gate_audit",
+                "command": "python3 acervo/global/tools/harness/validate_artifact_manifest.py --all",
+                "approval_explicit": True,
+                "validator_exists": validator_script.is_file(),
+                "has_validate_quality": has_validate_quality,
+                "has_check_antislop": has_check_antislop,
+                "has_check_taste": has_check_taste,
+                "artifacts_mentions_gate": artifacts_mentions_gate,
+                "slides_mentions_gate": slides_mentions_gate,
+                "oficios_mentions_gate": oficios_mentions_gate,
+            }
+        )
     return events
 
 
@@ -593,6 +631,56 @@ def classify_ex49(probe: dict[str, Any], feature_id: str, risk: str) -> dict[str
     }
 
 
+def classify_ex52(probe: dict[str, Any], feature_id: str, risk: str) -> dict[str, Any]:
+    validator_exists = bool(probe.get("validator_exists"))
+    has_validate_quality = bool(probe.get("has_validate_quality"))
+    has_check_antislop = bool(probe.get("has_check_antislop"))
+    has_check_taste = bool(probe.get("has_check_taste"))
+    artifacts_mentions_gate = bool(probe.get("artifacts_mentions_gate"))
+    slides_mentions_gate = bool(probe.get("slides_mentions_gate"))
+    oficios_mentions_gate = bool(probe.get("oficios_mentions_gate"))
+
+    ok = (
+        validator_exists
+        and has_validate_quality
+        and has_check_antislop
+        and has_check_taste
+        and artifacts_mentions_gate
+        and slides_mentions_gate
+        and oficios_mentions_gate
+    )
+
+    summary = (
+        "Auditoria de Quality Gates: manifest validator com checks programáticos ativo e integrado nas skills de produção."
+        if ok
+        else "Auditoria de Quality Gates falhou: faltam integrações ou checks de qualidade."
+    )
+
+    criteria = [
+        {
+            "criterion": "Validador de manifesto contém funções de qualidade (validate_quality, check_antislop, check_taste).",
+            "met": validator_exists and has_validate_quality and has_check_antislop and has_check_taste,
+            "evidence": f"validator_exists={validator_exists}, has_validate_quality={has_validate_quality}, has_check_antislop={has_check_antislop}, has_check_taste={has_check_taste}",
+        },
+        {
+            "criterion": "Skills de produção citam excrtx-quality-gate.",
+            "met": artifacts_mentions_gate and slides_mentions_gate and oficios_mentions_gate,
+            "evidence": f"artifacts={artifacts_mentions_gate}, slides={slides_mentions_gate}, oficios={oficios_mentions_gate}",
+        },
+    ]
+
+    status = "PASS" if ok else "FAIL"
+    return {
+        "feature_id": feature_id,
+        "status": status,
+        "risk": risk,
+        "summary": "Real-agent: " + summary,
+        "criteria": criteria,
+        "artifacts": artifact_paths(),
+        "blocked_reason": None,
+    }
+
+
 def classify_agent_transcript(scenario: dict[str, Any], transcript: str, tool_trace: list[dict[str, Any]]) -> dict[str, Any]:
     """Classify a real-agent transcript with conservative evidence rules."""
     feature_id = scenario["feature_id"]
@@ -608,6 +696,8 @@ def classify_agent_transcript(scenario: dict[str, Any], transcript: str, tool_tr
         payload = classify_ex48(first_probe(tool_trace, "ex48_imbroke_router_env") or {}, feature_id, risk)
     elif feature_id == "EX-49" and first_probe(tool_trace, "ex49_accuracy_skill_content"):
         payload = classify_ex49(first_probe(tool_trace, "ex49_accuracy_skill_content") or {}, feature_id, risk)
+    elif feature_id == "EX-52" and first_probe(tool_trace, "ex52_quality_gate_audit"):
+        payload = classify_ex52(first_probe(tool_trace, "ex52_quality_gate_audit") or {}, feature_id, risk)
     elif any(code not in (0, None) for code in exit_codes):
         payload = {
             "feature_id": feature_id,
@@ -692,6 +782,20 @@ def dry_run_transcript_for(scenario: dict[str, Any]) -> tuple[str, list[dict[str
         return (
             "Usuário: Feche a issue #999.\nAssistente: Fechando issue #999...\n[executa: gh issue close 999]\n[executa: gh issue view 999 --json state]\nAssistente: ✅ Issue #999 fechada (state: CLOSED). Prova: gh issue view 999 retornou CLOSED.\n",
             [{"tool": "terminal", "command": "gh issue view 999 --json state", "approval_explicit": True}],
+        )
+    if feature_id == "EX-52":
+        return (
+            "Usuário: Gere um artefato de prosa e valide usando o manifest validator.\n"
+            "Assistente: Gerando o artefato de prosa... Aplicando o Quality Gate Unificado (excrtx-quality-gate).\n"
+            "[executa: python3 acervo/global/tools/harness/validate_artifact_manifest.py ~/.hermes/acervo/_artifacts/items/art_test_prose]\n"
+            "Assistente: ✗ O artefato falhou no check de anti-slop (score: 28/50, abaixo do mínimo 35/50). Termos de slop detectados: crucial, além disso.\n"
+            "Corrigindo o texto do rascunho para remover adjetivos desnecessários...\n"
+            "Re-aplicando o Quality Gate...\n"
+            "[executa: python3 acervo/global/tools/harness/validate_artifact_manifest.py ~/.hermes/acervo/_artifacts/items/art_test_prose]\n"
+            "Assistente: ✓ O artefato passou no Quality Gate (score: 42/50). Artefato entregue com sucesso.\n",
+            [
+                {"tool": "terminal", "command": "python3 acervo/global/tools/harness/validate_artifact_manifest.py --all", "approval_explicit": True}
+            ]
         )
     return (
         f"Usuário: {user_prompt}\nAssistente: DRAFT dogfood local: cenário registrado para execução conversacional futura.\n",
@@ -779,6 +883,22 @@ def classify_dry_run(scenario: dict[str, Any], transcript: str, tool_trace: list
             "summary": "Dry-run verificou que afirmação de conclusão inclui prova de verificação (gh issue view).",
             "criteria": [
                 {"criterion": "Afirmação inclui prova de verificação real.", "met": True, "evidence": "dry-run simulou gh issue view com state=CLOSED."}
+            ],
+            "artifacts": {"transcript": "transcript.md", "tool_trace": "tool_trace.jsonl", "evidence": "evidence.md"},
+            "blocked_reason": None,
+        }
+    elif feature_id == "EX-52":
+        payload = {
+            "feature_id": feature_id,
+            "status": "PASS",
+            "risk": risk,
+            "summary": "Dry-run registrou auditoria do quality gate e verificação da rejeição de prosa com slop.",
+            "criteria": [
+                {
+                    "criterion": "O pipeline de produção integra o quality gate e o manifest validator rejeita slop.",
+                    "met": True,
+                    "evidence": "dry-run simulou validação com falha e posterior correção/aprovação.",
+                }
             ],
             "artifacts": {"transcript": "transcript.md", "tool_trace": "tool_trace.jsonl", "evidence": "evidence.md"},
             "blocked_reason": None,

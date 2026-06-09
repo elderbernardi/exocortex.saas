@@ -4,6 +4,7 @@ description: >
   Gerencia o modo imbroke do Exocórtex: seleção determinística de modelos gratuitos,
   conversão de intelligence index para escala 1-10, sistema de warnings e
   formatação de resposta transparente. 100% determinístico, sem uso de LLM.
+version: 1.0.0
 triggers:
   - "imbroke"
   - "modo imbroke"

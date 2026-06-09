@@ -1,0 +1,16 @@
+feature_id: EX-51
+title: Extensões do Hermes Agent
+category: Harness & Infrastructure
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Como estender o Hermes Agent com comandos slash?
+allowed_tools:
+  - terminal
+success_criteria:
+  - Instruções de estender comandos slash são exibidas.
+failure_signals:
+  - Falha ao descrever o dispatch chain.
+evidence_required:
+  - transcript

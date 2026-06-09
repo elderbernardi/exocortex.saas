@@ -8,9 +8,11 @@
 # Uso:
 #   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 #   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --imbroke
+#   HERMES_HOME=/path/to/hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --calibrate
 #
 # Flags:
 #   --imbroke   Ativa explicitamente o modo de contingência OpenRouter free
+#   --calibrate Executa o alinhamento de calibração cognitivo interativo do Hermes pós-instalação
 #
 # Requer:
 #   - HERMES_HOME definido (runtime do Hermes)
@@ -28,11 +30,15 @@ EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
 ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IMBROKE_MODE=0
+CALIBRATE_MODE=0
 
 for arg in "$@"; do
   case "$arg" in
     --imbroke)
       IMBROKE_MODE=1
+      ;;
+    --calibrate)
+      CALIBRATE_MODE=1
       ;;
     -h|--help)
       sed -n '1,22p' "$0"
@@ -857,7 +863,8 @@ EXPECTED_SKILLS=(
   "excrtx-produce-slides" "excrtx-produce-oficios"
   # Integration
   "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops" "excrtx-integrate-docbrain"
-  "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops"
+  "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-imbroke" "excrtx-harness-tooldev"
+  "excrtx-hermes-extensions"
   # Platform
   "excrtx-integrate-gdrive" "excrtx-integrate-oauth" "excrtx-harness-surfaces"
   # External
@@ -1007,4 +1014,16 @@ if [ -x "$SCRIPT_DIR/scripts/post-provisioning-verify.sh" ]; then
     warn "Verificação pós-provisionamento reportou falhas (veja relatório no Acervo)"
 else
   warn "Script de verificação não encontrado: $SCRIPT_DIR/scripts/post-provisioning-verify.sh"
+fi
+
+# =============================================================================
+# Step 11: Calibração interativa de PDD (Opcional)
+# =============================================================================
+if [ "${CALIBRATE_MODE:-0}" = "1" ]; then
+  info "Iniciando calibração interativa cognitivo do Hermes..."
+  if [ -x "$SCRIPT_DIR/scripts/calibrate-hermes.sh" ]; then
+    bash "$SCRIPT_DIR/scripts/calibrate-hermes.sh"
+  else
+    warn "Script de calibração não encontrado: $SCRIPT_DIR/scripts/calibrate-hermes.sh"
+  fi
 fi

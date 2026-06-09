@@ -1,0 +1,20 @@
+feature_id: EX-52
+title: Garantir aplicação de quality gate em artefatos
+category: Quality Gates
+source: FEATURES.md
+risk: P1
+mode: conversational
+user_prompt: |
+  Gere um artefato de prosa e valide usando o manifest validator.
+allowed_tools:
+  - terminal
+success_criteria:
+  - O pipeline de produção integra o quality gate como etapa obrigatória.
+  - O manifest validator rejeita prosa com anti-slop score < 35.
+  - O manifest validator rejeita visual com layout/meta-labels de template.
+failure_signals:
+  - Validação aceitando prosa com slop sem erros.
+  - Falha estrutural no script de validação de manifesto.
+evidence_required:
+  - transcript
+  - tool_trace

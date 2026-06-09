@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais, totalizando **36 skills**.
+Organizadas em 7 categorias funcionais, totalizando **40 skills**.
 
 ---
 
@@ -525,7 +525,38 @@ Organizadas em 7 categorias funcionais, totalizando **36 skills**.
 | **Dependências de Skills** | Nenhuma |
 | **Dependências de Tools** | `python3`, `hermes` |
 
+#### EX-50. Hermes Tool Development (`excrtx-harness-tooldev`)
+
+| Campo | Detalhe |
+|---|---|
+| **Funcionalidade** | Capacidade e guia para desenvolvimento e registro de novas ferramentas (tools) no Hermes Agent, permitindo estender o harness via chamada direta (slash command `/tool`) ignorando o loop do LLM para economia de tokens e latência. |
+| **Como usar** | Criar arquivos de ferramenta em `tools/` registrando com `registry.register()` e invocar diretamente via comando `/tool <nome_da_tool> [arg=val]`. |
+| **Instalação** | `setup.sh` copia a skill. |
+| **Dependências de Skills** | Nenhuma |
+| **Dependências de Tools** | Python 3.11+, Hermes runtime |
+
+#### EX-51. Extensões do Hermes Agent (`excrtx-hermes-extensions`)
+
+| Campo | Detalhe |
+|---|---|
+| **Funcionalidade** | Instruções e guias para estender o Hermes Agent com comandos slash personalizados adicionando registros a `commands.py`, handlers em `cli.py` e dispatches em `gateway/run.py` (cadeia principal e `_DEDICATED_HANDLERS`). Inclui guia de diagnóstico de dispatches de slash commands no Telegram/Discord. |
+| **Como usar** | Seguir a arquitetura de dispatch e registro de comandos detalhada no guia `slash-command-dispatch-debug.md`. |
+| **Instalação** | `setup.sh` copia a skill. |
+| **Dependências de Skills** | Nenhuma |
+| **Dependências de Tools** | Hermes runtime, Telegram/Discord Gateway |
+
+#### EX-52. Quality Gate Enforced (`excrtx-quality-gate`)
+
+| Campo | Detalhe |
+|---|---|
+| **Funcionalidade** | Garante que todos os artefatos produzidos pelas skills de produção (`excrtx-produce-artifacts`, `excrtx-produce-slides`, `excrtx-produce-oficios`) passem obrigatoriamente pelos gates de qualidade anti-slop e taste, com validação programática rigorosa do conteúdo e rejeição pelo harness de verificação (`validate_artifact_manifest.py`). |
+| **Como usar** | Automático ao validar o manifesto de qualquer artefato. Rejeita prosa com anti-slop score < 35 ou visual com layouts repetitivos ou meta-labels. |
+| **Instalação** | Atualizado via setup.sh e harness de verificação. |
+| **Dependências de Skills** | `excrtx-quality-gate` (EX-21) |
+| **Dependências de Tools** | Python 3.11+, `validate_artifact_manifest.py` |
+
 ---
+
 
 
 ## Mapa de Dependências
@@ -569,6 +600,7 @@ graph TD
         EX20[EX-20 Design Sys] --> EX19
         EX21[EX-21 Quality Gate] --> EX18
         EX21 --> EX19
+        EX52[EX-52 Quality Enforced] --> EX21
     end
 
     subgraph "Production"
@@ -591,6 +623,9 @@ graph TD
     EX11 --> EX07
     EX11 --> EX20
     EX11 --> EX22
+    EX22 --> EX52
+    EX23 --> EX52
+    EX24 --> EX52
 ```
 
 ---
@@ -638,7 +673,7 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 
 ## Convenções para Evolução
 
-1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-49` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
+1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-52` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
 2. **Cada feature é testável isoladamente.** Self-test (`EX-03`) valida checkpoints. Testes de regressão devem referenciar o ID da feature.
 3. **Dependências são explícitas.** Toda skill documenta de quais outras skills e tools depende.
 4. **Versionamento semântico.** Cada skill tem `version` no frontmatter. Bump obrigatório em mudanças funcionais.
