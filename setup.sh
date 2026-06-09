@@ -519,7 +519,7 @@ info "ARTIFACTS:      $SCRIPT_DIR"
 info "[Camada 1] Criando estrutura base..."
 
 # Runtime Hermes
-mkdir -p "$HERMES_HOME/skills/exocortex"
+mkdir -p "$HERMES_HOME/skills/excrtx"
 mkdir -p "$HERMES_HOME/profiles"
 mkdir -p "$HERMES_HOME/skill-bundles"
 mkdir -p "$HERMES_HOME/memories"
@@ -560,7 +560,7 @@ log "Estrutura de diretórios criada (runtime + workspace + v0.4 operacional)"
 info "Instalando skills..."
 
 SKILLS_SRC="$SCRIPT_DIR/skills"
-SKILLS_DST="$HERMES_HOME/skills/exocortex"
+SKILLS_DST="$HERMES_HOME/skills/excrtx"
 
 if [ -d "$SKILLS_SRC" ]; then
   for skill_dir in "$SKILLS_SRC"/*/; do
