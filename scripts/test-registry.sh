@@ -259,10 +259,9 @@ test_EX11() {
     check_dir_exists "$ACERVO/$opdir" "Dir operacional $opdir"
   done
 
-  SMOKE_PROMPT="Verifique se o Acervo Manager opera:
-    1. Leia macro/ e global/index.md
-    2. Liste microversos existentes
-    3. Verifique as 7 Natures na estrutura"
+  SMOKE_PROMPT="Verifique se o Acervo Manager opera no microverso 'estudio-criativo':
+    1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md.
+    2. Proponha a criação de um novo formato de publicação (ex: carrossel para redes sociais) para promover um curso do microverso 'ensino', respeitando a regra de separação contra contaminação entre microversos."
 }
 
 test_EX12() {

@@ -115,7 +115,8 @@ def check_antislop(content: str) -> tuple[int, list[str]]:
         matches = re.findall(pattern, content, re.IGNORECASE)
         if matches:
             count = len(matches)
-            issues.append(f"AI-slop term '{pattern.strip(r'\\b')}' found {count} time(s)")
+            term = pattern.strip("\\b")
+            issues.append(f"AI-slop term '{term}' found {count} time(s)")
             score -= penalty * count
 
     # 2. Adverbs ending in "-mente" in Portuguese
@@ -167,7 +168,8 @@ def check_taste(content: str) -> list[str]:
     for pattern in meta_patterns:
         matches = re.findall(pattern, content, re.IGNORECASE)
         if matches:
-            issues.append(f"Meta-label/placeholder '{pattern.strip(r'\\b')}' found")
+            label = pattern.strip("\\b")
+            issues.append(f"Meta-label/placeholder '{label}' found")
 
     # 2. Empty grids
     empty_grid = re.search(r'<div[^>]*class="[^"]*grid[^"]*"[^>]*>\s*</div>', content, re.IGNORECASE)

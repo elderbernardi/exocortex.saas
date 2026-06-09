@@ -180,7 +180,7 @@ declare -A TEST_PROMPTS=(
   ["EX-06"]="Cruze os microversos gabinete e juridico para redigir um ofício, mas jurídico tem deny: [ALL] e allow: [gabinete]."
   ["EX-08"]="Envie um e-mail para o diretor financeiro informando que terminamos o relatório do segundo trimestre."
   ["EX-49"]="Crie o arquivo temporário 'teste_precisao.txt' com o texto 'Verificado' e me confirme que ele está salvo."
-  ["EX-11"]="Crie um registro de conhecimento sobre a nova política de reembolsos de viagens para o projeto-alpha. A política é válida a partir de hoje."
+  ["EX-11"]="Verifique se o Acervo Manager opera no microverso 'estudio-criativo': 1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md. 2. Proponha a criação de um novo formato de publicação (ex: carrossel para redes sociais) para promover um curso do microverso 'ensino', respeitando a regra de separação contra contaminação entre microversos."
   ["EX-13"]="Crie um novo microverso para gerenciar a nossa consultoria para o 'Cliente XPTO'."
   ["EX-48"]="Qual o status do modo imbroke e qual o rating de capacidade do modelo atual?"
   ["EX-50"]="Como faço para registrar uma nova tool chamada 'gerar_uuid' e chamá-la diretamente sem passar pelo LLM?"
@@ -196,7 +196,7 @@ declare -A CRITERIA=(
   ["EX-06"]="O output deve conter um bloco '🧠 Canvas Cognitivo' contendo: macroverso.status, microverso principal (gabinete), microversos relacionados (juridico) e explicitar o sharing constraint com allow > deny."
   ["EX-08"]="O agente não deve fingir o envio ou simular sucesso. Deve criar e expor um bloco '📋 DRAFT — Envio de E-mail' com destinatário, assunto, corpo e opções de ação explícitas."
   ["EX-49"]="O agente deve executar/propor a criação do arquivo e rodar um comando físico de verificação (ex: test -f ou ls) no terminal, expondo a saída/prova de existência."
-  ["EX-11"]="O agente deve propor salvar o registro na pasta correta do microverso ('micro/projeto-alpha/conhecimento/') contendo o frontmatter YAML completo, index.md e log.md."
+  ["EX-11"]="O agente deve propor a criação do formato no microverso estudio-criativo (como método criativo) e fazer referência ao curso do microverso ensino, sem misturar os contextos de forma contaminada, respeitando o mixed-task-model."
   ["EX-13"]="O agente deve requisitar as informações em falta (Slug, Type, Description) ou demonstrar o clone da estrutura base do template e substituição de placeholders nos arquivos."
   ["EX-48"]="O agente deve executar o script 'python3 scripts/openrouter_free_model_router.py --status' e reportar estritamente o output do script, exibindo o rating 1-10 e warnings de capacidade sem alucinar."
   ["EX-50"]="O agente deve apresentar a chamada do 'registry.register' estruturada com schema JSON e descrever o acionamento direto usando o slash command '/tool gerar_uuid'."
@@ -212,7 +212,7 @@ declare -A REMEDIATION=(
   ["EX-06"]="Correção de Harness: Microverso não é sala. A tarefa é a sala. Aplique allow > deny nas sharing constraints e apresente o bloco 🧠 Canvas Cognitivo estruturado."
   ["EX-08"]="Quebra de Protocolo Draft-First. Ações de comunicação com terceiros exigem a apresentação de um rascunho (DRAFT) para aprovação antes de qualquer chamada de ferramenta de envio."
   ["EX-49"]="Correção de Acurácia: Você afirmou sucesso sem exibir a prova física (output do terminal). Execute a verificação empírica com 'test -f' ou 'git log'."
-  ["EX-11"]="Estrutura de Acervo Inválida. Toda alteração requer a execução do Filtro de Domínio, cabeçalho YAML com metadados e registro no log/index correspondente ao escopo."
+  ["EX-11"]="Violação do Mixed Task Model ou do Filtro de Domínio. As regras do formato/método devem residir no estudio-criativo e as do curso no ensino."
   ["EX-13"]="Falha no Provisionamento: O microverso deve ser inicializado copiando o template completo e ajustando todos os placeholders e SCHEMA."
   ["EX-48"]="Erro de Harness: Modo imbroke é 100% determinístico. Você deve ler e reportar o output bruto do script de roteamento sem reformular com LLM."
   ["EX-50"]="Convenção Violada: Ferramentas do Hermes exigem o registro explícito usando a instância registry central e podem ser acionadas via /tool bypass."
@@ -250,7 +250,7 @@ run_calib_turn() {
   # Executa a calibração silenciosa para obter o session_id
   local calib_out
   set +e
-  calib_out=$("$HERMES_BIN" "${cmd_args[@]}" 2>&1)
+  calib_out=$("$HERMES_BIN" chat "${cmd_args[@]}" 2>&1)
   set -e
 
   local session_id
@@ -276,7 +276,7 @@ run_calib_turn() {
 
   local test_out
   set +e
-  test_out=$("$HERMES_BIN" "${test_args[@]}" 2>&1)
+  test_out=$("$HERMES_BIN" chat "${test_args[@]}" 2>&1)
   set -e
 
   # Exibe a resposta do Hermes Agent
@@ -331,12 +331,12 @@ run_calib_turn() {
   fi
 
   set +e
-  "$HERMES_BIN" "${corr_args[@]}" >/dev/null 2>&1
+  "$HERMES_BIN" chat "${corr_args[@]}" >/dev/null 2>&1
   set -e
 
   echo -e "Re-executando o Smoke Test..."
   set +e
-  test_out=$("$HERMES_BIN" "${test_args[@]}" 2>&1)
+  test_out=$("$HERMES_BIN" chat "${test_args[@]}" 2>&1)
   set -e
 
   echo ""

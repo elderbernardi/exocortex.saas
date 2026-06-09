@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROD/MON — Server Fleet Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111115;
+    --border: #222228;
+    --text: #c8c8d0;
+    --text-dim: #666670;
+    --green: #00d858;
+    --amber: #f0a000;
+    --red: #ff3b30;
+    --blue: #3b82f6;
+    --cyan: #00d4d4;
+    --font: 'JetBrains Mono', monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 12px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── TOP BAR ─────────────────────────────── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar-brand {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--cyan);
+  }
+
+  .topbar-status {
+    display: flex;
+    gap: 24px;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.ok  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.warn{ background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .dot.down{ background: var(--red);   box-shadow: 0 0 6px var(--red); }
+
+  .stat-pill .label { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em; }
+  .stat-pill .value { font-weight: 700; }
+
+  .topbar-clock {
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  /* ── MAIN GRID ───────────────────────────── */
+  .main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin: 1px;
+  }
+
+  /* ── SERVER CARD ─────────────────────────── */
+  .card {
+    background: var(--surface);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: background 0.15s;
+  }
+  .card:hover { background: #16161c; }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .card-host {
+    font-weight: 700;
+    font-size: 13px;
+    color: #e0e0e6;
+  }
+  .card-role {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  .card-status {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  .card-status.online  { color: var(--green); background: rgba(0,216,88,0.08); }
+  .card-status.degraded{ color: var(--amber); background: rgba(240,160,0,0.08); }
+  .card-status.offline { color: var(--red);   background: rgba(255,59,48,0.08); }
+
+  /* ── METRICS ─────────────────────────────── */
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .metric {
+    background: #0d0d12;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .metric-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
+  .metric-value {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  /* ── BARS ────────────────────────────────── */
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .bar-label {
+    width: 30px;
+    font-size: 9px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    text-align: right;
+  }
+  .bar-track {
+    flex: 1;
+    height: 3px;
+    background: #1a1a20;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 0.6s ease;
+  }
+  .bar-fill.cpu   { background: var(--cyan); }
+  .bar-fill.ram   { background: var(--blue); }
+  .bar-fill.disk  { background: #8b5cf6; }
+
+  .bar-pct {
+    width: 38px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  /* ── FOOTER ROW ──────────────────────────── */
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .card-footer .uptime { }
+  .card-footer .last-check { text-align: right; }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 720px) {
+    .topbar { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .topbar-status { gap: 14px; }
+    .main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TOP BAR -->
+<!-- ═══════════════════════════════════════════ -->
+<header class="topbar">
+  <div>
+    <div class="topbar-brand">▶ PROD/MON</div>
+  </div>
+  <div class="topbar-status">
+    <div class="stat-pill"><span class="dot ok"></span><span class="label">Online</span><span class="value">8</span></div>
+    <div class="stat-pill"><span class="dot warn"></span><span class="label">Degraded</span><span class="value">1</span></div>
+    <div class="stat-pill"><span class="dot down"></span><span class="label">Offline</span><span class="value">0</span></div>
+  </div>
+  <div class="topbar-clock" id="clock">2026-06-09 14:31:22 UTC</div>
+</header>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SERVER GRID -->
+<!-- ═══════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- SERVER: lb-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">lb-01.prod.if-example.com</div>
+        <div class="card-role">Load Balancer</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Conn/s</span><span class="metric-value">2,847</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value">12%</span></div>
+      <div class="metric"><span class="metric-label">Mem</span><span class="metric-value">34%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:12%"></div></div><span class="bar-pct">12%</span></div>
+      <div class="bar-row"><span class="bar-label">RAM</span><div class="bar-track"><div class="bar-fill ram" style="width:34%"></div></div><span class="bar-pct">34%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 47d 12h</span>
+      <span class="last-check">● 0.3s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: app-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">app-01.prod.if-example.com</div>
+        <div class="card-role">Application Server</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Req/min</span><span class="metric-value">14,203</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value">67%</span></div>
+      <div class="metric"><span class="metric-label">Mem</span><span class="metric-value">58%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:67%"></div></div><span class="bar-pct">67%</span></div>
+      <div class="bar-row"><span class="bar-label">RAM</span><div class="bar-track"><div class="bar-fill ram" style="width:58%"></div></div><span class="bar-pct">58%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 47d 12h</span>
+      <span class="last-check">● 0.5s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: app-02 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">app-02.prod.if-example.com</div>
+        <div class="card-role">Application Server</div>
+      </div>
+      <span class="card-status degraded">Degraded</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Req/min</span><span class="metric-value">8,912</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value" style="color:var(--amber)">89%</span></div>
+      <div class="metric"><span class="metric-label">Mem</span><span class="metric-value" style="color:var(--amber)">91%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:89%; background:var(--amber)"></div></div><span class="bar-pct" style="color:var(--amber)">89%</span></div>
+      <div class="bar-row"><span class="bar-label">RAM</span><div class="bar-track"><div class="bar-fill ram" style="width:91%; background:var(--amber)"></div></div><span class="bar-pct" style="color:var(--amber)">91%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 31d 6h</span>
+      <span class="last-check">● 1.2s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: db-primary -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">db-primary.prod.if-example.com</div>
+        <div class="card-role">PostgreSQL — Primary</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Conn</span><span class="metric-value">234</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value">42%</span></div>
+      <div class="metric"><span class="metric-label">Disk</span><span class="metric-value">61%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:42%"></div></div><span class="bar-pct">42%</span></div>
+      <div class="bar-row"><span class="bar-label">DSK</span><div class="bar-track"><div class="bar-fill disk" style="width:61%"></div></div><span class="bar-pct">61%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 112d 3h</span>
+      <span class="last-check">● 0.4s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: db-replica -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">db-replica.prod.if-example.com</div>
+        <div class="card-role">PostgreSQL — Replica</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Lag</span><span class="metric-value">0.4s</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value">18%</span></div>
+      <div class="metric"><span class="metric-label">Disk</span><span class="metric-value">61%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:18%"></div></div><span class="bar-pct">18%</span></div>
+      <div class="bar-row"><span class="bar-label">DSK</span><div class="bar-track"><div class="bar-fill disk" style="width:61%"></div></div><span class="bar-pct">61%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 112d 3h</span>
+      <span class="last-check">● 0.4s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: cache-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">cache-01.prod.if-example.com</div>
+        <div class="card-role">Redis Cache</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Hit Rate</span><span class="metric-value">96.8%</span></div>
+      <div class="metric"><span class="metric-label">Memory</span><span class="metric-value">12.4GB</span></div>
+      <div class="metric"><span class="metric-label">Keys</span><span class="metric-value">4.2M</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">RAM</span><div class="bar-track"><div class="bar-fill ram" style="width:72%"></div></div><span class="bar-pct">72%</span></div>
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:8%"></div></div><span class="bar-pct">8%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 89d 14h</span>
+      <span class="last-check">● 0.6s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: queue-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">queue-01.prod.if-example.com</div>
+        <div class="card-role">RabbitMQ Broker</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Queued</span><span class="metric-value">1,423</span></div>
+      <div class="metric"><span class="metric-label">Rate</span><span class="metric-value">847/s</span></div>
+      <div class="metric"><span class="metric-label">Mem</span><span class="metric-value">22%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">RAM</span><div class="bar-track"><div class="bar-fill ram" style="width:22%"></div></div><span class="bar-pct">22%</span></div>
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:31%"></div></div><span class="bar-pct">31%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 56d 9h</span>
+      <span class="last-check">● 0.7s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: storage-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">storage-01.prod.if-example.com</div>
+        <div class="card-role">Object Storage — MinIO</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Used</span><span class="metric-value">3.2TB</span></div>
+      <div class="metric"><span class="metric-label">Objects</span><span class="metric-value">1.8M</span></div>
+      <div class="metric"><span class="metric-label">IOPS</span><span class="metric-value">412</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">DSK</span><div class="bar-track"><div class="bar-fill disk" style="width:64%"></div></div><span class="bar-pct">64%</span></div>
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:26%"></div></div><span class="bar-pct">26%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 112d 3h</span>
+      <span class="last-check">● 0.4s ago</span>
+    </div>
+  </article>
+
+  <!-- SERVER: monitor-01 -->
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-host">monitor-01.prod.if-example.com</div>
+        <div class="card-role">Grafana + Prometheus</div>
+      </div>
+      <span class="card-status online">Online</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Series</span><span class="metric-value">842K</span></div>
+      <div class="metric"><span class="metric-label">CPU</span><span class="metric-value">39%</span></div>
+      <div class="metric"><span class="metric-label">Disk</span><span class="metric-value">44%</span></div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-label">CPU</span><div class="bar-track"><div class="bar-fill cpu" style="width:39%"></div></div><span class="bar-pct">39%</span></div>
+      <div class="bar-row"><span class="bar-label">DSK</span><div class="bar-track"><div class="bar-fill disk" style="width:44%"></div></div><span class="bar-pct">44%</span></div>
+    </div>
+    <div class="card-footer">
+      <span class="uptime">up 112d 3h</span>
+      <span class="last-check">● 0.1s ago</span>
+    </div>
+  </article>
+
+</main>
+
+<script>
+  // live clock
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toISOString().replace('T',' ').slice(0,19) + ' UTC';
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // subtle hover pulse on degraded card
+  document.querySelectorAll('.card-status.degraded').forEach(el => {
+    const card = el.closest('.card');
+    card.style.animation = 'pulse-degraded 3s ease-in-out infinite';
+  });
+</script>
+<style>
+  @keyframes pulse-degraded {
+    0%, 100% { box-shadow: inset 4px 0 0 0 transparent; }
+    50%       { box-shadow: inset 4px 0 0 0 var(--amber); }
+  }
+</style>
+</body>
+</html>
