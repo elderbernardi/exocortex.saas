@@ -111,7 +111,29 @@ Todos os comandos do Exocórtex usam prefixo `/xc`. Comandos nativos do Hermes (
 
 ---
 
-## 7. Entregáveis e Fases
+## 7. Princípio de Atualização Orgânica
+
+A UI do Exocórtex no Telegram não é um artefato estático. Ela é uma **projeção viva do Acervo Cognitivo**.
+
+Mudanças estruturais devem refletir automaticamente na interface:
+
+| Evento no Acervo | Reflexo na UI |
+|------------------|---------------|
+| Criação de microverso | Novo tópico no Telegram (ou sugestão) |
+| Remoção/arquivamento de microverso | Tópico marcado como inativo ou arquivado |
+| Novo cron job | Entrada no tópico `cron` ou tópico dedicado |
+| Nova skill | Refletida no `/xc mv <nome>` e no hub |
+| Alteração no Macroverso | Notificação no feed de decisões |
+| Promoção de artefato | Entrada no feed de decisões |
+
+**Implicações técnicas:**
+- **Watcher/hook** que detecta mudanças no acervo (`mtime`, eventos git, ou triggers nas skills de create/delete)
+- **Mapper** `slug → thread_id` mantido em arquivo de configuração (atualizado automaticamente)
+- **`/xc rescan`** para forçar re-sincronização manual
+
+---
+
+## 8. Entregáveis e Fases
 
 ### Fase 0 — Fundação (bloqueante)
 - [ ] Ativar `/topic` (Multi-Session DM Mode) e verificar BotFather
@@ -144,7 +166,7 @@ Todos os comandos do Exocórtex usam prefixo `/xc`. Comandos nativos do Hermes (
 
 ---
 
-## 8. Relatório de Viabilidade
+## 9. Relatório de Viabilidade
 
 **Plataforma:** Hermes Agent com Telegram gateway
 **Mecanismo central:** Multi-Session DM Mode (`/topic`)
@@ -167,7 +189,7 @@ Cron jobs entregues no root DM caem no lobby (só comandos). Solução: criar t�
 
 ---
 
-## 9. Comandos Hermes Relevantes
+## 10. Comandos Hermes Relevantes
 
 | Comando | Função |
 |---------|--------|
@@ -180,7 +202,7 @@ Cron jobs entregues no root DM caem no lobby (só comandos). Solução: criar t�
 
 ---
 
-## 10. Referência Técnica
+## 11. Referência Técnica
 
 - **Hermes Multi-Session DM:** `/topic` command, isolamento por `thread_id`
 - **Config:** `gateway.platforms.telegram.extra.dm_topics` (config-driven, alternativo ao `/topic` user-driven)
