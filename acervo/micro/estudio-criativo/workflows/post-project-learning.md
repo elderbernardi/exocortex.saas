@@ -2,7 +2,7 @@
 title: Workflow — Aprendizado Pós-Projeto
 created: 2026-06-01
 updated: 2026-06-01
-nature: processos
+nature: workflows
 kind: workflow
 scope_mode: micro
 scope_slug: estudio-criativo

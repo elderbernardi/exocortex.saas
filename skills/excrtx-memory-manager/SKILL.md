@@ -8,7 +8,7 @@ metadata:
     tags: [exocortex, acervo, knowledge, wiki, memory, nature, search, scope]
     category: exocortex
     related_skills: [llm-wiki, excrtx-memory-newmicro]
-    replaces: [nature-contexto, nature-conhecimento, nature-instrucao, nature-persona, nature-processo, nature-ferramenta, nature-reflexao, exocortex-search]
+    replaces: [nature-context, nature-knowledge, nature-contracts, nature-prompts, nature-persona, nature-workflows, nature-skills, nature-tools, nature-templates, nature-decisions, nature-reflections, exocortex-search]
 ---
 
 # Acervo Manager
@@ -16,7 +16,7 @@ metadata:
 Skill unificada para operar sobre o Acervo Cognitivo do Exocórtex.
 Substitui as 7 Nature skills individuais e `exocortex-search` (ADR-005).
 
-As 7 Natures (contexto, conhecimento, instrucoes, persona, processos, ferramentas, reflexoes)
+As 11 Natures (context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections)
 são **classificação de dados**, não comportamentos distintos. Esta skill implementa a mecânica
 comum: ler, escrever, buscar e promover — a semântica de cada Nature é definida pelo SCHEMA
 e frontmatter dos próprios arquivos.
@@ -245,7 +245,7 @@ Buscar informação nas 4 camadas com prioridade.
 4. **Retornar resultados com metadados:**
    ```
    [Acervo: micro/cliente-acme/conhecimento] Resultado aqui
-   [Acervo: global/instrucoes] Regra universal aqui
+   [Acervo: global/contracts] Regra universal aqui
    ```
 
 5. **Se nada encontrado:** Declarar e oferecer busca externa.
@@ -306,13 +306,17 @@ As 7 Natures são classificação de dados. Semântica de cada uma:
 
 | Nature | Conteúdo | Quando ler | Quando escrever |
 |---|---|---|---|
-| `contexto` | Situação atual, prioridades, stakeholders | Início de tarefa em domínio | Mudança de cenário |
-| `conhecimento` | Fatos, métricas, referências | Pergunta factual | Novo dado confirmado |
-| `instrucoes` | Regras condicionais (QUANDO/ENTÃO) | Antes de ações no domínio | Nova regra do executivo |
-| `persona` | Tom, vocabulário, estilo | Antes de redigir para stakeholder | Ajuste de comunicação |
-| `processos` | Workflows, SOPs | Tarefa recorrente | Novo workflow aprovado |
-| `ferramentas` | MCPs, APIs, integrações | Tarefa que requer tool | Nova integração |
-| `reflexoes` | Lições aprendidas | Início de tarefa similar | Após incidente/aprendizado |
+| `context` | Situação atual, prioridades, stakeholders | Início de tarefa em domínio | Mudança de cenário |
+| `knowledge` | Fatos, métricas, referências | Pergunta factual | Novo dado confirmado |
+| `contracts` | Regras condicionais (QUANDO/ENTÃO) | Antes de ações no domínio | Nova regra do executivo |
+| `prompts` | Prompts reutilizáveis | Tarefa repetitiva | Novo prompt validado |
+| `persona` | Voz, tom, estilo | Ao comunicar no domínio | Novo perfil de público |
+| `workflows` | Workflows, SOPs | Tarefa recorrente | Novo workflow aprovado |
+| `skills` | Capacidades encapsuladas | Tarefa especializada | Nova skill criada |
+| `tools` | MCPs, APIs, integrações | Tarefa que requer tool | Nova integração |
+| `templates` | Modelos (emails, docs) | Output padronizado | Novo template aprovado |
+| `decisions` | Decisões arquiteturais (ADR) | Mudança estrutural | Decisão tomada |
+| `reflections` | Lições aprendidas | Início de tarefa similar | Após incidente/aprendizado |
 
 ---
 

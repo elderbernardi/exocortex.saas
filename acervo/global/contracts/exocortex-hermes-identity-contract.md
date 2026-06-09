@@ -2,7 +2,7 @@
 title: Contrato de identidade Exocórtex sobre Hermes
 created: 2026-06-01
 updated: 2026-06-01
-nature: instrucoes
+nature: contracts
 kind: contract
 scope_mode: global
 scope_slug: null

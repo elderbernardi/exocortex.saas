@@ -25,13 +25,13 @@ If provider memory conflicts with higher authority, provider memory loses.
 For a mature provider adoption, create or update the setup microverso, normally `micro/hermes-setup`:
 
 1. `contracts/<provider>-operational-memory-contract.md`
-   - `nature: instrucoes`
+   - `nature: contracts`
    - `kind: contract`
    - `operational_mode: blocking`
    - Define precedence, allowed/prohibited role, retention policy, recall policy, promotion policy, and reversibility.
 
 2. `workflows/<provider>-operational-memory.md`
-   - `nature: processos`
+   - `nature: workflows`
    - `kind: workflow`
    - Installation, guarded activation, config editing, validation, noise tuning, audit schedule, and deactivation.
 

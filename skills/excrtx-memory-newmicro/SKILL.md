@@ -54,7 +54,7 @@ Preencher seções de convenções, taxonomia de tags e regras de escrita espec�
 
 ### 4. Preencher Contexto Inicial
 
-Abrir `~/.hermes/acervo/micro/{slug}/contexto.md` e:
+Abrir `~/.hermes/acervo/micro/{slug}/context/` e:
 - Substituir `{MICROVERSO_NAME}` pelo nome
 - Substituir `{slug}` pelo slug
 - Preencher "Cenário Atual" com informações fornecidas pelo executivo
@@ -63,7 +63,7 @@ Repetir substituição de placeholders em todos os 7 Nature files.
 
 ### 5. Inicializar Wiki Files
 
-- **index.md:** Catálogo das 7 Natures com summaries (todas começam como "Vazio — aguardando contexto")
+- **index.md:** Catálogo das 11 Natures com summaries (todas começam como "Vazio — aguardando contexto")
 - **log.md:** Primeira entrada:
   ```
   ## [{YYYY-MM-DD}] create | Microverso {nome} criado
@@ -102,7 +102,7 @@ Registrar respostas nos respectivos Nature files.
 - [ ] raw/ e _archive/ existem (vazios)
 - [ ] 7 Nature files com frontmatter YAML
 - [ ] Placeholders `{MICROVERSO_NAME}` e `{slug}` substituídos em todos os arquivos
-- [ ] `contexto.md` tem pelo menos o cenário atual preenchido
+- [ ] `context/` tem pelo menos o cenário atual preenchido
 - [ ] `shared/groups.md` atualizado com o slug no tipo correto
 - [ ] MEMORY.md registra a criação do Microverso
 

@@ -3,7 +3,6 @@ title: Decisão — promover exocortex-ops a microverso base provisionável
 created: 2026-06-05
 updated: 2026-06-05
 nature: decisions
-kind: decision
 scope_slug: exocortex-ops
 authority: draft
 stability: draft

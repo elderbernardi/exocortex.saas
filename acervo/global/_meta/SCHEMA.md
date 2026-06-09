@@ -1,7 +1,7 @@
 # Wiki Schema — Global (Operação Universal)
 
 ## Domain
-Regras, processos, ferramentas e conhecimento que se aplicam a TODOS os Microversos.
+Rules, processes, tools, and knowledge that apply to ALL Microverses.
 Esta camada NÃO é identidade (isso é macro/). É operação universal.
 
 ## Type
@@ -25,7 +25,7 @@ global
 title: Título da Página
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-nature: instrucoes | processos | ferramentas | conhecimento | reflexoes
+nature: context | knowledge | contracts | workflows | tools | reflections
 type: rule | workflow | tool | fact | lesson
 tags: [from taxonomy below]
 sources: [raw/documents/source.md]
@@ -36,7 +36,7 @@ confidence: high | medium | low
 ## Tag Taxonomy
 - Scope: regra-global, workflow-global, tool-universal
 - Domain: comunicacao, qualidade, seguranca, compliance
-- Type: instrucao, processo, ferramenta, conhecimento, reflexao
+- Type: instruction, process, tool, knowledge, reflection
 
 ## Page Thresholds
 - Criar página: quando regra/processo é referenciado em 2+ Microversos

@@ -7,6 +7,6 @@
 
 ## [{{CREATED_DATE}}] create | Microverso initialized
 - Created from _template/ by exocortex-new-microverso
-- 7 Natures initialized as files
+- 7 Natures initialized as directories
 - Onboarding: pending
 - [2026-06-01T21:06:19-03:00] Contrato local de identidade Exocórtex sobre Hermes aplicado em `contracts/exocortex-hermes-identity.md`.

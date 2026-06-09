@@ -48,8 +48,8 @@ research/llm-wiki → excrtx-memory-wikiadapt → excrtx-memory-manager → Acer
 
 | LLM Wiki | Acervo v2 |
 |---|---|
-| entity | `knowledge/`, `nature: conhecimento`, `kind: fact/concept` |
-| concept | `knowledge/`, `nature: conhecimento`, `kind: concept` |
+| entity | `knowledge/`, `nature: knowledge`, `kind: fact/concept` |
+| concept | `knowledge/`, `nature: knowledge`, `kind: concept` |
 | comparison | `decisions/` ou `knowledge/`, `kind: decision/concept` |
 | query | `reflections/`, `kind: lesson`, se reutilizável |
 | raw | `raw/` do escopo resolvido, imutável após captura |

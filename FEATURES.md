@@ -253,7 +253,7 @@ Organizadas em 7 categorias funcionais, totalizando **40 skills**.
 
 | Campo | Detalhe |
 |---|---|
-| **Funcionalidade** | Skill unificada para operar o Acervo Cognitivo de 4 camadas (macro/global/micro/shared). Implementa operações READ, WRITE, SEARCH e PROMOTE sobre as 7 Natures (contexto, conhecimento, instruções, persona, processos, ferramentas, reflexões). Substitui as 7 Nature skills individuais (ADR-005). Resolve scope de acesso entre microversos e gerencia frontmatter v2. |
+| **Funcionalidade** | Skill unificada para operar o Acervo Cognitivo de 4 camadas (macro/global/micro/shared). Implementa operações READ, WRITE, SEARCH e PROMOTE sobre as 11 Natures (context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections). Substitui as 7 Nature skills individuais (ADR-005). Resolve scope de acesso entre microversos e gerencia frontmatter v2. |
 | **Como usar** | Ativado quando qualquer tarefa precisa ler ou escrever no Acervo. Boot de sessão: lê `macro/*` + `global/index.md`. Micro e shared carregados sob demanda por scope. |
 | **Instalação** | `setup.sh` copia skill e cria estrutura de diretórios do Acervo. |
 | **Dependências de Skills** | Nenhuma (é skill raiz do subsistema de memória) |

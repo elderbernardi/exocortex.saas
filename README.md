@@ -63,9 +63,13 @@ acervo/
 │   └── estilo.md               #    Tom e voz do executivo
 │
 ├── global/                     # 🌐 Operação Universal (Indexada no boot)
-│   ├── index.md                #    Catálogo global
-│   ├── instrucoes.md           #    Regras universais
-│   ├── processos.md            #    Workflows compartilhados
+│   ├── _meta/ (SCHEMA, index, log)
+│   ├── context/                #    Situação e prioridades universais
+│   ├── knowledge/              #    Compliance, legal, fatos
+│   ├── contracts/              #    Regras e contratos universais
+│   ├── workflows/              #    Workflows globais
+│   ├── tools/                  #    Tools em todo contexto
+│   ├── reflections/            #    Lições transversais
 │   └── raw/                    #    Fontes e documentações brutas universais
 │
 ├── micro/                      # 🔬 Domínios Isolados (Ativado por escopo)

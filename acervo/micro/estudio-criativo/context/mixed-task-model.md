@@ -2,7 +2,7 @@
 title: Modelo de Apoio Misto entre Microversos
 created: 2026-06-01
 updated: 2026-06-01
-nature: contexto
+nature: context
 kind: context
 scope_mode: micro
 scope_slug: estudio-criativo

@@ -2,7 +2,7 @@
 title: Ferramentas Globais
 created: 2026-05-26
 updated: 2026-05-26
-nature: ferramentas
+nature: tools
 type: tool
 tags: [tool-universal]
 ---

@@ -2,7 +2,7 @@
 title: Conhecimento Global
 created: 2026-05-26
 updated: 2026-05-26
-nature: conhecimento
+nature: knowledge
 type: fact
 tags: [conhecimento]
 ---

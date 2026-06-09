@@ -2,7 +2,7 @@
 title: Paisagem de Ferramentas Criativas
 created: 2026-06-01
 updated: 2026-06-01
-nature: conhecimento
+nature: knowledge
 kind: concept
 scope_mode: micro
 scope_slug: estudio-criativo

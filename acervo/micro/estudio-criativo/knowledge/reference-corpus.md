@@ -2,7 +2,7 @@
 title: Corpus de Referências do Estúdio
 created: 2026-06-01
 updated: 2026-06-01
-nature: conhecimento
+nature: knowledge
 kind: fact
 scope_mode: micro
 scope_slug: estudio-criativo

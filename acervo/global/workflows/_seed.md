@@ -2,7 +2,7 @@
 title: Processos Globais
 created: 2026-05-26
 updated: 2026-05-26
-nature: processos
+nature: workflows
 type: workflow
 tags: [workflow-global]
 ---

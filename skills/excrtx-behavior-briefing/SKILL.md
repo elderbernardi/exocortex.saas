@@ -29,8 +29,8 @@ Varrer TODOS os microversos ativos (respeitando scope) e coletar:
 |---|---|
 | `log.md` de cada micro | Últimas entradas (24h) |
 | Drafts pendentes | Ações que aguardam aprovação do executivo |
-| `reflexoes.md` de cada micro | Insights recentes não revisados |
-| `processos.md` global | Deadlines ou milestones próximos |
+| `reflections/` de cada micro | Insights recentes não revisados |
+| `workflows/` global | Deadlines ou milestones próximos |
 | `shared/cross-refs/` | Referências cruzadas recentes entre microversos |
 
 ### 2. Estrutura do Briefing

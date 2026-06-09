@@ -2,7 +2,7 @@
 title: Reflexão — Tese Inicial do Estúdio
 created: 2026-06-01
 updated: 2026-06-01
-nature: reflexoes
+nature: reflections
 kind: lesson
 scope_mode: micro
 scope_slug: estudio-criativo

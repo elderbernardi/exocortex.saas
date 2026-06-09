@@ -2,7 +2,7 @@
 title: Instruções Globais
 created: 2026-05-26
 updated: 2026-05-26
-nature: instrucoes
+nature: contracts
 type: rule
 tags: [regra-global]
 ---

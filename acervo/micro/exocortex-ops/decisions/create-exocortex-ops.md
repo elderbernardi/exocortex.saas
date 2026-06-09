@@ -3,7 +3,6 @@ title: Criar Microverso Exocortex Ops
 created: 2026-06-05
 updated: 2026-06-05
 nature: decisions
-type: decision
 tags: [microverso, ops, setup, canonical]
 sources: [conversation:user-request]
 confidence: high

@@ -57,7 +57,7 @@ Dizer: "Vou fazer perguntas em 5 blocos para entender como você pensa e trabalh
 Com base nas respostas, auto-gerar:
 1. **SOUL.md personalizado** — Values, Communication Style, Behavioral Boundaries
 2. **Microversos iniciais** — um para cada domínio do Bloco C (via `excrtx-memory-newmicro`)
-3. **ferramentas.md global** — integrações desejadas do Bloco E
+3. **tools/ global** — integrações desejadas do Bloco E
 4. **estilo.md no macroverso** — estilo de comunicação do Bloco B
 
 ### 4. Confirmação

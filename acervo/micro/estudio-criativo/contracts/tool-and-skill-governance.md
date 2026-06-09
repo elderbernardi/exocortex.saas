@@ -2,7 +2,7 @@
 title: Governança de Ferramentas e Skills Criativas
 created: 2026-06-01
 updated: 2026-06-01
-nature: instrucoes
+nature: contracts
 kind: contract
 scope_mode: micro
 scope_slug: estudio-criativo

@@ -2,7 +2,7 @@
 title: Stack Criativa do Estúdio
 created: 2026-06-01
 updated: 2026-06-01
-nature: ferramentas
+nature: tools
 kind: tool
 scope_mode: micro
 scope_slug: estudio-criativo

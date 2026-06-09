@@ -13,22 +13,24 @@ acervo/
 │   └── estilo.md               #    Tom e voz do executivo
 │
 ├── global/                     # 🌐 Operação Universal (WIKI — index no boot)
-│   ├── SCHEMA.md               #    Convenções da camada global
-│   ├── index.md                #    Catálogo (carregado no boot)
-│   ├── log.md                  #    Log append-only
+│   ├── _meta/
+│   │   ├── SCHEMA.md           #    Convenções da camada global
+│   │   ├── index.md            #    Catálogo (carregado no boot)
+│   │   ├── log.md              #    Log append-only
+│   │   └── DESIGN.md           #    Tokens visuais globais
+│   ├── context/                #    Situação e prioridades universais
+│   ├── knowledge/              #    Compliance, legal, fatos universais
+│   ├── contracts/              #    Regras e contratos universais
+│   ├── workflows/              #    Workflows globais
+│   ├── tools/                  #    Tools em todo contexto
+│   ├── reflections/            #    Lições transversais
 │   ├── raw/{articles,docs,assets}  # Fontes brutas universais
-│   ├── _archive/               #    Páginas supersedidas
-│   ├── instrucoes.md           #    Regras universais
-│   ├── processos.md            #    Workflows globais
-│   ├── ferramentas.md          #    Tools em todo contexto
-│   ├── conhecimento.md         #    Compliance, legal
-│   └── reflexoes.md            #    Lições transversais
+│   └── _archive/               #    Páginas supersedidas
 │
 ├── micro/                      # 🔬 Domínios Isolados (WIKI — por scope)
 │   ├── _template/              #    Template wiki completo
-│   │   ├── SCHEMA.md, index.md, log.md
-│   │   ├── raw/, _archive/
-│   │   └── {7 Nature files com frontmatter}
+│   │   ├── _meta/ (SCHEMA, index, log)
+│   │   └── {7 Nature directories com _seed.md + contracts/, raw/, _archive/}
 │   └── {slug}/                 #    Microverso instanciado
 │
 └── shared/                     # 🔗 Ponte Cross-domain

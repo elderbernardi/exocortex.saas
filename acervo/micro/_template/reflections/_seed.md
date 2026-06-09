@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Reflexões"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: reflexoes
+nature: reflections
 type: lesson
 tags: []
 confidence: medium
@@ -18,5 +18,5 @@ confidence: medium
 ## [2026-05-26] Deadline sem Buffer
 Contexto: Projeto entregue no prazo mas com qualidade comprometida.
 Lição: Sempre incluir 20% de buffer em estimativas deste domínio.
-Ação: Atualizar processos.md com regra de buffer.
+Ação: Atualizar workflows/ com regra de buffer.
 -->

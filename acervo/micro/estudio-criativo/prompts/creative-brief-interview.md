@@ -2,7 +2,7 @@
 title: Prompt — Entrevista de Briefing Criativo
 created: 2026-06-01
 updated: 2026-06-01
-nature: processos
+nature: prompts
 kind: prompt
 scope_mode: micro
 scope_slug: estudio-criativo

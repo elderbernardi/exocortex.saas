@@ -3,7 +3,6 @@ title: Roteamento de Manutenção Operacional
 created: 2026-06-05
 updated: 2026-06-05
 nature: skills
-type: workflow
 tags: [maintenance, routing, ops]
 sources: []
 confidence: high

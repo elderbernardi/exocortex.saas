@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Processos"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: processos
+nature: workflows
 type: workflow
 tags: []
 confidence: medium
@@ -19,7 +19,7 @@ TRIGGER: executivo menciona "novo cliente" ou "onboarding"
 STEPS:
 1. Coletar: nome, CNPJ, contato principal, setor
 2. Criar Microverso com exocortex-new-microverso
-3. Preencher contexto.md com dados iniciais
+3. Preencher context/ com dados iniciais
 4. Agendar reunião de kickoff
 VERIFICATION: Microverso criado + reunião agendada
 -->

@@ -2,7 +2,7 @@
 title: Skill — Desenvolvimento de Campanha Criativa
 created: 2026-06-01
 updated: 2026-06-01
-nature: processos
+nature: skills
 kind: skill
 scope_mode: micro
 scope_slug: estudio-criativo

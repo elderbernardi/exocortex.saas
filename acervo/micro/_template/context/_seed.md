@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Contexto"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: contexto
+nature: context
 type: context
 tags: []
 confidence: medium

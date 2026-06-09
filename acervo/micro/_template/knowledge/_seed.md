@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Conhecimento"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: conhecimento
+nature: knowledge
 type: fact
 tags: []
 confidence: medium

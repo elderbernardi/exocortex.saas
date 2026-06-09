@@ -2,8 +2,7 @@
 title: Template — Briefing Criativo Mínimo
 created: 2026-06-01
 updated: 2026-06-01
-nature: processos
-kind: template
+nature: templates
 scope_mode: micro
 scope_slug: estudio-criativo
 applies_to: []

@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Ferramentas"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: ferramentas
+nature: tools
 type: tool
 tags: []
 confidence: medium

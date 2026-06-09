@@ -2,7 +2,7 @@
 title: Reflexões Globais
 created: 2026-05-26
 updated: 2026-05-26
-nature: reflexoes
+nature: reflections
 type: lesson
 tags: [reflexao]
 ---

@@ -2,7 +2,7 @@
 title: "{{DOMAIN_NAME}} — Instruções"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: instrucoes
+nature: contracts
 type: rule
 tags: []
 confidence: high
