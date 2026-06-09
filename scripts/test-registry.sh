@@ -168,6 +168,39 @@ test_EX10() {
   SMOKE_PROMPT="Verifique se o Hermes Kanban nativo está acessível via hermes kanban list."
 }
 
+test_EX49() {
+  CURRENT_FEATURE_NAME="Verificação de Precisão"
+  CURRENT_FEATURE_CATEGORY="Behavior & Governance"
+  local skill="excrtx-behavior-accuracy"
+
+  check_skill_exists "$skill"
+  check_frontmatter "$skill" "name" "description" "version"
+  check_no_skill_deps
+  check_no_tool_deps
+
+  # Check key content markers
+  local skill_file="$SKILLS_DST/$skill/SKILL.md"
+  if [ -f "$skill_file" ]; then
+    if grep -q '| Ação' "$skill_file"; then
+      log_check_pass "Tabela de ações verificáveis presente"
+    else
+      log_check_fail "Tabela de ações verificáveis ausente no SKILL.md"
+    fi
+
+    if grep -q 'Anti-Padrões' "$skill_file"; then
+      log_check_pass "Anti-padrões documentados"
+    else
+      log_check_fail "Anti-padrões não documentados no SKILL.md"
+    fi
+  fi
+
+  SMOKE_PROMPT="Teste a feature EX-49 Verificação de Precisão:
+    1. A tabela de ações verificáveis (issue, commit, push, arquivo, config, mensagem) está completa?
+    2. Os anti-padrões (afirmar antes de executar, afirmar sem verificar, assumir sucesso, ignorar erros) estão documentados?
+    3. O formato de reporte com prova está definido?
+    Se todos estiverem presentes, responda SMOKE_OK."
+}
+
 # --- 3. Memory & Acervo ---
 
 test_EX11() {
@@ -597,6 +630,30 @@ test_EX35() {
   SMOKE_PROMPT="Verifique se a skill define Gateway, UI/Web e TUI como superfícies."
 }
 
+test_EX48() {
+  CURRENT_FEATURE_NAME="Modo imbroke"
+  CURRENT_FEATURE_CATEGORY="Behavior & Governance"
+  local skill="excrtx-harness-imbroke"
+
+  check_skill_exists "$skill"
+  check_frontmatter "$skill" "name" "description" "version"
+  check_no_skill_deps
+
+  local repo_root
+  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  local script="$repo_root/scripts/openrouter_free_model_router.py"
+
+  check_file_exists "$script" "Roteador OpenRouter free"
+
+  if python3 "$script" --status >/dev/null 2>&1; then
+    log_check_pass "Script do roteador funcional (--status exit 0)"
+  else
+    log_check_fail "Script do roteador falhou (--status exit diferente de 0)"
+  fi
+
+  SMOKE_PROMPT="Verifique o status do modo imbroke e garanta que o rating na escala 1-10 e warnings correspondentes são exibidos."
+}
+
 # =============================================================================
 # Dogfood conversacional reproduzível
 # =============================================================================
@@ -615,7 +672,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-p0)
       run_id="dogfood-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33; do
+      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48; do
         python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \
           --run-id "$run_id" \
@@ -633,7 +690,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-real-p0)
       run_id="dogfood-real-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33; do
+      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48; do
         DOGFOOD_AGENT_TIMEOUT="${DOGFOOD_AGENT_TIMEOUT:-120}" \
           python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \

@@ -372,7 +372,6 @@ def _hermes_config_get(key: str) -> str | None:
     (the real Hermes CLI uses ``config show`` but has no ``get``), falls back to
     reading ``config.yaml`` directly.
     """
-    # Try CLI first
     try:
         result = subprocess.run(
             ["hermes", "config", "get", key],
@@ -939,7 +938,8 @@ def do_activate(args: argparse.Namespace) -> int:
     # Build ranking and select best
     payload = build_payload(args)
     ranked = payload["_ranked_models"]
-    selected = ranked[0]
+    selected_id = payload["selected_model"]["id"]
+    selected = next(m for m in ranked if m.id == selected_id)
 
     # Apply primary model
     apply_selected_model(selected.id)
@@ -948,7 +948,7 @@ def do_activate(args: argparse.Namespace) -> int:
     # so Hermes auto-switches on model failure (rate_limit, 503, etc.)
     fallback_chain = [
         {"provider": "openrouter", "model": m.id}
-        for m in ranked[1:]  # all ranked models except the selected primary
+        for m in ranked if m.id != selected.id
     ]
     _set_fallback_providers(fallback_chain)
 
@@ -1063,10 +1063,14 @@ def do_mark_failed(args: argparse.Namespace) -> int:
         "attempts": entry.get("attempts", 0) + 1,
     }
 
+    # Save state FIRST so build_payload reads the updated failures
+    save_imbroke_state(state_path, state)
+
     # Build ranking and select next available
     payload = build_payload(args)
     ranked = payload["_ranked_models"]
-    selected = select_with_failover(ranked, failed_models)
+    selected_id = payload["selected_model"]["id"]
+    selected = next(m for m in ranked if m.id == selected_id)
 
     # Apply new model
     apply_selected_model(selected.id)
@@ -1084,7 +1088,8 @@ def do_mark_failed(args: argparse.Namespace) -> int:
         repeat=1,
     )
 
-    # Update state
+    # Reload state (in case build_payload updated failed_models due to validation failures)
+    state = load_imbroke_state(state_path)
     rating = convert_to_10_scale(selected.intelligence_index, selected.secondary_index)
     _set_environment_hint(_build_imbroke_hint(selected.id, rating))
     state["current_model"] = selected.id
@@ -1121,10 +1126,14 @@ def do_recover(args: argparse.Namespace) -> int:
     failed_models = state.get("failed_models", {})
     still_failed = list(failed_models.keys())
 
+    # Save state FIRST so build_payload reads updated failures
+    save_imbroke_state(state_path, state)
+
     # Re-rank and select best available
     payload = build_payload(args)
     ranked = payload["_ranked_models"]
-    selected = select_with_failover(ranked, failed_models)
+    selected_id = payload["selected_model"]["id"]
+    selected = next(m for m in ranked if m.id == selected_id)
 
     model_changed = selected.id != previous_model
     if model_changed:
@@ -1134,6 +1143,10 @@ def do_recover(args: argparse.Namespace) -> int:
     old_recovery = state.get("recovery_cron_id")
     if old_recovery:
         _hermes_cron_remove(old_recovery)
+
+    # Reload state (in case build_payload updated failed_models due to validation failures)
+    state = load_imbroke_state(state_path)
+    still_failed = list(state.get("failed_models", {}).keys())
 
     next_recovery_min: int | None = None
     recovery_id: str | None = None
@@ -1180,6 +1193,126 @@ def do_guard(_args: argparse.Namespace) -> int:
     return 0
 
 
+def _get_api_key() -> str | None:
+    """Retrieve OpenRouter/OpenAI API key from env or .secrets file."""
+    # 1. Environment variable
+    key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY")
+    if key and key.startswith("sk-or-"):
+        return key
+
+    # 2. Try loading .secrets from workspace
+    workspace_secrets = Path("/home/elder/projetos/projetob/exocortex.saas/.secrets")
+    if workspace_secrets.is_file():
+        try:
+            for line in workspace_secrets.read_text(encoding="utf-8").splitlines():
+                if "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip("'").strip('"')
+                    if k in ("OPENROUTER_API_KEY", "OPENAI_API_KEY") and v.startswith("sk-or-"):
+                        return v
+        except Exception:
+            pass
+
+    # 3. Try loading .secrets from current directory
+    local_secrets = Path(".secrets")
+    if local_secrets.is_file():
+        try:
+            for line in local_secrets.read_text(encoding="utf-8").splitlines():
+                if "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip("'").strip('"')
+                    if k in ("OPENROUTER_API_KEY", "OPENAI_API_KEY") and v.startswith("sk-or-"):
+                        return v
+        except Exception:
+            pass
+
+    # 4. Fallback to raw key if defined (even if not prefixed)
+    if key:
+        return key
+
+    return None
+
+
+def _test_model_call(model_id: str, api_key: str) -> bool:
+    """Perform a headless validation call to test if the model is responding."""
+    if os.environ.get("IMBROKE_TEST_MODE") == "1":
+        return True
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "User-Agent": USER_AGENT,
+    }
+    # Minimal payload for validation check
+    data = {
+        "model": model_id,
+        "messages": [{"role": "user", "content": "ok"}],
+        "max_tokens": 10,
+    }
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(data).encode("utf-8"),
+            headers=headers,
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status == 200:
+                res_payload = json.loads(response.read().decode("utf-8"))
+                if "choices" in res_payload:
+                    return True
+                if "error" in res_payload:
+                    return False
+            return False
+    except Exception:
+        return False
+
+
+def select_with_validation(ranked: list[RankedModel], failed_models: dict[str, Any], api_key: str | None) -> RankedModel:
+    """Select the best available model, verifying its availability via a headless call if an API key is available."""
+    temp_failed = dict(failed_models)
+
+    while True:
+        try:
+            selected = select_with_failover(ranked, temp_failed)
+        except RuntimeError:
+            if ranked:
+                return ranked[0]
+            raise
+
+        if not api_key:
+            return selected
+
+        print(f"📡 [VALIDATION] Testando chamada headless para o modelo {selected.id}...", flush=True)
+        if _test_model_call(selected.id, api_key):
+            print(f"✅ [VALIDATION] Modelo {selected.id} operacional.", flush=True)
+            return selected
+
+        print(f"❌ [VALIDATION] Modelo {selected.id} indisponível/falhou no teste. Tentando fallback...", flush=True)
+
+        # Persist validation failure in state sentinel if imbroke mode is active
+        state_path = default_state_path()
+        state = load_imbroke_state(state_path)
+        if state and state.get("active"):
+            now = datetime.now(timezone.utc)
+            cooldown_until = (now + timedelta(seconds=DEFAULT_COOLDOWN_SECONDS)).isoformat().replace("+00:00", "Z")
+            failed_state = state.setdefault("failed_models", {})
+            entry = failed_state.get(selected.id, {})
+            failed_state[selected.id] = {
+                "failed_at": now.isoformat().replace("+00:00", "Z"),
+                "reason": "headless_validation_failure",
+                "cooldown_until": cooldown_until,
+                "attempts": entry.get("attempts", 0) + 1,
+            }
+            save_imbroke_state(state_path, state)
+
+        temp_failed[selected.id] = {
+            "cooldown_until": (datetime.now(timezone.utc) + timedelta(seconds=DEFAULT_COOLDOWN_SECONDS)).isoformat().replace("+00:00", "Z")
+        }
+
+
 def build_payload(args: argparse.Namespace) -> dict[str, Any]:
     openrouter_payload = load_json_source(args.openrouter_models_source)
     if args.fox_metrics_source:
@@ -1196,7 +1329,8 @@ def build_payload(args: argparse.Namespace) -> dict[str, Any]:
     state_path = default_state_path()
     state = load_imbroke_state(state_path)
     failed_models = (state or {}).get("failed_models", {})
-    selected = select_with_failover(ranked, failed_models) if failed_models else ranked[0]
+    api_key = _get_api_key() if (args.imbroke or args.apply) else None
+    selected = select_with_validation(ranked, failed_models, api_key)
 
     payload: dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

@@ -850,6 +850,7 @@ EXPECTED_SKILLS=(
   # Behavior + Govern
   "excrtx-govern-draftfirst" "excrtx-behavior-vetor" "excrtx-behavior-canvas"
   "excrtx-behavior-briefing" "excrtx-govern-tools" "excrtx-harness-kanban"
+  "excrtx-behavior-accuracy"
   # Workspace
   "excrtx-produce-artifacts" "excrtx-memory-intake"
   # Production

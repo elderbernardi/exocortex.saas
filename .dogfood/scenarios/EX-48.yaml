@@ -1,0 +1,21 @@
+feature_id: EX-48
+title: Modo imbroke: classificar modelos 1-10 com transparência
+category: Behavior & Governance
+source: FEATURES.md
+risk: P1
+mode: conversational
+user_prompt: |
+  Mostre o ranking de modelos gratuitos e a transparência do modelo selecionado atualmente.
+allowed_tools:
+  - terminal
+success_criteria:
+  - O script lista o ranking de modelos gratuitos com rating formatado na escala 1-10.
+  - O aviso correspondente (emoji/status/mensagem) do warning é exibido de forma transparente.
+  - A transparência de custo zero, modelo e fonte é respeitada deterministicamente.
+failure_signals:
+  - Saída não determinística ou formatada por LLM.
+  - Ausência de classificação de rating na escala 1-10.
+  - Falhas em comandos do script do roteador.
+evidence_required:
+  - transcript
+  - tool_trace

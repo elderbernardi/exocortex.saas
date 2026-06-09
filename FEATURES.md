@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais, totalizando **35 skills**.
+Organizadas em 7 categorias funcionais, totalizando **36 skills**.
 
 ---
 
@@ -234,6 +234,16 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 | **Instalação** | `setup.sh` copia skill. |
 | **Dependências de Skills** | `excrtx-produce-artifacts`, `excrtx-memory-manager` |
 | **Dependências de Tools** | Hermes Kanban (nativo H-09) |
+
+#### EX-49. Verificação de Precisão (`excrtx-behavior-accuracy`)
+
+| Campo | Detalhe |
+|---|---|
+| **Funcionalidade** | Garante precisão nas afirmações sobre ações realizadas. Impede que o agente afirme ter feito algo que não fez (ex: fechar issues, commits, deploys, enviar mensagens). Toda afirmação de conclusão de ação externa requer verificação real do estado do sistema com prova (output do comando). Scoring: checklist de 4 pontos (executei? verifiquei? confirma? tenho prova?). |
+| **Como usar** | Automático. Intercepta toda afirmação de conclusão de ação externa. Triggers: "issue fechada", "commitado", "enviei", qualquer afirmação de conclusão. |
+| **Instalação** | `setup.sh` copia skill. |
+| **Dependências de Skills** | Nenhuma (complementa `excrtx-govern-draftfirst` mas sem dependência funcional) |
+| **Dependências de Tools** | Nenhuma |
 
 ---
 
@@ -505,7 +515,18 @@ Organizadas em 7 categorias funcionais, totalizando **35 skills**.
 | **Dependências de Skills** | Nenhuma |
 | **Dependências de Tools** | Hermes Gateway (H-04), Hermes Dashboard (H-08) |
 
+#### EX-48. Modo imbroke (`excrtx-harness-imbroke`)
+
+| Campo | Detalhe |
+|---|---|
+| **Funcionalidade** | Contingência para operar em cenários sem saldo no OpenRouter. Seleciona o melhor modelo gratuito baseado em benchmarks reais e catálogo, convertendo o índice para a escala 1-10 de capacidade com warnings transparentes. Configura o Hermes com fallback automático em duas camadas (failover nativo intra-sessão e circuit breaker persistente cross-sessão com crons de watchdog/recovery). |
+| **Como usar** | `python3 scripts/openrouter_free_model_router.py --imbroke --activate` ou via trigger `/xc imbroke`. |
+| **Instalação** | Ativado pelo `setup.sh` se `OPENROUTER_API_KEY` estiver definida com a flag `--imbroke`, ou executando o script principal. |
+| **Dependências de Skills** | Nenhuma |
+| **Dependências de Tools** | `python3`, `hermes` |
+
 ---
+
 
 ## Mapa de Dependências
 
@@ -529,6 +550,7 @@ graph TD
         EX05 --> EX07[EX-07 Briefing]
         EX08[EX-08 Draft-First]
         EX09[EX-09 Tool Gov]
+        EX49[EX-49 Accuracy]
         EX11[EX-11 Acervo Mgr]
     end
 
@@ -616,7 +638,7 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 
 ## Convenções para Evolução
 
-1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-35` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
+1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-49` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
 2. **Cada feature é testável isoladamente.** Self-test (`EX-03`) valida checkpoints. Testes de regressão devem referenciar o ID da feature.
 3. **Dependências são explícitas.** Toda skill documenta de quais outras skills e tools depende.
 4. **Versionamento semântico.** Cada skill tem `version` no frontmatter. Bump obrigatório em mudanças funcionais.

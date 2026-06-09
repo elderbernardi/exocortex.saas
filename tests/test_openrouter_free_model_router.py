@@ -29,6 +29,9 @@ class OpenRouterFreeModelRouterTest(unittest.TestCase):
             # Isolate from live sentinel/state to prevent test pollution
             env = os.environ.copy()
             env["HERMES_HOME"] = str(Path(tempfile.mkdtemp()) / "hermes-test-home")
+        else:
+            env = env.copy()
+        env["IMBROKE_TEST_MODE"] = "1"
         return subprocess.run(
             cmd,
             text=True,
@@ -361,9 +364,11 @@ class CircuitBreakerTest(unittest.TestCase):
 
     def _run(self, *args, env=None, cwd=None):
         cmd = [sys.executable, str(self.script), *args]
+        actual_env = env.copy() if env else os.environ.copy()
+        actual_env["IMBROKE_TEST_MODE"] = "1"
         return subprocess.run(
             cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            check=False, env=env, cwd=cwd or self._repo_root(),
+            check=False, env=actual_env, cwd=cwd or self._repo_root(),
         )
 
     def _make_fixtures(self, td_path):
@@ -671,6 +676,8 @@ class CircuitBreakerTest(unittest.TestCase):
             }), encoding="utf-8")
 
             result = self._run("--guard", env=env)
+            print("STDOUT:", result.stdout)
+            print("STDERR:", result.stderr)
             self.assertEqual(result.returncode, 0)
 
             # Sentinel should be removed
@@ -899,6 +906,30 @@ class CircuitBreakerUnitTest(unittest.TestCase):
             self.assertTrue(success)
             content = yaml.safe_load(config_path.read_text(encoding="utf-8"))
             self.assertNotIn("environment_hint", content.get("agent", {}))
+
+    def test_select_with_validation_skips_failed_validation(self):
+        from scripts.openrouter_free_model_router import select_with_validation, RankedModel
+        from unittest.mock import patch
+
+        ranked = [
+            RankedModel(id="model-a", canonical_slug="a", name="A", context_length=1000,
+                        pricing={}, benchmarked=True, intelligence_index=90.0,
+                        pass_rate=90.0, composite_score=40.0, avg_latency=10.0,
+                        fox_model_id="a", benchmark_timestamp="t", secondary_source=None, secondary_index=None),
+            RankedModel(id="model-b", canonical_slug="b", name="B", context_length=1000,
+                        pricing={}, benchmarked=True, intelligence_index=80.0,
+                        pass_rate=80.0, composite_score=30.0, avg_latency=10.0,
+                        fox_model_id="b", benchmark_timestamp="t", secondary_source=None, secondary_index=None),
+        ]
+        failed = {}
+
+        # Temporarily mock _test_model_call to simulate first model failing, and second model passing
+        def mock_test(model_id, api_key):
+            return model_id == "model-b"
+
+        with patch("scripts.openrouter_free_model_router._test_model_call", side_effect=mock_test):
+            selected = select_with_validation(ranked, failed, api_key="some-key")
+            self.assertEqual(selected.id, "model-b")
 
 
 if __name__ == "__main__":
