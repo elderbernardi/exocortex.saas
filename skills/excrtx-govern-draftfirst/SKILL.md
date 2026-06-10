@@ -8,22 +8,53 @@
 8|    tags: [exocortex, behavior, draft, approval, safety]
 9|---
 10|
-11|# Draft-First — Interceptor de Ações Externas
-12|
-13|> Nenhuma ação que envie dados para fora do sistema é executada sem aprovação explícita.
-14|
-15|## Trigger
-16|
-17|Ativar quando o agente for executar qualquer ação classificada como **Comunicação**, **Entrega ao executivo** ou **Criação externa** pela skill `excrtx-govern-tools`:
-18|- Enviar email, mensagem, notificação
-19|- Criar ou editar documento compartilhado (Google Docs, Drive, Notion)
-20|- Criar ou modificar evento de calendário
-21|- Publicar ou compartilhar conteúdo externamente
-22|- Qualquer tool call que transmita dados para fora do ambiente Hermes local
+# Draft-First — Interceptor de Ações com Efeito Externo
+
+> Ações internas executam direto. Ações externas passam por DRAFT. Nenhuma ação que envie dados para fora do sistema é executada sem aprovação explícita.
+
+## Trigger
+
+Ativar quando o agente for executar qualquer ação. A classificação entre ação interna e externa é o primeiro filtro.
+
+## Taxonomia de Ações: Internas vs Externas
+
+Antes de decidir o regime de execução, classificar a ação:
+
+### Ações internas (execução direta)
+
+| Ação | Notas |
+|---|---|
+| `git commit` (local) | Sem DRAFT |
+| `git add` | Sem DRAFT |
+| `git branch` (criar, checkout) | Sem DRAFT |
+| Rodar testes, py_compile, lint | Sem DRAFT |
+| Patches e edições em arquivos locais | Sem DRAFT |
+| Leitura de qualquer recurso | Sem DRAFT |
+| Operações de terminal sem transmissão externa | Sem DRAFT |
+
+**Regra:** ações internas não transmitem dados para fora do ambiente local nem produzem efeitos irreversíveis em sistemas remotos. Execução direta.
+
+**Exceção:** se o executivo disser "quero revisar antes", "mostra o DRAFT", ou similar, a ação interna também passa por DRAFT.
+
+### Ações externas (DRAFT obrigatório)
+
+| Ação | Notas |
+|---|---|
+| `git push` | DRAFT obrigatório |
+| Deploy para qualquer ambiente | DRAFT obrigatório |
+| Envio de email/mensagem para terceiros | DRAFT obrigatório |
+| Publicação em rede social ou canal compartilhado | DRAFT obrigatório |
+| Criação/modificação de evento no calendário | DRAFT obrigatório |
+| Modificação de documento compartilhado | DRAFT obrigatório |
+| Qualquer comunicação em nome do executivo | DRAFT obrigatório |
+
+**Regra:** ações externas transmitem dados para fora do ambiente local ou produzem efeitos em sistemas que o executivo não controla localmente. Draft-First obrigatório.
+
+**Exceção:** se o executivo disser "confio, execute direto", "pode enviar sem DRAFT", ou similar, a ação externa pode executar sem passar pelo ciclo de DRAFT.
 23|
-24|## Taxonomia obrigatória
-25|
-26|Antes de agir, classificar em uma destas categorias:
+## Taxonomia de Canais (para ações de comunicação/entrega)
+
+Quando a ação envolve entrega de mensagem ou comunicação, classificar o canal:
 27|
 28|1. **Self-delivery operacional**
 29|   - Destinatário: o próprio executivo
@@ -99,21 +130,29 @@
 99|- Se a categoria for self-delivery operacional, reportar a indisponibilidade da tool e oferecer entrega manual ou alternativa local
 100|- Logar a intenção no acervo do microverso ativo
 101|
-102|## Regras
-103|
-104|- Draft-First é obrigatório para comunicações externas e publicações externas
-105|- Self-delivery operacional NÃO cria autorização implícita para falar com terceiros
-106|- Mesmo ações "urgentes" passam pelo draft quando forem comunicação externa — o executivo decide o que é urgente
-107|- Destinatário ambíguo ou canal compartilhado deve ser tratado como comunicação externa
-108|- Drafts pendentes são incluídos no Morning Briefing
-109|- Se o executivo configurar auto-aprovação para um tipo específico (futuro), respeitar
-110|
-111|## Verificação
-112|
-113|- [ ] Pedido de email para terceiro gera DRAFT, não envia
-114|- [ ] Pedido de evento gera DRAFT com todos os campos
-115|- [ ] Resposta de aprovação dispara execução quando o caso exigir Draft-First
-116|- [ ] Resposta de descarte confirma que nada foi enviado
-117|- [ ] Self-delivery operacional pode executar sem DRAFT quando o destinatário é o próprio executivo no home channel
-118|- [ ] Modo degradado gera texto copiável quando a categoria exige DRAFT e a tool está ausente
+## Regras
+
+- Ações internas executam sem DRAFT (commit local, add, branch, testes, patches, leitura, operações locais)
+- Ações externas exigem DRAFT obrigatório (push, deploy, envio de email/mensagem, publicação, calendário, docs compartilhados)
+- Self-delivery operacional NÃO cria autorização implícita para falar com terceiros
+- Mesmo ações "urgentes" passam pelo draft quando forem comunicação externa — o executivo decide o que é urgente
+- Destinatário ambíguo ou canal compartilhado deve ser tratado como comunicação externa
+- O executivo pode forçar DRAFT em ação interna ("quero revisar antes")
+- O executivo pode autorizar ação externa sem DRAFT ("confio, execute direto")
+- Sem override explícito, vale a classificação padrão
+- Drafts pendentes são incluídos no Morning Briefing
+- Se o executivo configurar auto-aprovação para um tipo específico (futuro), respeitar
+
+## Verificação
+
+- [ ] Ações internas executam sem DRAFT (commit, add, branch, testes, patches)
+- [ ] Ações externas geram DRAFT (push, deploy, envio de email/mensagem, publicação)
+- [ ] Pedido de email para terceiro gera DRAFT, não envia
+- [ ] Pedido de evento gera DRAFT com todos os campos
+- [ ] Resposta de aprovação dispara execução quando o caso exigir Draft-First
+- [ ] Resposta de descarte confirma que nada foi enviado
+- [ ] Self-delivery operacional pode executar sem DRAFT quando o destinatário é o próprio executivo no home channel
+- [ ] Modo degradado gera texto copiável quando a categoria exige DRAFT e a tool está ausente
+- [ ] Executivo força DRAFT em ação interna com "quero revisar antes"
+- [ ] Executivo autoriza ação externa sem DRAFT com "confio, execute direto"
 119|

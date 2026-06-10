@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Step 12: Verificação de keys + OpenRouter + Telegram + Google credentials
+# =============================================================================
+
+# Standalone support
+if [ "${_EXOCORTEX_COMMON_LOADED:-}" != "1" ]; then
+  source "$(dirname "$0")/common.sh"
+fi
+
+configure_openrouter_free_router() {
+  local router_script="$SCRIPT_DIR/scripts/openrouter_free_model_router.py"
+  local report_path="$HERMES_HOME/model-routing/openrouter-free-models.json"
+
+  if [ ! -f "$router_script" ]; then
+    warn "Roteador OpenRouter free não encontrado: $router_script"
+    return 0
+  fi
+  if ! command -v python3 >/dev/null 2>&1; then
+    warn "python3 não encontrado; pulando roteador OpenRouter free"
+    return 0
+  fi
+
+  if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+    info "OPENROUTER_API_KEY ausente; gerando ranking de contingência sem aplicar provider/model"
+    if python3 "$router_script" --imbroke --report-path "$report_path" --format text >/dev/null 2>&1; then
+      log "Ranking OpenRouter free gerado em $report_path"
+    else
+      warn "Falha ao gerar ranking OpenRouter free"
+    fi
+    return 0
+  fi
+
+  if ! command -v hermes >/dev/null 2>&1; then
+    warn "hermes CLI não encontrado; roteador OpenRouter free não pode aplicar config"
+    return 0
+  fi
+
+  # Use --activate for full circuit breaker setup (sentinel + watchdog cron)
+  if python3 "$router_script" --imbroke --activate --report-path "$report_path" --format text >/dev/null 2>&1; then
+    log "Roteador OpenRouter free ativado com circuit breaker; relatório em $report_path"
+  else
+    # Fallback to legacy --apply if --activate fails (e.g., hermes cron unavailable)
+    warn "Falha no --activate; tentando --apply legado"
+    if python3 "$router_script" --imbroke --apply --report-path "$report_path" --format text >/dev/null 2>&1; then
+      log "Roteador OpenRouter free aplicado (modo legado); relatório em $report_path"
+    else
+      warn "Falha ao configurar roteador OpenRouter free"
+    fi
+  fi
+}
+
+# ─── API Keys ────────────────────────────────────────────────────────────────
+
+info "Verificando keys de API..."
+if [ -n "${OPENROUTER_API_KEY:-}" ]; then
+  log "OPENROUTER_API_KEY definida"
+else
+  warn "OPENROUTER_API_KEY não definida — DocBrain e LLM routing podem falhar"
+fi
+if [ -n "${CONTEXT7_API_KEY:-}" ]; then
+  log "CONTEXT7_API_KEY definida"
+else
+  info "CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)"
+fi
+
+# ─── OpenRouter Free Router ─────────────────────────────────────────────────
+
+if [ "$IMBROKE_MODE" = "1" ]; then
+  info "Modo --imbroke ativo: configurando roteador OpenRouter free..."
+  configure_openrouter_free_router
+else
+  info "Modo OpenRouter free desativado por default; use --imbroke para acionar a contingência"
+fi
+
+# ─── Telegram ────────────────────────────────────────────────────────────────
+
+info "Verificando Telegram gateway..."
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ]; then
+  log "TELEGRAM_BOT_TOKEN definida"
+  if command -v hermes >/dev/null 2>&1; then
+    if hermes gateway list 2>/dev/null | grep -q "telegram"; then
+      log "Gateway Telegram já configurado"
+    else
+      hermes gateway setup telegram --token "${TELEGRAM_BOT_TOKEN}" >/dev/null 2>&1 && \
+        log "Gateway Telegram configurado com token" || \
+        warn "Falha ao configurar gateway Telegram"
+    fi
+  fi
+else
+  mkdir -p "$HERMES_HOME/reminders"
+  cat > "$HERMES_HOME/reminders/telegram-setup.md" <<'EOF'
+# Configuração do Telegram pendente
+
+O Telegram é o gateway recomendado para começar.
+
+## Como configurar:
+1. Abra @BotFather no Telegram
+2. Envie /newbot e siga as instruções
+3. Copie o token fornecido
+4. Execute: TELEGRAM_BOT_TOKEN="seu_token" bash setup.sh
+   ou: hermes gateway setup telegram --token "seu_token"
+EOF
+  info "TELEGRAM_BOT_TOKEN não definida; reminder criado"
+  info "  Configure depois: TELEGRAM_BOT_TOKEN=<token> bash setup.sh"
+fi
+
+# ─── Google Credentials ─────────────────────────────────────────────────────
+
+info "Verificando Google credentials..."
+GOOGLE_CREDS_OK=false
+if [ -f "$HOME/.config/gcloud/application_default_credentials.json" ]; then
+  GOOGLE_CREDS_OK=true
+  log "Google Application Default Credentials encontradas"
+elif [ -n "${GOOGLE_APPLICATION_CREDENTIALS:-}" ] && [ -f "${GOOGLE_APPLICATION_CREDENTIALS}" ]; then
+  GOOGLE_CREDS_OK=true
+  log "Google credentials via GOOGLE_APPLICATION_CREDENTIALS"
+elif command -v gcloud >/dev/null 2>&1; then
+  if gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>/dev/null | grep -q "@"; then
+    GOOGLE_CREDS_OK=true
+    log "Google auth ativa via gcloud CLI"
+  fi
+fi
+
+if ! $GOOGLE_CREDS_OK; then
+  mkdir -p "$HERMES_HOME/reminders"
+  cat > "$HERMES_HOME/reminders/google-credentials.md" <<'EOF'
+# Google Credentials pendentes
+
+Para integração com Gmail, Calendar e Drive (Draft-First Protocol):
+
+## Opção 1: Application Default Credentials
+```bash
+gcloud auth application-default login
+```
+
+## Opção 2: Service Account
+Exporte GOOGLE_APPLICATION_CREDENTIALS apontando para o JSON da service account.
+
+## Opção 3: OAuth2 Client
+Crie um OAuth2 Client ID no Google Cloud Console (tipo Desktop).
+EOF
+  warn "Google credentials não encontradas; reminder criado"
+  info "  Configure: gcloud auth application-default login"
+fi

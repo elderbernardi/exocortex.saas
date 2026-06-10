@@ -12,16 +12,18 @@
 12|
 13|> Controla COMO e QUANDO o agente usa ferramentas externas.
 14|
-15|## Classificação de Tools
-16|
-17|| Tipo | Exemplos | Política |
-18||---|---|---|
-19|| **Internos** | file_read, file_write, terminal, hermes-cli | Uso livre. Logar apenas em ações destrutivas (delete, overwrite). |
-20|| **Pesquisa** | duckduckgo-search, excrtx-integrate-browser, arxiv | Uso livre. Logar query + nº de resultados. |
-21|| **Entrega ao executivo** | `send_message` para o próprio usuário no home channel | Pode executar sem DRAFT quando for self-delivery operacional, com destinatário inequívoco e sem representar fala do executivo para terceiros. |
-22|| **Comunicação para terceiros** | email, calendar, messaging, comentário, DM, post | **Draft-First obrigatório.** Jamais enviar sem aprovação pós-DRAFT. |
-23|| **Criação externa** | Google Docs, Drive, compartilhamentos | **Draft-First obrigatório.** Criar como rascunho local primeiro. |
-24|| **Configuração** | hermes skills install, pip install, mcp add | **Aprovação obrigatória.** Logar no session log. Atualizar setup.sh. |
+## Classificação de Tools
+
+| Tipo | Exemplos | Política |
+|---|---|---|
+| **Internos (execução local)** | file_read, file_write, terminal, hermes-cli | Uso livre. Logar apenas em ações destrutivas (delete, overwrite). |
+| **Ações internas (git/tests)** | git commit (local), git add, git branch, testes, py_compile, lint, patches | Execução direta. Sem DRAFT. |
+| **Ações externas (git push/deploy)** | git push, deploy scripts, publicação de artefato em remote | **Draft-First obrigatório.** |
+| **Pesquisa** | duckduckgo-search, excrtx-integrate-browser, arxiv | Uso livre. Logar query + nº de resultados. |
+| **Entrega ao executivo** | `send_message` para o próprio usuário no home channel | Pode executar sem DRAFT quando for self-delivery operacional, com destinatário inequívoco e sem representar fala do executivo para terceiros. |
+| **Comunicação para terceiros** | email, calendar, messaging, comentário, DM, post | **Draft-First obrigatório.** Jamais enviar sem aprovação pós-DRAFT. |
+| **Criação externa** | Google Docs, Drive, compartilhamentos | **Draft-First obrigatório.** Criar como rascunho local primeiro. |
+| **Configuração** | hermes skills install, pip install, mcp add | **Aprovação obrigatória.** Logar no session log. Atualizar setup.sh. |
 25|
 26|## Regras de Uso
 27|
