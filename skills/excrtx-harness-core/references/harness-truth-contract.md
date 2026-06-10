@@ -1,55 +1,55 @@
-# Contrato de verdade operacional do harness
+# Harness Operational Truth Contract
 
-Use este checklist quando uma feature do harness promete wrappers, diretórios locais, setup automatizado ou PASS em dogfood.
+Use this checklist when a harness feature promises wrappers, local directories, automated setup, or PASS in dogfood.
 
-## Quando aplicar
-- A documentação diz que um wrapper ou diretório "existe".
-- O `setup.sh` promete provisionar artefatos em `~/.hermes` / `$HERMES_HOME`.
-- Um probe de dogfood declara PASS/FAIL com base na presença de artefatos locais.
-- A issue é de credibilidade operacional: o sistema declara uma capacidade que pode não existir de fato.
+## When to Apply
+- Documentation says a wrapper or directory "exists."
+- `setup.sh` promises to provision artifacts in `~/.hermes` / `$HERMES_HOME`.
+- A dogfood probe declares PASS/FAIL based on the presence of local artifacts.
+- The issue is about operational credibility: the system claims a capability that may not actually exist.
 
-## Checklist mínimo
-1. **Arquivos no repo**
-   - confirme que os wrappers prometidos existem fisicamente no repositório
-   - se não existem, corrigir código antes de mexer em documentação
+## Minimum Checklist
+1. **Files in repo**
+   - Confirm the promised wrappers physically exist in the repository.
+   - If they don't exist, fix code before modifying documentation.
 
-2. **Provisionamento**
-   - confirme que o `setup.sh` copia os wrappers para o destino correto
-   - crie também os diretórios operacionais esperados pela feature
-   - aplique permissões executáveis quando o contrato da feature depender disso
+2. **Provisioning**
+   - Confirm `setup.sh` copies wrappers to the correct destination.
+   - Also create the operational directories expected by the feature.
+   - Apply executable permissions when the feature's contract depends on it.
 
-3. **Fonte de verdade de paths**
-   - probes e wrappers devem usar `$HERMES_HOME` ou helper central equivalente
-   - evitar `Path.home() / ".hermes"` quando a feature precisa ser testável em ambiente temporário/provisionado
+3. **Path source of truth**
+   - Probes and wrappers must use `$HERMES_HOME` or equivalent central helper.
+   - Avoid `Path.home() / ".hermes"` when the feature needs to be testable in temporary/provisioned environments.
 
-4. **Teste isolado**
-   - crie ou expanda teste que injeta `HERMES_HOME` temporário
-   - valide tanto presença de wrappers quanto comportamento do probe
+4. **Isolated test**
+   - Create or expand a test that injects a temporary `HERMES_HOME`.
+   - Validate both wrapper presence and probe behavior.
 
-5. **Smoke real do artefato provisionado**
-   - execute o wrapper instalado no destino real de `HERMES_HOME`, não só o script do repo
-   - confirme geração de artefatos esperados (`runs/`, `events/`, `reviews/` ou equivalentes)
+5. **Real provisioned artifact smoke**
+   - Execute the wrapper installed at the real `HERMES_HOME` destination, not just the repo script.
+   - Confirm generation of expected artifacts (`runs/`, `events/`, `reviews/` or equivalents).
 
-6. **Dogfood real-agent**
-   - rode a feature específica em modo real-agent
-   - só declare correção concluída quando o resultado de PASS estiver ancorado em evidência concreta
+6. **Real-agent dogfood**
+   - Run the specific feature in real-agent mode.
+   - Only declare fix complete when the PASS result is anchored in concrete evidence.
 
-7. **Documentação**
-   - alinhe `FEATURES.md`, skill operacional e qualquer referência que prometa a capacidade
-   - documentação nunca deve permanecer mais otimista que o runtime
+7. **Documentation**
+   - Align `FEATURES.md`, operational skill, and any reference that promises the capability.
+   - Documentation must never remain more optimistic than the runtime.
 
-## Pitfalls recorrentes
-- Corrigir só o markdown e esquecer o arquivo físico.
-- Criar o wrapper no repo mas não provisionar no `setup.sh`.
-- Probe usando `Path.home()` e quebrando testes com `HERMES_HOME` temporário.
-- Considerar um timeout de smoke adjacente como blocker da issue, mesmo quando a feature-alvo já foi provisionada e validada separadamente.
-- Declarar PASS sem executar o wrapper provisionado no destino real.
+## Recurring Pitfalls
+- Fix only the markdown and forget the physical file.
+- Create the wrapper in repo but don't provision in `setup.sh`.
+- Probe using `Path.home()` and breaking tests with temporary `HERMES_HOME`.
+- Consider an adjacent smoke timeout as a blocker for the issue, even when the target feature was already provisioned and validated separately.
+- Declare PASS without executing the provisioned wrapper at the real destination.
 
-## Evidência que vale
-- teste automatizado verde cobrindo `HERMES_HOME` temporário
-- smoke do wrapper provisionado com artefatos gerados
-- resultado dogfood `PASS` da feature específica
-- leitura do artefato final (`summary.json`, `review.md`, `result.json` ou equivalente)
+## Evidence That Counts
+- Green automated test covering temporary `HERMES_HOME`
+- Smoke of provisioned wrapper with generated artifacts
+- Dogfood `PASS` result for the specific feature
+- Reading the final artifact (`summary.json`, `review.md`, `result.json` or equivalent)
 
-## Caso-base capturado
-Issue EX-33 / #46: wrappers ausentes, probe apontando para `Path.home()`, setup sem provisionar diretório de aprendizado. A correção exigiu alinhar quatro camadas: arquivos reais no repo, `setup.sh`, runtime em `~/.hermes`, e dogfood real-agent.
+## Captured Base Case
+Issue EX-33 / #46: missing wrappers, probe pointing to `Path.home()`, setup not provisioning learning directory. The fix required aligning four layers: actual files in repo, `setup.sh`, runtime at `~/.hermes`, and real-agent dogfood.

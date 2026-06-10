@@ -1,53 +1,53 @@
-# Bootstrap de runtime isolado para Browser Automation
+# Isolated Runtime Bootstrap for Browser Automation
 
-## Quando aplicar
-- Quando a skill precisar funcionar em ambientes sem `uv` global
-- Quando o setup precisar ser portátil e autocontido no diretório da própria skill
-- Quando o browser (Playwright/Chromium) não deve depender de caches globais do sistema
+## When to Apply
+- When the skill needs to work in environments without global `uv`
+- When setup needs to be portable and self-contained in the skill's own directory
+- When the browser (Playwright/Chromium) must not depend on system-wide global caches
 
-## Padrão adotado
-Provisionar um runtime local em `skills/excrtx-integrate-browser/.runtime/` com subpaths explícitos:
+## Adopted Pattern
+Provision a local runtime in `skills/excrtx-integrate-browser/.runtime/` with explicit subpaths:
 
-- `uv/` — instalação local do `uv`
-- `bin/` — executáveis expostos pela tool install (`browser-use`)
-- `python/` — runtime Python gerenciado
-- `tools/` — artefatos de tools do `uv`
-- `cache/uv/` — cache isolado do `uv`
-- `ms-playwright/` — browsers baixados pelo Playwright
+- `uv/` — local `uv` installation
+- `bin/` — executables exposed by tool install (`browser-use`)
+- `python/` — managed Python runtime
+- `tools/` — `uv` tool artifacts
+- `cache/uv/` — isolated `uv` cache
+- `ms-playwright/` — browsers downloaded by Playwright
 
-## Regras operacionais
-1. O wrapper deve preferir o runtime local da skill antes de depender do PATH global.
-2. O instalador deve fazer auto-bootstrap quando `uv` estiver ausente.
-3. O wrapper deve injetar temporariamente no PATH tanto o diretório de binários da tool quanto o diretório do `uv` local.
-4. Variáveis de isolamento devem apontar para `.runtime/`, em especial:
+## Operational Rules
+1. The wrapper must prefer the skill's local runtime before depending on global PATH.
+2. The installer must auto-bootstrap when `uv` is absent.
+3. The wrapper must temporarily inject into PATH both the tool's binary directory and the local `uv` directory.
+4. Isolation variables must point to `.runtime/`, especially:
    - `UV_PYTHON_INSTALL_DIR`
    - `UV_TOOL_DIR`
    - `UV_CACHE_DIR`
    - `PLAYWRIGHT_BROWSERS_PATH`
-5. O setup preventivo (`setup.sh`) e o reparo sob demanda (primeiro uso do wrapper) devem convergir para o mesmo layout de runtime.
+5. Preventive setup (`setup.sh`) and on-demand repair (first wrapper use) must converge to the same runtime layout.
 
-## Pitfall confirmado
-Se apenas `bin/` entra no PATH e o diretório do binário do `uv` não entra, comandos subsequentes que dependem de `uvx`/`uv tool` podem falhar mesmo com a instalação local presente.
+## Confirmed Pitfall
+If only `bin/` enters PATH and the `uv` binary directory doesn't, subsequent commands depending on `uvx`/`uv tool` can fail even with the local installation present.
 
-## Workaround estável
-Para provisionar o Chromium, preferir:
+## Stable Workaround
+To provision Chromium, prefer:
 
 ```bash
 uv tool run --from playwright playwright install chromium
 ```
 
-Em vez de depender de fluxos indiretos do `browser-use install`, que podem tentar `sudo`, assumir PATH global ou falhar em shells mais restritos.
+Instead of relying on indirect `browser-use install` flows, which may try `sudo`, assume global PATH, or fail in more restricted shells.
 
-## Verificação mínima
-Validar a presença de:
+## Minimum Verification
+Validate the presence of:
 - `.runtime/uv/uv`
 - `.runtime/bin/browser-use`
 - `.runtime/ms-playwright/`
 
-E executar um smoke real:
+And run a real smoke:
 
 ```bash
 skills/excrtx-integrate-browser/scripts/browser-use.sh --help
 ```
 
-Critério de aceite: bootstrap completo + help do CLI com exit 0.
+Acceptance criteria: complete bootstrap + CLI help with exit 0.

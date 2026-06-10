@@ -1,24 +1,24 @@
-# GitHub publication: escopo, publicação e fechamento
+# GitHub Publication: Scope, Publication, and Closing
 
-## Quando usar
-Quando o executivo pedir commit, push, comentário em issue, fechamento de issue, abertura/edição de PR ou merge.
+## When to Use
+When the executive asks for commit, push, issue comment, issue closing, PR opening/editing, or merge.
 
-## Sequência recomendada
-1. Inspecionar branch atual, remote e working tree.
-2. Separar arquivos do escopo pedido dos arquivos paralelos fora de escopo.
-3. Montar DRAFT com:
-   - arquivos incluídos
-   - arquivos excluídos
-   - comandos sugeridos
-   - testes executados e resultado
-   - efeito externo exato (commit, push, comentário, fechamento)
-4. Só executar após aprovação explícita pós-DRAFT.
+## Recommended Sequence
+1. Inspect current branch, remote, and working tree.
+2. Separate files in the requested scope from parallel out-of-scope files.
+3. Build DRAFT with:
+   - Included files
+   - Excluded files
+   - Suggested commands
+   - Tests executed and results
+   - Exact external effect (commit, push, comment, closing)
+4. Only execute after explicit post-DRAFT approval.
 
-## Pitfalls recorrentes
-- `git status` pode conter ruído paralelo; não assumir que tudo pendente entra no commit.
-- Rascunhos locais de comentário/issue podem ser úteis para publicação, mas não precisam entrar no commit.
-- Fechar issue é efeito externo distinto de comentar issue; ambos precisam estar cobertos no DRAFT.
-- Pedido imperativo do usuário para publicar não substitui aprovação pós-DRAFT.
+## Recurring Pitfalls
+- `git status` may contain parallel noise; don't assume everything pending goes into the commit.
+- Local comment/issue drafts may be useful for publication, but don't need to enter the commit.
+- Closing an issue is a distinct external effect from commenting on an issue; both must be covered in the DRAFT.
+- User's imperative request to publish does not replace post-DRAFT approval.
 
-## Regra de escopo
-Se o pedido inicial é resolver uma issue específica, o default é publicar apenas os arquivos diretamente ligados àquela issue. Qualquer ampliação de escopo precisa ser explicitada no DRAFT.
+## Scope Rule
+If the initial request is to resolve a specific issue, the default is to publish only files directly related to that issue. Any scope expansion must be made explicit in the DRAFT.

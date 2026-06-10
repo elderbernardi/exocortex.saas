@@ -1,26 +1,26 @@
-# Drive path governance for final artifact publishing
+# Drive Path Governance for Final Artifact Publishing
 
-Contexto consolidado da sessão:
+Consolidated session context:
 
-- Upload direto com `google_api.py drive upload` pode cair na raiz do Drive quando `--parent` não é resolvido.
-- Para artefato final do Exocórtex, o fluxo correto é `artifact_publish.py` com manifesto + receipt.
+- Direct upload with `google_api.py drive upload` can fall to Drive root when `--parent` is not resolved.
+- For final Exocórtex artifacts, the correct flow is `artifact_publish.py` with manifest + receipt.
 
-## Regra operacional durável
+## Durable Operational Rule
 
-1. Resolver `drive_target.folder_path` antes do upload.
-2. Garantir parent explícito no upload final.
-3. Considerar upload em raiz do Drive como falha de governança.
-4. Corrigir com republicação em pasta correta e registrar receipt.
+1. Resolve `drive_target.folder_path` before upload.
+2. Ensure explicit parent in final upload.
+3. Consider Drive root upload as a governance failure.
+4. Fix with republication to correct folder and record receipt.
 
-## Convenção de path
+## Path Convention
 
-Use paths em lowercase para consistência:
+Use lowercase paths for consistency:
 
 - `exocortex/inbox` (fallback)
-- `exocortex/microverso/<dominio>/...` quando o microverso estiver claro
+- `exocortex/microverso/<domain>/...` when the microverso is clear
 
-## Verificação mínima
+## Minimum Verification
 
-- `manifest.json` contém `drive_target.folder_path` não vazio.
-- `receipt.google_drive.json` contém `folder_id` e `folder_path`.
-- `drive get <file_id>` retorna `parents` igual ao folder de destino (não raiz).
+- `manifest.json` contains non-empty `drive_target.folder_path`.
+- `receipt.google_drive.json` contains `folder_id` and `folder_path`.
+- `drive get <file_id>` returns `parents` matching the destination folder (not root).

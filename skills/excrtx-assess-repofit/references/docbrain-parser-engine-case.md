@@ -1,97 +1,97 @@
-# DocBrain parser-engine case
+# DocBrain Parser-Engine Case
 
-Contexto: auditoria e hardening do DocBrain para servir como engine documental do intake server, sem abandonar sua função original de wiki.
+Context: audit and hardening of DocBrain to serve as the documentary engine for the intake server, without abandoning its original wiki function.
 
-## Veredito usado
+## Verdict Used
 
-- suficiente como base exploratória de ingestão
-- insuficiente, no estado inicial, como engine de parser para o intake server
-- boa fundação para evoluir rápido se o contrato operacional for separado da projeção wiki
+- Sufficient as an exploratory ingestion base
+- Insufficient, in its initial state, as a parser engine for the intake server
+- Good foundation to evolve quickly if the operational contract is separated from the wiki projection
 
-## Sinais fortes positivos
+## Strong Positive Signals
 
-- estratégia de escalada entre parsers era conceitualmente boa
-- LiteParse agregava valor próprio em PDF: OCR, reconstrução espacial, heurística de legibilidade e cifra
-- preocupação com provenance já existia
-- separação razoável entre adapters, pipeline, wiki, scraper e query
-- build, lint e testes passavam após correções
+- Parser escalation strategy was conceptually good
+- LiteParse added proprietary value for PDF: OCR, spatial reconstruction, readability heuristic, and cipher detection
+- Provenance concern already existed
+- Reasonable separation between adapters, pipeline, wiki, scraper, and query
+- Build, lint, and tests passed after fixes
 
-## Gaps estruturais encontrados
+## Structural Gaps Found
 
-### 1. Produto wiki-first, não engine-first
+### 1. Wiki-first product, not engine-first
 
-O output principal era `WikiPageDraft` e markdown persistido. Para intake server, o contrato principal precisa ser um resultado estruturado de parsing.
+The main output was `WikiPageDraft` and persisted markdown. For an intake server, the primary contract needs to be a structured parsing result.
 
-Correção aplicada como padrão: manter `pages[]` para backward compatibility e adicionar `documents[]` com um contrato canônico (`DocumentParseResult` ou equivalente).
+Fix applied as pattern: keep `pages[]` for backward compatibility and add `documents[]` with a canonical contract (`DocumentParseResult` or equivalent).
 
-### 2. Falta de modo process-only
+### 2. Missing process-only mode
 
-Uma engine precisa poder processar e retornar JSON sem escrever na projeção wiki.
+An engine needs to be able to process and return JSON without writing to the wiki projection.
 
-Correção aplicada como padrão: flag/config `processOnly` + saída `--json`, preservando o fluxo antigo quando o modo não está ativo.
+Fix applied as pattern: `processOnly` flag/config + `--json` output, preserving the old flow when mode is not active.
 
-### 3. Chunking cosmético
+### 3. Cosmetic chunking
 
-O sistema aparentava suportar documentos longos, mas a orquestração real não agregava múltiplos chunks em todos os caminhos.
+The system appeared to support long documents, but the actual orchestration didn't aggregate multiple chunks across all paths.
 
-Lição: sempre verificar se há agregação real entre chunks, não apenas split local.
+Lesson: always verify there's real aggregation between chunks, not just local split.
 
-### 4. Governança declarativa fora do runtime
+### 4. Declarative governance outside runtime
 
-`purpose.md` e `schema.md` eram descritos como orientadores do LLM, mas não eram carregados pela pipeline analisada.
+`purpose.md` and `schema.md` were described as LLM guides, but weren't loaded by the analyzed pipeline.
 
-Lição: procurar a leitura efetiva dos arquivos prometidos; documentação sem consumo runtime não é contrato operacional.
+Lesson: look for effective reading of promised files; documentation without runtime consumption is not an operational contract.
 
-### 5. Escalada crítica quebrada por integração
+### 5. Critical escalation broken by integration
 
-O adapter de Docling apontava para caminho incorreto do script Python. A ideia da escalada era válida; o degrau estava quebrado.
+The Docling adapter pointed to an incorrect Python script path. The escalation idea was valid; the step was broken.
 
-Lição: distinguir falha de integração de falha de desenho. Corrigir o path/adapter antes de descartar a arquitetura.
+Lesson: distinguish integration failure from design failure. Fix the path/adapter before discarding the architecture.
 
-### 6. Vision fallback prometido, mas não entregue
+### 6. Vision fallback promised but not delivered
 
-A pipeline procurava `pdf_to_images.py`, mas o arquivo não existia no repo.
+The pipeline looked for `pdf_to_images.py`, but the file didn't exist in the repo.
 
-Lição: validar cada degrau até o fim; fallback ausente invalida a promessa operacional.
+Lesson: validate each step to completion; a missing fallback invalidates the operational promise.
 
-### 7. Provenance web degradada ao virar arquivo local
+### 7. Web provenance degraded when becoming local file
 
-A origem web era capturada, mas o caminho local passava a dominar o fluxo.
+The web origin was captured, but the local path took over the flow.
 
-Lição: separar `source_origin` de `source_artifact_path` e registrar lineage.
+Lesson: separate `source_origin` from `source_artifact_path` and register lineage.
 
-### 8. Ausência de idempotência por hash
+### 8. Absence of hash-based idempotency
 
-Para engine de intake, idempotência é requisito estrutural. Sem isso, o mesmo documento renomeado vira múltiplos processamentos e a automação perde previsibilidade.
+For an intake engine, idempotency is a structural requirement. Without it, the same renamed document becomes multiple processings and automation loses predictability.
 
-Correção aplicada como padrão:
+Fix applied as pattern:
 
-- calcular `document_id` por `sha256` do conteúdo quando a fonte é arquivo local
-- derivar identidade estável para web a partir de URL/conteúdo
-- persistir resultados em store próprio fora da projeção wiki
-- tornar a política de reprocessamento explícita
+- Calculate `document_id` via `sha256` of content when source is a local file
+- Derive stable identity for web from URL/content
+- Persist results in a dedicated store outside the wiki projection
+- Make reprocessing policy explicit
 
-## Padrão de implementação que funcionou
+## Implementation Pattern That Worked
 
-### Contrato canônico
+### Canonical Contract
 
-Criar `DocumentParseResult` com, no mínimo:
+Create `DocumentParseResult` with, at minimum:
 
-- identidade/provenance do documento
-- texto e markdown normalizados
-- seções
-- tabelas extraídas
-- tentativas de parser (`parser_attempts`)
-- qualidade/diagnóstico (`quality`)
-- entidades/imagens quando houver suporte real
+- Document identity/provenance
+- Normalized text and markdown
+- Sections
+- Extracted tables
+- Parser attempts (`parser_attempts`)
+- Quality/diagnostics (`quality`)
+- Entities/images when there's real support
 
-### Store de jobs
+### Job Store
 
-Criar store local com layout previsível:
+Create a local store with predictable layout:
 
 `.docbrain/parse-jobs/<document_id>/revision-N.json`
 
-Resumo operacional recomendado:
+Recommended operational summary:
 
 - `job_id`
 - `document_id`
@@ -101,47 +101,47 @@ Resumo operacional recomendado:
 - `created_at`
 - `updated_at`
 
-### Políticas de reprocessamento
+### Reprocessing Policies
 
-- `skip`: se existe job completed para o mesmo hash, retorna resultado persistido e marca como skipped
-- `reprocess`: processa novamente e atualiza a revisão corrente
-- `new_revision`: processa novamente e cria nova revisão incremental
+- `skip`: if a completed job exists for the same hash, return persisted result and mark as skipped
+- `reprocess`: process again and update the current revision
+- `new_revision`: process again and create a new incremental revision
 
 ### CLI/config
 
-Expor a política como flag/config, por exemplo:
+Expose the policy as a flag/config, for example:
 
 `--reprocess-policy skip|reprocess|new_revision`
 
-Manter `--process-only --json` como caminho limpo para consumo por servidor/worker.
+Keep `--process-only --json` as the clean path for server/worker consumption.
 
-### TDD mínimo
+### Minimum TDD
 
-Antes de considerar pronto:
+Before considering done:
 
-- teste do store salvando e recuperando latest por `document_id`
-- teste de nova revisão
-- teste da pipeline com `skip` sem reprocessar
-- teste de regressão garantindo que o modo wiki antigo ainda funciona
-- build/lint/test completos
+- Store test saving and retrieving latest by `document_id`
+- New revision test
+- Pipeline test with `skip` without reprocessing
+- Regression test ensuring old wiki mode still works
+- Full build/lint/test
 
-## Mudanças recomendadas que viraram padrão
+## Recommended Changes That Became Patterns
 
-Quando um repo wiki/CLI local precisar virar engine:
+When a local wiki/CLI repo needs to become an engine:
 
-1. separar core engine de projeções downstream
-2. criar `DocumentParseResult` ou equivalente
-3. mover wiki/search/viewer para consumers posteriores
-4. adicionar jobs, status, retries e idempotência
-5. persistir parser attempts e artifacts intermediários
-6. endurecer chunk aggregation real
-7. validar fallbacks por smoke test
-8. expor API/worker só depois do contrato engine estabilizado
+1. Separate core engine from downstream projections
+2. Create `DocumentParseResult` or equivalent
+3. Move wiki/search/viewer to downstream consumers
+4. Add jobs, status, retries, and idempotency
+5. Persist parser attempts and intermediate artifacts
+6. Harden real chunk aggregation
+7. Validate fallbacks via smoke test
+8. Expose API/worker only after the engine contract stabilizes
 
-## Frases úteis de síntese
+## Useful Synthesis Phrases
 
-- “o problema não está na ideia; está no contrato operacional”
-- “boa fundação, engine ainda não endurecida”
-- “serve como núcleo promissor, não como serviço pronto”
-- “não basta ligar a CLI no servidor”
-- “preserve a wiki como projeção; promova o parser a contrato primário”
+- "The problem isn't the idea; it's the operational contract"
+- "Good foundation, engine not yet hardened"
+- "Serves as a promising nucleus, not as a ready service"
+- "Plugging the CLI into the server is not enough"
+- "Preserve the wiki as a projection; promote the parser to primary contract"

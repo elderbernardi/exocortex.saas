@@ -1,29 +1,29 @@
-# Mixed working tree: publicação seletiva após aprovação
+# Mixed Working Tree: Selective Publication After Approval
 
-## Quando aplicar
-- O executivo aprova commit/push/deploy/fechamento de issue
-- O repositório tem mudanças locais de mais de um assunto ao mesmo tempo
-- Parte das mudanças aprovadas compartilha arquivo com outras mudanças ainda não aprovadas
+## When to Apply
+- The executive approves commit/push/deploy/issue closing
+- The repository has local changes from more than one topic simultaneously
+- Some approved changes share files with other not-yet-approved changes
 
-## Regra operacional
-A aprovação vale para o **escopo do draft**, não para toda a working tree.
+## Operational Rule
+Approval applies to the **draft's scope**, not to the entire working tree.
 
-## Procedimento
-1. Antes de publicar, listar claramente o escopo do draft: arquivos, issue, efeito externo e riscos.
-2. Se houver mudanças não relacionadas, avisar isso no draft antes da aprovação.
-3. Após aprovação, publicar só o conjunto aprovado:
-   - stage seletivo por arquivo ou hunk;
-   - commit separado por unidade lógica;
-   - push apenas do que foi aprovado.
-4. Só então fechar a issue correspondente.
-5. Se o executivo também mandar publicar o restante, tratar como segunda unidade de publicação: revisar, validar, commitar e enviar separadamente.
+## Procedure
+1. Before publishing, clearly list the draft scope: files, issue, external effect, and risks.
+2. If there are unrelated changes, mention this in the draft before approval.
+3. After approval, publish only the approved set:
+   - Selective staging by file or hunk;
+   - Separate commit per logical unit;
+   - Push only what was approved.
+4. Only then close the corresponding issue.
+5. If the executive also asks to publish the rest, treat as a second publication unit: review, validate, commit, and send separately.
 
 ## Pitfalls
-- Não interpretar "aprovado" como autorização para empacotar toda a árvore de trabalho.
-- Não misturar mudança de issue A com trabalho remanescente de issue B no mesmo commit só porque ambos estão prontos.
-- Se um arquivo contém hunks de dois assuntos, usar stage seletivo; não forçar commit monolítico.
+- Don't interpret "approved" as authorization to package the entire working tree.
+- Don't mix issue A changes with leftover issue B work in the same commit just because both are ready.
+- If a file contains hunks from two topics, use selective staging; don't force a monolithic commit.
 
-## Sinal de qualidade
-- Cada commit consegue ser descrito em uma frase curta.
-- Cada fechamento de issue aponta para o commit certo.
-- O branch principal permanece verde após cada unidade publicada.
+## Quality Signal
+- Each commit can be described in a short sentence.
+- Each issue closing points to the right commit.
+- The main branch remains green after each published unit.

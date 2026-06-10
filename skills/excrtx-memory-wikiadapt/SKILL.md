@@ -1,67 +1,63 @@
 ---
 name: excrtx-memory-wikiadapt
-description: "Adapter seguro entre a skill nativa research/llm-wiki e o Acervo Cognitivo v2."
+description: "Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo v2."
 version: 1.0.0
 author: Exocórtex
 metadata:
   hermes:
-    tags: [exocortex, acervo, llm-wiki, adapter, safety, ontology-v2]
-    category: exocortex
-    related_skills: [llm-wiki, excrtx-memory-manager]
+    tags: [exocortex, wiki, adapter, acervo, memory]
 ---
 
-# Acervo LLM Wiki Adapter
+# Wiki Adapter — llm-wiki ↔ Acervo v2
 
-Use esta skill quando uma operação da LLM Wiki precisar afetar o Acervo.
+Safe bridge between the native `research/llm-wiki` skill and the Acervo Cognitivo.
 
-## Princípio
+## Problem
 
-A LLM Wiki nativa fornece mecânica. O Acervo fornece ontologia, scope e destino.
+`research/llm-wiki` writes to `~/.hermes/wiki/` — outside the Acervo. Without this adapter, wiki writes bypass the Domain Filter and scope isolation of `excrtx-memory-manager`.
 
-Nunca apontar `WIKI_PATH` para `~/.hermes/acervo` como forma de integração.
+## Trigger
 
-Fluxo obrigatório:
+Activate when:
+- The agent calls `research/llm-wiki` to create or update wiki pages
+- Content needs to be synced between `~/.hermes/wiki/` and the Acervo
 
-```text
-research/llm-wiki → excrtx-memory-wikiadapt → excrtx-memory-manager → Acervo
+## Procedure
+
+### 1. Intercept wiki write
+
+When `llm-wiki` writes a page:
+
+1. **Classify content** — which microverso does this belong to?
+2. **Apply Domain Filter** from `excrtx-memory-manager` (Operation: WRITE)
+3. **Write to Acervo** at the correct path (`micro/{slug}/{nature}/`)
+4. **Register in wiki** — keep a pointer in `~/.hermes/wiki/` linking to the Acervo path
+
+### 2. Intercept wiki read
+
+When `llm-wiki` reads a page:
+
+1. **Check Acervo first** — does the content exist in the Acervo?
+2. **If yes** → serve from Acervo (authoritative source)
+3. **If no** → serve from wiki (fallback) and suggest promotion to Acervo
+
+### 3. Sync direction
+
+```
+Authoritative: Acervo → wiki (one-way)
+Wiki is a cache/pointer, never the source of truth.
 ```
 
-## Ativar quando
+## Rules
 
-- O usuário pedir ingestão, query, lint ou manutenção usando LLM Wiki e Acervo.
-- Uma fonte externa deve entrar automaticamente no Acervo.
-- Uma resposta da LLM Wiki deve virar conhecimento, decisão, contrato, prompt, skill, workflow ou reflexão.
+- Never let `llm-wiki` write directly to microverso paths without Domain Filter
+- Never duplicate content — use pointers
+- Acervo is always authoritative over wiki
+- If scope denies access to a microverso, the wiki adapter must respect it
 
-## Procedimento
+## Verification
 
-1. Carregar `research/llm-wiki` para obter mecânicas e cuidados upstream.
-2. Carregar `exocortex/excrtx-memory-manager` para operar o Acervo.
-3. Resolver scope: global, micro ou shared.
-4. Traduzir categorias LLM Wiki para Ontologia Multifocal v2.
-5. Preencher frontmatter v2.
-6. Chamar operação WRITE do excrtx-memory-manager.
-7. Atualizar `index.md` e `log.md` do escopo.
-8. Para mudanças estruturais, setup, contratos ou adapter, aplicar registro auditável: `SCHEMA.md`, `index.md`, `log.md`, `contracts/`, `decisions/` e `workflows/` quando aplicável. O `log.md` deve explicitar escopo, arquivos, autoridade e impacto operacional; não usar registro genérico. Ver `references/registration-audit-pattern.md`.
-9. Rodar lint ontológico quando houver alteração estrutural.
-
-## Tradução
-
-| LLM Wiki | Acervo v2 |
-|---|---|
-| entity | `knowledge/`, `nature: knowledge`, `kind: fact/concept` |
-| concept | `knowledge/`, `nature: knowledge`, `kind: concept` |
-| comparison | `decisions/` ou `knowledge/`, `kind: decision/concept` |
-| query | `reflections/`, `kind: lesson`, se reutilizável |
-| raw | `raw/` do escopo resolvido, imutável após captura |
-
-## Bloqueios
-
-- Não escrever em `macro/`.
-- Não criar `entities/`, `concepts/`, `comparisons/` ou `queries/` dentro do Acervo.
-- Não gerar wikilinks cross-microverso.
-- Não gravar direto em `~/wiki` como fonte oficial.
-- Não aceitar update upstream da LLM Wiki como mudança automática de contrato.
-
-## Persistência automática
-
-Conteúdo relevante entra automaticamente no Acervo, mas com `authority: derived | observed` por padrão. Só vira `canonical` quando vier de decisão explícita do executivo ou contrato já aceito.
+- [ ] Wiki write triggers Domain Filter
+- [ ] Content lands in correct Acervo path
+- [ ] Wiki pointer references Acervo location
+- [ ] Scope restrictions respected

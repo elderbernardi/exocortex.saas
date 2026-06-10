@@ -1,86 +1,86 @@
-# Auditoria de pendências entre sessões
+# Cross-Session Pending Audit
 
-Usar quando o executivo perguntar variações de:
+Use when the executive asks variations of:
 - "o que ficou pendente?"
 - "o que temos de outras sessões?"
 - "o que ainda está aberto?"
 - "quais drafts/planos ainda valem?"
 
-## Objetivo
+## Purpose
 
-Responder com backlog vivo, não com arqueologia cega. A auditoria deve separar:
-1. pendência operacional viva;
-2. artefato histórico já resolvido;
-3. rascunho local pronto para triagem/publicação;
-4. bloqueio externo real.
+Respond with a living backlog, not blind archaeology. The audit must separate:
+1. Living operational pending item;
+2. Historical artifact already resolved;
+3. Local draft ready for triage/publication;
+4. Real external blocker.
 
-## Ordem de leitura recomendada
+## Recommended Reading Order
 
-1. Recuperar sessões anteriores por termos de retomada:
+1. Retrieve previous sessions by resumption terms:
    - `pendente`, `backlog`, `TODO`, `kanban`, `handoff`, `retomada`, `próxima sessão`
-2. Verificar artefatos locais de retomada:
+2. Check local resumption artifacts:
    - `.hermes/plans/*.md`
-3. Verificar rascunhos locais de issue:
+3. Check local issue drafts:
    - `acervo/_artifacts/items/draft-issue-*.md`
-4. Verificar sumários consolidados que possam reclassificar o backlog:
-   - ex.: `feature-dogfood-summary-*.md`
-5. Checar estado operacional atual do repositório:
+4. Check consolidated summaries that may reclassify the backlog:
+   - e.g., `feature-dogfood-summary-*.md`
+5. Check current operational state of the repository:
    - `git status --short`
 
-## Heurística de classificação
+## Classification Heuristic
 
-### 1. Pendência viva
+### 1. Living Pending Item
 
-Manter como pendência quando houver trabalho ainda não executado, por exemplo:
-- plano de implementação ainda não iniciado;
-- defeito sem correção;
-- bloqueio externo sem resolução;
-- rascunho local aguardando triagem ou publicação.
+Keep as pending when there's work not yet executed, for example:
+- Implementation plan not yet started;
+- Defect without fix;
+- External blocker without resolution;
+- Local draft awaiting triage or publication.
 
-### 2. Histórico resolvido
+### 2. Resolved History
 
-Rebaixar para histórico quando a sessão posterior já provar fechamento, por exemplo:
-- PR merged em `main`;
-- branch removida;
-- handoff superado por execução posterior;
-- artefato criado apenas para transição de contexto.
+Demote to history when a subsequent session already proves closure, for example:
+- PR merged into `main`;
+- Branch removed;
+- Handoff superseded by subsequent execution;
+- Artifact created only for context transition.
 
-### 3. Rascunho triável
+### 3. Triageable Draft
 
-Listar separadamente quando houver drafts locais que já podem virar backlog formal.
+List separately when there are local drafts that can already become formal backlog.
 
-### 4. Sem pendência operacional local
+### 4. No Local Operational Pending
 
-Declarar explicitamente quando o estado atual estiver limpo:
-- sem mudanças locais;
-- sem branch de trabalho restante;
-- sem processo em aberto no repositório.
+Declare explicitly when the current state is clean:
+- No local changes;
+- No remaining work branch;
+- No open process in the repository.
 
-## Formato de resposta recomendado
+## Recommended Response Format
 
-- `Estado geral agora`
-- `O que ainda parece pendente de verdade`
-- `O que já não considero pendência real`
-- `Resumo executivo`
+- `Current overall state`
+- `What still seems truly pending`
+- `What I no longer consider a real pending item`
+- `Executive summary`
 
 ## Pitfalls
 
-### Pitfall 1 — tratar handoff como backlog eterno
+### Pitfall 1 — Treating handoff as eternal backlog
 
-Handoff é artefato de transição. Se a sessão seguinte já executou e fechou o trabalho, o handoff vira histórico.
+Handoff is a transition artifact. If the following session already executed and closed the work, the handoff becomes history.
 
-### Pitfall 2 — confundir draft local com issue já publicada
+### Pitfall 2 — Confusing local draft with already published issue
 
-Draft em `acervo/_artifacts/items/` é backlog potencial, não execução concluída.
+Draft in `acervo/_artifacts/items/` is potential backlog, not completed execution.
 
-### Pitfall 3 — ignorar o estado atual do git
+### Pitfall 3 — Ignoring current git state
 
-Sessão antiga pode falar em pendência local, mas o repositório atual pode já estar limpo. Sempre revalidar o presente.
+An old session may mention local pending items, but the current repository may already be clean. Always revalidate the present.
 
-### Pitfall 4 — devolver lista plana sem priorização
+### Pitfall 4 — Returning flat list without prioritization
 
-Separar pelo menos:
-- plano-mãe;
-- falhas críticas;
-- drafts para triagem;
-- itens já resolvidos.
+Separate at least:
+- Parent plan;
+- Critical failures;
+- Drafts for triage;
+- Already resolved items.

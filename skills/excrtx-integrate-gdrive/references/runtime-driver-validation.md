@@ -1,49 +1,49 @@
-# Runtime driver validation for Google Drive integration
+# Runtime Driver Validation for Google Drive Integration
 
-## Quando aplicar
-Use este procedimento quando um teste, dogfood ou harness da integração Google Drive precisar decidir entre:
-- driver ausente
-- driver presente mas inválido
-- falha de OAuth/API após o driver já estar íntegro
+## When to Apply
+Use this procedure when a test, dogfood, or harness for Google Drive integration needs to decide between:
+- Driver absent
+- Driver present but invalid
+- OAuth/API failure after driver is already intact
 
-## Regra de precedência de paths
-Validar primeiro o runtime real do Hermes. Ordem recomendada:
+## Path Precedence Rule
+Validate the real Hermes runtime first. Recommended order:
 
 1. `$HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py`
 2. `$HERMES_HOME/hermes-agent/skills/productivity/google-workspace/scripts/google_api.py`
-3. cópias locais do repo, apenas como artefatos de desenvolvimento
+3. Local repo copies, only as development artifacts
 
-Racional: o contrato operacional do usuário roda sobre o driver do runtime Hermes. Se o probe passa numa cópia local e falha no runtime, o PASS é falso.
+Rationale: the user's operational contract runs on the Hermes runtime driver. If the probe passes on a local copy and fails at runtime, the PASS is false.
 
-## Heurística mínima do probe
-1. Resolver `$HERMES_HOME`; fallback: `~/.hermes`.
-2. Construir a lista ordenada de candidatos.
-3. Registrar todos os `driver_candidates` para evidência.
-4. Selecionar o primeiro candidato existente.
-5. Rodar validação sintática (`py_compile` ou equivalente) nesse arquivo.
-6. Só depois seguir para OAuth e chamadas de API.
+## Minimum Probe Heuristic
+1. Resolve `$HERMES_HOME`; fallback: `~/.hermes`.
+2. Build the ordered list of candidates.
+3. Record all `driver_candidates` as evidence.
+4. Select the first existing candidate.
+5. Run syntactic validation (`py_compile` or equivalent) on that file.
+6. Only then proceed to OAuth and API calls.
 
-## Classificação recomendada
-- Nenhum candidato existe → `driver_found=false` / diagnóstico: driver ausente.
-- Candidato existe e falha em `py_compile` → `driver_found=true` / diagnóstico: driver runtime inválido.
-- `py_compile` passa e OAuth falha → problema de autenticação/configuração.
-- `py_compile` passa, OAuth passa e API falha → problema de permissão, query ou uso da API.
+## Recommended Classification
+- No candidate exists → `driver_found=false` / diagnosis: driver absent.
+- Candidate exists and fails `py_compile` → `driver_found=true` / diagnosis: invalid runtime driver.
+- `py_compile` passes and OAuth fails → authentication/configuration problem.
+- `py_compile` passes, OAuth passes, and API fails → permission, query, or API usage problem.
 
-## Evidência que deve ser preservada
+## Evidence That Must Be Preserved
 - `driver_candidates`
 - `driver_path`
 - `driver_found`
 - `py_compile_exit`
-- stderr completo do `py_compile`
+- Full stderr from `py_compile`
 
-## Caso real capturado
-Sessão de correção da issue #44 em `elderbernardi/exocortex.saas`:
-- o probe corrigido passou a localizar `~/.hermes/skills/productivity/google-workspace/scripts/google_api.py`
-- o status correto deixou de ser "driver ausente"
-- a falha real passou a aparecer como `SyntaxError` no driver runtime antes de qualquer OAuth
+## Captured Real Case
+Fix session for issue #44 in `elderbernardi/exocortex.saas`:
+- The corrected probe started locating `~/.hermes/skills/productivity/google-workspace/scripts/google_api.py`
+- The correct status was no longer "driver absent"
+- The real failure appeared as `SyntaxError` in the runtime driver before any OAuth
 
-## Testes de regressão úteis
-- encontra driver principal via `HERMES_HOME`
-- prioriza runtime Hermes sobre cópia local do repo
-- aceita fallback `hermes-agent/...`
-- serializa paths fora do repo sem quebrar a evidência
+## Useful Regression Tests
+- Finds main driver via `HERMES_HOME`
+- Prioritizes Hermes runtime over local repo copy
+- Accepts `hermes-agent/...` fallback
+- Serializes paths outside the repo without breaking evidence

@@ -1,66 +1,66 @@
 ---
-title: "Codex × Hermes: integração caseira (dois trilhos)"
+title: "Codex × Hermes: homegrown integration (two tracks)"
 created: "2026-05-29"
 updated: "2026-05-29"
-tags: [codex, hermes, delegacao, harness, evidencias]
+tags: [codex, hermes, delegation, harness, evidence]
 confidence: high
 ---
 
-Contexto
+Context
 
-Objetivo: integrar Codex ao Hermes de forma caseira, sem depender de plugins de terceiros, com separação clara entre:
+Goal: integrate Codex into Hermes in a homegrown way, without depending on third-party plugins, with clear separation between:
 
-Trilho A — Codex CLI (execução local / alteração de arquivos)
+Track A — Codex CLI (local execution / file modification)
 
-- Use quando a tarefa envolve: criar/editar arquivos, refactor, rodar comandos, mexer em repo, gerar patches, executar testes.
-- Preferir wrapper/harness local (abaixo) para padronizar logging e evidências.
-- Default seguro: rodar em scratch (repo temporário) quando a tarefa é “arbitrária” ou sem escopo claro.
+- Use when the task involves: creating/editing files, refactoring, running commands, working in a repo, generating patches, executing tests.
+- Prefer local wrapper/harness (below) to standardize logging and evidence.
+- Safe default: run in scratch (temporary repo) when the task is "arbitrary" or without clear scope.
 
-Trilho B — Delegation provider openai-codex (tarefas gerais)
+Track B — Delegation provider openai-codex (general tasks)
 
-- Use quando a tarefa envolve: planejar, analisar, sintetizar, escrever checklist, gerar hipóteses.
-- Implementa via delegate_task com delegation.provider=openai-codex e delegation.model fixo.
-- Mantém independência do modelo principal do gateway (que pode ser outro provider).
+- Use when the task involves: planning, analyzing, synthesizing, writing checklists, generating hypotheses.
+- Implement via delegate_task with delegation.provider=openai-codex and fixed delegation.model.
+- Maintains independence from the gateway's main model (which may be another provider).
 
-Checklist de integração (Hermes)
+Integration Checklist (Hermes)
 
-1) Credenciais
-- `hermes auth list` deve mostrar `openai-codex`.
+1) Credentials
+- `hermes auth list` must show `openai-codex`.
 
-2) Configuração delegação (Trilho B)
+2) Delegation config (Track B)
 - `hermes config set delegation.provider openai-codex`
-- `hermes config set delegation.model gpt-5.2` (ou outro listado no cache local)
-- Verificar em `~/.hermes/config.yaml`.
+- `hermes config set delegation.model gpt-5.2` (or another listed in local cache)
+- Verify in `~/.hermes/config.yaml`.
 
-Harness do Codex CLI (Trilho A)
+Codex CLI Harness (Track A)
 
-Artefatos locais (padrão):
-- runner: `~/.hermes/scripts/codex_learning/run_codex_with_learning.py`
-- reviewer: `~/.hermes/scripts/codex_learning/review_latest_run.py`
-- runs: `~/.hermes/codex-learning/runs/*.json`
-- events: `~/.hermes/codex-learning/events/*.json`
+Local artifacts (standard):
+- Runner: `~/.hermes/scripts/codex_learning/run_codex_with_learning.py`
+- Reviewer: `~/.hermes/scripts/codex_learning/review_latest_run.py`
+- Runs: `~/.hermes/codex-learning/runs/*.json`
+- Events: `~/.hermes/codex-learning/events/*.json`
 
-Semântica importante
+Important Semantics
 
-- Codex pode cair em sandbox read-only se não for explicitamente configurado para escrita.
-- No wrapper: usar `--full-auto` para mapear para sandbox de escrita (`workspace-write`).
-- Codex CLI costuma exigir estar dentro de um git repo; o wrapper garante `git init` + commit inicial.
+- Codex can fall into read-only sandbox if not explicitly configured for writes.
+- In wrapper: use `--full-auto` to map to write sandbox (`workspace-write`).
+- Codex CLI typically requires being inside a git repo; the wrapper ensures `git init` + initial commit.
 
-Evidências (não confiar em “feito”)
+Evidence (don't trust "done")
 
-Aprendizado-chave: `git diff --name-only` / `--stat` não inclui untracked (`??`). Para evidência correta, basear em:
-- `git status --porcelain` (inclui `??`)
-- `git ls-files --others --exclude-standard` (lista untracked)
+Key learning: `git diff --name-only` / `--stat` doesn't include untracked (`??`). For correct evidence, rely on:
+- `git status --porcelain` (includes `??`)
+- `git ls-files --others --exclude-standard` (lists untracked)
 
-Contrato de prompt (quando enviar tarefa para Codex CLI)
+Prompt Contract (when sending task to Codex CLI)
 
-Sempre explicitar:
-- Objetivo + critérios de aceite
-- Restrições (não mexer em X, não mudar deps, etc.)
-- Evidências esperadas: arquivos alterados/criados + comandos rodados + stdout relevante + exit code.
+Always make explicit:
+- Goal + acceptance criteria
+- Constraints (don't touch X, don't change deps, etc.)
+- Expected evidence: changed/created files + commands run + relevant stdout + exit code.
 
-Heurística de roteamento
+Routing Heuristic
 
-- “Precisa escrever/editar arquivo, rodar testes, mexer em repo” → Trilho A (Codex CLI)
-- “Precisa analisar/planejar/sintetizar” → Trilho B (delegate_task)
-- Híbrido → decompor: Trilho B (análise) → Trilho A (execução) → Hermes valida e resume evidências.
+- "Needs to write/edit file, run tests, work in repo" → Track A (Codex CLI)
+- "Needs to analyze/plan/synthesize" → Track B (delegate_task)
+- Hybrid → decompose: Track B (analysis) → Track A (execution) → Hermes validates and summarizes evidence.

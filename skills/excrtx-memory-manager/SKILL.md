@@ -1,6 +1,6 @@
 ---
 name: excrtx-memory-manager
-description: "Skill unificada do Acervo Cognitivo. Lê, escreve, busca e gerencia conhecimento nas 4 camadas (macro/global/micro/shared) com isolamento de contexto."
+description: "Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared) with context isolation."
 version: 2.0.0
 author: Exocórtex
 metadata:
@@ -13,22 +13,22 @@ metadata:
 
 # Acervo Manager
 
-Skill unificada para operar sobre o Acervo Cognitivo do Exocórtex.
-Substitui as 7 Nature skills individuais e `exocortex-search` (ADR-005).
+Unified skill for operating on the Exocórtex Acervo Cognitivo.
+Replaces the 7 individual Nature skills and `exocortex-search` (ADR-005).
 
-As 11 Natures (context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections)
-são **classificação de dados**, não comportamentos distintos. Esta skill implementa a mecânica
-comum: ler, escrever, buscar e promover — a semântica de cada Nature é definida pelo SCHEMA
-e frontmatter dos próprios arquivos.
+The 11 Natures (context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections)
+are **data classification**, not distinct behaviors. This skill implements the common mechanics:
+read, write, search, and promote — each Nature's semantics are defined by the SCHEMA
+and frontmatter of the files themselves.
 
 ## When This Skill Activates
 
-Ativar quando:
-- O executivo pergunta sobre fatos, dados, regras, processos ou ferramentas de um domínio
-- Uma tarefa precisa ler ou escrever no Acervo Cognitivo
-- O agente precisa buscar informação em múltiplos Microversos
-- Uma Nature precisa ser promovida (arquivo → diretório)
-- O agente precisa resolver scope de acesso entre Microversos
+Activate when:
+- The executive asks about facts, data, rules, processes, or tools in a domain
+- A task needs to read or write to the Acervo Cognitivo
+- The agent needs to search information across multiple microversos
+- A Nature needs to be promoted (file → directory)
+- The agent needs to resolve access scope between microversos
 
 ## Acervo Location
 
@@ -40,21 +40,21 @@ ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
 
 ```
 acervo/
-├── macro/          # Layer 1: Identidade (FLAT — sempre carregado)
-├── global/         # Layer 2: Operação Universal (WIKI — index no boot)
-├── micro/{slug}/   # Layer 3: Domínios Isolados (WIKI — por scope)
-└── shared/         # Layer 4: Ponte Cross-domain
+├── macro/          # Layer 1: Identity (FLAT — always loaded)
+├── global/         # Layer 2: Universal Operations (WIKI — index at boot)
+├── micro/{slug}/   # Layer 3: Isolated Domains (WIKI — by scope)
+└── shared/         # Layer 4: Cross-domain Bridge
 ```
 
-Detalhes completos em `acervo/README.md`.
+Full details in `acervo/README.md`.
 
 ## Resuming (CRITICAL — do this every session)
 
-No boot de cada sessão:
+At every session boot:
 
-① **Ler `macro/*`** — soul.md, valores.md, estilo.md (inteiros, ~100 linhas total)
-② **Ler `global/index.md`** — catálogo de regras/processos/tools universais
-③ **NÃO carregar** micro/ nem shared/ até que uma tarefa defina o scope
+① **Read `macro/*`** — soul.md, valores.md, estilo.md (entire files, ~100 lines total)
+② **Read `global/index.md`** — catalog of universal rules/processes/tools
+③ **DO NOT load** micro/ or shared/ until a task defines the scope
 
 ```bash
 cat "$ACERVO/macro/soul.md"
@@ -63,279 +63,279 @@ cat "$ACERVO/macro/estilo.md"
 cat "$ACERVO/global/index.md"
 ```
 
-### Design System (Sob Demanda)
+### Design System (On Demand)
 
-- `global/DESIGN.md` **NÃO** é carregado no boot (economia de contexto)
-- Carregado quando: tarefa demanda output visual, `excrtx-quality-designsys` solicita, ou `excrtx-quality-taste` precisa validar
-- Override por microverso: `micro/{slug}/DESIGN.md` (opcional, apenas deltas)
-- Cascade: global = base, micro override vence. Skill `excrtx-quality-designsys` resolve merge.
+- `global/DESIGN.md` is **NOT** loaded at boot (context economy)
+- Loaded when: task demands visual output, `excrtx-quality-designsys` requests it, or `excrtx-quality-taste` needs validation
+- Per-microverso override: `micro/{slug}/DESIGN.md` (optional, deltas only)
+- Cascade: global = base, micro override wins. Skill `excrtx-quality-designsys` resolves merge.
 
 ---
 
 ## Operation: READ
 
-Ler conteúdo de qualquer Nature em qualquer camada.
+Read content of any Nature in any layer.
 
 ### Procedure
 
-1. **Resolver camada:**
-   - Identidade? → `macro/{file}.md` (read direto)
-   - Universal? → `global/{nature}.md` ou `global/{nature}/`
-   - Domínio específico? → `micro/{slug}/{nature}.md` ou `micro/{slug}/{nature}/`
+1. **Resolve layer:**
+   - Identity? → `macro/{file}.md` (direct read)
+   - Universal? → `global/{nature}.md` or `global/{nature}/`
+   - Specific domain? → `micro/{slug}/{nature}.md` or `micro/{slug}/{nature}/`
 
-2. **Verificar scope** (se lendo de micro/):
-   - Tarefa tem `scope.deny`? → Executar [SCOPE](#operation-scope)
-   - Microverso bloqueado? → PARAR. Declarar: "Acesso ao domínio {slug} não permitido neste scope."
+2. **Verify scope** (if reading from micro/):
+   - Does the task have `scope.deny`? → Execute [SCOPE](#operation-scope)
+   - Microverso blocked? → STOP. Declare: "Access to domain {slug} not permitted in this scope."
 
-3. **Detectar formato (lógica dual):**
+3. **Detect format (dual logic):**
 
    ```
-   IF path é arquivo .md:
-     → read_file direto (conteúdo inteiro)
-   ELIF path é diretório:
-     → ler {nature}/_index.md (catálogo)
-     → identificar página relevante pela query
-     → ler página específica
+   IF path is .md file:
+     → direct file_read (entire content)
+   ELIF path is directory:
+     → read {nature}/_index.md (catalog)
+     → identify relevant page by query
+     → read specific page
    ```
 
-4. **Citar fonte:** Toda informação apresentada deve indicar origem:
-   `[Acervo: {camada}/{slug ou nature}]`
+4. **Cite source:** All presented information must indicate origin:
+   `[Acervo: {layer}/{slug or nature}]`
 
-5. **Se não encontrou:** Declarar honestamente:
-   "Não tenho essa informação no acervo. Posso pesquisar externamente?"
+5. **If not found:** Declare honestly:
+   "I don't have this information in the Acervo. Shall I search externally?"
 
 ### Verification
 
-- [ ] Informação apresentada existe no acervo (nunca fabricar)
-- [ ] Fonte citada na resposta
-- [ ] Dados com frontmatter `updated` antigo sinalizados como potencialmente desatualizados
+- [ ] Presented information exists in the Acervo (never fabricate)
+- [ ] Source cited in response
+- [ ] Data with old `updated` frontmatter flagged as potentially outdated
 
 ---
 
 ## Operation: WRITE
 
-Escrever conteúdo no Acervo com Filtro de Domínio.
+Write content to the Acervo with Domain Filter.
 
 ### Procedure
 
-1. **Filtro de Domínio (OBRIGATÓRIO antes de qualquer escrita):**
+1. **Domain Filter (MANDATORY before any write):**
 
    ```
-   ANTES de escrever, classificar o conteúdo:
+   BEFORE writing, classify the content:
 
-   1. Verificar scope da tarefa → Microverso bloqueado? → NÃO escrever
-   2. Conteúdo é ESPECÍFICO deste domínio?
-      → SIM → escrever em micro/{slug}/{nature}
-   3. É cross-domain (envolve 2+ Microversos)?
-      → SIM → shared/cross-refs/ + ponteiro (1 linha) em cada micro
-   4. Pertence a outro Microverso?
-      → SIM → escrever lá (se scope permitir)
-   5. É universal (vale para TODO contexto)?
-      → SIM → escrever em global/{nature}
-   6. Nenhum dos acima?
-      → DESCARTAR
+   1. Check task scope → Microverso blocked? → DO NOT write
+   2. Content is SPECIFIC to this domain?
+      → YES → write to micro/{slug}/{nature}
+   3. Is it cross-domain (involves 2+ microversos)?
+      → YES → shared/cross-refs/ + pointer (1 line) in each micro
+   4. Belongs to another microverso?
+      → YES → write there (if scope permits)
+   5. Is it universal (valid for ALL contexts)?
+      → YES → write to global/{nature}
+   6. None of the above?
+      → DISCARD
    ```
 
-2. **Formato de escrita:**
-   - Se Nature é arquivo → append ao arquivo existente
-   - Se Nature é diretório → criar nova página wiki com frontmatter
-   - Frontmatter YAML obrigatório em toda página nova:
+2. **Write format:**
+   - If Nature is file → append to existing file
+   - If Nature is directory → create new wiki page with frontmatter
+   - Mandatory YAML frontmatter on every new page:
      ```yaml
      ---
-     title: Título Descritivo
+     title: Descriptive Title
      created: YYYY-MM-DD
      updated: YYYY-MM-DD
      nature: {nature}
      type: {fact|rule|workflow|tool|profile|lesson|context}
      tags: [from SCHEMA taxonomy]
-     sources: [raw/source se aplicável]
+     sources: [raw/source if applicable]
      confidence: {high|medium|low}
      ---
      ```
 
-3. **Logar operação** em `log.md` do escopo correspondente:
-   - Escrita em micro/ → `micro/{slug}/log.md`
-   - Escrita em global/ → `global/log.md`
-   - Escrita em shared/ → `shared/log.md`
+3. **Log operation** in `log.md` of the corresponding scope:
+   - Write to micro/ → `micro/{slug}/log.md`
+   - Write to global/ → `global/log.md`
+   - Write to shared/ → `shared/log.md`
 
-4. **Atualizar index.md** se nova página criada.
+4. **Update index.md** if new page created.
 
 ### Rules
 
-- **NUNCA** copiar conteúdo entre Microversos — usar cross-ref em `shared/`
-- **NUNCA** modificar `raw/` em qualquer camada — fontes são imutáveis
-- **NUNCA** escrever informação de domínio A em domínio B
-- Ponteiro de cross-ref = 1 linha: `> Cross: ver shared/cross-refs/{slug}.md`
+- **NEVER** copy content between microversos — use cross-ref in `shared/`
+- **NEVER** modify `raw/` in any layer — sources are immutable
+- **NEVER** write domain A information in domain B
+- Cross-ref pointer = 1 line: `> Cross: see shared/cross-refs/{slug}.md`
 
 ### Verification
 
-- [ ] Filtro de Domínio executado (conteúdo está no lugar certo)
-- [ ] Frontmatter YAML presente em toda página nova
-- [ ] log.md atualizado
-- [ ] index.md atualizado (se nova página)
-- [ ] Nenhuma duplicação cross-domain
+- [ ] Domain Filter executed (content is in the right place)
+- [ ] YAML frontmatter present on every new page
+- [ ] log.md updated
+- [ ] index.md updated (if new page)
+- [ ] No cross-domain duplication
 
 ---
 
 ## Operation: PROMOTE
 
-Converter Nature de arquivo para diretório quando ultrapassa ~150 linhas.
+Convert Nature from file to directory when it exceeds ~150 lines.
 
 ### Procedure
 
-1. **Detectar candidato:** Após qualquer WRITE, verificar linhas do arquivo:
+1. **Detect candidate:** After any WRITE, check file lines:
    ```bash
    wc -l "$ACERVO/micro/{slug}/{nature}.md"
    ```
 
-2. **Se > ~150 linhas:**
+2. **If > ~150 lines:**
 
-   a. Criar diretório: `micro/{slug}/{nature}/`
+   a. Create directory: `micro/{slug}/{nature}/`
 
-   b. Extrair seções do arquivo em páginas separadas:
-      - Cada `## Heading` vira uma página: `{heading-slug}.md`
-      - Cada página recebe frontmatter YAML
+   b. Extract sections from file into separate pages:
+      - Each `## Heading` becomes a page: `{heading-slug}.md`
+      - Each page gets YAML frontmatter
 
-   c. Criar `_index.md` com catálogo das páginas
+   c. Create `_index.md` with page catalog
 
-   d. Remover arquivo original `{nature}.md`
+   d. Remove original file `{nature}.md`
 
-   e. Atualizar `micro/{slug}/index.md` (apontar para diretório)
+   e. Update `micro/{slug}/index.md` (point to directory)
 
-   f. Logar em `micro/{slug}/log.md`:
+   f. Log in `micro/{slug}/log.md`:
       ```
       ## [YYYY-MM-DD] promote | {nature} file → directory ({N} pages)
       ```
 
-3. **Split de página wiki:** Se uma página individual > ~200 linhas, dividir em 2+.
+3. **Wiki page split:** If an individual page > ~200 lines, split into 2+.
 
 ### Verification
 
-- [ ] Diretório criado com `_index.md`
-- [ ] Todas as seções extraídas como páginas separadas
-- [ ] Arquivo original removido
-- [ ] index.md do Microverso atualizado
-- [ ] log.md registra a promoção
+- [ ] Directory created with `_index.md`
+- [ ] All sections extracted as separate pages
+- [ ] Original file removed
+- [ ] Microverso index.md updated
+- [ ] log.md records the promotion
 
 ---
 
 ## Operation: SEARCH
 
-Buscar informação nas 4 camadas com prioridade.
+Search information across the 4 layers with priority.
 
 ### Procedure
 
-1. **Resolver scope:** Quais Microversos estão acessíveis? (ver [SCOPE](#operation-scope))
+1. **Resolve scope:** Which microversos are accessible? (see [SCOPE](#operation-scope))
 
-2. **Buscar em ordem de prioridade:**
+2. **Search in priority order:**
 
    ```
-   Prioridade 1: micro/{slug-ativo}/   ← mais específico
-   Prioridade 2: global/               ← regras/processos universais
-   Prioridade 3: shared/cross-refs/    ← referências cruzadas
-   Prioridade 4: outros micro/ (se no scope)
+   Priority 1: micro/{active-slug}/   ← most specific
+   Priority 2: global/               ← universal rules/processes
+   Priority 3: shared/cross-refs/    ← cross-references
+   Priority 4: other micro/ (if in scope)
    ```
 
-3. **Mecânica de busca (por camada):**
-   - Ler `index.md` → identificar páginas candidatas por título/tags
-   - Se Nature é arquivo → grep no conteúdo
-   - Se Nature é diretório → grep em `_index.md` → ler página match
-   - Usar frontmatter `tags` para narrowing
+3. **Search mechanics (per layer):**
+   - Read `index.md` → identify candidate pages by title/tags
+   - If Nature is file → grep in content
+   - If Nature is directory → grep in `_index.md` → read matching page
+   - Use frontmatter `tags` for narrowing
 
-4. **Retornar resultados com metadados:**
+4. **Return results with metadata:**
    ```
-   [Acervo: micro/cliente-acme/conhecimento] Resultado aqui
-   [Acervo: global/contracts] Regra universal aqui
+   [Acervo: micro/cliente-acme/knowledge] Result here
+   [Acervo: global/contracts] Universal rule here
    ```
 
-5. **Se nada encontrado:** Declarar e oferecer busca externa.
+5. **If nothing found:** Declare and offer external search.
 
 ### Verification
 
-- [ ] Scope verificado antes da busca
-- [ ] Resultados indicam camada de origem
-- [ ] Prioridade respeitada (micro > global > shared)
+- [ ] Scope verified before search
+- [ ] Results indicate layer of origin
+- [ ] Priority respected (micro > global > shared)
 
 ---
 
 ## Operation: SCOPE
 
-Resolver firewall de acesso para uma tarefa.
+Resolve access firewall for a task.
 
 ### Procedure
 
-1. **Ler `shared/groups.md`** para obter aliases:
-   - `ALL` → listar todos os diretórios em `micro/` (exceto `_template`)
-   - `CLIENTS` → filtrar por SCHEMA.md `type: client`
-   - `PROJECTS` → filtrar por SCHEMA.md `type: project`
-   - Grupos custom → resolver membros
+1. **Read `shared/groups.md`** to get aliases:
+   - `ALL` → list all directories in `micro/` (except `_template`)
+   - `CLIENTS` → filter by SCHEMA.md `type: client`
+   - `PROJECTS` → filter by SCHEMA.md `type: project`
+   - Custom groups → resolve members
 
-2. **Aplicar deny-list:**
+2. **Apply deny-list:**
    ```
-   Para cada Microverso:
-     1. Está em deny? → marcado como BLOQUEADO
-     2. Está em allow? → DESBLOQUEADO (override)
-     3. Resultado: allow SEMPRE vence deny
+   For each microverso:
+     1. Is it in deny? → marked as BLOCKED
+     2. Is it in allow? → UNBLOCKED (override)
+     3. Result: allow ALWAYS overrides deny
    ```
 
-3. **Se nenhum scope definido:** Tudo acessível (padrão aberto).
+3. **If no scope defined:** Everything accessible (open default).
 
-4. **Retornar lista de Microversos acessíveis.**
+4. **Return list of accessible microversos.**
 
-### Exemplos
+### Examples
 
 ```yaml
-# SÓ cliente ACME
+# Only client ACME
 scope: { deny: [ALL], allow: [cliente-acme] }
-→ Acessível: [cliente-acme]
+→ Accessible: [cliente-acme]
 
-# Bloqueia clientes, permite projetos
+# Block clients, allow projects
 scope: { deny: [CLIENTS] }
-→ Acessível: [todos os projects + domains + roles]
+→ Accessible: [all projects + domains + roles]
 
-# Tudo aberto (default)
+# Everything open (default)
 scope: {}
-→ Acessível: [todos]
+→ Accessible: [all]
 ```
 
 ---
 
 ## Natures Reference
 
-As 7 Natures são classificação de dados. Semântica de cada uma:
+The 7 Natures are data classification. Semantics of each:
 
-| Nature | Conteúdo | Quando ler | Quando escrever |
+| Nature | Content | When to Read | When to Write |
 |---|---|---|---|
-| `context` | Situação atual, prioridades, stakeholders | Início de tarefa em domínio | Mudança de cenário |
-| `knowledge` | Fatos, métricas, referências | Pergunta factual | Novo dado confirmado |
-| `contracts` | Regras condicionais (QUANDO/ENTÃO) | Antes de ações no domínio | Nova regra do executivo |
-| `prompts` | Prompts reutilizáveis | Tarefa repetitiva | Novo prompt validado |
-| `persona` | Voz, tom, estilo | Ao comunicar no domínio | Novo perfil de público |
-| `workflows` | Workflows, SOPs | Tarefa recorrente | Novo workflow aprovado |
-| `skills` | Capacidades encapsuladas | Tarefa especializada | Nova skill criada |
-| `tools` | MCPs, APIs, integrações | Tarefa que requer tool | Nova integração |
-| `templates` | Modelos (emails, docs) | Output padronizado | Novo template aprovado |
-| `decisions` | Decisões arquiteturais (ADR) | Mudança estrutural | Decisão tomada |
-| `reflections` | Lições aprendidas | Início de tarefa similar | Após incidente/aprendizado |
+| `context` | Current situation, priorities, stakeholders | Task start in domain | Scenario change |
+| `knowledge` | Facts, metrics, references | Factual question | New confirmed data |
+| `contracts` | Conditional rules (WHEN/THEN) | Before actions in domain | New executive rule |
+| `prompts` | Reusable prompts | Repetitive task | New validated prompt |
+| `persona` | Voice, tone, style | When communicating in domain | New audience profile |
+| `workflows` | Workflows, SOPs | Recurring task | New approved workflow |
+| `skills` | Encapsulated capabilities | Specialized task | New skill created |
+| `tools` | MCPs, APIs, integrations | Task requiring tool | New integration |
+| `templates` | Templates (emails, docs) | Standardized output | New approved template |
+| `decisions` | Architectural decisions (ADR) | Structural change | Decision made |
+| `reflections` | Lessons learned | Similar task start | After incident/learning |
 
 ---
 
 ## Archiving
 
-Conteúdo supersedido não é deletado. Procedimento:
+Superseded content is not deleted. Procedure:
 
-1. Mover página wiki para `_archive/{nature}/` (ou `_archive/` na raiz do escopo)
-2. Remover da `index.md`
-3. Substituir wikilinks `[[page]]` por texto plain + "(archived)"
-4. Logar em `log.md`: `## [YYYY-MM-DD] archive | {page} (reason: {motivo})`
-5. **raw/ permanece intacto** — fontes são imutáveis
+1. Move wiki page to `_archive/{nature}/` (or `_archive/` at scope root)
+2. Remove from `index.md`
+3. Replace wikilinks `[[page]]` with plain text + "(archived)"
+4. Log in `log.md`: `## [YYYY-MM-DD] archive | {page} (reason: {reason})`
+5. **raw/ remains intact** — sources are immutable
 
 ---
 
 ## ADRs
 
-- ADR-001: Arquitetura de 4 Camadas
-- ADR-002: Isolamento de Contexto (filtro de domínio + firewall)
-- ADR-003: Natures Híbridas (arquivo → diretório)
-- ADR-004: Integração LLM Wiki
-- ADR-005: Consolidação de Skills (7 → 1)
+- ADR-001: 4-Layer Architecture
+- ADR-002: Context Isolation (domain filter + firewall)
+- ADR-003: Hybrid Natures (file → directory)
+- ADR-004: LLM Wiki Integration
+- ADR-005: Skill Consolidation (7 → 1)

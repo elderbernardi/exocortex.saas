@@ -1,41 +1,41 @@
-# EX-30 — Contrato de path do wrapper de browser
+# EX-30 — Browser Wrapper Path Contract
 
-## Lição durável
+## Durable Lesson
 
-A skill de browser automation tem uma interface operacional pública: o wrapper shell. Quando a documentação promete um path e o repositório entrega outro, isso é falha de contrato, não mero detalhe interno.
+The browser automation skill has a public operational interface: the shell wrapper. When documentation promises one path and the repository delivers another, that's a contract failure, not a mere internal detail.
 
-## Path canônico
+## Canonical Path
 
 ```bash
 skills/excrtx-integrate-browser/scripts/browser-use.sh
 ```
 
-## Regra de classificação
+## Classification Rule
 
-1. **Path divergente** entre documentação/probe e arquivo real → `FAIL`
-2. **Path alinhado, mas pré-requisito ausente** (ex.: `uv`) → `BLOCKED`
-3. **Path alinhado + pré-requisitos presentes** → pode seguir para smoke / `PASS`
+1. **Divergent path** between documentation/probe and actual file → `FAIL`
+2. **Aligned path, but missing prerequisite** (e.g., `uv`) → `BLOCKED`
+3. **Aligned path + prerequisites present** → can proceed to smoke / `PASS`
 
-## Superfícies que precisam permanecer sincronizadas
+## Surfaces That Must Stay Synchronized
 
-- `SKILL.md` (`setup:` e exemplos de uso)
-- catálogo de features (`FEATURES.md` ou equivalente)
-- probes dogfood / smoke tests
-- qualquer wrapper compatível adicional criado no setup
+- `SKILL.md` (`setup:` and usage examples)
+- Feature catalog (`FEATURES.md` or equivalent)
+- Dogfood probes / smoke tests
+- Any additional compatible wrapper created in setup
 
-## Receita rápida de auditoria
+## Quick Audit Recipe
 
 ```bash
-# 1. Confirmar script real
+# 1. Confirm actual script
  test -x skills/excrtx-integrate-browser/scripts/browser-use.sh
 
-# 2. Confirmar que docs citam o mesmo path
-# (ajuste o método de busca ao ambiente)
+# 2. Confirm docs cite the same path
+# (adjust search method to environment)
 
-# 3. Separar contrato de dependência
+# 3. Separate contract from dependency
  command -v uv
 ```
 
-## Interpretação
+## Interpretation
 
-Se o script real existe e os docs ainda apontam para outro local, conserte a documentação/probe primeiro. Só depois avalie `uv`, Chromium e smoke end-to-end.
+If the actual script exists and docs still point to another location, fix the documentation/probe first. Only then evaluate `uv`, Chromium, and end-to-end smoke.

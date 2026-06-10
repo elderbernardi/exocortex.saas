@@ -1,6 +1,6 @@
 ---
 name: excrtx-produce-artifacts
-description: "Criar, organizar, exportar e publicar artefatos finais do Exocórtex no workspace do usuário, mantendo reprodutibilidade no Acervo."
+description: "Create, organize, export, and publish final Exocórtex artifacts in the user's workspace, maintaining reproducibility in the Acervo."
 version: 1.0.1
 author: Exocórtex
 license: MIT
@@ -13,45 +13,45 @@ metadata:
 
 # Personal Artifact Workspace
 
-Use esta skill quando o usuário pedir criação, organização, exportação ou entrega de artefatos finais: documentos, PDFs, HTML, planilhas, imagens, slides, pacotes ZIP ou relatórios.
+Use this skill when the user asks for creation, organization, export, or delivery of final artifacts: documents, PDFs, HTML, spreadsheets, images, slides, ZIP packages, or reports.
 
-Também use quando o usuário pedir para desenhar, replicar ou auditar o harness de publicação de artefatos em outro Exocórtex-Hermes.
+Also use when the user asks to design, replicate, or audit the artifact publishing harness in another Exocórtex-Hermes.
 
-Antes de executar, carregue quando aplicável:
+Before executing, load when applicable:
 
-- `excrtx-memory-manager`, para respeitar a ontologia e o cascade do Acervo.
-- `productivity/google-workspace`, para operações no Google Drive.
-- `excrtx-govern-draftfirst`, se houver compartilhamento, envio, publicação externa ou mudança de permissão.
-- `excrtx-quality-designsys` e `excrtx-quality-taste`, se o artefato tiver componente visual.
-- `excrtx-quality-antislop`, se o artefato tiver prosa final.
+- `excrtx-memory-manager`, to respect Acervo ontology and cascade.
+- `productivity/google-workspace`, for Google Drive operations.
+- `excrtx-govern-draftfirst`, if there's sharing, sending, external publication, or permission change.
+- `excrtx-quality-designsys` and `excrtx-quality-taste`, if the artifact has a visual component.
+- `excrtx-quality-antislop`, if the artifact has final prose.
 
-## Princípio
+## Principle
 
-O Drive é ferramenta de publicação e pode servir como superfície privada de edição humana. O Acervo é fonte cognitiva e registro reprodutível.
+Drive is a publishing tool and can serve as a private human editing surface. The Acervo is the cognitive source and reproducible registry.
 
-Não sincronize o Acervo inteiro com Drive. Publique exports finais por um pacote operacional controlado e grave receipts locais. Para drafts editáveis, sincronize somente o artefato vinculado, nunca a árvore do Acervo.
+Don't sync the entire Acervo with Drive. Publish final exports via a controlled operational package and write local receipts. For editable drafts, sync only the linked artifact, never the Acervo tree.
 
-Metadados operacionais de sincronização não são conteúdo cognitivo. Guarde estado de sync em `_ops/` dentro do pacote do artefato ou em registry operacional central. Diretórios/arquivos `_ops/`, `events.log`, `diffs/`, `locks.json` e `sync.json` não entram em contexto normal e só devem ser lidos para tarefas explícitas de sincronização, importação, conflito ou auditoria.
+Operational sync metadata is not cognitive content. Store sync state in `_ops/` inside the artifact package or in a central operational registry. Directories/files `_ops/`, `events.log`, `diffs/`, `locks.json`, and `sync.json` don't enter normal context and should only be read for explicit sync, import, conflict, or audit tasks.
 
-Quando o usuário precisar editar drafts com Hermes/Exocórtex rodando em servidor remoto, trate Drive/Docs como superfície editável por artefato, não como sincronização do Acervo. O ciclo correto é: fonte local canônica → documento externo privado → importação versionada → diff/revisão → promoção explícita da revisão aceita. Veja `references/remote-draft-editing-sync.md`.
+When the user needs to edit drafts with Hermes/Exocórtex running on a remote server, treat Drive/Docs as an editable surface per artifact, not as Acervo sync. The correct cycle is: canonical local source → private external document → versioned import → diff/review → explicit promotion of accepted revision. See `references/remote-draft-editing-sync.md`.
 
-## Modelo operacional
+## Operational Model
 
-Modelo v0.4 do harness Exocórtex:
+Harness model v0.4:
 
-- Inbox é separado de artefatos: entrada bruta fica em `~/.hermes/acervo/_inbox/` e uma tarefa/canvas dá destino ao material.
-- Artefatos finais ficam centralizados em `~/.hermes/acervo/_artifacts/items/{artifact_id}/` (Modelo 2).
-- Microversos e tarefas apontam para artefatos por metadados; path não é fonte canônica da relação.
-- `friendly_name`/`publication_names` controlam nomes de arquivos vistos pelo usuário; `artifact_id`/`canonical_slug` permanecem estáveis.
-- Quando um artefato fica `ready` ou aprovado, perguntar ao usuário se deseja publicar.
-- Antes de `ready`, aplicar Quality Gate; quando o Canvas/manifest exigir, rodar Avaliação por Personas e registrar pareceres em `evaluations/`.
+- Inbox is separate from artifacts: raw input goes to `~/.hermes/acervo/_inbox/` and a task/canvas determines the material's destination.
+- Final artifacts are centralized in `~/.hermes/acervo/_artifacts/items/{artifact_id}/` (Model 2).
+- Microversos and tasks point to artifacts via metadata; path is not the canonical source of the relationship.
+- `friendly_name`/`publication_names` control filenames seen by the user; `artifact_id`/`canonical_slug` remain stable.
+- When an artifact becomes `ready` or approved, ask the user if they want to publish.
+- Before `ready`, apply Quality Gate; when Canvas/manifest requires it, run Persona Evaluation and record assessments in `evaluations/`.
 
 ```text
 ~/.hermes/acervo/_artifacts/items/{artifact_id}/
 ├── source/
 │   ├── source.md
 │   ├── metadata.yaml
-│   └── revisions/          # snapshots importados de superfícies editáveis
+│   └── revisions/          # snapshots imported from editable surfaces
 ├── assets/
 │   ├── images/
 │   ├── data/
@@ -71,56 +71,56 @@ Modelo v0.4 do harness Exocórtex:
 │   ├── cientista.md
 │   ├── auditor.md
 │   └── editor.md
-├── diffs/                  # diffs de revisão humana quando houver sync externo
-├── sync.json               # vínculo opcional com Google Docs/Drive/editor externo
+├── diffs/                  # human revision diffs when external sync exists
+├── sync.json               # optional link to Google Docs/Drive/external editor
 ├── manifest.json
 └── receipts/
     └── receipt.google_drive.json
 ```
 
-Compatibilidade: pacotes antigos em `~/.hermes/acervo/_artifacts/{artifact_id}/` continuam legíveis, mas novas criações devem preferir `items/{artifact_id}/`.
+Compatibility: old packages at `~/.hermes/acervo/_artifacts/{artifact_id}/` remain readable, but new creations should prefer `items/{artifact_id}/`.
 
-## Regra de fonte
+## Source Rule
 
-Markdown é a fonte padrão para documentos, planos, ofícios, relatórios, roteiros e materiais didáticos.
+Markdown is the default source for documents, plans, official letters, reports, scripts, and educational materials.
 
-Exceções aceitas:
+Accepted exceptions:
 
-- Planilhas: `.xlsx`, `.csv`, `.json` ou script gerador.
-- Imagens: `.svg`, `.png`, `.html`, `.excalidraw` ou prompt visual.
-- Apresentações: `.md` Marp ou `.pptx`.
-- PDFs recebidos: PDF original como fonte, extração textual em `source/`.
-- Documentos colaborativos vivos: Drive como fonte externa; Acervo guarda link e manifesto.
+- Spreadsheets: `.xlsx`, `.csv`, `.json`, or generator script.
+- Images: `.svg`, `.png`, `.html`, `.excalidraw`, or visual prompt.
+- Presentations: `.md` Marp or `.pptx`.
+- Received PDFs: original PDF as source, text extraction in `source/`.
+- Live collaborative documents: Drive as external source; Acervo stores link and manifest.
 
-## Procedimento padrão
+## Standard Procedure
 
-1. Classificar o artefato: documento, planilha, imagem, apresentação, HTML, ZIP, relatório ou código.
-2. Se for código versionável, usar GitHub como destino primário. Se for consumo humano, usar Drive.
-3. Resolver microverso, disciplina/projeto/contexto e pasta humana de destino.
-4. Criar pacote em `~/.hermes/acervo/_artifacts/items/{artifact_id}/`.
-5. Escrever a fonte em `source/`.
-6. Copiar assets necessários para `assets/` com paths relativos.
-7. Exportar formatos finais para `exports/`.
-8. Validar exports antes de publicar: arquivo existe, tamanho maior que zero, MIME coerente e hash SHA-256 registrado.
-9. Aplicar o Quality Gate Unificado (`excrtx-quality-gate`): toda prosa final do artefato deve passar pelo gate de anti-slop (`excrtx-quality-antislop`); todo componente visual deve passar pelo gate de taste (`excrtx-quality-taste`). Correções de falhas no gate devem ser feitas pelo próprio executor antes de entregar.
-9.1. Quando Canvas/manifest exigir avaliação, gerar pareceres em `evaluations/` com personas relevantes, incluindo Cientista para claims factuais/metodológicos e Professor para materiais didáticos.
-10. Gerar ou atualizar `manifest.json` com hash, MIME, tamanho, fonte, exports e destino.
-11. Publicar exports no Drive privado do usuário via provider configurado.
-11.1. Resolver a pasta de destino antes do upload (`drive_target.folder_path`) e exigir parent explícito; upload na raiz é inválido para artefatos finais.
-12. Gravar `receipt.{provider}.json` com IDs, links e status.
-13. Entregar ao usuário o link do Drive e o caminho local do pacote.
-14. Se o artefato tiver valor cognitivo, criar página semântica no microverso apontando para o artifact_id.
+1. Classify the artifact: document, spreadsheet, image, presentation, HTML, ZIP, report, or code.
+2. If it's versionable code, use GitHub as primary destination. If for human consumption, use Drive.
+3. Resolve microverso, discipline/project/context, and human-facing destination folder.
+4. Create package at `~/.hermes/acervo/_artifacts/items/{artifact_id}/`.
+5. Write the source in `source/`.
+6. Copy necessary assets to `assets/` with relative paths.
+7. Export final formats to `exports/`.
+8. Validate exports before publishing: file exists, size greater than zero, consistent MIME, and SHA-256 hash recorded.
+9. Apply the Unified Quality Gate (`excrtx-quality-gate`): all final prose in the artifact must pass the anti-slop gate (`excrtx-quality-antislop`); all visual components must pass the taste gate (`excrtx-quality-taste`). Gate failures must be fixed by the executor itself before delivering.
+9.1. When Canvas/manifest requires evaluation, generate assessments in `evaluations/` with relevant personas, including Scientist for factual/methodological claims and Professor for educational materials.
+10. Generate or update `manifest.json` with hash, MIME, size, source, exports, and destination.
+11. Publish exports to the user's private Drive via configured provider.
+11.1. Resolve the destination folder before upload (`drive_target.folder_path`) and require explicit parent; root upload is invalid for final artifacts.
+12. Write `receipt.{provider}.json` with IDs, links, and status.
+13. Deliver to the user the Drive link and local package path.
+14. If the artifact has cognitive value, create a semantic page in the microverso pointing to the artifact_id.
 
-## Manifest e receipt
+## Manifest and Receipt
 
-O manifesto é a fonte local de rastreabilidade. O receipt é a prova de publicação.
+The manifest is the local source of traceability. The receipt is the proof of publication.
 
-Campos mínimos do manifesto:
+Minimum manifest fields:
 
 ```json
 {
   "artifact_id": "art_YYYYMMDD_HHMMSS_slug",
-  "title": "Título humano",
+  "title": "Human Title",
   "microverso": "ensino",
   "status": "draft|ready|published|failed",
   "source_type": "markdown|xlsx|image|mixed|external",
@@ -128,7 +128,7 @@ Campos mínimos do manifesto:
   "assets_dir": "assets",
   "exports": [
     {
-      "path": "exports/arquivo.pdf",
+      "path": "exports/file.pdf",
       "kind": "pdf",
       "mime": "application/pdf",
       "sha256": "...",
@@ -143,7 +143,7 @@ Campos mínimos do manifesto:
 }
 ```
 
-Campos mínimos do receipt:
+Minimum receipt fields:
 
 ```json
 {
@@ -153,7 +153,7 @@ Campos mínimos do receipt:
   "folder_id": "...",
   "files": [
     {
-      "export_path": "exports/arquivo.pdf",
+      "export_path": "exports/file.pdf",
       "drive_file_id": "...",
       "web_view_link": "https://drive.google.com/...",
       "mime": "application/pdf",
@@ -165,176 +165,176 @@ Campos mínimos do receipt:
 }
 ```
 
-## Telegram delivery pattern
+## Telegram Delivery Pattern
 
-When the current surface is Telegram and the artifact is a visual board, HTML prototype, deck preview or multi-file deliverable, create a ZIP export even if the primary deliverable is a single file. Register the ZIP in `manifest.json`, deliver it with `MEDIA:/absolute/path/to/file.zip`, and include the local path to the primary export. See `references/telegram-zip-visual-artifacts.md`.
+When the current surface is Telegram and the artifact is a visual board, HTML prototype, deck preview, or multi-file deliverable, create a ZIP export even if the primary deliverable is a single file. Register the ZIP in `manifest.json`, deliver it with `MEDIA:/absolute/path/to/file.zip`, and include the local path to the primary export. See `references/telegram-zip-visual-artifacts.md`.
 
-## Provider inicial: Google Drive local
+## Initial Provider: Local Google Drive
 
-Prefira OAuth local do Hermes, via skill `productivity/google-workspace`, antes de usar Composio.
+Prefer Hermes local OAuth, via skill `productivity/google-workspace`, before using Composio.
 
-Use Composio apenas quando o OAuth local não existir, quando o usuário pedir explicitamente ou quando o ambiente alvo exigir esse conector.
+Use Composio only when local OAuth doesn't exist, when the user explicitly requests it, or when the target environment requires that connector.
 
-Pré-check:
+Pre-check:
 
 ```bash
 python ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check
 ```
 
-Publicador inicial:
+Initial publisher:
 
 ```bash
 python ~/.hermes/acervo/global/tools/artifact_publish.py init \
-  --title "Título" \
+  --title "Title" \
   --microverso ensino \
-  --source-md /caminho/source.md \
+  --source-md /path/to/source.md \
   --drive-path "exocortex/ensino/2026/aulas"
 
 python ~/.hermes/acervo/global/tools/artifact_publish.py publish \
   --artifact-dir ~/.hermes/acervo/_artifacts/{artifact_id}
 ```
 
-## Políticas de destino
+## Destination Policies
 
-Destino padrão quando faltar contexto:
+Default destination when context is missing:
 
 ```text
 exocortex/inbox
 ```
 
-Padrões recomendados:
+Recommended patterns:
 
 ```text
-exocortex/ensino/{ano}/{disciplina}/{tipo}
-exocortex/gabinete/{ano}/{tipo}
-exocortex/dev/{ano}/artefatos/{projeto}
+exocortex/ensino/{year}/{discipline}/{type}
+exocortex/gabinete/{year}/{type}
+exocortex/dev/{year}/artefatos/{project}
 ```
 
-Não pergunte a pasta se a intenção estiver clara. Use Inbox quando a ambiguidade não mudar o valor da entrega.
+Don't ask for the folder if the intent is clear. Use Inbox when ambiguity doesn't change the delivery value.
 
 ## Draft-First
 
-Upload privado para o Drive do próprio usuário conta como entrega pessoal quando o usuário pediu o artefato.
+Private upload to the user's own Drive counts as personal delivery when the user requested the artifact.
 
-Exige Draft-First:
+Requires Draft-First:
 
-- criar link público;
-- compartilhar com turma, terceiros, domínio ou organização;
-- enviar por email/mensagem;
-- publicar em site, GitHub release ou documento compartilhado;
-- converter para documento colaborativo quando isso muda formato/semântica do arquivo.
+- Creating a public link;
+- Sharing with class, third parties, domain, or organization;
+- Sending via email/message;
+- Publishing to site, GitHub release, or shared document;
+- Converting to collaborative document when this changes format/semantics.
 
-### Delivery pattern — Gmail with Drive links
+### Delivery Pattern — Gmail with Drive Links
 
-No Exocórtex, email usa `productivity/google-workspace` como padrão operacional. Não roteie email pelo skill `himalaya`/`hymalaia` no setup Exocórtex, mesmo quando ele existir no catálogo Hermes.
+In Exocórtex, email uses `productivity/google-workspace` as the operational standard. Don't route email through `himalaya`/`hymalaia` skill in the Exocórtex setup, even when it exists in the Hermes catalog.
 
-Quando o executivo pedir upload no Drive e envio por email:
+When the executive asks for Drive upload and email send:
 
-1. publicar os arquivos finais no Drive dentro da estrutura `exocortex/...`;
-2. usar `exocortex/inbox` como fallback quando não houver pasta mais específica;
-3. para artefatos institucionais de palestra/evento no harness de ensino, preferir `exocortex/ensino/{ano}/palestras`;
-4. criar pastas intermediárias ausentes de forma explícita e registrar o `folder_id` final;
-5. gravar `receipt.google_drive.json` com `folder_id`, `drive_file_id`, links, MIME, SHA-256 e tamanhos;
-6. montar o email com os links verificados do Drive;
-7. apresentar o email como DRAFT e aguardar aprovação explícita antes de enviar;
-8. se o backend de Gmail disponível não suportar anexos no wrapper atual, não improvisar gambiarra local: manter o envio com links verificados do Drive e registrar isso no receipt.
+1. Publish final files to Drive within the `exocortex/...` structure;
+2. Use `exocortex/inbox` as fallback when no more specific folder exists;
+3. For institutional lecture/event artifacts in the teaching harness, prefer `exocortex/ensino/{year}/palestras`;
+4. Create missing intermediate folders explicitly and record the final `folder_id`;
+5. Write `receipt.google_drive.json` with `folder_id`, `drive_file_id`, links, MIME, SHA-256, and sizes;
+6. Compose the email with verified Drive links;
+7. Present the email as DRAFT and wait for explicit approval before sending;
+8. If the available Gmail backend doesn't support attachments in the current wrapper, don't improvise workarounds: keep sending with verified Drive links and record this in the receipt.
 
-Esse padrão separa duas classes de ação: upload privado para o Drive do próprio usuário é execução do artefato pedido; envio de email é comunicação externa e continua sob Draft-First.
+This pattern separates two action classes: private upload to the user's own Drive is artifact execution; email sending is external communication and remains under Draft-First.
 
-Detalhe de sessão: `references/session-2026-06-01-nugai-html-drive-email.md`.
-
-## GitHub vs Drive
-
-Quando o pedido for de artefato institucional, de gabinete, de impressão ou de entrega final do Exocórtex:
-- Priorizar skills do domínio `exocortex` antes de recorrer a workflows genéricos ou de outros domínios.
-- Usar skills de outros domínios apenas como apoio técnico pontual, não como trilha principal.
-- Se houver prosa institucional, aplicar também `excrtx-quality-antislop` e a regra local de redação sem linguagem neutra.
-- Se o artefato for para impressão, gerar pelo menos HTML e PDF; criar ZIP do pacote completo quando isso melhorar transporte, revisão ou reuso.
-- Validar visualmente o HTML exportado antes de encerrar a tarefa.
+Session detail: `references/session-2026-06-01-nugai-html-drive-email.md`.
 
 ## GitHub vs Drive
 
-Use GitHub quando o artefato for código versionável, PR, branch, commit ou release técnico.
+When the request is for an institutional, office, printing, or final delivery artifact from Exocórtex:
+- Prioritize skills from the `exocortex` domain before resorting to generic or other-domain workflows.
+- Use skills from other domains only as specific technical support, not as the main track.
+- If there's institutional prose, also apply `excrtx-quality-antislop` and the local writing rule without gender-neutral language.
+- If the artifact is for print, generate at least HTML and PDF; create a ZIP of the complete package when this improves transport, review, or reuse.
+- Visually validate the exported HTML before closing the task.
 
-Use Drive quando o artefato for consumo humano: PDF, planilha, ofício, relatório, material de aula, apresentação, imagem, HTML exportado ou ZIP final.
+## GitHub vs Drive
 
-Para `excrtx-produce-slides`, Drive é o destino padrão de publicação privada. Vercel ou URL pública são alvos opcionais avançados e exigem Draft-First explícito; não use criação/login Vercel como caminho padrão para usuário comum.
+Use GitHub when the artifact is versionable code, PR, branch, commit, or technical release.
 
-Caso híbrido: código no GitHub; artefatos finais no Drive; manifestos no Acervo.
+Use Drive when the artifact is for human consumption: PDF, spreadsheet, official letter, report, educational material, presentation, image, exported HTML, or final ZIP.
 
-## Troubleshooting durável
+For `excrtx-produce-slides`, Drive is the default private publication destination. Vercel or public URL are optional advanced targets requiring explicit Draft-First; don't use Vercel creation/login as default path for regular users.
 
-### OAuth válido, mas Drive API desabilitada
+Hybrid case: code on GitHub; final artifacts on Drive; manifests in the Acervo.
 
-Sintoma: `setup.py --check` retorna autenticado, mas upload/search falha com `HttpError 403` informando que Google Drive API não foi usada ou está desabilitada no projeto.
+## Durable Troubleshooting
 
-Correção:
+### Valid OAuth but Drive API Disabled
 
-1. Habilitar Google Drive API no projeto Google Cloud do OAuth usado pelo Hermes.
-2. Aguardar propagação.
-3. Reexecutar o publish.
+Symptom: `setup.py --check` returns authenticated, but upload/search fails with `HttpError 403` stating Google Drive API hasn't been used or is disabled in the project.
 
-Registre a falha em `receipt.google_drive.failed.json` e marque `manifest.status = failed`. Não transforme isso em regra negativa sobre Drive ou OAuth.
+Fix:
+
+1. Enable Google Drive API in the Google Cloud project of the OAuth used by Hermes.
+2. Wait for propagation.
+3. Re-execute publish.
+
+Record the failure in `receipt.google_drive.failed.json` and mark `manifest.status = failed`. Don't turn this into a negative rule about Drive or OAuth.
 
 ## Common Pitfalls
 
-1. Sincronizar o Acervo inteiro com Drive. Isso mistura memória cognitiva com superfície de entrega.
-2. Publicar source/assets por padrão. Entregue exports finais; envie pacote completo só quando fizer sentido.
-3. Criar link público automaticamente. Upload privado é entrega pessoal; compartilhamento exige aprovação.
-4. Confundir OAuth válido com API habilitada. O token pode renovar e a Drive API ainda falhar com 403.
-5. Usar Composio como default. Para o Exocórtex pessoal, prefira OAuth local auditável.
-6. Deixar artefato sem receipt. Link sem receipt não é reprodutível.
-7. Gerar PDF/HTML sem fonte. Sempre preserve a fonte ou registre por que o formato final é a fonte canônica.
-8. Ignorar assets. Copie assets necessários para o pacote com paths relativos.
-9. Upload final sem parent resolvido (raiz do Drive). Toda publicação final precisa de `drive_target.folder_path` e receipt com `folder_id`.
-10. Tratar Vercel como caminho padrão para decks HTML premium. Para usuário comum, export final vai para Drive privado; URL pública/deploy é exceção com Draft-First.
+1. Syncing the entire Acervo with Drive. This mixes cognitive memory with delivery surface.
+2. Publishing source/assets by default. Deliver final exports; send complete package only when it makes sense.
+3. Creating public link automatically. Private upload is personal delivery; sharing requires approval.
+4. Confusing valid OAuth with enabled API. The token can renew and the Drive API can still fail with 403.
+5. Using Composio as default. For personal Exocórtex, prefer auditable local OAuth.
+6. Leaving artifact without receipt. A link without receipt is not reproducible.
+7. Generating PDF/HTML without source. Always preserve the source or document why the final format is the canonical source.
+8. Ignoring assets. Copy necessary assets to the package with relative paths.
+9. Final upload without resolved parent (Drive root). Every final publication needs `drive_target.folder_path` and receipt with `folder_id`.
+10. Treating Vercel as default path for premium HTML decks. For regular users, final export goes to private Drive; public URL/deploy is an exception with Draft-First.
 
 ## Verification Checklist
 
-- [ ] Skill `excrtx-produce-artifacts` carregada antes de criar/publicar artefato.
-- [ ] Pacote criado em `~/.hermes/acervo/_artifacts/items/{artifact_id}` para novos artefatos.
-- [ ] Fonte preservada em `source/` ou exceção registrada no manifesto.
-- [ ] Assets necessários copiados para `assets/`.
-- [ ] Exports finais gerados em `exports/`.
-- [ ] Em Telegram, ZIP final criado e registrado no manifesto quando o artefato for visual, HTML, deck ou pacote multi-arquivo.
-- [ ] Hash, MIME e tamanho registrados no manifesto.
-- [ ] Quality Gate aplicado antes de `ready`.
-- [ ] Avaliação por personas registrada em `evaluations/` quando Canvas/manifest exigir.
-- [ ] Se o artefato estiver `ready`/aprovado, perguntar ao executivo se deseja publicar, exceto quando ele já pediu explicitamente a publicação no mesmo turno.
-- [ ] Upload privado feito no Drive configurado, com parent explícito.
-- [ ] Receipt gravado em `receipts/receipt.google_drive.json` com `drive_file_id`, `webViewLink`, `folder_id`, SHA-256 e tamanho.
-- [ ] `manifest.json` atualizado para `published` quando upload privado confirmado.
-- [ ] Falhas gravadas em `receipts/receipt.google_drive.failed.json`.
-- [ ] Compartilhamento externo/link público bloqueado até aprovação explícita.
-- [ ] Se houver valor cognitivo, página semântica criada no microverso ou link registrada em `_meta/`.
+- [ ] Skill `excrtx-produce-artifacts` loaded before creating/publishing artifact.
+- [ ] Package created at `~/.hermes/acervo/_artifacts/items/{artifact_id}` for new artifacts.
+- [ ] Source preserved in `source/` or exception recorded in manifest.
+- [ ] Necessary assets copied to `assets/`.
+- [ ] Final exports generated in `exports/`.
+- [ ] On Telegram, final ZIP created and registered in manifest when artifact is visual, HTML, deck, or multi-file package.
+- [ ] Hash, MIME, and size recorded in manifest.
+- [ ] Quality Gate applied before `ready`.
+- [ ] Persona evaluation recorded in `evaluations/` when Canvas/manifest requires it.
+- [ ] If artifact is `ready`/approved, ask executive if they want to publish, except when they already explicitly requested publication in the same turn.
+- [ ] Private upload done to configured Drive, with explicit parent.
+- [ ] Receipt written to `receipts/receipt.google_drive.json` with `drive_file_id`, `webViewLink`, `folder_id`, SHA-256, and size.
+- [ ] `manifest.json` updated to `published` when private upload confirmed.
+- [ ] Failures recorded in `receipts/receipt.google_drive.failed.json`.
+- [ ] External sharing/public link blocked until explicit approval.
+- [ ] If cognitive value exists, semantic page created in microverso or link registered in `_meta/`.
 
-## Reprodutibilidade
+## Reproducibility
 
-Detalhes de apoio:
+Supporting details:
 
-- `references/remote-draft-editing-sync.md` — padrão para permitir edição humana de drafts quando Hermes roda em servidor remoto: Google Docs como superfície, artifact package como fonte, `_ops/` fora do contexto e importação com diff/aceite.
-- `references/session-2026-05-30-mvp.md` — desenho e decisões do MVP inicial.
-- `references/replication-checklist.md` — checklist para portar a capacidade para outro Exocórtex-Hermes.
-- `references/pdd-v2-doc-alignment.md` — como alinhar PDD v2, provisioner e microverso ao evoluir esta capacidade.
-- `references/drive-path-governance.md` — regra de parent explícito, fallback `exocortex/inbox` e correção de upload indevido na raiz.
-- `references/telegram-zip-visual-artifacts.md` — padrão de entrega por ZIP no Telegram para artefatos visuais/HTML com manifesto.
-- `references/frontend-slides-artifact-track.md` — política de pacote, Drive e Draft-First para apresentações HTML premium geradas por `excrtx-produce-slides`.
-- `references/marp-frontend-slides-artifact-tracks.md` — política para combinar Marp como linha de produção de slides e Frontend Slides como renderer premium de artefatos visuais.
-- `references/remote-draft-editing-sync.md` — padrão para edição humana de drafts quando Hermes/Exocórtex roda em servidor remoto: Google Docs/Drive como superfície editável por artefato, `sync.json`, importação versionada, diff e promoção explícita da revisão aceita.
+- `references/remote-draft-editing-sync.md` — pattern for human draft editing when Hermes runs on remote server: Google Docs as surface, artifact package as source, `_ops/` outside context, and import with diff/acceptance.
+- `references/session-2026-05-30-mvp.md` — initial MVP design and decisions.
+- `references/replication-checklist.md` — checklist to port capability to another Exocórtex-Hermes.
+- `references/pdd-v2-doc-alignment.md` — how to align PDD v2, provisioner, and microverso when evolving this capability.
+- `references/drive-path-governance.md` — explicit parent rule, `exocortex/inbox` fallback, and correction of improper root upload.
+- `references/telegram-zip-visual-artifacts.md` — ZIP delivery pattern on Telegram for visual/HTML artifacts with manifest.
+- `references/frontend-slides-artifact-track.md` — package, Drive, and Draft-First policy for premium HTML presentations generated by `excrtx-produce-slides`.
+- `references/marp-frontend-slides-artifact-tracks.md` — policy for combining Marp as slide production line and Frontend Slides as premium visual artifact renderer.
+- `references/remote-draft-editing-sync.md` — pattern for human draft editing when Hermes/Exocórtex runs on remote server: Google Docs/Drive as editable surface per artifact, `sync.json`, versioned import, diff, and explicit promotion of accepted revision.
 
-Toda implementação replicável precisa conter:
+Every replicable implementation must contain:
 
-- contrato em `global/contracts/excrtx-produce-artifacts.md`;
-- ferramenta ou provider equivalente;
-- área `_artifacts/`;
-- manifestos e receipts;
-- regra de Drive como publicação, não sincronização;
-- política Draft-First para compartilhamento;
-- documentação de setup do provider.
+- Contract in `global/contracts/excrtx-produce-artifacts.md`;
+- Equivalent tool or provider;
+- `_artifacts/` area;
+- Manifests and receipts;
+- Rule of Drive as publication, not sync;
+- Draft-First policy for sharing;
+- Provider setup documentation.
 
-## Referências
+## References
 
-- `references/session-2026-05-30-mvp.md` — desenho e decisões do MVP inicial.
-- `references/replication-checklist.md` — checklist de portabilidade para outro Exocórtex-Hermes.
-- `references/pdd-v2-doc-alignment.md` — alinhamento documental entre PDD v2, provisioner e microverso.
-- `templates/manifest-template.md` — template comentado de `manifest.json`.
+- `references/session-2026-05-30-mvp.md` — initial MVP design and decisions.
+- `references/replication-checklist.md` — portability checklist for another Exocórtex-Hermes.
+- `references/pdd-v2-doc-alignment.md` — documentary alignment between PDD v2, provisioner, and microverso.
+- `templates/manifest-template.md` — annotated `manifest.json` template.

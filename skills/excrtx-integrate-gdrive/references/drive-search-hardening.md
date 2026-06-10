@@ -1,20 +1,20 @@
-# Drive search hardening (sem Composio)
+# Drive Search Hardening (without Composio)
 
-Checklist aplicado em sessão real:
+Checklist applied in real session:
 
-- OAuth validado com `setup.py --check`.
-- Diagnóstico de falha inicial: `HttpError 403 accessNotConfigured` (Drive API desabilitada no projeto GCP).
-- Após habilitar API no Console, busca voltou a responder normalmente.
+- OAuth validated with `setup.py --check`.
+- Initial failure diagnosis: `HttpError 403 accessNotConfigured` (Drive API disabled in GCP project).
+- After enabling API in Console, search returned to normal.
 
-Melhorias de robustez confirmadas:
+Confirmed robustness improvements:
 
-1. Escape de entrada (`'` e `\\`) ao montar `fullText contains '...`.
-2. Filtro padrão `trashed = false` no modo textual.
-3. Paginação por `nextPageToken` até atingir `--max`.
-4. Validação de `--max >= 1`.
+1. Input escaping (`'` and `\\`) when building `fullText contains '...`.
+2. Default filter `trashed = false` in textual mode.
+3. Pagination via `nextPageToken` until reaching `--max`.
+4. `--max >= 1` validation.
 
-Teste mínimo recomendado:
+Recommended minimum test:
 
-- termo comum: `relatório`
-- termo com apóstrofo: `O'Reilly`
-- `--max` acima do page size para validar paginação.
+- Common term: `relatório`
+- Term with apostrophe: `O'Reilly`
+- `--max` above page size to validate pagination.

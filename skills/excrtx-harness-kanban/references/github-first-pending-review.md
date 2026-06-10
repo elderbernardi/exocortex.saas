@@ -1,29 +1,29 @@
-# GitHub-first review of pendências entre sessões
+# GitHub-First Review of Cross-Session Pending Items
 
-Usar quando o projeto já externalizou o backlog para GitHub e o executivo pede uma leitura rápida do que segue aberto.
+Use when the project has already externalized its backlog to GitHub and the executive asks for a quick read of what's still open.
 
-## Heurística
+## Heuristic
 
-1. Fonte única vence memória de sessão.
-   - Se os rascunhos locais já foram promovidos para issues, o backlog vivo está nas issues abertas.
-2. Prioridade explícita vence interpretação subjetiva.
-   - Labels `P0`, `P1`, `P2` devem estruturar a resposta.
-3. Ausência de prioridade também comunica.
-   - Issues sem label P não devem ser forçadas para uma fila arbitrária; listá-las separadamente.
-4. Resumo executivo deve caber em um relance.
-   - Encerrar com 2-3 linhas do tipo: `fila crítica`, `fila operacional`, `trilha de arquitetura/pesquisa`.
+1. Single source beats session memory.
+   - If local drafts have already been promoted to issues, the living backlog is in the open issues.
+2. Explicit priority beats subjective interpretation.
+   - Labels `P0`, `P1`, `P2` should structure the response.
+3. Absence of priority also communicates.
+   - Issues without P labels should not be forced into an arbitrary queue; list them separately.
+4. Executive summary must fit in a glance.
+   - Close with 2-3 lines like: `critical queue`, `operational queue`, `architecture/research track`.
 
-## Formato recomendado
+## Recommended Format
 
 - `P0`
 - `P1`
 - `P2`
-- `Sem rótulo P explícito`
-- `Leitura executiva`
+- `No explicit P label`
+- `Executive read`
 
-## Erros a evitar
+## Errors to Avoid
 
-- tratar handoff antigo como pendência viva sem checar issue correspondente;
-- misturar histórico local com backlog já promovido;
-- esconder issues sem prioridade para simplificar a leitura;
-- responder apenas com busca de sessões quando já existe backlog canônico no GitHub.
+- Treating old handoff as a living pending item without checking the corresponding issue;
+- Mixing local history with already promoted backlog;
+- Hiding issues without priority to simplify the read;
+- Responding only with session search when canonical backlog already exists on GitHub.

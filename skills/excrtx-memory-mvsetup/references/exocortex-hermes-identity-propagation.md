@@ -1,34 +1,34 @@
-# Exocórtex sobre Hermes — padrão de propagação
+# Exocórtex on Hermes — Propagation Pattern
 
-Use quando o executivo pedir para corrigir drift de identidade, harness ou perfis do Exocórtex em um setup Hermes/Exocórtex.
+Use when the executive asks to correct identity drift, harness, or Exocórtex profiles in a Hermes/Exocórtex setup.
 
-## Regra canônica
+## Canonical Rule
 
-O agente é o Exocórtex.IA operando sobre o runtime Hermes Agent. Hermes é infraestrutura: harness, ferramentas, memória, perfis, gateway e automação. Exocórtex é identidade operacional: contrato cognitivo, método, governança, estilo e relação com o executivo.
+The agent is Exocórtex.IA operating on the Hermes Agent runtime. Hermes is infrastructure: harness, tools, memory, profiles, gateway, and automation. Exocórtex is operational identity: cognitive contract, method, governance, style, and relationship with the executive.
 
-Canary esperado: “sou o Exocórtex.IA rodando sobre o Hermes Agent”. Host, sistema operacional, diretório e perfil vêm depois.
+Expected canary: "sou o Exocórtex.IA rodando sobre o Hermes Agent". Host, OS, directory, and profile come after.
 
-## Onde propagar
+## Where to Propagate
 
-1. SOUL principal do projeto Exocórtex.
-2. SOUL runtime em `$HERMES_HOME/SOUL.md`, quando existir.
-3. SOULs de perfis Exocórtex, especialmente `exec` e `evol`.
-4. Cópias versionadas dos perfis no projeto de setup.
-5. `SOUL_SEED.md` do setup replicável.
-6. Contrato global no Acervo: `global/contracts/exocortex-hermes-identity-contract.md`.
-7. Contrato local em cada microverso: `micro/<slug>/contracts/exocortex-hermes-identity.md`.
-8. Template de microverso do setup.
-9. Logs/MEMORY do projeto para reprodutibilidade.
+1. Main SOUL of the Exocórtex project.
+2. Runtime SOUL at `$HERMES_HOME/SOUL.md`, when it exists.
+3. SOULs of Exocórtex profiles, especially `exec` and `evol`.
+4. Versioned copies of profiles in the setup project.
+5. `SOUL_SEED.md` of the replicable setup.
+6. Global contract in Acervo: `global/contracts/exocortex-hermes-identity-contract.md`.
+7. Local contract in each microverso: `micro/<slug>/contracts/exocortex-hermes-identity.md`.
+8. Microverso template in setup.
+9. Project logs/MEMORY for reproducibility.
 
 ## Pitfalls
 
-- Não editar arquivos upstream do Hermes para corrigir identidade do Exocórtex. Preserve Hermes como infraestrutura.
-- Não esconder o Hermes: ele deve aparecer como runtime/harness quando perguntado sobre operação.
-- Não deixar o canary responder só host/cwd/perfil; isso prova que a identidade ainda está fraca.
-- Não registrar apenas em memória. Identidade operacional pertence a SOUL, contratos do Acervo e perfis.
+- Don't edit Hermes upstream files to correct Exocórtex identity. Preserve Hermes as infrastructure.
+- Don't hide Hermes: it should appear as runtime/harness when asked about operations.
+- Don't let the canary respond only with host/cwd/profile; that proves the identity is still weak.
+- Don't register only in memory. Operational identity belongs in SOUL, Acervo contracts, and profiles.
 
-## Verificação mínima
+## Minimum Verification
 
-- Buscar a frase “Exocórtex.IA rodando sobre o Hermes Agent” nos SOULs críticos.
-- Confirmar que todos os microversos têm contrato local.
-- Rodar canary nos perfis `exec` e `evol` quando a sessão tiver permissão para usar terminal.
+- Search for the phrase "Exocórtex.IA rodando sobre o Hermes Agent" in critical SOULs.
+- Confirm all microversos have a local contract.
+- Run canary on `exec` and `evol` profiles when the session has permission to use terminal.

@@ -1,34 +1,34 @@
-# Verificação de card bloqueado no Hermes Kanban
+# Hermes Kanban Blocked Card Verification
 
-Use este padrão quando a pendência depende de decisão humana e não deve cair em execução automática.
+Use this pattern when the pending item depends on a human decision and must not fall into automatic execution.
 
-## Sequência segura
+## Safe Sequence
 
-1. Criar o card com título orientado a decisão.
-2. Inserir referências obrigatórias no corpo.
-3. Verificar o resultado com `kanban list` e `kanban show`.
-4. Se o card não estiver em `blocked`, aplicar bloqueio explícito.
-5. Verificar de novo.
+1. Create the card with a decision-oriented title.
+2. Insert mandatory references in the body.
+3. Verify the result with `kanban list` and `kanban show`.
+4. If the card is not in `blocked`, apply explicit block.
+5. Verify again.
 
-## Sinal de boa qualidade
+## Quality Signal
 
-O `show` final deve deixar claro:
-- status `blocked`
-- resumo mais recente explicando a dependência da decisão humana
-- referências suficientes para retomada sem reconstrução da sessão
+The final `show` should make clear:
+- Status `blocked`
+- Most recent summary explaining the dependency on human decision
+- Sufficient references for resumption without session reconstruction
 
-## Comentário de bloqueio recomendado
+## Recommended Block Comment
 
 ```text
-Aguardando decisão explícita do executivo sobre arquitetura, storage, escopo da v1 e staging privado.
+Awaiting explicit executive decision on architecture, storage, v1 scope, and private staging.
 ```
 
-Adapte a frase ao caso, mas mantenha o motivo concreto.
+Adapt the phrase to the case, but keep the concrete reason.
 
-## Quando usar
+## When to Use
 
-- ADR proposta sem martelo final
-- decisão de arquitetura
-- escolha de escopo da v1
-- política operacional ainda indefinida
-- qualquer retomada que dependa de aprovação ou direção do executivo
+- Proposed ADR without final decision
+- Architecture decision
+- v1 scope choice
+- Operational policy still undefined
+- Any resumption that depends on executive approval or direction

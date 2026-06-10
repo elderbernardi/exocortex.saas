@@ -1,42 +1,42 @@
-# Marp e Frontend Slides — Trilhas de Artefato
+# Marp and Frontend Slides — Artifact Tracks
 
-## Princípio
+## Principle
 
-Marp é linha de produção. Frontend Slides é renderer premium.
+Marp is the production line. Frontend Slides is the premium renderer.
 
-Ambos preservam Markdown como fonte canônica sempre que possível. A escolha do renderer depende do objetivo do artefato, não do microverso sozinho.
+Both preserve Markdown as canonical source whenever possible. The renderer choice depends on the artifact's goal, not the microverso alone.
 
-## Quando usar Marp
+## When to Use Marp
 
-Use Marp para:
+Use Marp for:
 
-- aula recorrente;
-- material técnico com muito código;
-- manutenção manual frequente;
-- PDF rápido;
-- produção seriada por unidade/disciplina;
-- decks onde consistência e velocidade valem mais que direção visual.
+- Recurring lectures;
+- Technical material with lots of code;
+- Frequent manual maintenance;
+- Quick PDF;
+- Serial production per unit/discipline;
+- Decks where consistency and speed matter more than visual direction.
 
-## Quando usar Frontend Slides
+## When to Use Frontend Slides
 
-Use `exocortex-slides` para:
+Use `exocortex-slides` for:
 
-- apresentação premium;
-- palestra;
-- pitch;
-- briefing executivo;
-- aula especial;
-- abertura/fechamento de unidade;
-- artefato com narrativa visual forte;
-- HTML navegável como entrega principal.
+- Premium presentations;
+- Talks;
+- Pitches;
+- Executive briefings;
+- Special lectures;
+- Unit opening/closing;
+- Artifacts with strong visual narrative;
+- Navigable HTML as the primary deliverable.
 
-## Regra de export
+## Export Rule
 
-Google Drive privado é o destino padrão para entrega final ao usuário comum.
+Private Google Drive is the default destination for final delivery to regular users.
 
-Vercel ou publicação pública só entram quando o usuário pede URL pública e aprova o DRAFT.
+Vercel or public publication only enters when the user requests a public URL and approves the DRAFT.
 
-## Pacote recomendado
+## Recommended Package
 
 ```text
 _artifacts/{artifact_id}/
@@ -53,6 +53,6 @@ _artifacts/{artifact_id}/
 └── manifest.json
 ```
 
-## Relação com Estúdio Criativo
+## Relationship with Creative Studio
 
-Se o deck precisa de tese visual forte, Frontend Slides consulta Estúdio Criativo. Se Estúdio Criativo precisa entregar apresentação, chama Frontend Slides para empacotar e exportar.
+If the deck needs a strong visual thesis, Frontend Slides consults Creative Studio. If Creative Studio needs to deliver a presentation, it calls Frontend Slides to package and export.

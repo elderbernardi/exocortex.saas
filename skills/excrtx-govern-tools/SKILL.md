@@ -1,122 +1,121 @@
-1|---
-2|name: excrtx-govern-tools
-3|description: Regras de governança para uso de tools pelo Exocórtex.IA. Define quando e como tools devem ser usadas, logging obrigatório, e classificação por tipo.
-4|version: 1.0.0
-5|category: excrtx
-6|metadata:
-7|  hermes:
-8|    tags: [exocortex, governance, tools, policy]
+---
+name: excrtx-govern-tools
+description: Governance rules for tool usage by Exocórtex.IA. Defines when and how tools should be used, mandatory logging, and classification by type.
+version: 1.0.0
+category: excrtx
+metadata:
+  hermes:
+    tags: [exocortex, governance, tools, policy]
 compiled_rules: |
   Least privilege: use the simplest tool that solves the task.
   Log destructive actions. Sandbox operations by active microverso.
   Never rm -rf, never apt/pip install without explicit approval.
   Prefer read-only tools when gathering information. Batch related tool calls.
   File operations: always verify path exists before writing.
-9|---
-10|
-11|# Tool Governance — Exocórtex.IA
-12|
-13|> Controla COMO e QUANDO o agente usa ferramentas externas.
-14|
-## Classificação de Tools
+---
 
-| Tipo | Exemplos | Política |
+# Tool Governance — Exocórtex.IA
+
+> Controls HOW and WHEN the agent uses external tools.
+
+## Tool Classification
+
+| Type | Examples | Policy |
 |---|---|---|
-| **Internos (execução local)** | file_read, file_write, terminal, hermes-cli | Uso livre. Logar apenas em ações destrutivas (delete, overwrite). |
-| **Ações internas (git/tests)** | git commit (local), git add, git branch, testes, py_compile, lint, patches | Execução direta. Sem DRAFT. |
-| **Ações externas (git push/deploy)** | git push, deploy scripts, publicação de artefato em remote | **Draft-First obrigatório.** |
-| **Pesquisa** | duckduckgo-search, excrtx-integrate-browser, arxiv | Uso livre. Logar query + nº de resultados. |
-| **Entrega ao executivo** | `send_message` para o próprio usuário no home channel | Pode executar sem DRAFT quando for self-delivery operacional, com destinatário inequívoco e sem representar fala do executivo para terceiros. |
-| **Comunicação para terceiros** | email, calendar, messaging, comentário, DM, post | **Draft-First obrigatório.** Jamais enviar sem aprovação pós-DRAFT. |
-| **Criação externa** | Google Docs, Drive, compartilhamentos | **Draft-First obrigatório.** Criar como rascunho local primeiro. |
-| **Configuração** | hermes skills install, pip install, mcp add | **Aprovação obrigatória.** Logar no session log. Atualizar setup.sh. |
-25|
-26|## Regras de Uso
-27|
-28|### R1: Princípio do Menor Privilégio
-29|Usar a tool mais simples que resolve o problema.
-30|- Precisa de dados? → `file_read` antes de `web_search`
-31|- Precisa de busca? → `duckduckgo-search` antes de `excrtx-integrate-browser`
-32|- Precisa de browser? → `excrtx-integrate-browser` CLI antes do modo agente
-33|
-34|### R2: Logging Obrigatório
-35|Toda tool call que modifique estado externo DEVE ser logada:
-36|```
-37|[TOOL] {timestamp} | {tool_name} | {action} | {target} | {result}
-38|```
-39|
-40|### R3: Governança de entrega e comunicação
-41|Antes de usar uma tool de comunicação, classificar o ato:
-42|
-43|1. **Self-delivery operacional**
-44|   - Destinatário: o próprio executivo
-45|   - Canal: home channel dele
-46|   - Natureza: entrega operacional do sistema, recibo, teste técnico explícito ou envio do próprio output de volta ao operador
-47|   - Política: pode executar sem DRAFT
-48|
-49|2. **Comunicação para terceiros**
-50|   - Qualquer destinatário que não seja inequivocamente o próprio executivo
-51|   - Qualquer canal compartilhado, grupo ou superfície pública
-52|   - Qualquer texto que represente fala do executivo para terceiros
-53|   - Política: Draft-First obrigatório
-54|
-55|Fluxo para casos com Draft-First:
-56|1. Gerar rascunho localmente
-57|2. Apresentar ao executivo
-58|3. Executivo aprova → executar
-59|4. Executivo rejeita → descartar ou revisar
-60|
-61|Na dúvida sobre destinatário, canal ou efeito social, tratar como comunicação para terceiros.
-62|
-63|### R4: Sandbox por Microverso
-64|Quando operando dentro de um microverso, tools devem respeitar o escopo:
-65|- Buscas no acervo: restringir ao microverso ativo (a menos que cross-domain seja explícito)
-66|- File writes: restringir ao path do microverso ativo
-67|- Exceção: skills de meta-gestão (excrtx-memory-manager) podem operar cross-microverso
-68|
-69|### R5: Failsafe — Sem Mutação Silenciosa
-70|Se uma tool falhar, o agente DEVE:
-71|1. Reportar a falha ao executivo
-72|2. Nunca tentar auto-reparar com outra tool sem informar
-73|3. Sugerir alternativas
-74|
-75|### R6: Mudanças de configuração com efeito colateral exigem ambiente isolado de validação
-76|Quando a tarefa altera automações que chamam CLIs de configuração (`hermes config set`, setup scripts, provisionadores, roteadores de provider/model, wrappers que escrevem estado), validar em duas camadas antes de declarar pronto:
-77|
-78|1. **Teste isolado com binário fake no PATH**
-79|   - Criar diretório temporário.
-80|   - Injetar um shim executável (`hermes`, ou outro CLI-alvo) no `PATH` para registrar argumentos em arquivo.
-81|   - Rodar o script real contra esse ambiente e verificar as chamadas exatas emitidas.
-82|   - Objetivo: provar intenção de mutação sem tocar no runtime principal.
-83|
-84|2. **Smoke real somente leitura, quando houver fonte externa**
-85|   - Se a lógica depende de API pública/catálogo remoto, executar um smoke contra a fonte real.
-86|   - Preferir modo que gere relatório/artifact sem aplicar mutação real quando isso bastar para validar ranking/seleção.
-87|
-88|3. **Cobrir fixtures + edge cases que apareceram no smoke**
-89|   - Se o smoke revelar bug de parsing/tempo/formato, congelar isso em teste unitário imediatamente.
-90|   - Exemplo de classe de bug: comparação entre datetime sem timezone e datetime com timezone.
-91|
-92|4. **Só então integrar no setup/provisionamento**
-93|   - Depois de provar o script isoladamente, plugar no `setup.sh`/provisionador e adicionar teste textual ou estrutural que confirme a chamada no fluxo de instalação.
-94|
-95|Esse padrão é obrigatório para evitar travar ou contaminar o agente principal durante validação de automações de configuração.
-96|
-97|## Support files
-98|
-99|- `references/config-mutation-isolated-validation.md` — padrão de validação isolada para scripts que aplicam configuração via CLI, com shim no PATH, smoke real sem mutação e promoção imediata de bugs encontrados para testes.
-100|
-101|## Whitelist Padrão
-102|
-103|Skills do bundle `exocortex-alpha` são pré-autorizadas.
-104|Qualquer skill fora do bundle requer menção explícita do executivo.
-105|
-106|## Blacklist
-107|
-108|| Tool/Ação | Motivo |
-109||---|---|
-110|| `rm -rf` em qualquer path | Destruição irreversível |
-111|| Envio direto de email/mensagem para terceiros sem aprovação pós-DRAFT | Viola Draft-First |
-112|| Instalação de packages do sistema (`apt`, `brew`) | Requer aprovação manual |
-113|| Acesso a dados de outros tenants | Violação de isolamento |
-114|
+| **Internal (local execution)** | file_read, file_write, terminal, hermes-cli | Free use. Log only destructive actions (delete, overwrite). |
+| **Internal actions (git/tests)** | git commit (local), git add, git branch, tests, py_compile, lint, patches | Direct execution. No DRAFT. |
+| **External actions (git push/deploy)** | git push, deploy scripts, remote artifact publication | **Draft-First mandatory.** |
+| **Research** | duckduckgo-search, excrtx-integrate-browser, arxiv | Free use. Log query + result count. |
+| **Delivery to executive** | `send_message` to the user's own home channel | Can execute without DRAFT for operational self-delivery, with unambiguous recipient and not representing executive's speech to third parties. |
+| **Communication to third parties** | email, calendar, messaging, comments, DM, posts | **Draft-First mandatory.** Never send without post-DRAFT approval. |
+| **External creation** | Google Docs, Drive, shared resources | **Draft-First mandatory.** Create as local draft first. |
+| **Configuration** | hermes skills install, pip install, mcp add | **Explicit approval mandatory.** Log in session log. Update setup.sh. |
+
+## Usage Rules
+
+### R1: Principle of Least Privilege
+Use the simplest tool that solves the problem.
+- Need data? → `file_read` before `web_search`
+- Need search? → `duckduckgo-search` before `excrtx-integrate-browser`
+- Need browser? → `excrtx-integrate-browser` CLI before agent mode
+
+### R2: Mandatory Logging
+Every tool call that modifies external state MUST be logged:
+```
+[TOOL] {timestamp} | {tool_name} | {action} | {target} | {result}
+```
+
+### R3: Delivery and Communication Governance
+Before using a communication tool, classify the act:
+
+1. **Operational self-delivery**
+   - Recipient: the executive themselves
+   - Channel: their home channel
+   - Nature: operational system delivery, receipt, explicit technical test, or sending output back to the operator
+   - Policy: can execute without DRAFT
+
+2. **Communication to third parties**
+   - Any recipient that is not unambiguously the executive themselves
+   - Any shared channel, group, or public surface
+   - Any text representing the executive's speech to third parties
+   - Policy: Draft-First mandatory
+
+Draft-First flow:
+1. Generate draft locally
+2. Present to executive
+3. Executive approves → execute
+4. Executive rejects → discard or revise
+
+When in doubt about recipient, channel, or social effect, treat as communication to third parties.
+
+### R4: Sandbox by Microverso
+When operating within a microverso, tools must respect scope:
+- Acervo searches: restrict to active microverso (unless cross-domain is explicit)
+- File writes: restrict to active microverso's path
+- Exception: meta-management skills (excrtx-memory-manager) can operate cross-microverso
+
+### R5: Failsafe — No Silent Mutation
+If a tool fails, the agent MUST:
+1. Report the failure to the executive
+2. Never attempt self-repair with another tool without informing
+3. Suggest alternatives
+
+### R6: Configuration changes with side effects require isolated validation environment
+When the task modifies automations that call configuration CLIs (`hermes config set`, setup scripts, provisioners, provider/model routers, wrappers that write state), validate in two layers before declaring done:
+
+1. **Isolated test with fake binary in PATH**
+   - Create temporary directory.
+   - Inject an executable shim (`hermes`, or other target CLI) in `PATH` to record arguments to file.
+   - Run the actual script against this environment and verify the exact calls emitted.
+   - Goal: prove mutation intent without touching the main runtime.
+
+2. **Read-only real smoke, when there's an external source**
+   - If the logic depends on a public API/remote catalog, execute a smoke against the real source.
+   - Prefer mode that generates report/artifact without applying real mutation when that suffices to validate ranking/selection.
+
+3. **Cover fixtures + edge cases surfaced by the smoke**
+   - If the smoke reveals a parsing/timing/format bug, freeze it in a unit test immediately.
+   - Example bug class: comparison between timezone-naive and timezone-aware datetime.
+
+4. **Only then integrate into setup/provisioning**
+   - After proving the script in isolation, plug into `setup.sh`/provisioner and add a textual or structural test confirming the call in the installation flow.
+
+This pattern is mandatory to avoid locking or contaminating the main agent during configuration automation validation.
+
+## Support Files
+
+- `references/config-mutation-isolated-validation.md` — isolated validation pattern for scripts that apply configuration via CLI, with PATH shim, real smoke without mutation, and immediate promotion of discovered bugs to tests.
+
+## Default Whitelist
+
+Skills in the `exocortex-alpha` bundle are pre-authorized.
+Any skill outside the bundle requires explicit executive mention.
+
+## Blacklist
+
+| Tool/Action | Reason |
+|---|---|
+| `rm -rf` on any path | Irreversible destruction |
+| Direct email/message send to third parties without post-DRAFT approval | Violates Draft-First |
+| System package installation (`apt`, `brew`) | Requires manual approval |
+| Access to other tenants' data | Isolation violation |

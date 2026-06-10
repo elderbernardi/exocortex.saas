@@ -1,46 +1,46 @@
-# Alinhamento com padrão do workspace de ensino (NLM)
+# Alignment with Teaching Workspace Standard (NLM)
 
-## Decisões operacionais validadas
+## Validated Operational Decisions
 
-1. **CLI-first**: usar `nlm` como rota padrão para operações de conhecimento.
-2. **Fallback MCP**: usar `notebooklm-mcp` apenas quando a rota CLI não for viável.
-3. **Instalação oficial**: `uv tool install notebooklm-mcp-cli`.
-4. **Verificação de auth no runtime atual**: `nlm login --check`.
-   - Não usar `nlm auth status` neste ambiente.
+1. **CLI-first**: use `nlm` as the default route for knowledge operations.
+2. **MCP fallback**: use `notebooklm-mcp` only when the CLI route is not viable.
+3. **Official installation**: `uv tool install notebooklm-mcp-cli`.
+4. **Auth verification on current runtime**: `nlm login --check`.
+   - Don't use `nlm auth status` in this environment.
 
-## Fluxo mínimo recomendado
+## Minimum Recommended Flow
 
 ```bash
 nlm --version
 nlm login --check
-nlm notebook create "<tema>"
-nlm research start "<tema e foco>" --source web --mode fast --notebook-id <id> --auto-import
+nlm notebook create "<topic>"
+nlm research start "<topic and focus>" --source web --mode fast --notebook-id <id> --auto-import
 nlm source list <id> --full
-nlm notebook query <id> "<pergunta principal>" --json
+nlm notebook query <id> "<main question>" --json
 ```
 
-## Troubleshooting observado no runtime
+## Troubleshooting Observed at Runtime
 
-- Se `nlm login --check` retornar `HTTP 400 Bad Request`, não assumir imediatamente que o MCP está saudável só porque `hermes mcp test notebooklm` conecta.
-- `hermes mcp test` confirma transporte stdio e descoberta de tools; não valida operação autenticada.
-- Ordem recomendada de reparo:
-  1. recarregar tokens locais;
-  2. repetir `nlm login --check`;
-  3. refazer `nlm login`;
-  4. se a CLI estiver defasada em relação ao release atual, atualizar `notebooklm-mcp-cli` pela via oficial (`uv tool upgrade notebooklm-mcp-cli`).
+- If `nlm login --check` returns `HTTP 400 Bad Request`, don't immediately assume MCP is healthy just because `hermes mcp test notebooklm` connects.
+- `hermes mcp test` confirms stdio transport and tool discovery; it doesn't validate authenticated operation.
+- Recommended repair order:
+  1. Reload local tokens;
+  2. Repeat `nlm login --check`;
+  3. Redo `nlm login`;
+  4. If CLI is outdated relative to the current release, update `notebooklm-mcp-cli` via the official channel (`uv tool upgrade notebooklm-mcp-cli`).
 
-## Regra de ingestão quando não há fontes
+## Ingestion Rule When There Are No Sources
 
-- Coletar e importar **10 fontes** antes da query principal.
-- `--mode fast` tende a retornar ~10 fontes de forma rápida; usar `deep` quando o tema exigir maior amplitude.
+- Collect and import **10 sources** before the main query.
+- `--mode fast` tends to return ~10 sources quickly; use `deep` when the topic requires greater breadth.
 
-## Critério de qualidade das fontes
+## Source Quality Criteria
 
-- Priorizar autoridade, atualidade, cobertura e diversidade.
-- Evitar duplicatas, spam SEO e páginas sem rastreabilidade.
+- Prioritize authority, recency, coverage, and diversity.
+- Avoid duplicates, SEO spam, and pages without traceability.
 
-## Entrega mínima
+## Minimum Delivery
 
-- Síntese pedida
-- Lista explícita de fontes usadas
-- Indicação de uso de deep research/web search quando aplicável
+- Requested synthesis
+- Explicit list of sources used
+- Indication of deep research/web search usage when applicable

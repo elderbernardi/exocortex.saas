@@ -1,38 +1,38 @@
-# Setup propagation checklist (Google Drive hardening)
+# Setup Propagation Checklist (Google Drive Hardening)
 
-Objetivo: garantir que o hardening de `drive search` não se perca em reprovisionamento.
+Goal: ensure that `drive search` hardening is not lost during reprovisioning.
 
-## Escopo mínimo de propagação
+## Minimum Propagation Scope
 
-Aplicar a função idempotente `patch_google_drive_search` em:
-- setup do projeto (`.../exocortex.saas/setup.sh`)
-- setup canônico do Hermes (`~/.hermes/setup.sh`)
-- setup seed de artifacts (`.../plans/pdd_v2/artifacts/setup.sh`)
+Apply the idempotent `patch_google_drive_search` function to:
+- Project setup (`.../exocortex.saas/setup.sh`)
+- Canonical Hermes setup (`~/.hermes/setup.sh`)
+- Artifacts seed setup (`.../plans/pdd_v2/artifacts/setup.sh`)
 
-## Requisitos da função
+## Function Requirements
 
-1. Detecta estado já hardenizado (não reaplica).
-2. Se `google_api.py` não existir, emite aviso e não quebra setup.
-3. Substitui o bloco `drive_search` por versão com:
-   - escape de query textual (`'`, `\\`)
-   - `trashed = false` no modo não-raw
-   - paginação por `nextPageToken`
-   - validação `--max >= 1`
+1. Detects already hardened state (doesn't reapply).
+2. If `google_api.py` doesn't exist, emits warning and doesn't break setup.
+3. Replaces the `drive_search` block with a version that has:
+   - Textual query escaping (`'`, `\\`)
+   - `trashed = false` in non-raw mode
+   - Pagination via `nextPageToken`
+   - `--max >= 1` validation
 
-## Smoke test pós-setup
+## Post-Setup Smoke Test
 
 1. Auth:
 `python ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check`
 
-2. Busca acento:
+2. Accent search:
 `python ~/.hermes/skills/productivity/google-workspace/scripts/google_api.py drive search "relatório" --max 3`
 
-3. Busca apóstrofo:
+3. Apostrophe search:
 `python ~/.hermes/skills/productivity/google-workspace/scripts/google_api.py drive search "O'Reilly" --max 2`
 
-4. Sintaxe setups:
-`bash -n <setup.sh-alvo>`
+4. Setup syntax:
+`bash -n <target-setup.sh>`
 
 ## Pitfall
 
-Aplicar hardening só no arquivo runtime (`google_api.py`) e esquecer setup gera regressão silenciosa na próxima máquina/perfil limpo.
+Applying hardening only to the runtime file (`google_api.py`) and forgetting setup causes silent regression on the next clean machine/profile.

@@ -1,6 +1,6 @@
 ---
 name: excrtx-memory-intake
-description: "Receber, normalizar, extrair, triar e promover arquivos e mídias enviados ao Exocórtex por múltiplos canais, sem contaminar o Acervo semântico com bruto não curado."
+description: "Receive, normalize, extract, triage, and promote files and media sent to Exocórtex through multiple channels, without contaminating the semantic Acervo with uncurated raw material."
 version: 1.0.0
 author: Exocórtex
 license: MIT
@@ -13,46 +13,46 @@ metadata:
 
 # Personal Intake Workspace
 
-Use esta skill quando o usuário pedir para desenhar, implementar, revisar ou operar o caminho de entrada de arquivos, áudios, imagens, PDFs, links ou lotes enviados ao Exocórtex.
+Use this skill when the user asks to design, implement, review, or operate the entry path for files, audio, images, PDFs, links, or batches sent to Exocórtex.
 
-Também use quando a discussão envolver inbox, intake multicanal, anexos, dropzone, onboarding voice-first, triagem cognitiva ou promoção de material bruto para o Acervo.
+Also use when the discussion involves inbox, multichannel intake, attachments, dropzone, voice-first onboarding, cognitive triage, or promotion of raw material to the Acervo.
 
-Antes de executar, carregue quando aplicável:
+Before executing, load when applicable:
 
-- `excrtx-memory-manager`, para respeitar ontologia, scope e promotion.
-- `excrtx-harness-surfaces`, para separar canal, UI e cockpit operacional.
-- `excrtx-govern-draftfirst`, se o intake acionar comunicação ou publicação externa.
-- `excrtx-produce-artifacts`, se o material ingerido virar artefato final publicável.
-- `ocr-and-documents`, `google-workspace`, STT ou visão, conforme o tipo de mídia.
+- `excrtx-memory-manager`, to respect ontology, scope, and promotion.
+- `excrtx-harness-surfaces`, to separate channel, UI, and operational cockpit.
+- `excrtx-govern-draftfirst`, if intake triggers external communication or publication.
+- `excrtx-produce-artifacts`, if ingested material becomes a publishable final artifact.
+- `ocr-and-documents`, `google-workspace`, STT, or vision, depending on media type.
 
-## Princípio
+## Principle
 
-Entrada não é memória. Entrada é matéria-prima.
+Input is not memory. Input is raw material.
 
-O arquivo recebido não deve entrar direto no Acervo semântico. Primeiro ele cai numa área operacional de intake, onde é preservado, descrito, extraído e triado. Só depois o sistema decide se aquilo vira memória, tarefa, referência operacional ou artefato derivado.
+A received file must not enter the semantic Acervo directly. First it lands in an operational intake area, where it's preserved, described, extracted, and triaged. Only then does the system decide whether it becomes memory, task, operational reference, or derived artifact.
 
-## Modelo mental
+## Mental Model
 
-Use a simetria abaixo:
+Use the symmetry below:
 
 ```text
-input -> _inbox -> acervo semântico -> _artifacts -> publish
+input -> _inbox -> semantic acervo -> _artifacts -> publish
 ```
 
-- `_inbox/` guarda bruto, extrações e roteamento.
-- `acervo/` guarda conhecimento curado.
-- `_artifacts/` guarda saídas finais para consumo humano.
+- `_inbox/` stores raw material, extractions, and routing.
+- `acervo/` stores curated knowledge.
+- `_artifacts/` stores final outputs for human consumption.
 
-Não colapse essas camadas.
+Do not collapse these layers.
 
-## Workspace operacional
+## Operational Workspace
 
-Local canônico:
+Canonical location:
 
 ```text
 ~/.hermes/acervo/_inbox/{intake_id}/
 ├── original/
-│   └── <arquivo ou mídia original>
+│   └── <original file or media>
 ├── derived/
 │   ├── transcript.md
 │   ├── ocr.md
@@ -63,17 +63,17 @@ Local canônico:
 └── log.json
 ```
 
-`_inbox/` é operacional, não semântico. Não substitui `knowledge/`, `context/`, `contracts/` nem `raw/` de um microverso.
+`_inbox/` is operational, not semantic. It does not replace `knowledge/`, `context/`, `contracts/`, or `raw/` of a microverso.
 
-## Regra estrutural
+## Structural Rule
 
-Não escrever uploads diretamente em `micro/{slug}/knowledge`, `context`, `contracts` ou páginas equivalentes.
+Do not write uploads directly to `micro/{slug}/knowledge`, `context`, `contracts`, or equivalent pages.
 
-Também não usar o Acervo semântico como depósito de binários, anexos ou transcrições cruas. O destino semântico só é decidido após triagem.
+Also do not use the semantic Acervo as a dump for binaries, attachments, or raw transcripts. The semantic destination is decided only after triage.
 
 ## IntakeEnvelope
 
-Todo canal deve convergir para um envelope interno comum. Campos mínimos:
+Every channel must converge to a common internal envelope. Minimum fields:
 
 ```json
 {
@@ -90,214 +90,214 @@ Todo canal deve convergir para um envelope interno comum. Campos mínimos:
 }
 ```
 
-Canal não decide workflow. Canal só entrega envelope.
+Channel does not decide workflow. Channel only delivers envelope.
 
-## Arquitetura recomendada
+## Recommended Architecture
 
-Quando existir uma GUI ou integração dedicada, respeite a separação:
+When a dedicated GUI or integration exists, respect the separation:
 
 ```text
 USER -> GUI -> SERVER -> HERMES
 ```
 
-- GUI/gateway recebe o gesto humano.
-- SERVER normaliza upload, persiste o bruto e gera o envelope.
-- HERMES classifica, extrai, triageia e propõe promoção.
+- GUI/gateway receives the human gesture.
+- SERVER normalizes upload, persists the raw file, and generates the envelope.
+- HERMES classifies, extracts, triages, and proposes promotion.
 
-Não empurre a responsabilidade de recepção de arquivos crus para dentro da lógica cognitiva se houver um servidor intermediário disponível.
+Do not push responsibility for raw binary reception into cognitive logic when an intermediary server is available.
 
-### Seed orgânico para rollout
+### Organic Seed for Rollout
 
-Se a GUI final ainda não existe, não espere o stack definitivo para validar a arquitetura.
+If the final GUI doesn't exist yet, don't wait for the definitive stack to validate the architecture.
 
-Use um control plane HTTP mínimo como seed:
+Use a minimal HTTP control plane as seed:
 
-- `POST /v1/intake/upload` para arquivo;
-- `POST /v1/intake/text` para texto curto;
-- `POST /v1/intake/link` para links;
-- `GET /v1/intake/{id}` para inspeção;
-- `POST /v1/intake/{id}/promote` para promoção explícita.
+- `POST /v1/intake/upload` for files;
+- `POST /v1/intake/text` for short text;
+- `POST /v1/intake/link` for links;
+- `GET /v1/intake/{id}` for inspection;
+- `POST /v1/intake/{id}/promote` for explicit promotion.
 
-Esse server não decide semântica. Ele só recebe, normaliza metadata e invoca a tool de intake.
+This server does not decide semantics. It only receives, normalizes metadata, and invokes the intake tool.
 
-Regra importante: GUI, bot, webhook ou gateway não devem chamar `intake_ingest.py` diretamente. O canal fala HTTP com o control plane; o control plane fala com a tool cognitiva.
+Important rule: GUI, bot, webhook, or gateway must not call `intake_ingest.py` directly. The channel speaks HTTP with the control plane; the control plane speaks with the cognitive tool.
 
-Para MVP, uma implementação stdlib/local sem dependência nova obrigatória é aceitável. Se o projeto evoluir para FastAPI ou outro framework, preserve o contrato externo do `IntakeEnvelope` e dos endpoints.
+For MVP, a stdlib/local implementation without mandatory new dependencies is acceptable. If the project evolves to FastAPI or another framework, preserve the `IntakeEnvelope` external contract and endpoints.
 
-## Canais prioritários
+## Priority Channels
 
-Para adoção com menor atrito:
+For lowest-friction adoption:
 
-1. Telegram como superfície espontânea do executivo.
-2. GUI web com dropzone para upload formal, desktop e lote.
+1. Telegram as the executive's spontaneous surface.
+2. Web GUI with dropzone for formal upload, desktop, and batches.
 
-Depois expandir para WhatsApp, email forward, webhook e API.
+Then expand to WhatsApp, email forward, webhook, and API.
 
-## Fluxo padrão
+## Standard Flow
 
-### 1. Recepção
+### 1. Reception
 
-Receber o arquivo, áudio, imagem, ZIP, link ou lote via canal disponível.
+Receive the file, audio, image, ZIP, link, or batch via available channel.
 
-Persistir imediatamente em `_inbox/{intake_id}/original/`.
+Persist immediately in `_inbox/{intake_id}/original/`.
 
-### 2. Manifesto inicial
+### 2. Initial Manifest
 
-Criar `manifest.json` com:
+Create `manifest.json` with:
 
-- metadados do envelope;
-- hash SHA-256 do original quando aplicável;
-- tamanho;
+- Envelope metadata;
+- SHA-256 hash of original when applicable;
+- Size;
 - MIME;
-- status inicial `received`.
+- Initial status `received`.
 
-### 3. Extração por tipo
+### 3. Extraction by Type
 
-Aplicar o trilho certo:
+Apply the correct track:
 
-- áudio/voz -> transcrição + resumo curto;
-- PDF/doc -> extração para Markdown; OCR se escaneado;
-- imagem -> OCR + descrição visual quando necessário;
-- ZIP -> inventário do conteúdo, sem promoção automática;
-- link -> metadados, snapshot textual e resolução com conector quando fizer sentido.
+- audio/voice -> transcription + short summary;
+- PDF/doc -> extraction to Markdown; OCR if scanned;
+- image -> OCR + visual description when needed;
+- ZIP -> content inventory, no automatic promotion;
+- link -> metadata, textual snapshot, and resolution with connector when it makes sense.
 
-Sempre preservar o original.
+Always preserve the original.
 
-### 4. Triagem cognitiva
+### 4. Cognitive Triage
 
-Gerar uma hipótese útil, não uma taxonomia burocrática.
+Generate a useful hypothesis, not a bureaucratic taxonomy.
 
-Responder em linguagem simples:
+Answer in simple language:
 
-- o que chegou;
-- o que foi extraído;
-- o que parece ser;
-- qual microverso/diretório/ação faz mais sentido.
+- What arrived;
+- What was extracted;
+- What it appears to be;
+- Which microverso/directory/action makes the most sense.
 
-Exemplo:
+Example:
 
 ```text
-Recebi 1 PDF. Parece ser um plano de ensino.
-Extraí 12 páginas.
-Sugestão:
+Received 1 PDF. Appears to be a lesson plan.
+Extracted 12 pages.
+Suggestion:
 - microverso: ensino
-- destino provável: knowledge/ ou contracts/
-- próxima ação: resumir, arquivar bruto, ou promover para página semântica
+- likely destination: knowledge/ or contracts/
+- next action: summarize, archive raw, or promote to semantic page
 ```
 
-### 5. Promoção
+### 5. Promotion
 
-Escolher um destes destinos:
+Choose one of these destinations:
 
-1. ficar apenas em `_inbox/` como referência operacional;
-2. virar página semântica no Acervo;
-3. virar tarefa acionável;
-4. virar artefato derivado no `excrtx-produce-artifacts`.
+1. Stay in `_inbox/` as operational reference only;
+2. Become a semantic page in the Acervo;
+3. Become an actionable task;
+4. Become a derived artifact in `excrtx-produce-artifacts`.
 
-Não presuma que todo intake vira conhecimento.
+Do not presume every intake becomes knowledge.
 
-## Heurística de UX
+## UX Heuristic
 
-Evite pedir taxonomia antes do upload.
+Avoid asking for taxonomy before upload.
 
-A UX correta é:
+The correct UX is:
 
-1. gesto natural do usuário — mandar arquivo, áudio, foto, link;
-2. confirmação curta — recebi, extraí, isso parece X;
-3. proposta de destino — quer que eu promova para Y ou deixe na inbox?
+1. Natural user gesture — send file, audio, photo, link;
+2. Short confirmation — received, extracted, this looks like X;
+3. Destination proposal — want me to promote to Y or leave in inbox?
 
-Primeiro curadoria assistida. Depois automação.
+Assisted curation first. Automation later.
 
-## Voice-first
+## Voice-First
 
-Áudio não é exceção; é canal de primeira classe.
+Audio is not an exception; it's a first-class channel.
 
-O intake deve acomodar:
+The intake must accommodate:
 
-- mensagem de voz curta;
-- áudio longo com transcrição;
-- áudio acompanhado de arquivo ou foto;
-- fala que explica o contexto do anexo.
+- Short voice message;
+- Long audio with transcription;
+- Audio accompanied by file or photo;
+- Speech that explains the attachment's context.
 
-Quando houver áudio + anexo, trate os dois como partes do mesmo intake quando a correlação for clara.
+When there's audio + attachment, treat both as parts of the same intake when correlation is clear.
 
-## Doc-first extraction
+## Doc-First Extraction
 
-Para documentos, prefira uma rota de extração para Markdown limpo. O objetivo é tornar o conteúdo legível e promotável, não apenas armazenar o binário.
+For documents, prefer an extraction route to clean Markdown. The goal is to make content readable and promotable, not just store the binary.
 
-Se houver stack local como markitdown, liteparse, OCR ou pipeline similar, encaixe-a aqui. A lição durável é a etapa de extração; não a ferramenta específica.
+If there's a local stack like markitdown, liteparse, OCR, or similar pipeline, plug it in here. The durable lesson is the extraction step; not the specific tool.
 
-### Engine documental vs wiki própria
+### Documentary Engine vs Own Wiki
 
-Quando o intake usar um projeto legado que também gera wiki própria, não assuma que a wiki desse projeto deve virar o centro arquitetural. No Exocórtex, a wiki/acervo semântico já existe. Prefira primeiro um modo de somente processamento, mantendo a projeção wiki como opcional, se o atrito for baixo.
+When intake uses a legacy project that also generates its own wiki, don't assume that project's wiki should become the architectural center. In Exocórtex, the semantic wiki/acervo already exists. Prefer a process-only mode first, keeping the wiki projection as optional if friction is low.
 
-Regra prática:
+Practical rule:
 
-1. Preservar o projeto único quando `process-only` puder ser adicionado sem fork.
-2. Separar o contrato de engine (`DocumentParseResult`, job status, artifacts, lineage) da projeção wiki (`WikiPageDraft`, markdown, index local).
-3. Manter a wiki do processador como consumer downstream, não como output primário do intake server.
-4. Só considerar fork quando a wiki estiver tão acoplada que bloquear contrato, idempotência ou observabilidade.
+1. Preserve the single project when `process-only` can be added without fork.
+2. Separate the engine contract (`DocumentParseResult`, job status, artifacts, lineage) from the wiki projection (`WikiPageDraft`, markdown, local index).
+3. Keep the processor's wiki as downstream consumer, not as the intake server's primary output.
+4. Only consider fork when the wiki is so coupled that it blocks contract, idempotency, or observability.
 
-Para páginas web, trate `excrtx-integrate-browser` como trilho semântico para páginas dinâmicas, consent banners, navegação interativa e extração que exige raciocínio. Use Playwright vanilla para renderização determinística sem tokens, e urllib/fetch para páginas simples. O modo `auto` deve ser uma política de escalada explícita, não um fallback opaco.
+For web pages, treat `excrtx-integrate-browser` as the semantic track for dynamic pages, consent banners, interactive navigation, and extraction requiring reasoning. Use vanilla Playwright for deterministic rendering without tokens, and urllib/fetch for simple pages. The `auto` mode should be an explicit escalation policy, not an opaque fallback.
 
-## Relação com o Acervo
+## Relationship with Acervo
 
-Use `excrtx-memory-manager` para promoção semântica.
+Use `excrtx-memory-manager` for semantic promotion.
 
-A promoção deve responder explicitamente:
+Promotion must explicitly answer:
 
-- isso tem valor cognitivo durável?
-- qual escopo: micro, global ou shared?
-- qual diretório funcional: knowledge, contracts, context, decisions, reflections, tools, workflows?
-- qual Nature e `kind`?
+- Does this have durable cognitive value?
+- Which scope: micro, global, or shared?
+- Which functional directory: knowledge, contracts, context, decisions, reflections, tools, workflows?
+- Which Nature and `kind`?
 
-Sem essa resposta, o material fica em `_inbox/`.
+Without this answer, the material stays in `_inbox/`.
 
-## Relação com publicação
+## Relationship with Publication
 
-Drive, Docs, OneDrive ou equivalentes não são a inbox primária do Exocórtex.
+Drive, Docs, OneDrive, or equivalents are not the Exocórtex primary inbox.
 
-Eles são melhores como workspace do usuário e superfície de publicação. Quando o material ingerido virar saída final, encaminhe para `excrtx-produce-artifacts`.
+They are better as user workspace and publication surface. When ingested material becomes final output, route to `excrtx-produce-artifacts`.
 
 ## Pitfalls
 
-1. Jogar arquivo bruto direto no Acervo semântico.
-2. Obrigar o usuário a escolher microverso, pasta e natureza no momento do upload.
-3. Acoplar workflow ao canal. Telegram e GUI devem convergir para o mesmo envelope.
-4. Tratar Drive como inbox cognitiva principal.
-5. Promover ZIP automaticamente sem inventário e triagem.
-6. Perder o original após OCR/transcrição.
-7. Tratar toda ingestão como conhecimento, em vez de considerar tarefa, referência operacional ou artefato derivado.
-8. Colocar responsabilidade de recepção binária complexa dentro do Hermes quando a arquitetura já prevê SERVER intermediário.
-9. Deixar GUI ou bot chamar a tool cognitiva diretamente, pulando a camada de server/control plane.
-10. Quebrar o contrato HTTP no momento de migrar de MVP local para framework web; trocar a implementação é aceitável, trocar o contrato sem necessidade é regressão.
+1. Dumping raw files directly into the semantic Acervo.
+2. Forcing the user to choose microverso, folder, and nature at upload time.
+3. Coupling workflow to channel. Telegram and GUI must converge to the same envelope.
+4. Treating Drive as primary cognitive inbox.
+5. Promoting ZIP automatically without inventory and triage.
+6. Losing the original after OCR/transcription.
+7. Treating every ingestion as knowledge, instead of considering task, operational reference, or derived artifact.
+8. Putting complex binary reception responsibility inside Hermes when the architecture already provides an intermediary SERVER.
+9. Letting GUI or bot call the cognitive tool directly, skipping the server/control plane layer.
+10. Breaking the HTTP contract when migrating from local MVP to web framework; changing implementation is acceptable, changing the contract unnecessarily is regression.
 
-## Checklist de verificação
+## Verification Checklist
 
-- [ ] Existe `_inbox/` autocontida e separada do Acervo semântico.
-- [ ] Cada intake tem manifesto, hash, MIME, tamanho e status.
-- [ ] O original foi preservado.
-- [ ] A extração gerou texto utilizável quando aplicável.
-- [ ] A resposta ao usuário foi curta e orientada a decisão.
-- [ ] A sugestão de destino não exigiu taxonomia antecipada do usuário.
-- [ ] A promoção para o Acervo só ocorreu após triagem.
-- [ ] O material que virou saída final foi encaminhado para `excrtx-produce-artifacts`.
+- [ ] Self-contained `_inbox/` exists, separate from the semantic Acervo.
+- [ ] Each intake has manifest, hash, MIME, size, and status.
+- [ ] The original was preserved.
+- [ ] Extraction generated usable text when applicable.
+- [ ] The response to the user was short and decision-oriented.
+- [ ] The destination suggestion did not require upfront taxonomy from the user.
+- [ ] Promotion to the Acervo only occurred after triage.
+- [ ] Material that became final output was routed to `excrtx-produce-artifacts`.
 
-## Reprodutibilidade
+## Reproducibility
 
-Toda implementação replicável deve conter:
+Every replicable implementation must contain:
 
-- contrato do `_inbox/`;
-- schema do `IntakeEnvelope`;
-- manifesto mínimo;
-- trilhos de extração por tipo;
-- regra de triagem antes de promoção;
-- separação explícita entre canal, server e Hermes.
+- `_inbox/` contract;
+- `IntakeEnvelope` schema;
+- Minimum manifest;
+- Extraction tracks by type;
+- Triage rule before promotion;
+- Explicit separation between channel, server, and Hermes.
 
-## Support files
+## Support Files
 
-- `references/session-2026-05-30-intake-path.md` — desenho consolidado do caminho de ingestão amigável e multicanal, com a simetria `_inbox` vs `_artifacts`, prioridades de canal e trade-offs arquiteturais.
-- `references/replication-checklist.md` — checklist mínimo para portar a capability de intake para outro Exocórtex-Hermes.
-- `references/multichannel-intake-contract-and-rollout.md` — contrato canônico do `IntakeEnvelope`, shape do `_inbox`, ordem de rollout e baseline da implementação v1.
-- `references/intake-control-plane-seed.md` — seed prático de control plane HTTP entre GUI/gateway e `intake_ingest.py`, com endpoints mínimos e ordem de rollout.
-- `references/docbrain-processing-engine-mode.md` — padrão para adaptar processadores documentais legados com wiki própria: preferir modo `process-only`, contrato `DocumentParseResult`, projeções downstream, idempotência por hash como próximo endurecimento e política web incluindo `excrtx-integrate-browser`.
+- `references/session-2026-05-30-intake-path.md` — consolidated design of the friendly multichannel ingestion path, with the `_inbox` vs `_artifacts` symmetry, channel priorities, and architectural trade-offs.
+- `references/replication-checklist.md` — minimum checklist to port the intake capability to another Exocórtex-Hermes.
+- `references/multichannel-intake-contract-and-rollout.md` — canonical `IntakeEnvelope` contract, `_inbox` shape, rollout order, and v1 implementation baseline.
+- `references/intake-control-plane-seed.md` — practical HTTP control plane seed between GUI/gateway and `intake_ingest.py`, with minimum endpoints and rollout order.
+- `references/docbrain-processing-engine-mode.md` — pattern for adapting legacy documentary processors with their own wiki: prefer `process-only` mode, `DocumentParseResult` contract, downstream projections, hash-based idempotency as next hardening, and web policy including `excrtx-integrate-browser`.

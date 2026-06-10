@@ -1,136 +1,137 @@
 ---
 name: excrtx-harness-codexint
-description: "Integrar OpenAI Codex (CLI e provider) ao Hermes/Exocórtex com governança, roteamento e verificação."
+description: "Integrate OpenAI Codex (CLI and provider) into Hermes/Exocórtex with governance, routing, and verification."
 version: 0.1.0
 created_by: agent
 context: exocortex
 platforms: [linux]
 ---
 
-CODex aqui significa duas coisas distintas:
+# Codex Integration — Hermes/Exocórtex
 
-1) Codex CLI (agente local via terminal; exige git repo; interativo/PTY)
-2) Provider/model openai-codex dentro do Hermes (para subagentes via delegation)
+Codex here means two distinct things:
 
-Este skill define como usar as duas sem acoplamento frágil ao modelo principal do gateway.
+1) Codex CLI (local agent via terminal; requires git repo; interactive/PTY)
+2) Provider/model openai-codex within Hermes (for subagents via delegation)
 
-
-QUANDO USAR
-
-- O executivo quer “aproveitar assinatura do Codex” dentro do Hermes.
-- Precisamos delegar tarefas gerais ao Codex (subagente Hermes) E usar Codex para codar (Codex CLI).
-- O gateway do Hermes pode estar respondendo com outro LLM via API, mas a execução/roteamento precisa seguir funcionando.
+This skill defines how to use both without fragile coupling to the gateway's main model.
 
 
-PRINCÍPIO-CHAVE (anti-confusão)
+## When to Use
 
-- Codex CLI é um executável local. Independe do provider/model do Hermes.
-- Delegation provider é configuração do Hermes. Independe do modelo principal do gateway.
+- The executive wants to "leverage their Codex subscription" within Hermes.
+- We need to delegate general tasks to Codex (Hermes subagent) AND use Codex to code (Codex CLI).
+- The Hermes gateway may be responding with another LLM via API, but execution/routing must keep working.
 
-Ou seja: dois trilhos, uma política de roteamento.
+
+## Key Principle (anti-confusion)
+
+- Codex CLI is a local executable. Independent of the Hermes provider/model.
+- Delegation provider is Hermes configuration. Independent of the gateway's main model.
+
+In short: two tracks, one routing policy.
 
 
-ARQUITETURA (DOIS TRILHOS)
+## Architecture (Two Tracks)
 
-TRILHO A — Codex CLI para trabalho que mexe em repositório
-- Chamado via tool `terminal` com `pty=true`.
-- Pré-condição: estar dentro de um git repo (Codex recusa fora).
-- Modos:
+TRACK A — Codex CLI for repository work
+- Called via `terminal` tool with `pty=true`.
+- Precondition: must be inside a git repo (Codex refuses outside).
+- Modes:
   - One-shot: `codex exec '<prompt>'`
-  - Mudança maior (preferir): `codex exec --full-auto '<prompt>'` (sandbox; auto-aprova mudanças no workspace)
-  - Evitar `--yolo` como default (só com decisão explícita do executivo).
+  - Larger changes (prefer): `codex exec --full-auto '<prompt>'` (sandbox; auto-approves workspace changes)
+  - Avoid `--yolo` as default (only with explicit executive decision).
 
-TRILHO B — Subagente Hermes usando provider openai-codex (tarefas gerais)
-- Configurar `delegation.provider` + `delegation.model` para apontar para openai-codex.
-- Executar via `delegate_task(...)` quando a tarefa for paralelizável e não exigir interatividade de CLI.
-
-
-POLÍTICA DE ROTEAMENTO (REGRA OBJETIVA)
-
-1) Se a tarefa envolve alteração de arquivos/código em repo, refactor, revisão de PR, ou execução de testes → TRILHO A (Codex CLI).
-2) Se a tarefa é geral (pesquisa/síntese/plano/comparação/checklist) e o objetivo é velocidade/paralelismo → TRILHO B (delegate_task com provider Codex).
-3) Se a tarefa é híbrida → Hermes/Exocórtex decompõe:
-   - análise/decisão aqui
-   - implementação no Codex CLI
-   - validação aqui
+TRACK B — Hermes subagent using openai-codex provider (general tasks)
+- Configure `delegation.provider` + `delegation.model` to point to openai-codex.
+- Execute via `delegate_task(...)` when the task is parallelizable and doesn't require CLI interactivity.
 
 
-PADRÕES DE PROMPT (CONTRATOS DE SAÍDA)
+## Routing Policy (Objective Rule)
 
-A) Template mínimo para Codex CLI (sempre pedir evidência verificável)
-
-- Objetivo (1 linha)
-- Contexto (paths, versões, constraints)
-- Critérios de aceitação
-- Restrições (não mexer em X; manter API)
-- Validação: comandos a rodar (test/lint/build)
-- Saída obrigatória:
-  - lista de arquivos alterados
-  - resumo por arquivo
-  - comandos executados + status
-  - riscos/limitações
-
-B) Template mínimo para delegate_task
-
-- Escopo do subagente (o que ele PODE e NÃO PODE fazer)
-- Forma do output (estrutura explícita)
-- Fontes: se puder usar web/file/terminal, dizer claramente
-- Pedido de “assumptions list” (para separar fato de inferência)
+1) If the task involves file/code changes in repo, refactoring, PR review, or test execution → TRACK A (Codex CLI).
+2) If the task is general (research/synthesis/plan/comparison/checklist) and the goal is speed/parallelism → TRACK B (delegate_task with Codex provider).
+3) If the task is hybrid → Hermes/Exocórtex decomposes:
+   - Analysis/decision here
+   - Implementation in Codex CLI
+   - Validation here
 
 
-VERIFICAÇÃO (PÓS-EXECUÇÃO)
+## Prompt Patterns (Output Contracts)
 
-Após Codex CLI:
-- `git status` (limpo vs sujo)
-- `git diff` (inspecionar)
-- rodar testes/lint conforme stack
-- se falhar: pedir correção incremental ao Codex com contexto (log + diff)
+A) Minimum template for Codex CLI (always request verifiable evidence)
 
-Após delegate_task:
-- validar se o output é acionável
-- quando houver comando sugerido: executar você mesmo (ou gerar DRAFT se ação externa)
+- Objective (1 line)
+- Context (paths, versions, constraints)
+- Acceptance criteria
+- Restrictions (don't touch X; keep API)
+- Validation: commands to run (test/lint/build)
+- Required output:
+  - List of changed files
+  - Per-file summary
+  - Commands executed + status
+  - Risks/limitations
 
+B) Minimum template for delegate_task
 
-GOVERNANÇA PARA GATEWAY (LLM PRINCIPAL POR API)
-
-Meta: a operação não pode depender do modelo principal do gateway.
-
-- TRILHO A (CLI) é sempre local e funciona mesmo que o gateway use outro LLM.
-- TRILHO B depende apenas de `delegation.*` estar configurado; deve continuar estável quando `model.default/provider` do Hermes mudar.
-
-Aceite (smoke tests):
-- Rodar um `codex exec` em repo descartável e checar `git diff`.
-- Rodar um `delegate_task` simples e confirmar execução.
-- Trocar o modelo principal do Hermes (gateway/API) e repetir o `delegate_task`.
+- Subagent scope (what it CAN and CANNOT do)
+- Output format (explicit structure)
+- Sources: if it can use web/file/terminal, state clearly
+- Request an "assumptions list" (to separate fact from inference)
 
 
-ECOSSISTEMA/COMUNIDADE (O QUE VALE AVALIAR)
+## Verification (Post-Execution)
+
+After Codex CLI:
+- `git status` (clean vs dirty)
+- `git diff` (inspect)
+- Run tests/lint per stack
+- If failure: request incremental fix from Codex with context (log + diff)
+
+After delegate_task:
+- Validate output is actionable
+- When commands are suggested: execute yourself (or generate DRAFT if external action)
+
+
+## Gateway Governance (Main LLM via API)
+
+Goal: operations must not depend on the gateway's main model.
+
+- TRACK A (CLI) is always local and works even if the gateway uses another LLM.
+- TRACK B depends only on `delegation.*` being configured; must remain stable when `model.default/provider` of Hermes changes.
+
+Acceptance (smoke tests):
+- Run a `codex exec` in a disposable repo and check `git diff`.
+- Run a simple `delegate_task` and confirm execution.
+- Switch the Hermes main model (gateway/API) and repeat the `delegate_task`.
+
+
+## Ecosystem/Community (Worth Evaluating)
 
 - Plugin "Hermes Agent Gateway" (Bigsunnyboy/hermes-codex-gateway):
-  - objetivo: governança chat→fila→worktree→runner→verify→artefatos
-  - útil quando a execução deve ser comandada por chat com guardrails (approve/allow/verify)
+  - Purpose: chat→queue→worktree→runner→verify→artifacts governance
+  - Useful when execution should be commanded by chat with guardrails (approve/allow/verify)
 - Plugin "Hermes Codex Learning" (New-dev0/hermes-codex-learning):
-  - objetivo: instrumentar sessões do Codex e exportar artefatos locais para o Hermes aprender
+  - Purpose: instrument Codex sessions and export local artifacts for Hermes to learn
 - Harness "Maestro" (ReinaMacCredy/maestro):
-  - objetivo: estado local durável (spec→task→verify→ship) para múltiplos agentes
+  - Purpose: durable local state (spec→task→verify→ship) for multiple agents
 
-Ver `references/hermes-community-codex.md` para notas curtas e critérios.
-
-
-PITFALLS (NÃO ESQUECER)
-
-- Codex CLI exige git repo; para scratch usar `mktemp -d && git init`.
-- Sempre usar `pty=true` ao chamar Codex CLI pelo terminal.
-- Não “chutar” string de `delegation.model`: descobrir via `hermes model` e então setar config.
-- Não confundir: provider do modelo principal ≠ provider da delegação.
+See `references/hermes-community-codex.md` for short notes and criteria.
 
 
-EVOLUÇÃO (QUANDO PRODUTIZAR)
+## Pitfalls (Don't Forget)
 
-Quando o fluxo estiver provado:
-- encapsular em um skill-operacional (ou scripts) com:
-  - criação automática de worktree
-  - execução codex
-  - captura de evidências (diff/test)
-  - limpeza
+- Codex CLI requires git repo; for scratch use `mktemp -d && git init`.
+- Always use `pty=true` when calling Codex CLI via terminal.
+- Don't "guess" `delegation.model` string: discover via `hermes model` then set config.
+- Don't confuse: main model provider ≠ delegation provider.
 
+
+## Evolution (When to Productize)
+
+When the flow is proven:
+- Encapsulate in an operational skill (or scripts) with:
+  - Automatic worktree creation
+  - Codex execution
+  - Evidence capture (diff/test)
+  - Cleanup

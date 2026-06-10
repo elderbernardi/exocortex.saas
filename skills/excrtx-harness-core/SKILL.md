@@ -1,6 +1,6 @@
 ---
 name: excrtx-harness-core
-description: "Harness caseiro para operar Codex CLI (exec) com rastreabilidade e verificação leve, sem plugins de terceiros."
+description: "Homegrown harness to operate Codex CLI (exec) with traceability and lightweight verification, without third-party plugins."
 version: 0.2.0
 created_by: agent
 platforms: [linux]
@@ -8,77 +8,77 @@ metadata:
   intent: class-level
 ---
 
-# Codex Harness (caseiro)
+# Codex Harness (homegrown)
 
-Skill de operao para usar **Codex CLI** como executor de trabalho (especialmente cdigo) de forma reprodutedvel, com rastreabilidade local, **sem depender de plugins comunite1rios**.
+Operational skill for using **Codex CLI** as a work executor (especially code) in a reproducible way, with local traceability, **without relying on community plugins**.
 
-Ne3o e9 uma skill de *learning*; e9 um harness de execue7e3o + evideancia.
+Not a *learning* skill; it's an execution + evidence harness.
 
-## Quando usar
+## When to Use
 
-- O usue1rio quer *Codex para codar* (alterar arquivos, refatorar, criar scripts).
-- O usue1rio quer delegar execue7f5es para o Codex sem acoplar ao modelo do gateway Hermes.
-- Vocea precisa de um rastro local do que foi pedido/feito (prompt + saedda + evideancia git).
+- The executive wants *Codex to code* (modify files, refactor, create scripts).
+- The executive wants to delegate executions to Codex without coupling to the Hermes gateway model.
+- You need a local trace of what was requested/done (prompt + output + git evidence).
 
-## Artefatos (local)
+## Artifacts (local)
 
-Padre3o recomendado: usar o wrapper em `~/.hermes/scripts/codex_learning/` que grava em:
+Recommended pattern: use the wrapper at `~/.hermes/scripts/codex_learning/` which records to:
 
 - `~/.hermes/codex-learning/runs/*.json`
 - `~/.hermes/codex-learning/events/*.json`
 
-## Modos
+## Modes
 
-### 1) Scratch (padre3o seguro)
+### 1) Scratch (safe default)
 
-Use quando a tarefa ne3o depende de um repo real.
+Use when the task doesn't depend on a real repo.
 
-- cria diretf3rio tempore1rio
-- inicializa git
-- roda Codex
-- captura evideancia
+- Creates temporary directory
+- Initializes git
+- Runs Codex
+- Captures evidence
 
-Exemplo:
+Example:
 
 ```bash
 python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py \
   --scratch \
   --full-auto \
-  --prompt 'Crie hello.py que imprime "hello" e rode python3 hello.py.'
+  --prompt 'Create hello.py that prints "hello" and run python3 hello.py.'
 ```
 
-### 2) Repo ne3o-credtico (aberto)
+### 2) Non-critical repo (open)
 
-Use apenas quando explicitamente direcionado e o repo e9 ne3o-credtico.
+Use only when explicitly directed and the repo is non-critical.
 
 ```bash
 python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py \
-  --cd /caminho/do/repo \
+  --cd /path/to/repo \
   --full-auto \
   --prompt '...'
 ```
 
-## Flags e seme2ntica
+## Flags and Semantics
 
-- `--full-auto`: deve permitir escrita. Internamente, **mapear para** `--sandbox workspace-write` (o Codex vem depreciando `--full-auto`).
-- `--yolo`: evita como padre3o; sf3 quando o usue1rio pedir explicitamente.
+- `--full-auto`: allows writes. Internally, **maps to** `--sandbox workspace-write` (Codex is deprecating `--full-auto`).
+- `--yolo`: avoid as default; only when the executive explicitly requests it.
 
-## Evideancia: o que capturar (ne3o-negocie1vel)
+## Evidence: What to Capture (non-negotiable)
 
-1) Prompt e comando executado.
-2) stdout/stderr (com truncamento).
+1) Prompt and command executed.
+2) stdout/stderr (with truncation).
 3) Git evidence:
    - `git status --porcelain`
    - `git_diff_stat`
-   - lista de arquivos alterados **incluindo untracked** (importante).
+   - List of changed files **including untracked** (important).
 
-## Pitfalls (aprendidos em produe7e3o)
+## Pitfalls (learned in production)
 
-- `git diff --name-only` e `git diff --stat` **ne3o mostram arquivos untracked** (`??`). Para medir "changed files" corretamente, derive do `git status --porcelain` e/ou `git ls-files --others --exclude-standard`.
-- Codex pode cair em sandbox read-only se ne3o houver flag de escrita. Para tarefas que esperam criae7e3o/edie7e3o de arquivo, use `--full-auto` (ou equivalente `--sandbox workspace-write`).
-- `--full-auto` pode aparecer como deprecated em builds recentes; preferir `--sandbox workspace-write`.
+- `git diff --name-only` and `git diff --stat` **don't show untracked files** (`??`). To measure "changed files" correctly, derive from `git status --porcelain` and/or `git ls-files --others --exclude-standard`.
+- Codex can fall into read-only sandbox without a write flag. For tasks expecting file creation/editing, use `--full-auto` (or equivalent `--sandbox workspace-write`).
+- `--full-auto` may appear as deprecated in recent builds; prefer `--sandbox workspace-write`.
 
-## Refereancias
+## References
 
-- `references/codex-cli-gotchas.md` (gotchas + sinais em stderr + como interpretar)
-- `references/harness-truth-contract.md` (checklist para alinhar promessas da feature, arquivos reais, `setup.sh`, `HERMES_HOME` e dogfood antes de declarar PASS)
+- `references/codex-cli-gotchas.md` (gotchas + stderr signals + how to interpret)
+- `references/harness-truth-contract.md` (checklist to align feature promises, actual files, `setup.sh`, `HERMES_HOME` and dogfood before declaring PASS)

@@ -1,49 +1,49 @@
-# Publicação de branch e PR — review draft-first
+# Branch and PR Publication — Draft-First Review
 
-Use este fluxo quando o executivo pedir push, PR, comentário em PR/issue ou qualquer publicação de estado do repositório.
+Use this flow when the executive asks for push, PR, PR/issue comment, or any repository state publication.
 
-## Objetivo
+## Purpose
 
-Evitar que publicação externa misture:
-- escopo real do commit/branch
-- ruído local no working tree
-- duplicação de branch remota ou PR já existente
+Prevent external publication from mixing:
+- Real commit/branch scope
+- Local working tree noise
+- Remote branch or PR duplication
 
-## Checklist mínimo antes do DRAFT
+## Minimum Checklist Before DRAFT
 
-1. Confirmar branch atual e HEAD.
-2. Confirmar o commit exato que será publicado.
-3. Comparar a branch contra a base (`origin/main` ou base equivalente).
-4. Separar:
-   - arquivos no diff rastreado da branch
-   - arquivos paralelos locais fora de escopo (modified/untracked fora do commit)
-5. Verificar se a branch remota já existe.
-6. Verificar se já existe PR para a mesma head branch.
-7. Rodar os checks relevantes e registrar resultado real.
-8. Só então montar o DRAFT.
+1. Confirm current branch and HEAD.
+2. Confirm the exact commit to be published.
+3. Compare the branch against the base (`origin/main` or equivalent base).
+4. Separate:
+   - Files in the tracked branch diff
+   - Local parallel files out of scope (modified/untracked outside the commit)
+5. Check if the remote branch already exists.
+6. Check if a PR already exists for the same head branch.
+7. Run relevant checks and record actual results.
+8. Only then build the DRAFT.
 
-## Forma do DRAFT
+## DRAFT Format
 
-### DRAFT de push
-- impacto externo
-- comando exato de push
-- confirmação do commit/branch publicados
-- confirmação explícita do que fica de fora
+### Push DRAFT
+- External impact
+- Exact push command
+- Confirmation of published commit/branch
+- Explicit confirmation of what stays out
 
-### DRAFT de PR
-- base branch
-- head branch
-- título sugerido
-- corpo sugerido
-- test plan com checks realmente executados
-- riscos e pendências explícitas
+### PR DRAFT
+- Base branch
+- Head branch
+- Suggested title
+- Suggested body
+- Test plan with actually executed checks
+- Explicit risks and pending items
 
-## Pitfalls observados
+## Observed Pitfalls
 
-- "working tree sujo" não significa automaticamente que o push publicará tudo; diferenciar estado local de escopo commitado evita falso alarme.
-- Push e PR são dois efeitos externos distintos; exigir aprovação separada reduz erro operacional.
-- Se o smoke/harness ficar bloqueado pelo ambiente, registrar como pendência real; não preencher o PR como se tivesse sido executado.
+- "Dirty working tree" doesn't automatically mean the push will publish everything; differentiating local state from committed scope avoids false alarms.
+- Push and PR are two distinct external effects; requiring separate approval reduces operational error.
+- If smoke/harness gets blocked by the environment, record as real pending item; don't fill the PR as if it had been executed.
 
-## Resultado esperado
+## Expected Result
 
-O executivo recebe um pacote de publicação verificável: o que entra, o que fica fora, o que já foi validado e o comando pronto para aprovação.
+The executive receives a verifiable publication package: what goes in, what stays out, what was already validated, and the command ready for approval.

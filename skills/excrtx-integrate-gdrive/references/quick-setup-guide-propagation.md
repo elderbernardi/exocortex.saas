@@ -1,47 +1,47 @@
-# Quick-setup guide propagation (Google Cloud OAuth)
+# Quick-Setup Guide Propagation (Google Cloud OAuth)
 
-Objetivo: garantir que o script `gcloud_quick_setup.py` seja deployado junto com a skill `google-workspace` em reprovisionamento.
+Goal: ensure the `gcloud_quick_setup.py` script is deployed alongside the `google-workspace` skill during reprovisioning.
 
-## Escopo
+## Scope
 
-O script gera links pré-configurados do Google Cloud Console com o project ID auto-detectado,
-eliminando a necessidade de navegação manual no console. Reduz o setup de ~9 passos para ~3.
+The script generates pre-configured Google Cloud Console links with auto-detected project ID,
+eliminating the need for manual console navigation. Reduces setup from ~9 steps to ~3.
 
-## Onde vive
+## Where It Lives
 
 - **Seed/repo:** `scripts/gcloud_quick_setup.py` (exocortex.saas)
-- **Runtime Hermes:** `$HERMES_HOME/skills/productivity/google-workspace/scripts/gcloud_quick_setup.py`
-- **Integração:** `$HERMES_HOME/skills/productivity/google-workspace/scripts/setup.py --setup-guide`
+- **Hermes runtime:** `$HERMES_HOME/skills/productivity/google-workspace/scripts/gcloud_quick_setup.py`
+- **Integration:** `$HERMES_HOME/skills/productivity/google-workspace/scripts/setup.py --setup-guide`
 
-## Requisitos de propagação
+## Propagation Requirements
 
-1. Copiar `gcloud_quick_setup.py` para `$HERMES_HOME/skills/productivity/google-workspace/scripts/` no provisioning.
-2. Garantir que `setup.py` tenha o comando `--setup-guide` funcional.
-3. Script deve ser standalone (funciona com `python gcloud_quick_setup.py` direto).
+1. Copy `gcloud_quick_setup.py` to `$HERMES_HOME/skills/productivity/google-workspace/scripts/` during provisioning.
+2. Ensure `setup.py` has a functional `--setup-guide` command.
+3. Script must be standalone (works with `python gcloud_quick_setup.py` directly).
 
-## Detecção de projeto
+## Project Detection
 
-Ordem de precedência para auto-detecção do project ID:
-1. `client_secret.json` existente em `~/.hermes/` (extrai prefixo numérico do client_id)
-2. `gcloud config get-value project` (se gcloud CLI disponível)
+Precedence order for auto-detecting the project ID:
+1. Existing `client_secret.json` in `~/.hermes/` (extracts numeric prefix from client_id)
+2. `gcloud config get-value project` (if gcloud CLI available)
 3. `gcloud projects list --limit=1` (fallback)
-4. Se nada encontrado → instruir usuário a fornecer `--project ID`
+4. If nothing found → instruct user to provide `--project ID`
 
-## Smoke test pós-deploy
+## Post-Deploy Smoke Test
 
 ```bash
-# Detecção automática (deve encontrar projeto)
+# Auto-detection (should find project)
 python $HERMES_HOME/skills/productivity/google-workspace/scripts/gcloud_quick_setup.py --format json
 
 # Via setup.py
 python $HERMES_HOME/skills/productivity/google-workspace/scripts/setup.py --setup-guide text
 
-# Formato texto
+# Text format
 python $HERMES_HOME/skills/productivity/google-workspace/scripts/gcloud_quick_setup.py --format text
 ```
 
 ## Pitfall
 
-O script `gcloud_quick_setup.py` depende de `_hermes_home.py` (módulo sibling).
-Se copiado para outro diretório sem `_hermes_home.py`, falha na importação.
-Sempre manter junto com os outros scripts da skill `google-workspace`.
+The `gcloud_quick_setup.py` script depends on `_hermes_home.py` (sibling module).
+If copied to another directory without `_hermes_home.py`, import fails.
+Always keep together with the other `google-workspace` skill scripts.

@@ -1,44 +1,44 @@
-# Macroverso, Microversos e Tarefa — alinhamento semântico
+# Macroverso, Microversos, and Task — Semantic Alignment
 
-Aprendizado consolidado desta classe de tarefa:
+Consolidated learning from this class of task:
 
-## Correção de filosofia
+## Philosophy Correction
 
-Não modelar assim:
-- Microverso = sala
+Don't model like this:
+- Microverso = room
 
-Modelar assim:
-- Macroverso = quem fala
-- Microversos = entidades semânticas e operacionais autocontidas
-- Tarefa = sala operacional concreta onde a execução acontece
+Model like this:
+- Macroverso = who is speaking
+- Microversos = self-contained semantic and operational entities
+- Task = concrete operational room where execution happens
 
-## Regra operacional
+## Operational Rule
 
-Para qualquer canvas não-trivial:
-1. declarar o estado do macroverso
-2. identificar o microverso principal que ancora a tarefa
-3. listar microversos secundários apenas quando houver apoio real
-4. explicitar restrições de compartilhamento entre microversos em tarefas cross-domain
-5. descrever a tarefa como espaço operacional, não como domínio
+For any non-trivial canvas:
+1. Declare the macroverso state
+2. Identify the primary microverso that anchors the task
+3. List secondary microversos only when there's real support
+4. Make explicit the sharing constraints between microversos in cross-domain tasks
+5. Describe the task as an operational space, not as a domain
 
 ## Pitfall
 
-Erro comum: usar "microverso" como sinônimo de contexto/sala/ambiente ativo.
+Common mistake: using "microverso" as a synonym for active context/room/environment.
 
-Por que isso é ruim:
-- colapsa domínio e execução numa só coisa
-- apaga a diferença entre âncora principal e apoios secundários
-- enfraquece o controle de compartilhamento entre microversos
-- deixa o canvas filosoficamente fora do contrato do Exocórtex
+Why this is bad:
+- Collapses domain and execution into one thing
+- Erases the difference between primary anchor and secondary supports
+- Weakens sharing control between microversos
+- Leaves the canvas philosophically outside the Exocórtex contract
 
-## Heurística curta
+## Short Heuristic
 
-Pergunta certa:
-- que microverso ancora?
-- quais microversos apoiam?
-- que tarefa/sala estamos abrindo?
-- que fronteiras de compartilhamento precisam ser respeitadas?
+Right questions:
+- Which microverso anchors?
+- Which microversos support?
+- Which task/room are we opening?
+- Which sharing boundaries need to be respected?
 
-## Sinal de falha
+## Failure Signal
 
-Se a formulação do canvas puder ser lida como "estamos na sala X" quando X é um domínio, o canvas está errado. A sala é a tarefa; X é o microverso.
+If the canvas formulation can be read as "we are in room X" where X is a domain, the canvas is wrong. The room is the task; X is the microverso.

@@ -1,55 +1,55 @@
 ---
 name: excrtx-quality-taste
-description: Quality Gate Visual - seleciona automaticamente o sub-skill correto para outputs visuais premium
+description: Visual Quality Gate — auto-selects the correct sub-skill for premium visual outputs
 version: 1.0.0
 metadata:
   hermes:
     tags: [exocortex, quality, visual, design, anti-slop]
 ---
 
-# Taste Skill - Visual Quality Gate
+# Taste Skill — Visual Quality Gate
 
-Conjunto de sub-skills que quebram defaults estatísticos de LLMs na geração de UI e outputs visuais.
+Sub-skills that break LLM statistical defaults in UI and visual output generation.
 
 ## Sub-Skills
 
-### gpt-taste (UI premium / landing pages)
-Ativar quando o output é uma landing page, produto web ou interface de usuário.
-Regras: layout variado via randomização, estrutura AIDA, hero max 2-3 linhas, bento grid sem gaps, GSAP motion, sem meta-labels como SECTION 01.
-Detalhes completos em: gpt-taste.md
+### gpt-taste (premium UI / landing pages)
+Activate when the output is a landing page, web product, or user interface.
+Rules: varied layout via randomization, AIDA structure, hero max 2-3 lines, bento grid without gaps, GSAP motion, no meta-labels like SECTION 01.
+Full details: gpt-taste.md
 
-### brandkit (identidade visual / marca)
-Ativar quando o output envolve identidade visual, logos, brand boards ou sistemas de cor/tipografia.
-Detalhes completos em: brandkit.md
+### brandkit (visual identity / branding)
+Activate when the output involves visual identity, logos, brand boards, or color/typography systems.
+Full details: brandkit.md
 
-### brutalist (dados pesados / dashboards)
-Ativar quando o output apresenta métricas, dashboards, visualização de dados ou interfaces data-heavy.
-Estilo: tipografia Swiss, estrutura raw, alto contraste, linguagem visual mecânica.
-Detalhes completos em: brutalist.md
+### brutalist (data-heavy / dashboards)
+Activate when the output presents metrics, dashboards, data visualization, or data-heavy interfaces.
+Style: Swiss typography, raw structure, high contrast, mechanical visual language.
+Full details: brutalist.md
 
-## Routing Automático
+## Auto-Routing
 
-O orquestrador seleciona o sub-skill por contexto:
-- Output de dados/métricas → brutalist
-- Output de identidade/marca → brandkit
-- Output de landing/produto/UI → gpt-taste
+The orchestrator selects the sub-skill by context:
+- Data/metrics output → brutalist
+- Identity/branding output → brandkit
+- Landing/product/UI output → gpt-taste
 
-## Integração com Design System
+## Design System Integration
 
-Antes de gerar qualquer output visual, verificar se `excrtx-quality-designsys`
-tem tokens resolvidos para o microverso ativo:
+Before generating any visual output, check whether `excrtx-quality-designsys`
+has resolved tokens for the active microverso:
 
-1. Chamar RESOLVE da skill `excrtx-quality-designsys`
-2. Se tokens existem → usar como base para cores, tipografia e spacing
-3. Se não existem → aplicar defaults do sub-skill ativo (gpt-taste/brutalist)
+1. Call RESOLVE from `excrtx-quality-designsys`
+2. If tokens exist → use as base for colors, typography, and spacing
+3. If tokens don't exist → apply defaults from the active sub-skill (gpt-taste/brutalist)
 
-Fluxo completo: `brandkit` (criação) → `excrtx-quality-designsys` (tokens) → `excrtx-quality-taste` (validação)
+Flow: `brandkit` (creation) → `excrtx-quality-designsys` (tokens) → `excrtx-quality-taste` (validation)
 
 ## Anti-Slop Checks
 
-Antes de entregar qualquer output visual:
-- Headings com mais de 3 linhas? Alargar container.
-- Grid com espaços vazios? Aplicar grid-flow-dense.
-- Meta-labels genéricos (SECTION 01)? Remover.
-- Texto de botão invisível? Fixar contraste.
-- Layout repetitivo (sempre left/right)? Variar.
+Before delivering any visual output:
+- Headings longer than 3 lines? Widen container.
+- Grid with empty spaces? Apply grid-flow-dense.
+- Generic meta-labels (SECTION 01)? Remove.
+- Invisible button text? Fix contrast.
+- Repetitive layout (always left/right)? Vary.

@@ -1,46 +1,46 @@
-# Hindsight single-container setup (Exocórtex default)
+# Hindsight Single-Container Setup (Exocórtex Default)
 
-Objetivo: setup local simples, persistente e reversível para um único Hermes por máquina.
+Goal: simple, persistent, and reversible local setup for a single Hermes per machine.
 
-## Topologia padrão
+## Default Topology
 
-- 1 container Hindsight (`exocortex-hindsight`)
-- diretório: `~/.hermes/hindsight-local`
-- persistência: `~/.hermes/hindsight-local/data`
-- API local: `localhost:8888`
-- UI local: `localhost:9999`
+- 1 Hindsight container (`exocortex-hindsight`)
+- Directory: `~/.hermes/hindsight-local`
+- Persistence: `~/.hermes/hindsight-local/data`
+- Local API: `localhost:8888`
+- Local UI: `localhost:9999`
 
-## Ordem obrigatória no setup
+## Mandatory Setup Order
 
-1. Provisionar Docker local do Hindsight.
-2. Preparar `~/.hermes/hindsight/config.json` a partir de template.
-3. Sincronizar `llm_model` e `llm_base_url` com `~/.hermes/config.yaml`.
-4. Só então ativar `memory.provider=hindsight`.
-5. Após ativação, desativar memória simples local:
+1. Provision local Hindsight Docker.
+2. Prepare `~/.hermes/hindsight/config.json` from template.
+3. Sync `llm_model` and `llm_base_url` with `~/.hermes/config.yaml`.
+4. Only then activate `memory.provider=hindsight`.
+5. After activation, disable simple local memory:
    - `memory.memory_enabled=false`
    - `memory.user_profile_enabled=false`
 
-## Escopo de memória neste padrão
+## Memory Scope in This Pattern
 
-- Um Hindsight por instância Hermes.
-- Perfis `exec` e `evol` compartilham o mesmo bank.
-- `bank_id_template` recomendado: `exocortex`.
+- One Hindsight per Hermes instance.
+- Profiles `exec` and `evol` share the same bank.
+- Recommended `bank_id_template`: `exocortex`.
 
-## Reset destrutivo (guardrail)
+## Destructive Reset (guardrail)
 
-Excluir memória local apenas com confirmação dupla:
+Delete local memory only with double confirmation:
 
 - `EXOCORTEX_HINDSIGHT_RESET_DATA=1`
 - `EXOCORTEX_HINDSIGHT_CONFIRM_DELETE=DELETE_HINDSIGHT_MEMORY`
 
-Sem as duas flags, preservar dados.
+Without both flags, preserve data.
 
-## Validação mínima
+## Minimum Validation
 
-1. `hermes memory status` sem erro de disponibilidade.
-2. Nova sessão após restart da superfície (CLI/Gateway).
-3. Recall útil sem ruído excessivo.
+1. `hermes memory status` without availability error.
+2. New session after surface restart (CLI/Gateway).
+3. Useful recall without excessive noise.
 
-## Observação de compatibilidade
+## Compatibility Note
 
-`local_embedded` descreve storage local. Pode ainda existir exigência de autenticação do plugin para ficar `available`.
+`local_embedded` describes local storage. There may still be a plugin authentication requirement to become `available`.

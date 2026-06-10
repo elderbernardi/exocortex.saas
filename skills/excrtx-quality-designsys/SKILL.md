@@ -1,6 +1,6 @@
 ---
 name: excrtx-quality-designsys
-description: "Persistir, resolver e validar tokens visuais no Acervo Cognitivo. Fork de design-md adaptado ao cascade macro→micro do Exocórtex."
+description: "Persist, resolve, and validate visual tokens in the Acervo Cognitivo. Fork of design-md adapted to the macro→micro cascade of Exocórtex."
 version: 1.0.0
 author: Exocórtex
 metadata:
@@ -12,42 +12,42 @@ metadata:
 
 # Exocórtex Design System
 
-Skill para gerenciar tokens visuais no Acervo Cognitivo.
-Baseada no formato Google DESIGN.md (YAML tokens + markdown prosa).
+Skill for managing visual tokens in the Acervo Cognitivo.
+Based on the Google DESIGN.md format (YAML tokens + markdown prose).
 
-Complementa o ecossistema:
-- **brandkit** (taste sub-skill) → guia criativo para *definir* identidade visual
-- **excrtx-quality-designsys** (esta) → *persiste e resolve* tokens no acervo
-- **excrtx-quality-taste** → *valida qualidade* do output visual
+Complements the ecosystem:
+- **brandkit** (taste sub-skill) → creative guide to *define* visual identity
+- **excrtx-quality-designsys** (this one) → *persists and resolves* tokens in the Acervo
+- **excrtx-quality-taste** → *validates quality* of visual output
 
 ## When This Skill Activates
 
-Ativar quando:
-- Uma tarefa precisa de tokens visuais (cores, tipografia, spacing) para gerar output
-- O executivo quer definir, revisar ou atualizar o estilo visual
-- O agente precisa resolver cascade de estilo (global + micro override)
-- Lint ou validação WCAG dos tokens é necessária
-- Export de tokens para formato externo (Tailwind, DTCG) é solicitado
+Activate when:
+- A task needs visual tokens (colors, typography, spacing) to generate output
+- The executive wants to define, review, or update the visual style
+- The agent needs to resolve style cascade (global + micro override)
+- Token WCAG lint or validation is needed
+- Token export to external format (Tailwind, DTCG) is requested
 
 ## Acervo Paths
 
 ```
 ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
 
-# Fonte de verdade (tokens base)
+# Source of truth (base tokens)
 DESIGN_GLOBAL="$ACERVO/global/DESIGN.md"
 
-# Overrides por microverso (opcional — apenas deltas)
+# Per-microverso overrides (optional — deltas only)
 DESIGN_MICRO="$ACERVO/micro/{slug}/DESIGN.md"
 
-# Assets de identidade (binários: logo, favicon)
+# Identity assets (binaries: logo, favicon)
 ASSETS="$ACERVO/macro/assets/"
 ```
 
 ## Format: Google DESIGN.md
 
-O formato combina YAML frontmatter (tokens machine-readable) com markdown body
-(rationale human-readable). Spec: `google-labs-code/design.md` (Apache-2.0).
+The format combines YAML frontmatter (machine-readable tokens) with markdown body
+(human-readable rationale). Spec: `google-labs-code/design.md` (Apache-2.0).
 
 ### Token Types
 
@@ -73,137 +73,137 @@ O formato combina YAML frontmatter (tokens machine-readable) com markdown body
 
 ## Operation: RESOLVE
 
-Resolver tokens visuais para o contexto ativo (cascade global → micro).
+Resolve visual tokens for the active context (cascade global → micro).
 
 ### Procedure
 
-1. **Ler `global/DESIGN.md`** — tokens base (obrigatório):
+1. **Read `global/DESIGN.md`** — base tokens (mandatory):
    ```bash
    cat "$DESIGN_GLOBAL"
    ```
 
-2. **Verificar se microverso ativo tem override:**
+2. **Check if active microverso has override:**
    ```bash
    test -f "$ACERVO/micro/{slug}/DESIGN.md"
    ```
 
-3. **Se override existe:**
-   - Ler `micro/{slug}/DESIGN.md`
-   - Verificar campo `extends: global` no frontmatter
-   - Mesclar: tokens do micro vencem tokens do global (override)
-   - Tokens não declarados no micro → herdados do global
+3. **If override exists:**
+   - Read `micro/{slug}/DESIGN.md`
+   - Verify `extends: global` field in frontmatter
+   - Merge: micro tokens override global tokens
+   - Tokens not declared in micro → inherited from global
 
-4. **Se override NÃO existe:**
-   - Usar global puro (100% herança)
+4. **If override does NOT exist:**
+   - Use pure global (100% inheritance)
 
-5. **Retornar tokens resolvidos** para a skill que solicitou.
+5. **Return resolved tokens** to the requesting skill.
 
 ### Merge Logic
 
 ```
-Para cada token no DESIGN.md global:
-  SE micro declara o mesmo token → usar valor do micro
-  SENÃO → usar valor do global
+For each token in global DESIGN.md:
+  IF micro declares the same token → use micro value
+  ELSE → use global value
 
-Tokens que existem APENAS no micro (ex: componentes específicos)
-→ adicionar ao resultado (extensão, não conflito)
+Tokens that exist ONLY in micro (e.g., specific components)
+→ add to result (extension, not conflict)
 ```
 
 ### Verification
 
-- [ ] global/DESIGN.md lido
-- [ ] Override detectado corretamente (existe ou não)
-- [ ] Merge respeita cascade (micro vence global)
-- [ ] Tokens resolvidos são completos (nenhum token global perdido)
+- [ ] global/DESIGN.md read
+- [ ] Override detected correctly (exists or not)
+- [ ] Merge respects cascade (micro overrides global)
+- [ ] Resolved tokens are complete (no global token lost)
 
 ---
 
 ## Operation: WRITE
 
-Criar ou atualizar DESIGN.md no acervo.
+Create or update DESIGN.md in the Acervo.
 
 ### Procedure
 
-1. **Determinar escopo:**
-   - Tokens do executivo (paleta base) → `global/DESIGN.md`
-   - Override de microverso → `micro/{slug}/DESIGN.md`
+1. **Determine scope:**
+   - Executive's tokens (base palette) → `global/DESIGN.md`
+   - Microverso override → `micro/{slug}/DESIGN.md`
 
-2. **Se escrevendo override em micro:**
-   - Adicionar `extends: global` no frontmatter YAML
-   - Incluir APENAS tokens que diferem do global
-   - NÃO copiar tokens inalterados
+2. **If writing micro override:**
+   - Add `extends: global` in YAML frontmatter
+   - Include ONLY tokens that differ from global
+   - Do NOT copy unchanged tokens
 
-3. **Validar formato:**
-   - YAML frontmatter válido
-   - Hex colors entre aspas (`"#1a73e8"`)
-   - Dimensões negativas entre aspas (`"-0.02em"`)
-   - Seções na ordem canônica
+3. **Validate format:**
+   - Valid YAML frontmatter
+   - Hex colors in quotes (`"#1a73e8"`)
+   - Negative dimensions in quotes (`"-0.02em"`)
+   - Sections in canonical order
 
-4. **Logar operação** via `excrtx-memory-manager` (log.md do escopo).
+4. **Log operation** via `excrtx-memory-manager` (log.md of the scope).
 
-5. **Atualizar index.md** se arquivo novo.
+5. **Update index.md** if new file.
 
-### Integração com brandkit
+### Integration with brandkit
 
-Quando o executivo quer definir identidade visual:
+When the executive wants to define visual identity:
 
-1. Ativar `brandkit` (sub-skill de taste) como guia criativo
-2. brandkit coleta: posicionamento, personalidade, tensão visual, público
-3. brandkit define: cores proprietárias, sistema tipográfico, linguagem visual
-4. **Esta skill persiste** o resultado como DESIGN.md no acervo
+1. Activate `brandkit` (taste sub-skill) as creative guide
+2. brandkit collects: positioning, personality, visual tension, audience
+3. brandkit defines: proprietary colors, typographic system, visual language
+4. **This skill persists** the result as DESIGN.md in the Acervo
 
-Fluxo: `brandkit` (criação) → `excrtx-quality-designsys` (persistência)
+Flow: `brandkit` (creation) → `excrtx-quality-designsys` (persistence)
 
 ### Rules
 
-- NUNCA duplicar tokens globais em override de micro
-- Override de micro DEVE ter `extends: global`
-- Hex colors SEMPRE entre aspas (YAML requirement)
-- Token references usam dotted path: `{colors.primary}`, nunca `{primary}`
+- NEVER duplicate global tokens in micro override
+- Micro override MUST have `extends: global`
+- Hex colors ALWAYS in quotes (YAML requirement)
+- Token references use dotted path: `{colors.primary}`, never `{primary}`
 
 ---
 
 ## Operation: LINT
 
-Validar DESIGN.md usando CLI do Google.
+Validate DESIGN.md using Google CLI.
 
 ### Procedure
 
 ```bash
-# Validar estrutura + token references + WCAG contrast
+# Validate structure + token references + WCAG contrast
 npx -y @google/design.md lint "$DESIGN_GLOBAL"
 
-# Se override existe
+# If override exists
 npx -y @google/design.md lint "$ACERVO/micro/{slug}/DESIGN.md"
 ```
 
-### What lint catches
+### What Lint Catches
 
-- `broken-ref` — referência a token inexistente
-- `duplicate-section` — heading duplicado
-- `invalid-color`, `invalid-dimension`, `invalid-typography` — formato errado
-- `wcag-contrast` — contraste textColor vs backgroundColor abaixo de WCAG AA (4.5:1)
-- `unknown-component-property` — propriedade fora do whitelist
+- `broken-ref` — reference to nonexistent token
+- `duplicate-section` — duplicate heading
+- `invalid-color`, `invalid-dimension`, `invalid-typography` — wrong format
+- `wcag-contrast` — textColor vs backgroundColor contrast below WCAG AA (4.5:1)
+- `unknown-component-property` — property outside whitelist
 
 ---
 
 ## Operation: EXPORT
 
-Gerar formato consumível a partir dos tokens resolvidos.
+Generate consumable format from resolved tokens.
 
 ### Procedure
 
 ```bash
-# Export para Tailwind theme JSON
+# Export to Tailwind theme JSON
 npx -y @google/design.md export --format tailwind "$DESIGN_GLOBAL" > tailwind.theme.json
 
-# Export para W3C DTCG (Design Tokens Format Module) JSON
+# Export to W3C DTCG (Design Tokens Format Module) JSON
 npx -y @google/design.md export --format dtcg "$DESIGN_GLOBAL" > tokens.json
 ```
 
 ### CSS Custom Properties (manual)
 
-Se o export nativo não atender, gerar CSS manualmente a partir dos tokens YAML:
+If native export doesn't suffice, generate CSS manually from YAML tokens:
 
 ```css
 :root {
@@ -218,20 +218,20 @@ Se o export nativo não atender, gerar CSS manualmente a partir dos tokens YAML:
 
 ## Pitfalls
 
-- **Hex colors must be quoted strings.** `#1A1C1E` sem aspas quebra YAML.
+- **Hex colors must be quoted strings.** `#1A1C1E` without quotes breaks YAML.
 - **Negative dimensions need quotes.** `letterSpacing: -0.02em` → `letterSpacing: "-0.02em"`.
-- **Section order is enforced.** Reordenar se necessário.
-- **`version: alpha`** é a versão atual da spec (Apr 2026).
-- **Override NÃO é standalone.** Sem `extends: global`, agente trata como spec completa.
+- **Section order is enforced.** Reorder if necessary.
+- **`version: alpha`** is the current spec version (Apr 2026).
+- **Override is NOT standalone.** Without `extends: global`, agent treats it as complete spec.
 - **Token references resolve by dotted path.** `{colors.primary}` ✓, `{primary}` ✗.
 
 ---
 
 ## ADR
 
-- ADR-006: Design System — Google DESIGN.md como formato de tokens visuais
-  - Formato machine-readable com tooling nativo (lint, diff, export)
-  - Tokens em global/ (sob demanda) — não em macro/ (evita custo de contexto)
-  - Assets visuais (logo) em macro/assets/ (binários, sem custo de contexto)
+- ADR-006: Design System — Google DESIGN.md as visual token format
+  - Machine-readable format with native tooling (lint, diff, export)
+  - Tokens in global/ (on demand) — not in macro/ (avoids context cost)
+  - Visual assets (logo) in macro/assets/ (binaries, no context cost)
   - Cascade: global = base, micro = override (extends: global)
-  - brandkit = guia criativo, excrtx-quality-designsys = persistência
+  - brandkit = creative guide, excrtx-quality-designsys = persistence

@@ -1,94 +1,94 @@
-# Batch Backlog Intake — Múltiplos itens brutos → Backlog Estruturado
+# Batch Backlog Intake — Multiple Raw Items → Structured Backlog
 
-> Quando o executivo envia um lote de links, comandos, observações e screenshots e espera que virem backlog organizado.
+> When the executive sends a batch of links, commands, observations, and screenshots and expects them to become organized backlog.
 
 ## Trigger
 
-Usar quando o executivo envia múltiplos itens simultaneamente (>3) com instruções como "cria issues", "coloca no backlog", "adiciona como tarefa", "organiza isso".
+Use when the executive sends multiple items simultaneously (>3) with instructions like "cria issues", "coloca no backlog", "adiciona como tarefa", "organiza isso".
 
-## Princípio
+## Principle
 
-O lote bruto não pode virar backlog solto. Cada item precisa de:
-- contexto adicional (quando ausente, pedir ou inferir razoavelmente)
-- classificação: tipo + prioridade + área
-- escopo inicial
-- critério de aceite
+The raw batch cannot become loose backlog. Each item needs:
+- Additional context (when absent, ask or infer reasonably)
+- Classification: type + priority + area
+- Initial scope
+- Acceptance criteria
 
-## Fluxo
+## Flow
 
-### 1. Coleta e consolidação
+### 1. Collection and Consolidation
 
-Agrupar itens por afinidade temática antes de classificar:
+Group items by thematic affinity before classifying:
 
-- Integrações externas (links, MCPs, serviços)
-- Setup/infraestrutura (instalações, binários, configs)
-- Arquitetura e comportamento (decisões de design)
-- Modelos e roteamento (provedores, rankings)
-- Docs e pesquisa (Reddit, manuais)
-- Bugfixes (drift, nomes, ruído)
+- External integrations (links, MCPs, services)
+- Setup/infrastructure (installations, binaries, configs)
+- Architecture and behavior (design decisions)
+- Models and routing (providers, rankings)
+- Docs and research (Reddit, manuals)
+- Bugfixes (drift, names, noise)
 
-Itens ambíguos demais para implementação direta → marcar como `research` ou `chore` com escopo de clarificação.
+Items too ambiguous for direct implementation → mark as `research` or `chore` with clarification scope.
 
-### 2. Classificação por item
+### 2. Per-Item Classification
 
-Cada item recebe:
+Each item receives:
 
-| Campo | Valores |
+| Field | Values |
 |---|---|
-| **tipo** | `bug`, `feature`, `docs`, `infra`, `research`, `chore` |
-| **prioridade** | `P0` (bloqueante), `P1` (próximo ciclo), `P2` (quando der), `P3` (nice-to-have) |
-| **área** | `hermes`, `exocortex`, `memory`, `ui`, `integration`, `models`, `docbrain`, `google`, `telegram` (ajustar ao contexto) |
+| **type** | `bug`, `feature`, `docs`, `infra`, `research`, `chore` |
+| **priority** | `P0` (blocker), `P1` (next cycle), `P2` (when possible), `P3` (nice-to-have) |
+| **area** | `hermes`, `exocortex`, `memory`, `ui`, `integration`, `models`, `docbrain`, `google`, `telegram` (adjust to context) |
 
-Regra: itens com dependência entre si herdam a prioridade do mais alto. Ex.: se `gcloud` (P1) bloqueia Google Workspace (P1), ambos P1.
+Rule: items with dependencies between them inherit the priority of the highest. E.g., if `gcloud` (P1) blocks Google Workspace (P1), both P1.
 
-### 3. Documentação com contexto + escopo + critério
+### 3. Documentation with Context + Scope + Criteria
 
-Cada issue/backlog-item deve ter:
+Each issue/backlog-item must have:
 
 ```markdown
-### Título
-[Ação] [objeto] — até 80 caracteres, orientado a decisão ou próxima ação
+### Title
+[Action] [object] — up to 80 chars, oriented to decision or next action
 
-### Contexto
-Por que isso existe? O que levou a registrar? 2-3 frases.
+### Context
+Why does this exist? What led to registering it? 2-3 sentences.
 
-### Escopo inicial
-- O que fazer primeiro
-- O que NÃO fazer
-- Dependências conhecidas
+### Initial Scope
+- What to do first
+- What NOT to do
+- Known dependencies
 
-### Critérios de aceite
-- [ ] Condição verificável A
-- [ ] Condição verificável B
+### Acceptance Criteria
+- [ ] Verifiable condition A
+- [ ] Verifiable condition B
 ```
 
-**Pitfall:** Itens sem critério de aceite viram tarefas que nunca terminam. Sempre definir "como saber que isso está pronto".
+**Pitfall:** Items without acceptance criteria become tasks that never finish. Always define "how to know this is done."
 
-### 4. Apresentação e aprovação
+### 4. Presentation and Approval
 
-- Consolidar em arquivo markdown local (`candidate-issues.md` ou similar)
-- Apresentar como DRAFT (seguindo o protocolo Draft-First)
-- Só criar issues/kanban-cards apó s aprovação explícita
+- Consolidate in a local markdown file (`candidate-issues.md` or similar)
+- Present as DRAFT (following Draft-First protocol)
+- Only create issues/kanban-cards after explicit approval
 
-### 5. Priorização relativa
+### 5. Relative Prioritization
 
-Apresentar ordem sugerida de ataque:
+Present suggested attack order:
 
 ```
-P0 — itens que bloqueiam outros
-P1 — itens para o ciclo atual
-P2 — itens documentados mas não imediatos
-P3 — itens que precisam de clarificação primeiro
+P0 — items that block others
+P1 — items for the current cycle
+P2 — documented but not immediate items
+P3 — items that need clarification first
 ```
 
-## Gatilho de design
+## Design Trigger
 
-Quando um backlog pedido envolver **decisão arquitetural** (ex.: "A, B ou C?"), não dar resposta pronta — apresentar opções com trade-offs e pedir escolha explícita antes de registrar.
+When a requested backlog involves **architectural decision** (e.g., "A, B, or C?"), don't give a ready answer — present options with trade-offs and ask for explicit choice before registering.
 
-## Exemplo desta sessão
+## Example from This Session
 
-Nesta sessão, 16 itens brutos (links + comandos + screenshot + observações) foram consolidados em `candidate-issues.md` com:
-- classificação tipo/prioridade/área
-- contexto + escopo + critério por item
-- ordem de ataque sugerida (P0→P3)
-- 1 issue criada no GitHub após aprovação
+In this session, 16 raw items (links + commands + screenshot + observations) were consolidated in `candidate-issues.md` with:
+- type/priority/area classification
+- context + scope + criteria per item
+- suggested attack order (P0→P3)
+- 1 issue created on GitHub after approval
