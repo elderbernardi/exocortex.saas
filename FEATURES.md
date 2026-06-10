@@ -437,9 +437,9 @@ Organizadas em 7 categorias funcionais, totalizando **40 skills**.
 |---|---|
 | **Funcionalidade** | Política operacional para aprendizado com NotebookLM. Define rota CLI-first (`nlm`) com fallback MCP (`notebooklm-mcp`). Quando sem fontes fornecidas: busca as 10 melhores fontes por autoridade, atualidade, cobertura e diversidade. Se lacuna documental: deep research → web search → re-query. |
 | **Como usar** | Ativado automaticamente quando a tarefa exige aprender/sintetizar conhecimento. Também quando o executivo pede explicitamente NotebookLM. |
-| **Instalação** | `setup.sh` via `configure_notebooklm_integration()`: instala `nlm` via `uv tool install notebooklm-mcp-cli`, registra MCP server `notebooklm`. |
+| **Instalação** | `setup.sh` via `configure_notebooklm_integration()`: instala `nlm` via `uv tool install notebooklm-mcp-cli` (fallback: `pip`), registra MCP server `notebooklm`. Versão mínima: **0.7.0** (versões anteriores têm protocolo de auth quebrado). |
 | **Dependências de Skills** | Nenhuma |
-| **Dependências de Tools** | `nlm` CLI, `notebooklm-mcp`, `uv`, autenticação via `nlm login` |
+| **Dependências de Tools** | `nlm` CLI (>= 0.7.0), `notebooklm-mcp`, `uv` (preferencial) ou `pip` (fallback), autenticação via `nlm login` |
 
 #### EX-29. NotebookLM Ops (`excrtx-integrate-nlmops`)
 

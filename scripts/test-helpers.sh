@@ -49,7 +49,7 @@ TOTAL_PENDING=0
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
 ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
-SKILLS_DST="$HERMES_HOME/skills/exocortex"
+SKILLS_DST="$HERMES_HOME/skills/excrtx"
 HARNESS_MODEL="${EXOCORTEX_HARNESS_MODEL:-openai/gpt-5.4}"
 REPO_PATH="${EXOCORTEX_REPO_PATH:-}"
 SYNC_ENABLED="${EXOCORTEX_SYNC_ENABLED:-1}"
@@ -510,7 +510,7 @@ run_smoke_test() {
   # Build the full prompt with context
   local full_prompt="Você é o Hermes executando smoke test pós-provisionamento.
 Feature: ${feature_id} (${skill_name})
-Skill: \$HERMES_HOME/skills/exocortex/${skill_name}/
+Skill: \$HERMES_HOME/skills/excrtx/${skill_name}/
 Acervo: \$ACERVO/
 
 Tarefa: ${smoke_prompt}
@@ -594,7 +594,7 @@ A feature ${feature_id} (${skill_name}) falhou na verificação.
 
 Erro detectado: ${error_desc}
 
-Skill path: \$HERMES_HOME/skills/exocortex/${skill_name}/
+Skill path: \$HERMES_HOME/skills/excrtx/${skill_name}/
 Acervo: \$ACERVO/
 
 Tente diagnosticar e consertar o problema. Logue cada ação tomada.

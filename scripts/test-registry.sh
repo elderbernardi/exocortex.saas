@@ -541,25 +541,79 @@ test_EX28() {
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
   check_no_skill_deps
-  check_tool_in_path "uv"
+
+  # Package manager: uv preferred, pip accepted as fallback
+  if command -v uv >/dev/null 2>&1; then
+    log_check_pass "uv disponível"
+  elif command -v pip >/dev/null 2>&1 || python3 -m pip --version >/dev/null 2>&1; then
+    log_check_pass "pip disponível (fallback para uv)"
+  elif [ "$SKIP_API" = "1" ]; then
+    log_check_pending "uv e pip ausentes — pendente de instalação"
+  else
+    log_check_fail "nenhum gerenciador de pacotes Python (uv/pip) disponível"
+  fi
+
   check_tool_in_path "notebooklm-mcp"
 
+  # nlm CLI: existence + version + auth + real operation
   if command -v nlm >/dev/null 2>&1; then
-    log_check_pass "nlm CLI disponível"
+    local nlm_ver
+    nlm_ver=$(nlm --version 2>/dev/null | grep -oP '[\d]+\.[\d]+\.[\d]+' | head -1)
+
+    if [ -n "$nlm_ver" ]; then
+      log_check_pass "nlm CLI disponível (v$nlm_ver)"
+
+      # Minimum version gate: < 0.7.0 has broken auth protocol
+      local IFS=.
+      local ver_parts=($nlm_ver)
+      if [ "${ver_parts[0]:-0}" -eq 0 ] && [ "${ver_parts[1]:-0}" -lt 7 ]; then
+        log_check_fail "nlm $nlm_ver desatualizado — atualize para >= 0.7.0 (pip install --upgrade notebooklm-mcp-cli)"
+      else
+        log_check_pass "nlm versão >= 0.7.0"
+      fi
+    else
+      log_check_fail "nlm presente mas --version não retornou versão parseável"
+    fi
+
+    # Auth check: real HTTP call to Google
     if nlm login --check >/dev/null 2>&1; then
-      log_check_pass "nlm autenticado"
+      log_check_pass "nlm auth operacional"
     elif [ "$SKIP_API" = "1" ]; then
       log_check_pending "nlm login não autenticado — pendente de credencial"
     else
-      log_check_fail "nlm login não autenticado"
+      log_check_fail "nlm login não autenticado — execute: nlm login"
     fi
+
+    # Real operation: list notebooks (prova que API está funcional)
+    if [ "$SKIP_API" != "1" ]; then
+      if nlm notebook list --title >/dev/null 2>&1; then
+        log_check_pass "nlm operação real OK (notebook list)"
+      else
+        log_check_fail "nlm auth passou mas listagem de notebooks falhou"
+      fi
+    fi
+
   elif [ "$SKIP_API" = "1" ]; then
     log_check_pending "nlm CLI não instalado — pendente"
   else
     log_check_fail "nlm CLI não encontrado"
   fi
 
-  SMOKE_PROMPT="Verifique se nlm CLI está funcional e o MCP server notebooklm está registrado."
+  # MCP discovery ≠ auth: warn if MCP passes but nlm auth fails
+  if command -v hermes >/dev/null 2>&1; then
+    if hermes mcp list 2>/dev/null | grep -q "notebooklm"; then
+      log_check_pass "MCP server notebooklm registrado"
+      if command -v nlm >/dev/null 2>&1 && ! nlm login --check >/dev/null 2>&1; then
+        if [ "$SKIP_API" != "1" ]; then
+          log_check_fail "MCP discovery OK mas auth operacional falhou — o MCP test gera falso positivo"
+        fi
+      fi
+    else
+      log_check_fail "MCP server notebooklm não registrado"
+    fi
+  fi
+
+  SMOKE_PROMPT="Verifique se nlm CLI está funcional (versão >= 0.7.0), auth OK, operação real funciona, e MCP server notebooklm NÃO gera falso positivo quando auth falha."
 }
 
 test_EX29() {
