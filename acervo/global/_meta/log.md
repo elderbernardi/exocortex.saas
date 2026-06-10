@@ -10,3 +10,6 @@
 - Natures: context, knowledge, contracts, workflows, tools, reflections
 - Directories: raw/ (articles, documents, assets), _archive/
 - [2026-06-01T21:06:19-03:00] Contrato global de identidade Exocórtex sobre Hermes criado em `contracts/exocortex-hermes-identity-contract.md`.
+- [2026-06-10] create | Ecossistema Visual — Design System do Exocórtex em `knowledge/ecossistema-visual-design-system.md`
+  - Conhecimento promovido após sessão de evolução sobre issue #18 (brandkit generator)
+  - Abrange: formato Google DESIGN.md, cascade global→micro, tooling, skills envolvidas, estado atual, path mismatch conhecido
