@@ -14,13 +14,16 @@ confidence: medium
 > Quando este arquivo ultrapassar ~150 linhas, promover para diretório.
 
 ## Fatos-Chave
+
 <!-- Informações factuais do domínio. Exemplo:
 - Receita mensal: R$ 2.3M (Q3 2026)
 - Equipe: 12 pessoas (4 eng, 3 produto, 5 ops)
 -->
 
 ## Métricas
+
 <!-- KPIs e métricas relevantes. -->
 
 ## Referências
+
 <!-- Links para fontes em raw/ ou URLs externas. -->

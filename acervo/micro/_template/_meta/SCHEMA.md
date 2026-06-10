@@ -1,29 +1,37 @@
 # Wiki Schema — Microverso Template
 
 ## Domain
+
 {{DOMAIN_NAME}}
 
 ## Description
+
 {{DOMAIN_DESCRIPTION}}
 
 ## Type
+
 {{micro_type}}
+
 <!-- Options: client | project | domain | role -->
 
 ## Owner
+
 @elder
 
 ## Loading Strategy
+
 - `index.md` carregado quando Microverso entra no scope da tarefa
 - Natures carregadas sob demanda (por query ou por step do workflow)
 - NUNCA carregar todas as Natures de uma vez
 
 ## Isolation Rules
+
 - Conteúdo deste Microverso NÃO pode ser copiado para outros Microversos
 - Cross-refs vão para shared/cross-refs/ com ponteiro mínimo aqui
 - Wikilinks [[page]] são INTRA-microverso apenas
 
 ## Neighbors
+
 <!-- Microversos que frequentemente interagem com este. Exemplo:
 - cliente-alfa (via shared/cross-refs/)
 -->
@@ -57,6 +65,7 @@ Cada diretório de Nature contém pelo menos um `_seed.md` (template inicial).
 O valor de `nature:` no frontmatter DEVE corresponder ao diretório onde o arquivo reside (ex: arquivo em `prompts/` → `nature: prompts`).
 
 ## Conventions
+
 - File names: lowercase, hyphens, no spaces
 - YAML frontmatter obrigatório em toda página wiki
 - Tags devem constar na taxonomia abaixo
@@ -64,6 +73,7 @@ O valor de `nature:` no frontmatter DEVE corresponder ao diretório onde o arqui
 - Quando um diretório de Nature ultrapassa ~200 linhas totais, considerar split em múltiplos arquivos
 
 ## Frontmatter
+
 ```yaml
 ---
 title: Título da Página
@@ -78,14 +88,17 @@ confidence: high | medium | low
 ```
 
 ## Tag Taxonomy
+
 <!-- Customize per domain. Starting defaults: -->
+
 - Nature: context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections
 - Priority: critico, importante, referencia
 
 ## Page Thresholds
-- Promover Nature: quando arquivo ultrapassa ~150 linhas → converter para diretório com _index.md
+
+- Promover Nature: quando arquivo ultrapassa ~150 linhas → converter para diretório com \_index.md
 - Split de página wiki: quando ultrapassa ~200 linhas
-- Archive: quando conteúdo é supersedido → mover para _archive/
+- Archive: quando conteúdo é supersedido → mover para \_archive/
 
 ## Style Override (DESIGN.md)
 
@@ -97,6 +110,7 @@ confidence: high | medium | low
 - Criação guiada por `brandkit` via `exocortex-design-system`
 
 ## Update Policy
+
 - Alterações locais — sem aprovação extra necessária
 - Alterações que afetam global/ — confirmar com executivo
 - Logar toda alteração em log.md

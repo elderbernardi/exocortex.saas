@@ -13,11 +13,14 @@ confidence: medium
 > Situação atual deste domínio. Atualizado conforme o cenário muda.
 
 ## Situação Atual
+
 <!-- Descrever o estado atual do domínio: o que está acontecendo, quais são as
      prioridades, deadlines, stakeholders ativos. -->
 
 ## Histórico Recente
+
 <!-- Eventos recentes relevantes para entender o momento atual. -->
 
 ## Prioridades Ativas
+
 <!-- Top 3-5 prioridades ordenadas por urgência. -->
