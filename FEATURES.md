@@ -405,11 +405,7 @@ Organizadas em 7 categorias funcionais, totalizando **40 skills**.
 
 | Campo | Detalhe |
 |---|---|
-| **Funcionalidade** | Opera Google Drive via API direta (sem Composio) com foco em robustez de busca e validação. Complementa as skills nativas do Hermes com hardening: filtro `trashed = false`, paginação com `nextPageToken`, campos expandidos (`id, name, mimeType, modifiedTime, webViewLink`), suporte a `--raw-query`. |
-| **Como usar** | Ativado quando tarefas envolvem busca, leitura ou escrita no Drive. |
-| **Instalação** | `setup.sh` aplica patch em `google_api.py` do Hermes via `patch_google_drive_search()`. O driver runtime esperado fica em `$HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py` (fallback observado: `$HERMES_HOME/hermes-agent/skills/productivity/google-workspace/scripts/google_api.py`). Composio removido pelo baseline MCP (`enforce_mcp_baseline()`). Himalaya removido pelo baseline de email (`enforce_email_baseline()`). |
-| **Dependências de Skills** | Google Workspace nativa do Hermes (H-07) |
-| **Dependências de Tools** | Google Credentials (ADC ou gcloud auth) |
+| **Funcionalidade** | Opera Google Drive via API direta (sem Composio) com foco em robustez de busca e validação. Complementa as skills nativas do Hermes com hardening: filtro `trashed = false`, paginação com `nextPageToken`, campos expandidos (`id, name, mimeType, modifiedTime, webViewLink`), suporte a `--raw-query`. |\n| **Como usar** | Ativado quando tarefas envolvem busca, leitura ou escrita no Drive. |\n| **Instalação** | `setup.sh` aplica patch em `google_api.py` (step-06) e provisiona credenciais (step-06b): instala `gcloud` CLI (user-space ou snap/pacman) e orienta fluxo OAuth. O driver runtime esperado fica em `$HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py`. Auth primária: OAuth 2.0 (`google_token.json` via `setup.py`). Alternativa: gcloud ADC (`gcloud auth application-default login`), mas `google_api.py` usa exclusivamente OAuth token. |\n| **Dependências de Skills** | Google Workspace nativa do Hermes (H-07) |\n| **Dependências de Tools** | `gcloud` CLI (>= 571.0), OAuth 2.0 Client Secret (`google_client_secret.json`), token OAuth (`google_token.json`) |
 
 #### EX-26. OAuth MCP (`excrtx-integrate-oauth`)
 
@@ -427,9 +423,10 @@ Organizadas em 7 categorias funcionais, totalizando **40 skills**.
 |---|---|
 | **Funcionalidade** | Integra engine DocBrain (parser de documentos) para ingestão ágil de PDFs e bases legadas. Valida engine local, reproduz instalação em novas instâncias. |
 | **Como usar** | Ativado quando o executivo precisa processar documentos PDF ou fontes legadas para ingestão no Acervo. |
-| **Instalação** | `setup.sh` via `configure_docbrain_engine()`: clona `github.com/ProjetoBB/docBrainBB.git` em `$EXOCORTEX_HOME/tools/docbrain/`, executa `npm install && npm run build`. |
+| **Repo Fonte** | `github.com/elderbernardi/docbrain.git` (desenvolvimento). Fork de integração com CLI API: `github.com/ProjetoBB/docBrainBB.git`. |
+| **Instalação** | `setup.sh` via `configure_docbrain_engine()`: clona `github.com/ProjetoBB/docBrainBB.git` em `${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}`, executa `npm install && npm run build`. |
 | **Dependências de Skills** | `excrtx-memory-intake` |
-| **Dependências de Tools** | `git`, `npm`, Node.js, `OPENROUTER_API_KEY` ou `DOCBRAIN_LLM_API_KEY` |
+| **Dependências de Tools** | `git`, `npm`, Node.js, `OPENROUTER_API_KEY` ou `DOCBRAIN_LLM_API_KEY` (mesma key DeepSeek) |
 
 #### EX-28. NotebookLM Router (`excrtx-integrate-nlmroute`)
 
@@ -665,7 +662,9 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 | `EXOCORTEX_HOME` | Sim (default: `~/exocortex`) | Workspace cognitivo |
 | `ACERVO` | Sim (default: `$EXOCORTEX_HOME/acervo`) | Acervo Cognitivo |
 | `TELEGRAM_BOT_TOKEN` | Não | Gateway Telegram |
-| `OPENROUTER_API_KEY` | Não | DocBrain + LLM routing |
+| `OPENROUTER_API_KEY` | Não | DocBrain + LLM routing (mesma key DeepSeek) |
+| `EXOCORTEX_DOCBRAIN_DIR` | Não (default: `$EXOCORTEX_HOME/tools/docbrain`) | Path da instância DocBrain |
+| `DOCBRAIN_LLM_API_KEY` | Não | Override de key específico para DocBrain |
 | `CONTEXT7_API_KEY` | Não | Context7 MCP (docs técnicos) |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | Não | Ativar Hindsight Docker |
 

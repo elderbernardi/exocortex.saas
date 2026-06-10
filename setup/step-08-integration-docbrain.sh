@@ -33,13 +33,28 @@ configure_docbrain_engine() {
   log "DocBrain dependências/build verificados"
   if [ -n "${OPENROUTER_API_KEY:-}" ] || [ -n "${DOCBRAIN_LLM_API_KEY:-}" ]; then
     log "Key LLM disponível para DocBrain"
+    # Cleanup stale reminder if key now exists
+    if [ -f "$HERMES_HOME/reminders/docbrain-llm-key.md" ]; then
+      rm -f "$HERMES_HOME/reminders/docbrain-llm-key.md"
+      log "Reminder stale removido (key já disponível)"
+    fi
   else
     mkdir -p "$HERMES_HOME/reminders"
-    cat > "$HERMES_HOME/reminders/docbrain-llm-key.md" <<'EOF'
+    cat > "$HERMES_HOME/reminders/docbrain-llm-key.md" <<'REMINDER'
 # Pending DocBrain LLM key
+
 DocBrain is installed, but no LLM key was available during setup.
-Configure OPENROUTER_API_KEY in the Hermes environment.
-EOF
+
+## Before acting on this reminder
+
+Check the live environment first — if OPENROUTER_API_KEY or DOCBRAIN_LLM_API_KEY
+is already set, this reminder is stale and should be deleted.
+
+## If no key exists
+
+Configure OPENROUTER_API_KEY in the Hermes environment (use the same DeepSeek key).
+DocBrain will reuse it automatically.
+REMINDER
     info "Sem key LLM; lembrete criado em $HERMES_HOME/reminders/docbrain-llm-key.md"
   fi
 }

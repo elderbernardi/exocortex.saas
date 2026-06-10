@@ -479,27 +479,66 @@ test_EX25() {
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
 
-  # Check Google credentials
-  local creds_ok=false
-  if [ -f "$HOME/.config/gcloud/application_default_credentials.json" ]; then
-    creds_ok=true
-  elif [ -n "${GOOGLE_APPLICATION_CREDENTIALS:-}" ] && [ -f "${GOOGLE_APPLICATION_CREDENTIALS}" ]; then
-    creds_ok=true
-  elif command -v gcloud >/dev/null 2>&1; then
-    if gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>/dev/null | grep -q "@"; then
-      creds_ok=true
+  # Package manager: gcloud CLI installed?
+  if [ -x "$HOME/.local/google-cloud-sdk/bin/gcloud" ] || command -v gcloud >/dev/null 2>&1; then
+    log_check_pass "gcloud CLI disponível"
+  elif [ "$SKIP_API" = "1" ]; then
+    log_check_pending "gcloud CLI não instalado — pendente"
+  else
+    log_check_fail "gcloud CLI não instalado"
+  fi
+
+  # OAuth token (primary auth method for google_api.py)
+  local oauth_token="$HERMES_HOME/google_token.json"
+  local setup_py="$HERMES_HOME/skills/productivity/google-workspace/scripts/setup.py"
+
+  if [ -f "$oauth_token" ]; then
+    if [ -f "$setup_py" ] && python3 "$setup_py" --check >/dev/null 2>&1; then
+      log_check_pass "OAuth token válido (google_token.json)"
+    elif [ -f "$setup_py" ]; then
+      log_check_fail "OAuth token presente mas inválido/expirado — execute: python3 $setup_py --check"
+    else
+      log_check_pass "OAuth token presente (setup.py não encontrado para validação)"
+    fi
+  elif [ -f "$HERMES_HOME/google_client_secret.json" ]; then
+    if [ "$SKIP_API" = "1" ]; then
+      log_check_pending "Client secret OK mas OAuth token ausente — pendente de fluxo OAuth"
+    else
+      log_check_fail "Client secret presente mas OAuth token ausente — execute: python3 $setup_py --auth-url"
+    fi
+  else
+    if [ "$SKIP_API" = "1" ]; then
+      log_check_pending "Credenciais Google OAuth não configuradas — pendente"
+    else
+      log_check_fail "Credenciais Google OAuth não configuradas — veja $HERMES_HOME/reminders/google-drive-oauth-setup.md"
     fi
   fi
 
-  if $creds_ok; then
-    log_check_pass "Google credentials disponíveis"
-  elif [ "$SKIP_API" = "1" ]; then
-    log_check_pending "Google credentials — pendente de auth"
-  else
-    log_check_fail "Google credentials não encontradas"
+  # gcloud ADC (alternative, not used by google_api.py)
+  if [ -f "$HOME/.config/gcloud/application_default_credentials.json" ]; then
+    log_check_pass "gcloud ADC disponível (alternativo; google_api.py requer OAuth)"
+  elif gcloud auth application-default print-access-token >/dev/null 2>&1; then
+    log_check_pass "gcloud ADC funcional"
   fi
 
-  SMOKE_PROMPT="Verifique se o patch de Drive search (trashed=false, nextPageToken) está aplicado."
+  # Drive API hardening
+  local gapi="$HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py"
+  if [ -f "$gapi" ]; then
+    if python3 -m py_compile "$gapi" 2>/dev/null; then
+      log_check_pass "google_api.py compila OK"
+      if grep -q "trashed = false" "$gapi" 2>/dev/null; then
+        log_check_pass "Drive search hardening aplicado (trashed=false)"
+      else
+        log_check_fail "Drive search hardening ausente"
+      fi
+    else
+      log_check_fail "google_api.py falha em py_compile"
+    fi
+  else
+    log_check_fail "google_api.py não encontrado"
+  fi
+
+  SMOKE_PROMPT="Verifique se google_api.py compila, hardening está aplicado, e OAuth token está válido (google_token.json). gcloud ADC é alternativo — a API direta usa OAuth."
 }
 
 test_EX26() {
