@@ -12,8 +12,8 @@ skills:
 - excrtx-harness-kanban
 - excrtx-produce-artifacts
 - excrtx-memory-intake
-- excrtx-quality-gate
-- excrtx-govern-tools
-- excrtx-behavior-vetor
-- excrtx-behavior-canvas
-- excrtx-quality-antislop
+# Behavioral/governance skills removed from always-load:
+# excrtx-quality-gate, excrtx-govern-tools, excrtx-behavior-vetor,
+# excrtx-behavior-canvas, excrtx-quality-antislop
+# → Now compiled into SOUL_SEED.md (compiled_rules).
+# → Still available via `skill_view` for on-demand depth.

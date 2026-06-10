@@ -266,6 +266,7 @@
 266|echo -e "  ${BOLD}Próximos passos:${NC}"
 267|echo -e "    ${GREEN}hermes${NC}                          # iniciar sessão interativa"
 268|echo -e "    ${GREEN}hermes -p manut${NC}                 # modo manutenção"
+268b|echo -e "    ${GREEN}hermes -p chat${NC}                  # modo chat (sem harness)"
 269|echo ''
 270|
 271|# Telegram status

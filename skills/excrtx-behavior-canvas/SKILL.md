@@ -6,6 +6,11 @@
 6|metadata:
 7|  hermes:
 8|    tags: [exocortex, behavior, canvas, parsing, intent, v0.4]
+compiled_rules: |
+  For complex inputs: parse focus, vector, gaps, urgency into a structured canvas block before responding.
+  Required fields: focus (string), vetor (execucao|evolucao|manutencao|ambiguo), intent_type (explorar|decidir|produzir|revisar|manter).
+  Optional: macroverso_status, microverso_primary, gaps[], urgency.
+  Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.
 9|---
 10|
 11|# Canvas Cognitivo — Extrator de Ponteiros (v0.4)

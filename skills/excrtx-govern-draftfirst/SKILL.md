@@ -6,6 +6,11 @@
 6|metadata:
 7|  hermes:
 8|    tags: [exocortex, behavior, draft, approval, safety]
+compiled_rules: |
+  External actions (push, deploy, email, message, calendar, shared docs): generate DRAFT, present to executive, wait for explicit approval.
+  Internal actions (commit, test, lint, file edits, reads): execute directly without DRAFT.
+  Self-delivery to executive's own channel: allowed without DRAFT when content is operational (not speech to third parties).
+  Never assume approval. Never interpret silence as consent.
 9|---
 10|
 # Draft-First — Interceptor de Ações com Efeito Externo

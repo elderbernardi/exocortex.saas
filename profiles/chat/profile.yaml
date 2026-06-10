@@ -1,0 +1,4 @@
+description: "Modo chat — LLM sem harness do Exocórtex. Sem quality gates, sem classificação de vetor, sem Draft-First. Para conversas rápidas ou quando o executivo quer interagir com o modelo bruto."
+description_auto: false
+bundle: null
+skills: []

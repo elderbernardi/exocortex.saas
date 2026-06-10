@@ -5,6 +5,12 @@ version: 1.0.0
 metadata:
   hermes:
     tags: [exocortex, quality, anti-slop, writing]
+compiled_rules: |
+  Cut filler phrases, throat-clearing openers, emphasis crutches, all adverbs.
+  Break formulaic structures: no binary contrasts, no dramatic fragmentation, no rhetorical setups.
+  Active voice only. Be specific — no vague declaratives. Vary rhythm.
+  Trust readers: state facts directly, skip softening and hand-holding.
+  Score 1-10 on: Directness, Rhythm, Trust, Authenticity, Density. Min: 35/50.
 ---
 
 # Stop Slop

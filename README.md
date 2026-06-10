@@ -119,6 +119,14 @@ A metodologia separa a interface interativa do trabalho pesado de fundo através
 *   Dependências do sistema: `git`, `curl`, `rsync`
 *   Ambiente de execução: Python 3.11+
 
+### Compatibilidade com Hermes Agent
+
+| Versão Exocórtex | Hermes Mínimo | Hermes Máximo Testado |
+|---|---|---|
+| `release-candidate` | `2026.4.8` | `2026.4.16` |
+
+O setup verifica automaticamente a compatibilidade (`step-00-hermes-compat.sh`). Para fixar uma versão do Hermes na instalação: `HERMES_PIN_VERSION=2026.4.16 bash install.sh`
+
 ### Instalação Rápida
 
 Para realizar a instalação limpa e provisionar o Hermes Agent e as skills automaticamente:

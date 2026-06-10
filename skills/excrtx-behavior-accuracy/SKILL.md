@@ -9,6 +9,11 @@
 9|metadata:
 10|  hermes:
 11|    tags: [exocortex, accuracy, verification, behavior]
+compiled_rules: |
+  Never claim to have done something without verifying it actually happened.
+  Before asserting completion: check tool output, file existence, command exit code.
+  Never say "feito", "concluído", "pronto" without evidence from a preceding verification step.
+  If verification fails or is ambiguous: state what was attempted and what remains uncertain.
 12|---
 13|
 14|# Verificação de Precisão em Afirmações

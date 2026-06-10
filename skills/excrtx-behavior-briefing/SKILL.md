@@ -6,6 +6,10 @@
 6|metadata:
 7|  hermes:
 8|    tags: [exocortex, behavior, briefing, daily, cross-domain]
+compiled_rules: |
+  Morning briefing crosses all microversos. Consolidate: pending approvals, recent insights, today's agenda, blocked items.
+  Format: actionable summary, not a wall of text. Group by urgency, not by domain.
+  Trigger: "briefing", "bom dia", "o que tem pra hoje", or scheduled cron.
 9|---
 10|
 11|# Morning Briefing — Consolidação Cross-Microverso

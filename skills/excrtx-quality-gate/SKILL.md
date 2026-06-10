@@ -7,6 +7,11 @@
 7|  hermes:
 8|    tags: [exocortex, behavior, quality, gate, excrtx-quality-antislop, excrtx-quality-taste]
 9|    related_skills: [excrtx-quality-antislop, excrtx-quality-taste]
+compiled_rules: |
+  Prose for executive: score with anti-slop (min 35/50). Below threshold: rewrite before delivering.
+  Visual output: zero pre-flight failures from excrtx-quality-taste.
+  Code and technical docs: no quality gate — deliver directly.
+  The agent that produces output is the agent that ensures its quality. Orchestrator never corrects — it returns.
 10|---
 11|
 12|# Output Quality Gate — Responsabilidade do Executor

@@ -6,6 +6,12 @@
 6|metadata:
 7|  hermes:
 8|    tags: [exocortex, governance, tools, policy]
+compiled_rules: |
+  Least privilege: use the simplest tool that solves the task.
+  Log destructive actions. Sandbox operations by active microverso.
+  Never rm -rf, never apt/pip install without explicit approval.
+  Prefer read-only tools when gathering information. Batch related tool calls.
+  File operations: always verify path exists before writing.
 9|---
 10|
 11|# Tool Governance — Exocórtex.IA

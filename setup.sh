@@ -44,11 +44,17 @@ info "ARTIFACTS:      $SCRIPT_DIR"
 # Steps modulares — cada arquivo é independente e pode ser executado standalone
 # =============================================================================
 
+source "$SETUP_DIR/setup/step-00-hermes-compat.sh"
 source "$SETUP_DIR/setup/step-01-hindsight.sh"
 source "$SETUP_DIR/setup/step-02-create-structure.sh"
 source "$SETUP_DIR/setup/step-03-install-skills.sh"
 source "$SETUP_DIR/setup/step-04-install-acervo.sh"
 source "$SETUP_DIR/setup/step-05-install-profiles.sh"
+
+# Compile behavioral rules into SOUL_SEED.md
+info "Compiling behavioral rules into SOUL..."
+python3 "$SETUP_DIR/scripts/compile_soul.py" --skills-dir "$HERMES_HOME/skills/excrtx" --soul "$HERMES_HOME/SOUL.md" 2>&1 || warn "compile_soul.py failed — SOUL.md may be stale"
+
 source "$SETUP_DIR/setup/step-06-hardening.sh"
 source "$SETUP_DIR/setup/step-06b-google-auth.sh"
 source "$SETUP_DIR/setup/step-07-install-identity.sh"
