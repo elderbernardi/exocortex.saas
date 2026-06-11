@@ -1,16 +1,39 @@
 ---
 name: excrtx-quality-designsys
-description: "Persist, resolve, and validate visual tokens in the Acervo Cognitivo. Fork of design-md adapted to the macro→micro cascade of Exocórtex."
+description: Persist, resolve, and validate visual tokens in the Acervo Cognitivo.
+  Fork of design-md adapted to the macro→micro cascade of Exocórtex.
 version: 1.0.0
 author: Exocórtex
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, design, tokens, style, brand, visual, cascade]
-    related_skills: [excrtx-memory-manager, excrtx-quality-taste, design-md, brandkit]
+    tags:
+    - exocortex
+    - design
+    - tokens
+    - style
+    - brand
+    - visual
+    - cascade
+    related_skills:
+    - excrtx-memory-manager
+    - excrtx-quality-taste
+    - design-md
+    - brandkit
+    calibration:
+    - feature_id: EX-20
+      calibration_prompt: Você deve garantir que as operações e regras da skill Design
+        System (excrtx-quality-designsys) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define operações RESOLVE, CREATE, UPDATE,
+        LINT, EXPORT.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Design System.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Design
+        System em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocórtex Design System
 
 Skill for managing visual tokens in the Acervo Cognitivo.

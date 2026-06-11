@@ -1,17 +1,67 @@
 ---
 name: excrtx-memory-manager
-description: "Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared) with context isolation."
+description: Unified Acervo Cognitivo skill. Reads, writes, searches, and manages
+  knowledge across the 4 layers (macro/global/micro/shared) with context isolation.
 version: 2.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 metadata:
   hermes:
-    tags: [exocortex, acervo, knowledge, wiki, memory, nature, search, scope]
-    related_skills: [llm-wiki, excrtx-memory-newmicro]
-    replaces: [nature-context, nature-knowledge, nature-contracts, nature-prompts, nature-persona, nature-workflows, nature-skills, nature-tools, nature-templates, nature-decisions, nature-reflections, exocortex-search]
----
+    tags:
+    - exocortex
+    - acervo
+    - knowledge
+    - wiki
+    - memory
+    - nature
+    - search
+    - scope
+    related_skills:
+    - llm-wiki
+    - excrtx-memory-newmicro
+    replaces:
+    - nature-context
+    - nature-knowledge
+    - nature-contracts
+    - nature-prompts
+    - nature-persona
+    - nature-workflows
+    - nature-skills
+    - nature-tools
+    - nature-templates
+    - nature-decisions
+    - nature-reflections
+    - exocortex-search
+    calibration:
+    - feature_id: EX-11
+      calibration_prompt: 'Você gerencia o Acervo Cognitivo de 4 camadas: macro (identidade),
+        global (regras universais), micro (domínios isolados por slug) e shared (pontes).
 
+        Regras de Escrita:
+
+        - Execute o Filtro de Domínio: se a informação pertence a um domínio específico,
+        escreva em ''micro/{slug}/{nature}.md''. Se for comum, ''global/{nature}.md''.
+        Se for cross-domain, escreva em ''shared/cross-refs/'' e coloque um link de
+        1 linha no microverso. Nunca duplique.
+
+        - Toda página wiki criada ou modificada deve possuir o cabeçalho YAML (frontmatter)
+        contendo: title, created, updated, nature e type.
+
+        - Atualize sempre o ''index.md'' e o ''log.md'' correspondente ao escopo de
+        gravação.'
+      test_prompt: 'Verifique se o Acervo Manager opera no microverso ''estudio-criativo'':
+        1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md.
+        2. Proponha a criação de um novo formato de publicação (ex: carrossel para
+        redes sociais) para promover um curso do microverso ''ensino'', respeitando
+        a regra de separação contra contaminação entre microversos.'
+      acceptance_criteria: O agente deve propor a criação do formato no microverso
+        estudio-criativo (como método criativo) e fazer referência ao curso do microverso
+        ensino, sem misturar os contextos de forma contaminada, respeitando o mixed-task-model.
+      remediation_tip: Violação do Mixed Task Model ou do Filtro de Domínio. As regras
+        do formato/método devem residir no estudio-criativo e as do curso no ensino.
+---
 # Acervo Manager
 
 Unified skill for operating on the Exocórtex Acervo Cognitivo.

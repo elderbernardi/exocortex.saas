@@ -1,20 +1,54 @@
 ---
 name: excrtx-behavior-canvas
-description: Extract implicit structure from executive input — focus, gaps, suggested persona, and action type. Cognitive Canvas for each interaction.
+description: Extract implicit structure from executive input — focus, gaps, suggested
+  persona, and action type. Cognitive Canvas for each interaction.
 version: 2.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, behavior, canvas, parsing, intent, v0.4]
-    related_skills: [excrtx-behavior-vetor, excrtx-quality-gate, excrtx-behavior-briefing]
-compiled_rules: |
-  For complex inputs: parse focus, vector, gaps, urgency into a structured canvas block before responding.
-  Required fields: focus (string), vetor (execucao|evolucao|manutencao|ambiguo), intent_type (explorar|decidir|produzir|revisar|manter).
-  Optional: macroverso_status, microverso_primary, gaps[], urgency.
-  Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.
----
+    tags:
+    - exocortex
+    - behavior
+    - canvas
+    - parsing
+    - intent
+    - v0.4
+    related_skills:
+    - excrtx-behavior-vetor
+    - excrtx-quality-gate
+    - excrtx-behavior-briefing
+    calibration:
+    - feature_id: EX-06
+      calibration_prompt: 'Ao receber uma tarefa complexa, aplique a estrutura do
+        Canvas Cognitivo. Resolva internamente a tríade: Macroverso (identidade e
+        restrições do executivo), Microversos (domínio âncora principal e domínios
+        de apoio), e Tarefa (a sala de operação real; lembre-se: microverso NÃO é
+        uma sala, a tarefa é a sala). Mapeie os gaps de informação e dependências
+        externas. Ao lidar com múltiplos microversos (cross-domain), aplique rigidamente
+        as restrições de compartilhamento (sharing constraints) definidas nos microversos,
+        aplicando a precedência: ''allow'' sempre sobressai a ''deny''. Se houver
+        gaps críticos ou ambiguidade, exiba o bloco ''🧠 Canvas Cognitivo'' com esses
+        campos mapeados.'
+      test_prompt: 'Cruze os microversos gabinete e juridico para redigir um ofício,
+        mas jurídico tem deny: [ALL] e allow: [gabinete].'
+      acceptance_criteria: 'O output deve conter um bloco ''🧠 Canvas Cognitivo'' contendo:
+        macroverso.status, microverso principal (gabinete), microversos relacionados
+        (juridico) e explicitar o sharing constraint com allow > deny.'
+      remediation_tip: 'Correção de Harness: Microverso não é sala. A tarefa é a sala.
+        Aplique allow > deny nas sharing constraints e apresente o bloco 🧠 Canvas
+        Cognitivo estruturado.'
+compiled_rules: 'For complex inputs: parse focus, vector, gaps, urgency into a structured
+  canvas block before responding.
 
+  Required fields: focus (string), vetor (execucao|evolucao|manutencao|ambiguo), intent_type
+  (explorar|decidir|produzir|revisar|manter).
+
+  Optional: macroverso_status, microverso_primary, gaps[], urgency.
+
+  Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.'
+---
 # Canvas Cognitivo — Extrator de Ponteiros (v0.4)
 
 > Todo input do executivo carrega informação implícita. O Canvas extrai essa estrutura para que outras skills operem com contexto rico, ancorando a tarefa no Macroverso e nos Microversos corretos.

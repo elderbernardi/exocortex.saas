@@ -1,17 +1,36 @@
 ---
 name: excrtx-onboard-interview
-description: >-
-  Onboarding interview for new executives. Captures values, style, domains,
-  and integrations in 5 question blocks to auto-generate personalized SOUL.md
-  and initial microversos. Activate after welcome or when executive requests re-onboarding.
+description: Onboarding interview for new executives. Captures values, style, domains,
+  and integrations in 5 question blocks to auto-generate personalized SOUL.md and
+  initial microversos. Activate after welcome or when executive requests re-onboarding.
 version: 2.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, onboard, interview, soul, setup, personalization]
----
+    tags:
+    - exocortex
+    - onboard
+    - interview
+    - soul
+    - setup
+    - personalization
+    calibration:
+    - feature_id: EX-02
+      calibration_prompt: Você deve garantir que as operações e regras da skill Entrevista
+        de Onboarding (excrtx-onboard-interview) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: 'Verifique se a skill de entrevista está configurada:
 
+        1. Os 5 blocos de entrevista estão definidos no SKILL.md?
+
+        2. A skill referencia corretamente excrtx-onboard-welcome?'
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Entrevista de Onboarding.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Entrevista
+        de Onboarding em seu SKILL.md estão sendo estritamente seguidos.
+---
 # Onboarding Interview — Cognitive Systems Architect
 
 > Every executive is unique. The onboarding captures the new user's essence and configures the Exocórtex to fit.

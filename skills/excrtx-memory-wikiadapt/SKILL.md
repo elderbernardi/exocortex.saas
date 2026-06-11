@@ -1,15 +1,32 @@
 ---
 name: excrtx-memory-wikiadapt
-description: "Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo v2."
+description: Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo
+  v2.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 metadata:
   hermes:
-    tags: [exocortex, wiki, adapter, acervo, memory]
+    tags:
+    - exocortex
+    - wiki
+    - adapter
+    - acervo
+    - memory
+    calibration:
+    - feature_id: EX-12
+      calibration_prompt: Você deve garantir que as operações e regras da skill Wiki
+        Adapter (excrtx-memory-wikiadapt) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o wiki adapter traduz categorias LLM Wiki para Ontologia
+        Multifocal v2.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Wiki Adapter.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Wiki
+        Adapter em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Wiki Adapter — llm-wiki ↔ Acervo v2
 
 Safe bridge between the native `research/llm-wiki` skill and the Acervo Cognitivo.

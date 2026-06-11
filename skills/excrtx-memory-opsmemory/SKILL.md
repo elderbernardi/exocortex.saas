@@ -1,207 +1,152 @@
 ---
 name: excrtx-memory-opsmemory
-description: Govern, deploy, and audit operational memory providers for the agent in Exocórtex/Hermes without replacing the Acervo Cognitivo.
-version: 1.0.0
+description: Govern, deploy, and audit operational memory providers for the agent
+  in Exocórtex/Hermes without replacing the Acervo Cognitivo.
+version: 1.1.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 metadata:
   hermes:
-    tags: [exocortex, hermes, memory, hindsight, operational-memory, acervo, setup, governance]
-    related_skills: [excrtx-memory-manager, hermes-agent]
+    tags:
+    - exocortex
+    - hermes
+    - memory
+    - hindsight
+    - operational-memory
+    - acervo
+    - setup
+    - governance
+    related_skills:
+    - excrtx-memory-manager
+    - hermes-agent
+    calibration:
+    - feature_id: EX-16
+      calibration_prompt: Você deve garantir que as operações e regras da skill Memória
+        Operacional (excrtx-memory-opsmemory) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define precedência de providers de memória.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Memória Operacional.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Memória
+        Operacional em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocórtex Operational Memory
 
-Use this skill when the user asks to evaluate, deploy, configure, compare, or audit operational memory providers for the agent in Hermes/Exocórtex, such as Hindsight, Holographic, Honcho, Mem0, Supermemory, RetainDB, ByteRover, or OpenViking.
+Govern, deploy, and audit operational memory providers (Hindsight, Holographic, Mem0, etc.) that aid agent operation without replacing the Acervo Cognitivo.
 
-## Principle
+## When to Use
 
-Operational memory aids agent operation. It does not replace the Exocórtex primary harness.
+- Evaluating, deploying, configuring, comparing, or auditing operational memory providers
+- Setting up Hindsight, Holographic, Honcho, Mem0, or similar
+- Diagnosing memory provider status issues
+
+**Don't use for:** Managing the Acervo Cognitivo directly (use `excrtx-memory-manager`). Creating microversos (use `excrtx-memory-newmicro`). Configuring session history or built-in memory.
+
+## Core Principle
 
 ```text
-Provider observes and retrieves.
-Exocórtex interprets.
-Acervo canonizes.
-Skills proceduralize.
-Built-in memory stores invariants.
-Session Search preserves literal history.
+Provider observes and retrieves.  Exocórtex interprets.
+Acervo canonizes.                 Skills proceduralize.
+Built-in memory stores invariants. Session Search preserves literal history.
 ```
 
-## Precedence
+**Precedence (in case of conflict):**
 
-In case of conflict, apply this order:
-
-1. SOUL / system instructions.
-2. Acervo contracts with `operational_mode: blocking`.
-3. Loaded skills and canonical workflows.
-4. Built-in memory for compact invariants.
-5. Acervo Cognitivo v2 for canonical knowledge, decisions, and processes.
-6. Session Search for literal history.
-7. Operational memory provider for semantic observations.
+| Priority | Layer | Role |
+|----------|-------|------|
+| 1 | SOUL / system instructions | Absolute authority |
+| 2 | Acervo contracts (`operational_mode: blocking`) | Blocking rules |
+| 3 | Loaded skills and canonical workflows | Active procedures |
+| 4 | Built-in memory | Compact invariants |
+| 5 | Acervo Cognitivo v2 | Canonical knowledge |
+| 6 | Session Search | Literal history |
+| 7 | Operational memory provider | Semantic observations |
 
 Never treat a provider-retrieved observation as a canonical decision.
 
-## Suitability Assessment
+## Procedure
 
-When comparing providers, evaluate:
+### Step 1 — Assess Provider Suitability
 
-- Plugin maturity;
-- Local, self-hosted, or cloud mode;
-- Auto-recall and auto-retain;
-- Ability to consolidate observations;
-- Context overload risk;
-- Auditability;
-- Reversibility;
-- Acervo adherence;
-- Cost/latency;
-- Risk of creating a parallel source of truth.
+Evaluate using this matrix:
 
-## Adoption Pattern
+| Criterion | Question to Answer |
+|-----------|-------------------|
+| Plugin maturity | Is the Hermes plugin stable (not alpha)? |
+| Hosting mode | Local, self-hosted, or cloud? Acceptable for sovereignty? |
+| Auto-recall | Does it inject context automatically? Risk of overload? |
+| Consolidation | Can it merge observations into summaries? |
+| Auditability | Can you inspect what it stores/retrieves? |
+| Cost/latency | Acceptable for production use? |
+| Acervo adherence | Does it respect the precedence hierarchy? |
 
-For mature providers in production:
+### Step 2 — Deploy (Hindsight Example)
 
-1. Create contract in the setup microverso.
-2. Create operational workflow.
-3. Create configuration templates.
-4. Update replicable setup workflow.
-5. Update `index.md` and `log.md` of the microverso.
-6. Update `~/.hermes/setup.sh` with explicit, idempotent activation.
-7. Validate without activating by default.
-8. Activate only after configuring credentials/backend.
-9. Audit at 7 and 14 days.
+1. Create Hindsight directory: `mkdir -p ~/.hermes/hindsight-local/{data}`
+2. Create `docker-compose.yml` and `.env` in that directory
+3. Start container: `docker compose up -d`
+4. Configure in Hermes:
+   ```bash
+   hermes config set memory.provider hindsight
+   hermes config set memory.memory_enabled false
+   hermes config set memory.user_profile_enabled false
+   ```
+5. Verify: `hermes memory status`
 
-## `setup.sh` Pattern
+> **Critical:** Hindsight may require `HINDSIGHT_API_KEY` even in `local_embedded` mode. If `hermes memory status` shows `Missing: HINDSIGHT_API_KEY`, provision the key or switch providers.
 
-Operational memory integrations must be optional and guarded by flag:
+### Step 3 — Integrate into Setup
+
+Add to `~/.hermes/setup.sh` with opt-in guard:
 
 ```bash
 EXOCORTEX_ENABLE_<PROVIDER>=1 bash ~/.hermes/setup.sh
 ```
 
-The script must:
+The script must: preserve existing configs, not overwrite credentials, not activate if config contains `CHANGE_ME`, not fail setup if provider isn't ready.
 
-- Preserve existing configs;
-- Copy template only when config doesn't exist;
-- Not overwrite credentials;
-- Not activate provider if config contains `CHANGE_ME`;
-- Not fail the entire setup if the provider isn't ready;
-- Make the next step clear.
+### Step 4 — Validate and Activate
 
-## Hindsight
+1. Run `hermes memory status` — provider must show `available`
+2. Test recall: send a message, verify observation is stored
+3. Test retrieval: ask about a previous topic, verify recall
+4. Activate only after successful validation
 
-### Validated Operational Pattern (Exocórtex)
+### Step 5 — Audit (7 and 14 days)
 
-When the priority is setup simplicity with local persistence:
+1. Review stored observations for relevance and accuracy
+2. Check context overload (is recall injecting too much?)
+3. Verify no provider observations overrode Acervo decisions
+4. Adjust `recall_budget`, `retain_every_n_turns` as needed
 
-1. Run Hindsight in a dedicated Docker container (single-container), separate from the Hermes process.
-2. Maintain Hindsight's own directory (e.g., `~/.hermes/hindsight-local/`) with:
-   - `docker-compose.yml`
-   - `.env`
-   - Persistent `data/`.
-3. Execute this step **before** memory provider activation/configuration in setup.
-4. Treat memory reset as a destructive action with explicit confirmation via parameters.
-
-Recommended flags for safe reset:
-
-- `EXOCORTEX_HINDSIGHT_RESET_DATA=1`
-- `EXOCORTEX_HINDSIGHT_CONFIRM_DELETE=DELETE_HINDSIGHT_MEMORY`
-
-Without both flags, memory must be preserved.
-
-Operational reference: `references/hindsight-single-container-setup.md`.
-
-State pattern after Hindsight activation in Hermes:
-
-- `memory.provider=hindsight`
-- `memory.memory_enabled=false`
-- `memory.user_profile_enabled=false`
-
-Scope pattern for this setup:
-
-- One Hindsight per Hermes instance.
-- `exec` and `evol` profiles share the same bank (`bank_id_template: exocortex`).
-
-Initial preference for Exocórtex:
-
-```json
-{
-  "memory_mode": "hybrid",
-  "auto_recall": true,
-  "auto_retain": true,
-  "retain_async": true,
-  "retain_every_n_turns": 2,
-  "recall_budget": "low",
-  "recall_prefetch_method": "recall",
-  "recall_types": "observation",
-  "recall_max_tokens": 1200,
-  "recall_max_input_chars": 800
-}
-```
-
-`local_embedded` means the Hindsight service/database runs locally. The LLM backend can be truly local, self-hosted, or external API. Explain this distinction to avoid the false requirement of running a full model on the same host.
-
-### Critical Pitfall (Hermes + Hindsight plugin)
-
-In the current Hermes integration state, the `hindsight` provider may require `HINDSIGHT_API_KEY` to be `available` in `hermes memory status`, even when `mode=local_embedded`.
-
-Practical implication:
-- `local_embedded` does NOT imply "no platform key" operation.
-- Without `HINDSIGHT_API_KEY`, the provider may remain `not available`.
-
-Mandatory diagnosis before concluding setup:
-1. Run `hermes memory status`.
-2. If `Missing: HINDSIGHT_API_KEY` appears, treat as provider activation blocker.
-3. Decide explicitly:
-   - Keep Hindsight and provision the required key, or
-   - Migrate to an alternative local-first provider (e.g., holographic/honcho/mem0 local) when the cloud-key requirement is unacceptable.
-
-Communication rule for the user:
-- Don't say "just needs LLM backend".
-- Always separate three layers: local storage, LLM backend, plugin-required authentication.
-
-## Holographic
-
-Use as a local-first, auditable alternative when sovereignty, SQLite, and explicit control matter more than self-organization. Start with `auto_extract: false` and use explicit facts until there's quality evidence.
-
-## Promotion to Canonical Memory
-
-Use this funnel:
+### Promotion to Canonical Memory
 
 ```text
-provider observation
-→ validation against current context
-→ candidate
-→ Acervo decision/contract/workflow/reflection
-→ skill, if procedural
-→ built-in memory, if compact invariant
+provider observation → validation → candidate
+→ Acervo decision/contract/workflow → skill (if procedural)
+→ built-in memory (if compact invariant)
 ```
+
+## Pitfalls
+
+- **`HINDSIGHT_API_KEY` required even locally:** `local_embedded` does NOT mean "no platform key." Without the key, provider stays `not available`. Always check `hermes memory status`.
+- **Three layers confusion:** Separate local storage, LLM backend, and plugin-required authentication. Don't tell the user "just needs LLM backend."
+- **Parallel source of truth:** Provider observations must never override Acervo decisions. Enforce precedence hierarchy.
+- **Auto-recall overload:** Broad auto-recall injects stale or irrelevant context. Start with `recall_budget: low` and `retain_every_n_turns: 2`.
+- **Setup error ≠ permanent rule:** A failed provider deployment doesn't mean the provider is permanently unsuitable. Diagnose root cause first.
+
+## Verification
+
+- [ ] `hermes memory status` shows provider as `available`
+- [ ] `docker ps` shows Hindsight container running (if using Hindsight)
+- [ ] Test message produces a stored observation
+- [ ] Recall returns relevant past context
+- [ ] No provider observation treated as canonical decision
+- [ ] Setup script is idempotent (running twice produces same result)
 
 ## References
 
 - `references/operational-memory-provider-integration.md` — detailed integration pattern and repeatability checklist.
-- `references/hindsight-local-embedded-key-requirement.md` — operational distinction between local storage, LLM backend, and plugin-required authentication in Hermes.
-
-## Pitfalls
-
-- Don't point memory provider to replace Acervo.
-- Don't activate broad auto-recall in production without an audit period.
-- Don't start with raw fact recall if the provider offers consolidated observations.
-- Don't turn a setup error into a permanent rule against the provider.
-- Don't register secrets, credentials, or unapproved drafts as operational memory.
-
-## When to Use
-
-Activate when working with this skill's domain. See procedure for details.
-
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
-
-## Procedure
-
-Follow the steps and rules defined in this skill's body sections above.
-
-## Verification
-
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- `references/hindsight-local-embedded-key-requirement.md` — operational distinction between local storage, LLM backend, and plugin-required authentication.

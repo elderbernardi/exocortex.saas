@@ -3,12 +3,26 @@ name: excrtx-harness-promptlog
 description: Log configuration prompts to MEMORY.md for audit and reproducibility.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, logging, audit, configuration]
+    tags:
+    - exocortex
+    - logging
+    - audit
+    - configuration
+    calibration:
+    - feature_id: EX-31
+      calibration_prompt: Você deve garantir que as operações e regras da skill Prompt
+        Log (excrtx-harness-promptlog) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se MEMORY.md existe e contém registros de prompts.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Prompt Log.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Prompt
+        Log em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocortex Prompt Log
 
 ## When to Use

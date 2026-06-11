@@ -1,17 +1,36 @@
 ---
 name: excrtx-harness-codexint
-description: "Integrate OpenAI Codex (CLI and provider) into Hermes/Exocórtex with governance, routing, and verification."
+description: Integrate OpenAI Codex (CLI and provider) into Hermes/Exocórtex with
+  governance, routing, and verification.
 version: 0.2.0
 category: excrtx
 created_by: agent
 context: exocortex
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, harness, codexint, codex, delegation]
-    related_skills: [excrtx-harness-core, excrtx-govern-tools, excrtx-govern-draftfirst]
+    tags:
+    - exocortex
+    - harness
+    - codexint
+    - codex
+    - delegation
+    related_skills:
+    - excrtx-harness-core
+    - excrtx-govern-tools
+    - excrtx-govern-draftfirst
+    calibration:
+    - feature_id: EX-32
+      calibration_prompt: Você deve garantir que as operações e regras da skill Codex
+        Integration (excrtx-harness-codexint) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define os dois modos (CLI e provider).
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Codex Integration.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Codex
+        Integration em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Codex Integration — Hermes/Exocórtex
 
 > Two tracks, one routing policy: Codex CLI (local terminal agent) vs Codex provider (Hermes subagent delegation).

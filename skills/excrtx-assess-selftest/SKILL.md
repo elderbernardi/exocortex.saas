@@ -1,14 +1,29 @@
 ---
 name: excrtx-assess-selftest
-description: Self-diagnostic of the Exocortex.IA configuration state. Validates SOUL_SEED, acervo structure, and skill loading.
+description: Self-diagnostic of the Exocortex.IA configuration state. Validates SOUL_SEED,
+  acervo structure, and skill loading.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, diagnostics, self-test, configuration]
+    tags:
+    - exocortex
+    - diagnostics
+    - self-test
+    - configuration
+    calibration:
+    - feature_id: EX-03
+      calibration_prompt: Você deve garantir que as operações e regras da skill Self-Test
+        / Auto-diagnóstico (excrtx-assess-selftest) estão totalmente ativas no seu
+        comportamento e integridade.
+      test_prompt: Execute self-test e reporte o score N/5.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Self-Test / Auto-diagnóstico.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Self-Test
+        / Auto-diagnóstico em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocórtex Self-Test
 
 ## When to Use

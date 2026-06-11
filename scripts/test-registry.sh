@@ -878,6 +878,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       python "$REPO_ROOT/scripts/skill_judge.py" --all --d1-only \
         --compare-baseline "$REPO_ROOT/.dogfood/baselines/d1-40-40-baseline.json"
       ;;
+    skill-judge-trends)
+      # Trend dashboard: PASS/IMPROVE/REWRITE counts across baselines.
+      python "$REPO_ROOT/scripts/skill_judge_trends.py"
+      ;;
     ""|--help|-h)
       cat <<'USAGE'
 Uso direto:
@@ -888,6 +892,7 @@ Uso direto:
   ./scripts/test-registry.sh skill-judge         # D1 regression gate (fast)
   ./scripts/test-registry.sh skill-judge-d1      # D1 only, compare baseline
   ./scripts/test-registry.sh skill-judge-full    # D1-D5 with LLM (slow)
+  ./scripts/test-registry.sh skill-judge-trends  # Trend dashboard
 
 Uso tradicional:
   source scripts/test-registry.sh  # feito por run-provisioning-tests.sh

@@ -1,25 +1,40 @@
 ---
 name: excrtx-integrate-browser
-description: Autonomous browser automation via CLI. Navigate, interact, extract data from web pages. Use when agents need to perform web research, fill forms, scrape content, or automate browser-based workflows.
+description: Autonomous browser automation via CLI. Navigate, interact, extract data
+  from web pages. Use when agents need to perform web research, fill forms, scrape
+  content, or automate browser-based workflows.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 triggers:
-  - "browse"
-  - "open website"
-  - "web scrape"
-  - "fill form"
-  - "browser automation"
-  - "navigate to"
-  - "screenshot page"
-  - "extract from page"
+- browse
+- open website
+- web scrape
+- fill form
+- browser automation
+- navigate to
+- screenshot page
+- extract from page
 priority: P2
 setup: scripts/browser-use.sh
 metadata:
   hermes:
-    tags: [exocortex, integrate, browser]
+    tags:
+    - exocortex
+    - integrate
+    - browser
+    calibration:
+    - feature_id: EX-30
+      calibration_prompt: Você deve garantir que as operações e regras da skill Browser
+        Automation (excrtx-integrate-browser) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se browser-use.sh responde a 'state' sem erro fatal.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Browser Automation.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Browser
+        Automation em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Browser-Use CLI Skill
 
 > Control a real browser from the terminal. Persistent sessions for rapid iteration.

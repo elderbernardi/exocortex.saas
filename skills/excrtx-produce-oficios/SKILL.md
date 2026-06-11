@@ -1,15 +1,34 @@
 ---
 name: excrtx-produce-oficios
-description: Generate professional official documents (IFSul Campus Passo Fundo) in DOCX, PDF, or Markdown format.
+description: Generate professional official documents (IFSul Campus Passo Fundo) in
+  DOCX, PDF, or Markdown format.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 metadata:
   hermes:
-    tags: [exocortex, gabinete, documentos, oficio, word, pdf, html]
+    tags:
+    - exocortex
+    - gabinete
+    - documentos
+    - oficio
+    - word
+    - pdf
+    - html
+    calibration:
+    - feature_id: EX-24
+      calibration_prompt: Você deve garantir que as operações e regras da skill Gerador
+        de Ofícios (excrtx-produce-oficios) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: 'Verifique se gerar_oficio.py importa sem erros: python3 -c ''import
+        importlib; importlib.import_module("gerar_oficio")''.'
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Gerador de Ofícios.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Gerador
+        de Ofícios em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Gerador de Ofícios — Gabinete IFSul
 
 Gera ofícios em DOCX, PDF ou HTML usando templates persistidos no acervo.

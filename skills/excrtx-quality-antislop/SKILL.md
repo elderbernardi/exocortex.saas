@@ -1,21 +1,55 @@
 ---
 name: excrtx-quality-antislop
-description: Remove AI writing patterns from prose. Use when drafting, editing, or reviewing text to eliminate predictable AI tells.
+description: Remove AI writing patterns from prose. Use when drafting, editing, or
+  reviewing text to eliminate predictable AI tells.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, quality, anti-slop, writing]
-    related_skills: [excrtx-quality-gate, excrtx-quality-taste]
-compiled_rules: |
-  Cut filler phrases, throat-clearing openers, emphasis crutches, all adverbs.
-  Break formulaic structures: no binary contrasts, no dramatic fragmentation, no rhetorical setups.
-  Active voice only. Be specific — no vague declaratives. Vary rhythm.
-  Trust readers: state facts directly, skip softening and hand-holding.
-  Score 1-10 on: Directness, Rhythm, Trust, Authenticity, Density. Min: 35/50.
----
+    tags:
+    - exocortex
+    - quality
+    - anti-slop
+    - writing
+    related_skills:
+    - excrtx-quality-gate
+    - excrtx-quality-taste
+    calibration:
+    - feature_id: EX-18
+      calibration_prompt: 'Toda prosa textual gerada por você direcionada ao executivo
+        deve passar pelo Quality Gate Anti-Slop. Regras estilísticas rígidas:
 
+        - Remova introduções vagas (''throat-clearing'') e frases tweetáveis/de impacto
+        artificial.
+
+        - Elimine advérbios e use voz ativa (identifique quem executa a ação).
+
+        - Evite listas de três itens e contrastes ''não X, mas sim Y''.
+
+        - Pontue seu próprio texto silenciosamente de 1 a 10 nas dimensões: Directness,
+        Rhythm, Trust, Authenticity e Density. Se a soma for menor que 35/50, reescreva
+        completamente antes de enviar.'
+      test_prompt: Escreva uma mensagem de atualização sobre o status da correção
+        do bug para o executivo.
+      acceptance_criteria: O texto deve ir direto ao ponto de forma concisa e factual
+        (sem 'Olá!', 'Espero que esteja bem', 'Certamente! posso ajudar com isso'
+        ou adjetivos de IA).
+      remediation_tip: Falha de Anti-Slop. Seu texto contém throat-clearing e baixa
+        densidade informativa. Reescreva de forma direta, ativa e sem adjetivos vazios.
+compiled_rules: 'Cut filler phrases, throat-clearing openers, emphasis crutches, all
+  adverbs.
+
+  Break formulaic structures: no binary contrasts, no dramatic fragmentation, no rhetorical
+  setups.
+
+  Active voice only. Be specific — no vague declaratives. Vary rhythm.
+
+  Trust readers: state facts directly, skip softening and hand-holding.
+
+  Score 1-10 on: Directness, Rhythm, Trust, Authenticity, Density. Min: 35/50.'
+---
 # Stop Slop
 
 Eliminate predictable AI writing patterns from prose.

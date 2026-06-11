@@ -618,5 +618,83 @@ Use for testing vetor classification.
             self.assertEqual(len(desyncs), 0)
 
 
+class TestD1ComplianceGate(unittest.TestCase):
+    """Tests for the --require-d1-pass D1 compliance gate in compile_soul.py."""
+
+    def test_compliant_skill_passes_gate(self):
+        from scripts.compile_soul import validate_d1_compliance
+        skill = """\
+---
+name: excrtx-test-gated
+description: A D1-compliant gated skill
+version: 1.0.0
+category: excrtx
+compiled_rules: |
+  Always verify before committing.
+metadata:
+  hermes:
+    tags:
+      - testing
+---
+
+# Gated Skill
+
+## When to Use
+Use when testing the D1 gate.
+
+## Procedure
+1. Verify always before committing
+
+## Pitfalls
+- Don't skip verification
+
+## Verification Checklist
+- [ ] All checks pass
+"""
+        with tempfile.TemporaryDirectory() as td:
+            _write_skill(Path(td), "excrtx-test-gated", skill)
+            failures = validate_d1_compliance(Path(td))
+            self.assertEqual(len(failures), 0)
+
+    def test_non_compliant_skill_fails_gate(self):
+        from scripts.compile_soul import validate_d1_compliance
+        skill = """\
+---
+name: excrtx-test-broken
+version: 0.1.0
+compiled_rules: |
+  Some broken rule.
+---
+
+# Broken
+
+No proper sections.
+"""
+        with tempfile.TemporaryDirectory() as td:
+            _write_skill(Path(td), "excrtx-test-broken", skill)
+            failures = validate_d1_compliance(Path(td))
+            self.assertGreater(len(failures), 0)
+            self.assertEqual(failures[0]["name"], "excrtx-test-broken")
+            self.assertIn(failures[0]["label"], ["PARTIAL", "NON_COMPLIANT"])
+
+    def test_skill_without_compiled_rules_not_gated(self):
+        """Skills without compiled_rules should NOT be checked by the gate."""
+        from scripts.compile_soul import validate_d1_compliance
+        skill = """\
+---
+name: excrtx-test-nogated
+version: 0.1.0
+---
+
+# No Rules
+
+No compiled_rules means no gate check.
+"""
+        with tempfile.TemporaryDirectory() as td:
+            _write_skill(Path(td), "excrtx-test-nogated", skill)
+            failures = validate_d1_compliance(Path(td))
+            self.assertEqual(len(failures), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

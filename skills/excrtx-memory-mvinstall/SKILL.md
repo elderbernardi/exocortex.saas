@@ -1,15 +1,31 @@
 ---
 name: excrtx-memory-mvinstall
-description: >-
-  Install microverso structure from _fixture templates into the acervo. Scaffold microverso directories and base files.
+description: Install microverso structure from _fixture templates into the acervo.
+  Scaffold microverso directories and base files.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, memory, microverso, install, package, dependencies]
+    tags:
+    - exocortex
+    - memory
+    - microverso
+    - install
+    - package
+    - dependencies
+    calibration:
+    - feature_id: EX-15
+      calibration_prompt: Você deve garantir que as operações e regras da skill Microverso
+        Package Installer (excrtx-memory-mvinstall) estão totalmente ativas no seu
+        comportamento e integridade.
+      test_prompt: Verifique se a skill define schema excrtx/v1 para microverso.yaml.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Microverso Package Installer.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Microverso
+        Package Installer em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Microverso Package Installer
 
 > Microversos não são só arquivos. São skills, pacotes, dependências — um ecossistema.

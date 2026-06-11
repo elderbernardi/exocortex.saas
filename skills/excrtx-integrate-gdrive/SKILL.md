@@ -1,15 +1,35 @@
 ---
 name: excrtx-integrate-gdrive
-description: Configure and operate Google Drive via direct API (no Composio), with focus on search robustness and validation.
-version: 1.0.0
+description: Configure and operate Google Drive via direct API (no Composio), with
+  focus on search robustness and validation.
+version: 1.1.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocortex
 metadata:
   hermes:
-    tags: [exocortex, integration, gdrive, api]
+    tags:
+    - exocortex
+    - integration
+    - gdrive
+    - api
+    related_skills:
+    - excrtx-integrate-oauth
+    - excrtx-produce-artifacts
+    calibration:
+    - feature_id: EX-25
+      calibration_prompt: Você deve garantir que as operações e regras da skill Google
+        Drive Integration (excrtx-integrate-gdrive) estão totalmente ativas no seu
+        comportamento e integridade.
+      test_prompt: Verifique se google_api.py compila, hardening está aplicado, e
+        OAuth token está válido (google_token.json). gcloud ADC é alternativo — a
+        API direta usa OAuth.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Google Drive Integration.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Google
+        Drive Integration em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Google Drive Integration
 
 Direct Google Drive API integration without Composio, focusing on search robustness and validation.
@@ -21,55 +41,64 @@ Activate when:
 - An artifact needs to be exported to Drive
 - `excrtx-produce-artifacts` needs a Drive destination
 
-**Don't use for:** Local file operations without Drive involvement. OAuth setup (use `excrtx-integrate-oauth`). NotebookLM integration (use `excrtx-integrate-nlmops`). Browser-based Drive access.
+**Don't use for:** Local file operations without Drive involvement. OAuth setup (use `excrtx-integrate-oauth`). NotebookLM integration (use `excrtx-integrate-nlmops`). Browser-based Drive access. Read-only link sharing without API.
 
 ## Procedure
 
-### 1. Authentication
+### Step 1 — Validate Authentication
 
-Use the OAuth token managed by `excrtx-integrate-oauth`. If not configured, guide the executive through setup.
+1. Check OAuth token: `python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check`
+2. If expired, guide the executive through re-auth flow via `excrtx-integrate-oauth`
+3. Never proceed with API calls without a validated token
 
-### 2. Search
+### Step 2 — Search (with hardening)
 
-Drive search is notoriously fragile. Apply hardening:
+Drive search is notoriously fragile. Apply this hardening sequence:
 
 1. **Normalize query** — strip diacritics, lowercase, remove special chars
-2. **Use `fullText contains`** for content search, `name contains` for filenames
-3. **Paginate** — never trust first-page results alone
-4. **Validate results** — confirm MIME type, modification date, owner
+2. **Build query** — use `fullText contains '<term>'` for content, `name contains '<term>'` for filenames
+3. **Add safety filter** — always include `trashed = false` in the query
+4. **Paginate** — iterate all pages, never trust first-page results alone
+5. **Validate results** — confirm MIME type, modification date, and owner before returning
 
-See: `references/drive-search-hardening.md`
+```python
+# Example hardened search query
+query = f"name contains '{normalized_term}' and trashed = false"
+```
 
-### 3. Upload
+### Step 3 — Upload (Draft-First)
 
-1. Resolve target folder (create if missing)
-2. Check for existing file with same name (avoid duplicates)
-3. Upload with correct MIME type
-4. Return shareable link
+All uploads are external actions — apply Draft-First protocol:
 
-### 4. Artifact Export
+1. Present DRAFT to the executive: target folder, filename, MIME type
+2. Await confirmation before proceeding
+3. Resolve target folder (create if missing, confirm with executive)
+4. Check for existing file with same name (avoid duplicates)
+5. Upload with correct MIME type
+6. Return shareable link and log in microverso's `log.md`
+
+### Step 4 — Artifact Export
 
 When `excrtx-produce-artifacts` requests Drive export:
 
 1. Generate artifact locally
-2. Upload to the microverso's designated Drive folder
+2. Upload to the microverso's designated Drive folder (Step 3)
 3. Register Drive URL in artifact manifest
-
-## Rules
-
-- Never upload without confirming target folder with the executive
-- Never overwrite existing files silently — ask first
-- Always validate OAuth token before operations
-- Log all Drive operations in the active microverso's log
-
-## Verification
-
-- [ ] OAuth token validated before API calls
-- [ ] Search results verified (MIME, date, owner)
-- [ ] Duplicate check before upload
-- [ ] Drive URL registered in manifest after upload
+4. Classify operation as Vetor `exec` (producing output)
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **Search returning stale results:** Drive API caches aggressively. If a recently uploaded file isn't found, wait 5-10s and retry with `orderBy=modifiedTime desc`.
+- **MIME type mismatch:** Google Docs native formats (application/vnd.google-apps.*) cannot be downloaded directly. Use export endpoint with target MIME.
+- **Shared Drive vs My Drive:** `corpora=allDrives` + `includeItemsFromAllDrives=true` + `supportsAllDrives=true` are required for shared drives. Default queries only search My Drive.
+- **Silent overwrite:** Never overwrite without confirmation. Check file existence first, present options to executive.
+- **Token expiry mid-operation:** Long batch operations can exceed token TTL. Validate token before each batch chunk.
+
+## Verification
+
+- [ ] `setup.py --check` returns exit 0 (OAuth token valid)
+- [ ] Search query includes `trashed = false` hardening
+- [ ] Upload shows DRAFT to executive before API call (Draft-First)
+- [ ] Uploaded file URL is registered in artifact manifest
+- [ ] Drive operation logged in active microverso's `log.md`
+- [ ] Shared Drive queries include `supportsAllDrives=true`

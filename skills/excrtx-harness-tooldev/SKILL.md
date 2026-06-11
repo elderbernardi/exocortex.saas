@@ -1,123 +1,152 @@
 ---
 name: excrtx-harness-tooldev
-description: Hermes Tool development and extension via direct invocation (no LLM). Build, test, and deploy tools.
-version: 1.0.0
+description: Hermes Tool development and extension via direct invocation (no LLM).
+  Build, test, and deploy tools.
+version: 1.1.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex.IA
 license: MIT
-tags: [hermes, tool-development, harness, extension, python]
+tags:
+- hermes
+- tool-development
+- harness
+- extension
+- python
 trigger:
-  - "criar uma tool no hermes"
-  - "desenvolver ferramenta hermes"
-  - "chamada direta de tool"
-  - "implementar /tool"
-  - "entender harness do hermes"
-  - "como criar uma tool"
+- criar uma tool no hermes
+- desenvolver ferramenta hermes
+- chamada direta de tool
+- implementar /tool
+- entender harness do hermes
+- como criar uma tool
 metadata:
   hermes:
-    tags: [exocortex, harness, tooldev]
----
+    tags:
+    - exocortex
+    - harness
+    - tooldev
+    calibration:
+    - feature_id: EX-50
+      calibration_prompt: 'Você é capaz de projetar e estender o harness do Hermes
+        criando ferramentas diretas.
 
+        - Toda nova ferramenta em Python deve ser criada em ''tools/'' e se registrar
+        usando ''registry.register()'' especificando nome, schema JSON de parâmetros,
+        handler em lambda e uma função de pré-requisitos ''check_fn()''.
+
+        - Evite o loop do LLM implementando a chamada direta via comando ''/tool <nome>
+        [argumentos]''. Os argumentos devem ser parseados como JSON ou no formato
+        ''chave=valor'' no interpretador CLI/Gateway.'
+      test_prompt: Como faço para registrar uma nova tool chamada 'gerar_uuid' e chamá-la
+        diretamente sem passar pelo LLM?
+      acceptance_criteria: O agente deve apresentar a chamada do 'registry.register'
+        estruturada com schema JSON e descrever o acionamento direto usando o slash
+        command '/tool gerar_uuid'.
+      remediation_tip: 'Convenção Violada: Ferramentas do Hermes exigir o registro
+        explícito usando a instância registry central e podem ser acionadas via /tool
+        bypass.'
+---
 # Hermes Tool Development (Harness Extension)
 
-Skill de nível de classe para criar ferramentas no Hermes Agent e estender o comportamento via chamada direta (slash command `/tool`), sem passar pelo LLM.
+Skill for creating tools in Hermes Agent and extending behavior via direct call (slash command `/tool`), bypassing the LLM.
 
 ## When to Use
 
-- Quando o Exocórtex precisa de uma nova capacidade que o Hermes não tem nativamente.
-- Quando se quer economizar tokens chamando uma tool diretamente via chat.
-- Quando se quer entender as camadas do Harness do Hermes para propósitos de extensão.
+- When the Exocórtex needs a new capability that Hermes doesn't have natively.
+- When you want to save tokens by calling a tool directly via chat.
+- When you need to understand the Hermes Harness layers for extension purposes.
 
-## Arquitetura (Resumo)
+**Don't use for:** Modifying SOUL.md or skills (use `excrtx-hermes-extensions`). Configuring MCP servers (use `excrtx-integrate-oauth`). Building standalone scripts outside Hermes.
 
-1. **Entrada:** Gateway/CLI (`commands.py`, `cli.py`).
-2. **Agent Loop:** `run_agent.py` (classe `AIAgent`).
-3. **Especialização:** `SOUL.md`, Skills, Memória.
-4. **Ferramentas:** `tools/registry.py`, `model_tools.py`.
+## Procedure
 
-## Criando uma Tool (Hello World)
+### Step 1 — Create the Tool File
 
-### 1. Arquivo da Tool (`tools/hello_world_tool.py`)
+Create `tools/<tool_name>_tool.py` in the Hermes installation:
 
 ```python
 import json
 from tools.registry import registry
 
 def check_requirements() -> bool:
+    """Return True if all dependencies are available."""
     return True
 
-def hello_world_tool(name: str = "World", uppercase: bool = False, task_id: str = None) -> str:
+def my_tool(name: str = "World", task_id: str = None) -> str:
     try:
-        greeting = f"Olá, {name}! Bem-vindo ao Exocórtex."
-        if uppercase:
-            greeting = greeting.upper()
-        return json.dumps({"status": "sucesso", "message": greeting})
+        result = f"Hello, {name}!"
+        return json.dumps({"status": "success", "message": result})
     except Exception as e:
         return json.dumps({"error": str(e)})
 
-# Registro no Registry
 registry.register(
-    name="hello_world",
+    name="my_tool",
     toolset="exocortex_dev",
-    schema={"name": "hello_world", "description": "...", "parameters": {...}},
-    handler=lambda args, **kw: hello_world_tool(...),
+    schema={
+        "name": "my_tool",
+        "description": "Example tool",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Name to greet"}
+            }
+        }
+    },
+    handler=lambda args, **kw: my_tool(**args),
     check_fn=check_requirements
 )
 ```
 
-### 2. Passagem de Parâmetros
+### Step 2 — Register the Slash Command
 
-- **Via LLM:** O modelo envia JSON `{function_name, function_args}`.
-- **Via Código:** `handle_function_call(function_name, function_args)` (em `model_tools.py`).
-- **Parse de argumentos:** Aceita JSON puro ou formato `key=value`.
+In `hermes_cli/commands.py`, add to `COMMAND_REGISTRY`:
 
-## Implementando Chamada Direta (`/tool`)
-
-### 1. Registro (`hermes_cli/commands.py`)
-
-Adicione ao `COMMAND_REGISTRY`:
 ```python
 CommandDef("tool", "Call a tool directly without LLM", "Tools & Skills",
            args_hint="<tool_name> [arg1=val1] ..."),
 ```
 
-### 2. Handler (`cli.py`)
+### Step 3 — Implement the Handler
 
-No método `process_command`, adicione:
+In `cli.py`, add the handler method:
+
 ```python
 elif canonical == "tool":
     self._handle_tool_command(cmd_original)
 ```
 
-### 3. Lógica de Parse (`cli.py`)
+The handler must: split the command, parse `key=value` pairs (or JSON if input starts with `{`), convert basic types (int, float, bool), call `handle_function_call(function_name, function_args)`, and print the result.
 
-Crie o método `_handle_tool_command`:
-- Fazer split de `command`.
-- Se 1 arg + inicia com `{` ou `[`, tentar `json.loads`.
-- Senão, iterar `parts[2:]` fazendo split em `=`.
-- Converter tipos básicos (int, float, bool).
-- Chamar `handle_function_call(function_name, function_args)`.
-- Imprimir resultado (formatado ou raw).
+### Step 4 — Test the Tool
+
+```bash
+# Verify tool appears in registry
+python3 -c "from tools.registry import registry; print([t for t in registry.list_tools() if 'my_tool' in t])"
+
+# Test via direct call
+hermes /tool my_tool name=Elder
+
+# Verify JSON output format
+hermes /tool my_tool name=Elder | python3 -m json.tool
+```
+
+### Step 5 — Gateway Integration (if needed)
+
+For Telegram/Discord, add dispatch in `gateway/run.py` — search for `resolve_command` or `message.text.startswith('/')`.
 
 ## Pitfalls
 
-- **Linter Errors:** Sempre use `Optional[T]` para argumentos que podem ser `None` (ex: `task_id: Optional[str]`).
-- **Tool Discovery:** Ferramentas em `tools/*.py` são auto-descobertas via `import` em `model_tools.py`. Se a tool não aparecer, verifique o `check_fn`.
-- **Gateway:** Para usar `/tool` no Telegram/Discord, o dispatch deve ser adicionado em `gateway/run.py` (procurar por `resolve_command` ou `message.text.startswith('/')`).
-
-## Referencias
-
-- `references/hermes-tool-anatomy.md`: Anatomia de uma Tool Hermes.
-- `references/direct-call-pattern.md`: Padrão de chamada direta sem LLM.
-- Skill `hermes-agent` (documentação oficial, protegida).
-
-## Procedure
-
-Follow the steps and rules defined in this skill's body sections above.
+- **`Optional[T]` for nullable args:** Always use `Optional[str]` for arguments that can be `None` (e.g., `task_id`). Linter errors otherwise.
+- **Tool not discovered:** Tools in `tools/*.py` are auto-discovered via import in `model_tools.py`. If the tool doesn't appear, check that `check_fn` returns `True` and the file has no import errors.
+- **JSON parse failure:** If args start with `{` but are malformed JSON, the handler will crash. Always wrap `json.loads` in try/except.
+- **Gateway dispatch:** `/tool` won't work in Telegram/Discord unless explicitly added to the gateway command dispatcher.
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] `python3 -c "from tools.<tool>_tool import *"` imports without errors
+- [ ] Tool name appears in `registry.list_tools()` output
+- [ ] `/tool <name> arg=value` returns valid JSON with `status: success`
+- [ ] `check_fn` returns `True` in the target environment
+- [ ] Gateway dispatch works (if applicable)

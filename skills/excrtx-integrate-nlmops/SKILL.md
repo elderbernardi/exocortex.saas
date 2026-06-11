@@ -1,14 +1,31 @@
 ---
 name: excrtx-integrate-nlmops
-description: Standard executable workflow for learning with NotebookLM in Exocórtex (CLI-first, MCP fallback), with automatic source ingestion and quality criteria.
+description: Standard executable workflow for learning with NotebookLM in Exocórtex
+  (CLI-first, MCP fallback), with automatic source ingestion and quality criteria.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, notebooklm, workflow, nlm, mcp, research]
+    tags:
+    - exocortex
+    - notebooklm
+    - workflow
+    - nlm
+    - mcp
+    - research
+    calibration:
+    - feature_id: EX-29
+      calibration_prompt: Você deve garantir que as operações e regras da skill NotebookLM
+        Ops (excrtx-integrate-nlmops) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define as 6 etapas do workflow NLM.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill NotebookLM Ops.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill NotebookLM
+        Ops em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocortex NotebookLM Operational Workflow
 
 ## When to Use

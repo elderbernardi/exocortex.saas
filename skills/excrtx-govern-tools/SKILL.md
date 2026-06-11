@@ -1,21 +1,43 @@
 ---
 name: excrtx-govern-tools
-description: Governance rules for tool usage by Exocórtex.IA. Defines when and how tools should be used, mandatory logging, and classification by type.
+description: Governance rules for tool usage by Exocórtex.IA. Defines when and how
+  tools should be used, mandatory logging, and classification by type.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, governance, tools, policy]
-    related_skills: [excrtx-govern-draftfirst, excrtx-behavior-accuracy, excrtx-behavior-vetor]
-compiled_rules: |
-  Least privilege: use the simplest tool that solves the task.
-  Log destructive actions. Sandbox operations by active microverso.
-  Never rm -rf, never apt/pip install without explicit approval.
-  Prefer read-only tools when gathering information. Batch related tool calls.
-  File operations: always verify path exists before writing.
----
+    tags:
+    - exocortex
+    - governance
+    - tools
+    - policy
+    related_skills:
+    - excrtx-govern-draftfirst
+    - excrtx-behavior-accuracy
+    - excrtx-behavior-vetor
+    calibration:
+    - feature_id: EX-09
+      calibration_prompt: Você deve garantir que as operações e regras da skill Tool
+        Governance (excrtx-govern-tools) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define classificação de tools (Internos, Pesquisa,
+        Comunicação, Criação).
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Tool Governance.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Tool
+        Governance em seu SKILL.md estão sendo estritamente seguidos.
+compiled_rules: 'Least privilege: use the simplest tool that solves the task.
 
+  Log destructive actions. Sandbox operations by active microverso.
+
+  Never rm -rf, never apt/pip install without explicit approval.
+
+  Prefer read-only tools when gathering information. Batch related tool calls.
+
+  File operations: always verify path exists before writing.'
+---
 # Tool Governance — Exocórtex.IA
 
 > Controls HOW and WHEN the agent uses external tools.

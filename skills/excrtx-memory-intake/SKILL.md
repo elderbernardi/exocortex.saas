@@ -1,17 +1,43 @@
 ---
 name: excrtx-memory-intake
-description: "Receive, normalize, extract, triage, and promote files and media sent to Exocórtex through multiple channels, without contaminating the semantic Acervo with uncurated raw material."
+description: Receive, normalize, extract, triage, and promote files and media sent
+  to Exocórtex through multiple channels, without contaminating the semantic Acervo
+  with uncurated raw material.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
-    tags: [exocortex, intake, inbox, ingestion, multicanal, acervo, triage, voice, files]
-    related_skills: [excrtx-memory-manager, excrtx-harness-surfaces, excrtx-produce-artifacts, excrtx-govern-draftfirst]
+    tags:
+    - exocortex
+    - intake
+    - inbox
+    - ingestion
+    - multicanal
+    - acervo
+    - triage
+    - voice
+    - files
+    related_skills:
+    - excrtx-memory-manager
+    - excrtx-harness-surfaces
+    - excrtx-produce-artifacts
+    - excrtx-govern-draftfirst
+    calibration:
+    - feature_id: EX-17
+      calibration_prompt: Você deve garantir que as operações e regras da skill Intake
+        Multicanal (excrtx-memory-intake) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o pipeline _inbox tem os 4 estágios e o IntakeEnvelope
+        está documentado.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Intake Multicanal.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Intake
+        Multicanal em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Personal Intake Workspace
 
 Use this skill when the user asks to design, implement, review, or operate the entry path for files, audio, images, PDFs, links, or batches sent to Exocórtex.

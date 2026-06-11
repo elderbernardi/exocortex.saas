@@ -1,16 +1,44 @@
 ---
 name: excrtx-hermes-extensions
-description: "Deep-dive: Add slash commands (CLI + Gateway) and call tools directly (bypass LLM) in Hermes Agent."
+description: 'Deep-dive: Add slash commands (CLI + Gateway) and call tools directly
+  (bypass LLM) in Hermes Agent.'
 version: 1.1.0
 category: excrtx
 created_by: agent
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, hermes, extensions]
+    tags:
+    - exocortex
+    - hermes
+    - extensions
+    calibration:
+    - feature_id: EX-51
+      calibration_prompt: 'Ao estender comandos slash no Hermes Agent, você deve instruir
+        ou aplicar alterações em três pontos estratégicos do código do runtime:
+
+        1. Registro em ''hermes_cli/commands.py'' (dentro da lista ''COMMAND_REGISTRY''
+        e no frozenset ''ACTIVE_SESSION_BYPASS_COMMANDS'').
+
+        2. Handler do CLI em ''cli.py'' (método ''process_command'').
+
+        3. Handlers do Gateway em ''gateway/run.py'' (em ambas as localizações: na
+        cadeia de dispatch principal para novas sessões e na lista ''_DEDICATED_HANDLERS''
+        para sessões ativas).
+
+        Se houver falha de execução de um comando no Telegram/Discord, verifique se
+        o dispatch não foi omitido em um dos dois locais de ''run.py''.'
+      test_prompt: Criei um slash command chamado '/status_servidor' que funciona
+        perfeitamente no terminal, mas no Telegram ele é tratado como uma mensagem
+        comum enviada ao agente. Qual é o problema e como corrijo?
+      acceptance_criteria: O agente deve identificar a falha no dispatch de gateway
+        e indicar a alteração em ambas as localizações em 'gateway/run.py' (cadeia
+        principal de rotas e no '_DEDICATED_HANDLERS').
+      remediation_tip: 'Erro de Harness: Novos comandos slash exigem o dispatch na
+        cadeia principal E no _DEDICATED_HANDLERS em gateway/run.py.'
   intent: class-level
 ---
-
 # Extending the Hermes Agent
 
 Advanced-level skill for developers who need to modify Hermes behavior or add new capabilities via slash commands and custom tools.

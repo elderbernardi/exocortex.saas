@@ -1,17 +1,37 @@
 ---
 name: excrtx-integrate-docbrain
-description: Use when Hermes or Exocórtex needs to parse documents through DocBrain, validate the local parser engine, or reproduce the DocBrain integration in a new Exocortex install.
+description: Use when Hermes or Exocórtex needs to parse documents through DocBrain,
+  validate the local parser engine, or reproduce the DocBrain integration in a new
+  Exocortex install.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
-    tags: [exocortex, docbrain, parser, cli-api, intake, documents]
-    related_skills: [hermes-agent, excrtx-memory-manager]
+    tags:
+    - exocortex
+    - docbrain
+    - parser
+    - cli-api
+    - intake
+    - documents
+    related_skills:
+    - hermes-agent
+    - excrtx-memory-manager
+    calibration:
+    - feature_id: EX-27
+      calibration_prompt: Você deve garantir que as operações e regras da skill DocBrain
+        Parser (excrtx-integrate-docbrain) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o DocBrain repo está clonado e buildado.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill DocBrain Parser.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill DocBrain
+        Parser em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # DocBrain CLI API
 
 ## Overview

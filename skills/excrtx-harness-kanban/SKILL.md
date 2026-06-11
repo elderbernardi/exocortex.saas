@@ -1,14 +1,32 @@
 ---
 name: excrtx-harness-kanban
-description: Register pending items, architectural decisions, and resumption points for Exocortex sessions. Structured session state tracking.
+description: Register pending items, architectural decisions, and resumption points
+  for Exocortex sessions. Structured session state tracking.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, kanban, backlog, governance, architecture, resumption]
+    tags:
+    - exocortex
+    - kanban
+    - backlog
+    - governance
+    - architecture
+    - resumption
+    calibration:
+    - feature_id: EX-10
+      calibration_prompt: Você deve garantir que as operações e regras da skill Kanban
+        Backlog (excrtx-harness-kanban) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o Hermes Kanban nativo está acessível via hermes kanban
+        list.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Kanban Backlog.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Kanban
+        Backlog em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocortex Kanban Backlog
 
 Usar quando o executivo pedir para deixar uma decisão, pendência ou plano em estado de espera para retomada posterior.

@@ -19,6 +19,22 @@ import re
 import sys
 from pathlib import Path
 
+# Lazy import to avoid circular dependency when used standalone
+_skill_judge = None
+
+
+def _get_skill_judge():
+    """Lazy-load skill_judge module for D1 checks."""
+    global _skill_judge
+    if _skill_judge is None:
+        import importlib.util
+        sj_path = Path(__file__).resolve().parent / "skill_judge.py"
+        spec = importlib.util.spec_from_file_location("skill_judge", sj_path)
+        sj = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sj)
+        _skill_judge = sj
+    return _skill_judge
+
 # ─── Markers ────────────────────────────────────────────────────────────────
 
 START_MARKER = "<!-- COMPILED_RULES_START -->"
@@ -157,6 +173,39 @@ def validate_compiled_rules(skills_dir: Path) -> list[dict]:
     return results
 
 
+def validate_d1_compliance(skills_dir: Path) -> list[dict]:
+    """Run D1 structural compliance on all skills that have compiled_rules.
+
+    Returns a list of {name, label, issues} dicts for non-COMPLIANT skills.
+    Only checks skills that would be included in the compiled soul.
+    """
+    sj = _get_skill_judge()
+    failures = []
+
+    for skill_dir in sorted(skills_dir.iterdir()):
+        skill_md = skill_dir / "SKILL.md"
+        if not skill_md.exists():
+            continue
+
+        # Only gate skills that have compiled_rules (will be in the soul)
+        result = extract_compiled_rules(skill_md)
+        if not result:
+            continue
+
+        name, _ = result
+        parsed = sj.parse_skill(skill_md)
+        d1 = sj.check_d1_structural(parsed)
+
+        if d1["label"] != "COMPLIANT":
+            failures.append({
+                "name": name,
+                "label": d1["label"],
+                "issues": d1["issues"],
+            })
+
+    return failures
+
+
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 def compile_rules(skills_dir: Path) -> str:
@@ -225,6 +274,10 @@ def main():
         "--validate-compiled-rules", action="store_true",
         help="Cross-check compiled_rules against body content. Exit 1 if desync found.",
     )
+    parser.add_argument(
+        "--require-d1-pass", action="store_true",
+        help="Refuse to compile if any skill with compiled_rules is not D1-COMPLIANT.",
+    )
     args = parser.parse_args()
 
     # Resolve paths relative to script location
@@ -251,8 +304,21 @@ def main():
             sys.exit(1)
         else:
             print("✅ All compiled_rules are synchronized with their body content.")
-            if args.dry_run:
-                sys.exit(0)
+
+    # D1 structural compliance gate
+    if args.require_d1_pass:
+        d1_failures = validate_d1_compliance(skills_dir)
+        if d1_failures:
+            print(f"\n❌ D1 COMPLIANCE GATE FAILED ({len(d1_failures)} skills):", file=sys.stderr)
+            for f in d1_failures:
+                print(f"  - {f['name']}: {f['label']} — {', '.join(f['issues'][:3])}", file=sys.stderr)
+            sys.exit(1)
+        else:
+            print("✅ All compiled_rules skills are D1-COMPLIANT.")
+
+    # Exit early if only validating in dry-run mode
+    if (args.validate_compiled_rules or args.require_d1_pass) and args.dry_run:
+        sys.exit(0)
 
     # Compile
     compiled = compile_rules(skills_dir)

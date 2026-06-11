@@ -1,19 +1,41 @@
 ---
 name: excrtx-behavior-briefing
-description: Morning Briefing cross-microverso. Consolidates pending information, queued approvals, recent insights, and the day's agenda across multiple domains.
+description: Morning Briefing cross-microverso. Consolidates pending information,
+  queued approvals, recent insights, and the day's agenda across multiple domains.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, behavior, briefing, daily, cross-domain]
-    related_skills: [excrtx-behavior-vetor, excrtx-govern-draftfirst, excrtx-memory-manager]
-compiled_rules: |
-  Briefing matinal cruza todos os microversos. Coleta: drafts pendentes, insights recentes, agenda do dia, ações bloqueadas.
-  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
-  Trigger: "briefing", "bom dia", "o que tem pra hoje", ou início de sessão.
----
+    tags:
+    - exocortex
+    - behavior
+    - briefing
+    - daily
+    - cross-domain
+    related_skills:
+    - excrtx-behavior-vetor
+    - excrtx-govern-draftfirst
+    - excrtx-memory-manager
+    calibration:
+    - feature_id: EX-07
+      calibration_prompt: Você deve garantir que as operações e regras da skill Briefing
+        Contextual (excrtx-behavior-briefing) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o briefing consegue ler macro/ e global/ do Acervo.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Briefing Contextual.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Briefing
+        Contextual em seu SKILL.md estão sendo estritamente seguidos.
+compiled_rules: 'Briefing matinal cruza todos os microversos. Coleta: drafts pendentes,
+  insights recentes, agenda do dia, ações bloqueadas.
 
+  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo
+  compacto ≤10 linhas.
+
+  Trigger: "briefing", "bom dia", "o que tem pra hoje", ou início de sessão.'
+---
 # Morning Briefing — Consolidação Cross-Microverso
 
 > Um executivo não vive em silos. O briefing cruza todos os domínios e entrega um panorama acionável.

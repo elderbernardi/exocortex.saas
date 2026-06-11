@@ -1,16 +1,38 @@
 ---
 name: excrtx-memory-mvsetup
-description: Provision base microversos for Exocortex as part of the replicable Hermes/Exocortex setup.
+description: Provision base microversos for Exocortex as part of the replicable Hermes/Exocortex
+  setup.
 version: 1.0.0
 author: Exocórtex
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, acervo, microverso, setup, reproducibility, shell, idempotency]
-    related_skills: [excrtx-memory-manager, excrtx-memory-newmicro, hermes-agent]
+    tags:
+    - exocortex
+    - acervo
+    - microverso
+    - setup
+    - reproducibility
+    - shell
+    - idempotency
+    related_skills:
+    - excrtx-memory-manager
+    - excrtx-memory-newmicro
+    - hermes-agent
+    calibration:
+    - feature_id: EX-14
+      calibration_prompt: Você deve garantir que as operações e regras da skill Setup
+        de Microverso Base (excrtx-memory-mvsetup) estão totalmente ativas no seu
+        comportamento e integridade.
+      test_prompt: Verifique se exocortex-ops tem microverso.yaml, SCHEMA.md, index.md,
+        log.md.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Setup de Microverso Base.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Setup
+        de Microverso Base em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocórtex Base Microverso Setup
 
 Use quando um microverso deve virar parte do setup inicial e replicável do Exocórtex/Hermes. Exemplo: uma capacidade transversal que precisa existir em novos Exocórtex, não apenas no ambiente atual.

@@ -1,14 +1,43 @@
 ---
 name: excrtx-memory-newmicro
-description: Criar novos Microversos no Acervo Cognitivo com estrutura wiki completa (SCHEMA, index, log, raw, 7 Natures).
+description: Criar novos Microversos no Acervo Cognitivo com estrutura wiki completa
+  (SCHEMA, index, log, raw, 7 Natures).
 version: 2.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, microverso, acervo, creation, onboarding, wiki]
----
+    tags:
+    - exocortex
+    - microverso
+    - acervo
+    - creation
+    - onboarding
+    - wiki
+    calibration:
+    - feature_id: EX-13
+      calibration_prompt: 'Ao ser solicitado a criar ou iniciar um novo domínio/contexto
+        de atuação, ative a skill de criação de microverso:
 
+        - Solicite ao executivo (se ausente): Nome legível, Slug (kebab-case), Type
+        (client|project|domain|role) e Description.
+
+        - Copie recursivamente o template ''micro/_template/'' para ''micro/{slug}/''.
+
+        - Preencha o ''SCHEMA.md'' e substitua todos os placeholders como ''{MICROVERSO_NAME}''
+        e ''{slug}'' em todos os arquivos gerados.
+
+        - Registre o novo microverso em ''shared/groups.md'' no alias correspondente
+        e crie uma entrada de log em ''log.md'' e no ''MEMORY.md'' global.'
+      test_prompt: Crie un novo microverso para gerenciar a nossa consultoria para
+        o 'Cliente XPTO'.
+      acceptance_criteria: O agente deve requisitar as informações em falta (Slug,
+        Type, Description) ou demonstrar o clone da estrutura base do template e substituição
+        de placeholders nos arquivos.
+      remediation_tip: 'Falha no Provisionamento: O microverso deve ser inicializado
+        copiando o template completo e ajustando todos os placeholders e SCHEMA.'
+---
 # Criar Novo Microverso
 
 Provisiona um novo domínio de atuação no Acervo Cognitivo do executivo.

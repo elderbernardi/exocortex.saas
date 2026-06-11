@@ -1,17 +1,38 @@
 ---
 name: excrtx-produce-artifacts
-description: "Create, organize, export, and publish final Exocórtex artifacts in the user's workspace, maintaining reproducibility in the Acervo."
+description: Create, organize, export, and publish final Exocórtex artifacts in the
+  user's workspace, maintaining reproducibility in the Acervo.
 version: 1.0.1
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
-    tags: [exocortex, artifacts, drive, acervo, publishing, reproducibility]
-    related_skills: [excrtx-memory-manager, google-workspace, excrtx-govern-draftfirst, excrtx-quality-antislop]
+    tags:
+    - exocortex
+    - artifacts
+    - drive
+    - acervo
+    - publishing
+    - reproducibility
+    related_skills:
+    - excrtx-memory-manager
+    - google-workspace
+    - excrtx-govern-draftfirst
+    - excrtx-quality-antislop
+    calibration:
+    - feature_id: EX-22
+      calibration_prompt: Você deve garantir que as operações e regras da skill Artifacts
+        Manager (excrtx-produce-artifacts) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o artifacts manager consegue listar artefatos existentes.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Artifacts Manager.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Artifacts
+        Manager em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Personal Artifact Workspace
 
 Use this skill when the user asks for creation, organization, export, or delivery of final artifacts: documents, PDFs, HTML, spreadsheets, images, slides, ZIP packages, or reports.

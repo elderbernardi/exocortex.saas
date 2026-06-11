@@ -1,24 +1,59 @@
 ---
 name: excrtx-harness-imbroke
-description: >
-  Gerencia o modo imbroke do Exocórtex: seleção determinística de modelos gratuitos,
-  conversão de intelligence index para escala 1-10, sistema de warnings e
-  formatação de resposta transparente. 100% determinístico, sem uso de LLM.
+description: 'Gerencia o modo imbroke do Exocórtex: seleção determinística de modelos
+  gratuitos, conversão de intelligence index para escala 1-10, sistema de warnings
+  e formatação de resposta transparente. 100% determinístico, sem uso de LLM.
+
+  '
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 triggers:
-  - "imbroke"
-  - "modo imbroke"
-  - "classificar modelo 1-10"
-  - "rating de modelo gratuito"
-  - "/xc imbroke"
-tags: [exocortex, openrouter, imbroke, deterministic, rating, warnings]
+- imbroke
+- modo imbroke
+- classificar modelo 1-10
+- rating de modelo gratuito
+- /xc imbroke
+tags:
+- exocortex
+- openrouter
+- imbroke
+- deterministic
+- rating
+- warnings
 metadata:
   hermes:
-    tags: [exocortex, harness, imbroke]
----
+    tags:
+    - exocortex
+    - harness
+    - imbroke
+    calibration:
+    - feature_id: EX-48
+      calibration_prompt: 'Quando o modo ''imbroke'' for ativado pelo executivo (ou
+        por erro de pagamento detectado), você deve agir estritamente por meio do
+        script determinístico ''scripts/openrouter_free_model_router.py''.
 
+        - NUNCA use o LLM para adivinhar, classificar ou formatar informações do modo
+        imbroke.
+
+        - O script faz a seleção com base em benchmarks reais (escala 1-10) e configura
+        o Hermes automaticamente.
+
+        - Copie e apresente exatamente o resultado retornado pelo script, preservando
+        o warning contextual de segurança correspondente ao rating (🟢 OK, 🟡 ALERTA
+        ou 🔴 PERIGO).
+
+        - Lembre o executivo que a mudança exige reiniciar a sessão com ''/new''.'
+      test_prompt: Qual o status do modo imbroke e qual o rating de capacidade do
+        modelo atual?
+      acceptance_criteria: O agente deve executar o script 'python3 scripts/openrouter_free_model_router.py
+        --status' e reportar estritamente o output do script, exibindo o rating 1-10
+        e warnings de capacidade sem alucinar.
+      remediation_tip: 'Erro de Harness: Modo imbroke é 100% determinístico. Você
+        deve ler e reportar o output bruto do script de roteamento sem reformular
+        com LLM.'
+---
 # excrtx-harness-imbroke
 
 ## ⚡ Instruções para o Agente (OBRIGATÓRIO)

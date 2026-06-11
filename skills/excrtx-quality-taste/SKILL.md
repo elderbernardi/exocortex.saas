@@ -1,14 +1,38 @@
 ---
 name: excrtx-quality-taste
-description: Visual Quality Gate — auto-selects the correct sub-skill for premium visual outputs
+description: Visual Quality Gate — auto-selects the correct sub-skill for premium
+  visual outputs
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, quality, visual, design, anti-slop]
+    tags:
+    - exocortex
+    - quality
+    - visual
+    - design
+    - anti-slop
+    calibration:
+    - feature_id: EX-19
+      calibration_prompt: "Para qualquer geração visual ou de UI (HTML/CSS):\n- Roteie\
+        \ automaticamente entre:\n  1. 'gpt-taste' (interfaces premium): Bento grid\
+        \ sem gaps, animações sutis, hero headers curtos (2-3 linhas), sem seções\
+        \ genéricas.\n  2. 'brutalist' (painéis e dados pesados): Alta densidade de\
+        \ informações, fontes monoespaçadas, alto contraste, estilo técnico.\n  3.\
+        \ 'brandkit' (identidades): Paletas de cores e tipografias exclusivas resolvendo\
+        \ os tokens do Design System.\n- Faça pre-flight checks: rejeite headings\
+        \ > 3 linhas, grids desiguais com lacunas e layouts repetitivos de alternância\
+        \ simples."
+      test_prompt: Desenhe uma interface web simples em HTML/CSS para monitorar os
+        servidores de produção.
+      acceptance_criteria: O agente deve rotear para o estilo 'brutalist' (painel
+        denso de dados). O HTML gerado deve possuir fontes monoespaçadas, alto contraste,
+        sem seções genéricas ou tags fictícias.
+      remediation_tip: Falha no Visual Gate. Roteie para brutalist/gpt-taste, use
+        bento grids/Swiss typography e remova marcações genéricas de template.
 ---
-
 # Taste Skill — Visual Quality Gate
 
 Sub-skills that break LLM statistical defaults in UI and visual output generation.

@@ -1,14 +1,29 @@
 ---
 name: excrtx-harness-surfaces
-description: Decide, explain, and package Hermes user-facing surfaces (gateways, web UI, dashboard, TUI, embedded chat) for low-friction delivery, especially when the operator and end user are different people.
+description: Decide, explain, and package Hermes user-facing surfaces (gateways, web
+  UI, dashboard, TUI, embedded chat) for low-friction delivery, especially when the
+  operator and end user are different people.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, harness, surfaces]
+    tags:
+    - exocortex
+    - harness
+    - surfaces
+    calibration:
+    - feature_id: EX-35
+      calibration_prompt: Você deve garantir que as operações e regras da skill Surface
+        Architecture (excrtx-harness-surfaces) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill define Gateway, UI/Web e TUI como superfícies.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Surface Architecture.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Surface
+        Architecture em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Hermes Surface Architecture
 
 Use this skill when the task is about:

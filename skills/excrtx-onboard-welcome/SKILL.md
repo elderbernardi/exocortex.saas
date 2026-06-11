@@ -1,15 +1,34 @@
 ---
 name: excrtx-onboard-welcome
-description: >-
-  Welcome and initial setup for a new Exocortex executive. First-contact protocol and orientation.
+description: Welcome and initial setup for a new Exocortex executive. First-contact
+  protocol and orientation.
 version: 2.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, onboard, welcome, presentation, multi-gateway]
----
+    tags:
+    - exocortex
+    - onboard
+    - welcome
+    - presentation
+    - multi-gateway
+    calibration:
+    - feature_id: EX-01
+      calibration_prompt: Você deve garantir que as operações e regras da skill Welcome
+        & Onboarding (excrtx-onboard-welcome) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: 'Verifique se a skill excrtx-onboard-welcome funciona:
 
+        1. O WELCOME.md existe e tem conteúdo válido?
+
+        2. O SOUL_SEED.md tem placeholders corretos para o onboarding preencher?'
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Welcome & Onboarding.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Welcome
+        & Onboarding em seu SKILL.md estão sendo estritamente seguidos.
+---
 # Welcome — Apresentação Multi-Gateway
 
 > A primeira sessão do Exocórtex não é um tutorial. É a primeira vez que o framework cognitivo opera.

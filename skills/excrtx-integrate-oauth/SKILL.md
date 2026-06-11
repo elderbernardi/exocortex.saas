@@ -1,19 +1,36 @@
 ---
 name: excrtx-integrate-oauth
-description: Configure and validate remote MCP servers in Hermes when the provider uses HTTP transport plus OAuth, then document the integration cleanly for future reuse.
+description: Configure and validate remote MCP servers in Hermes when the provider
+  uses HTTP transport plus OAuth, then document the integration cleanly for future
+  reuse.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 triggers:
-  - User wants to connect Hermes to a remote MCP server over HTTP.
-  - Provider docs mention OAuth or PKCE instead of static headers.
-  - Task involves adding, testing, or documenting a third-party cloud integration for Hermes.
-  - You need to translate generic provider docs into the exact Hermes CLI flow.
+- User wants to connect Hermes to a remote MCP server over HTTP.
+- Provider docs mention OAuth or PKCE instead of static headers.
+- Task involves adding, testing, or documenting a third-party cloud integration for
+  Hermes.
+- You need to translate generic provider docs into the exact Hermes CLI flow.
 metadata:
   hermes:
-    tags: [exocortex, integrate, oauth]
+    tags:
+    - exocortex
+    - integrate
+    - oauth
+    calibration:
+    - feature_id: EX-26
+      calibration_prompt: Você deve garantir que as operações e regras da skill OAuth
+        MCP (excrtx-integrate-oauth) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill documenta validação em 3 camadas (mcp list,
+        mcp test, sessão).
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill OAuth MCP.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill OAuth
+        MCP em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Hermes MCP OAuth Integrations
 
 Use this skill when Hermes must connect to a third-party remote MCP server that authenticates via OAuth rather than static bearer headers. The goal is to derive the exact Hermes-native flow, validate it end to end, and leave reusable documentation behind.

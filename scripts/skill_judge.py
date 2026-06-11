@@ -63,8 +63,11 @@ D5_LABELS = ["EFFICIENT", "ACCEPTABLE", "BLOATED"]
 VERDICTS = ["PASS", "IMPROVE", "REWRITE"]
 
 # LLM judge model preferences
-JUDGE_MODEL_PRIMARY = "anthropic/claude-sonnet-4" 
-JUDGE_MODEL_FALLBACK = "deepseek/deepseek-chat"
+# Primary: DeepSeek V4 Pro direct (flagship reasoning model)
+# Fallback: OpenRouter (broader model access)
+JUDGE_MODEL_DEEPSEEK = "deepseek-v4-pro"
+JUDGE_MODEL_OPENROUTER = "anthropic/claude-sonnet-4"
+JUDGE_MODEL_OPENROUTER_DS = "deepseek/deepseek-chat"
 
 # API endpoints
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -481,21 +484,31 @@ def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | 
         "Content-Type": "application/json",
         "User-Agent": "exocortex-skill-judge/1.0",
     }
-    data = json.dumps({
+    payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": "You are a skill quality judge. Respond ONLY with valid JSON."},
             {"role": "user", "content": prompt},
         ],
-        "max_tokens": 2000,
+        "max_tokens": 4000,
         "temperature": 0.1,
-    }).encode("utf-8")
+    }
+
+    # DeepSeek V4 Pro: enforce JSON output and disable thinking mode for clean JSON
+    is_deepseek_direct = "deepseek.com" in api_url
+    if is_deepseek_direct:
+        payload["response_format"] = {"type": "json_object"}
+
+    data = json.dumps(payload).encode("utf-8")
 
     try:
         req = urllib.request.Request(api_url, data=data, headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=90) as resp:
             body = json.loads(resp.read().decode("utf-8"))
-            content = body.get("choices", [{}])[0].get("message", {}).get("content", "")
+            choice = body.get("choices", [{}])[0]
+            message = choice.get("message", {})
+            # DeepSeek V4 may return reasoning in reasoning_content; we want content
+            content = message.get("content", "")
             return content
     except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, Exception) as e:
         print(f"    ⚠️ LLM API error ({model}): {e}", file=sys.stderr)
@@ -547,34 +560,34 @@ def _parse_llm_response(response_text: str) -> dict:
 
 
 def call_llm_judge(prompt: str) -> dict:
-    """Call the LLM judge API with failover: OpenRouter → DeepSeek.
+    """Call the LLM judge API with failover: DeepSeek → OpenRouter → OpenRouter+DS.
 
     Returns D2-D5 dimensional labels dict, or empty dict on total failure.
     """
-    # Try OpenRouter (primary)
-    openrouter_key = _get_api_key()
-    if openrouter_key:
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_PRIMARY)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
-            print(f"    ⚠️ Failed to parse OpenRouter response, trying fallback...", file=sys.stderr)
-
-    # Fallback: DeepSeek direct API
+    # Primary: DeepSeek direct API (fast, cheap)
     deepseek_key = _get_deepseek_key()
     if deepseek_key:
-        print(f"    🔄 Falling back to DeepSeek...", file=sys.stderr)
-        response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_FALLBACK)
+        response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_DEEPSEEK)
+        if response:
+            dims = _parse_llm_response(response)
+            if dims:
+                return dims
+            print(f"    ⚠️ Failed to parse DeepSeek response, trying fallback...", file=sys.stderr)
+
+    # Fallback 1: OpenRouter (Claude)
+    openrouter_key = _get_api_key()
+    if openrouter_key:
+        print(f"    🔄 Falling back to OpenRouter...", file=sys.stderr)
+        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER)
         if response:
             dims = _parse_llm_response(response)
             if dims:
                 return dims
 
-    # Fallback: DeepSeek via OpenRouter (if OpenRouter key exists)
+    # Fallback 2: DeepSeek via OpenRouter (last resort)
     if openrouter_key:
         print(f"    🔄 Trying DeepSeek via OpenRouter...", file=sys.stderr)
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_FALLBACK)
+        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER_DS)
         if response:
             dims = _parse_llm_response(response)
             if dims:
@@ -641,8 +654,8 @@ def main():
             prompt = build_judge_prompt(parsed, rubric_text, soul_context)
             if args.model:
                 # Allow model override from CLI
-                global JUDGE_MODEL_PRIMARY
-                JUDGE_MODEL_PRIMARY = args.model
+                global JUDGE_MODEL_DEEPSEEK
+                JUDGE_MODEL_DEEPSEEK = args.model
             llm_dims = call_llm_judge(prompt)
             if not llm_dims:
                 print(f"    ⚠️ No LLM response for {skill_name}, using D1-only verdict", file=sys.stderr)

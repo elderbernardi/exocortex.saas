@@ -1,17 +1,36 @@
 ---
 name: excrtx-harness-core
-description: "Homegrown harness to operate Codex CLI (exec) with traceability and lightweight verification, without third-party plugins."
+description: Homegrown harness to operate Codex CLI (exec) with traceability and lightweight
+  verification, without third-party plugins.
 version: 0.3.0
 category: excrtx
 created_by: agent
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, harness, core, codex, execution]
-    related_skills: [excrtx-harness-codexint, excrtx-harness-hermesops, excrtx-govern-draftfirst]
+    tags:
+    - exocortex
+    - harness
+    - core
+    - codex
+    - execution
+    related_skills:
+    - excrtx-harness-codexint
+    - excrtx-harness-hermesops
+    - excrtx-govern-draftfirst
+    calibration:
+    - feature_id: EX-33
+      calibration_prompt: Você deve garantir que as operações e regras da skill Codex
+        Core Harness (excrtx-harness-core) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se os scripts runner e review existem.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Codex Core Harness.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Codex
+        Core Harness em seu SKILL.md estão sendo estritamente seguidos.
   intent: class-level
 ---
-
 # Codex Harness (homegrown)
 
 Operational skill for using **Codex CLI** as a work executor (especially code) in a reproducible way, with local traceability, **without relying on community plugins**.

@@ -1,20 +1,65 @@
 ---
 name: excrtx-quality-gate
-description: Quality gate applied by the executor agent at the end of each task. Prose goes through excrtx-quality-antislop, visual through excrtx-quality-taste. Corrections are made by the executor, never by the orchestrator.
+description: Quality gate applied by the executor agent at the end of each task. Prose
+  goes through excrtx-quality-antislop, visual through excrtx-quality-taste. Corrections
+  are made by the executor, never by the orchestrator.
 version: 1.1.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, behavior, quality, gate, excrtx-quality-antislop, excrtx-quality-taste]
-    related_skills: [excrtx-quality-antislop, excrtx-quality-taste]
-compiled_rules: |
-  Prose for executive: score with anti-slop (min 35/50). Below threshold: rewrite before delivering.
-  Visual output: zero pre-flight failures from excrtx-quality-taste.
-  Code and technical docs: no quality gate — deliver directly.
-  The agent that produces output is the agent that ensures its quality. Orchestrator never corrects — it returns.
----
+    tags:
+    - exocortex
+    - behavior
+    - quality
+    - gate
+    - excrtx-quality-antislop
+    - excrtx-quality-taste
+    related_skills:
+    - excrtx-quality-antislop
+    - excrtx-quality-taste
+    calibration:
+    - feature_id: EX-52
+      calibration_prompt: 'Todos os artefatos gerados (documentos, planilhas, slides)
+        pelas skills de produção devem passar pela validação rigorosa do script de
+        harness ''validate_artifact_manifest.py''.
 
+        - Antes de marcar um manifesto de artefato como ''ready'' ou ''published'',
+        você deve simular ou acionar a execução do validador.
+
+        - Certifique-se de que o antislop score é superior a 35 e que não foram utilizados
+        componentes repetitivos de template.
+
+        - Qualquer falha na validação impede o status ''ready'' e exige a correção
+        imediata do conteúdo dos arquivos afetados.'
+      test_prompt: Gere o manifesto final para um relatório de auditoria recém-criado
+        sob o id 'art_20260608_auditoria'. Como você garante que ele passa pelo Quality
+        Gate Enforced?
+      acceptance_criteria: O agente deve explicitar que o manifesto deve ser validado
+        pelo script 'validate_artifact_manifest.py' e atestar que a pontuação anti-slop
+        deve ser superior a 35.
+      remediation_tip: Quality Gate Bypassed. É obrigatório executar a validação técnica
+        de manifesto pelo script 'validate_artifact_manifest.py' antes de publicar.
+    - feature_id: EX-21
+      calibration_prompt: Você deve garantir que as operações e regras da skill Quality
+        Gate Unificado (excrtx-quality-gate) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se o orquestrador classifica output como prosa/visual/técnico.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Quality Gate Unificado.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Quality
+        Gate Unificado em seu SKILL.md estão sendo estritamente seguidos.
+compiled_rules: 'Prose for executive: score with anti-slop (min 35/50). Below threshold:
+  rewrite before delivering.
+
+  Visual output: zero pre-flight failures from excrtx-quality-taste.
+
+  Code and technical docs: no quality gate — deliver directly.
+
+  The agent that produces output is the agent that ensures its quality. Orchestrator
+  never corrects — it returns.'
+---
 # Output Quality Gate — Executor Responsibility
 
 > The agent that produces the output is the agent that ensures its quality. The orchestrator **never** corrects — it returns.

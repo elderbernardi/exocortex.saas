@@ -343,6 +343,21 @@ python3 scripts/openrouter_free_model_router.py --status
 
 ---
 
+## 🧑‍💻 Developer Onboarding & Knowledge Base
+
+For developers looking to contribute, extend, or troubleshoot Exocortex.IA, the primary and most up-to-date documentation is located inside the `exocortex-dev` Microverso:
+
+*   **Wiki Catalog & Schema**: Refer to the Microverso Index at [index.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/_meta/index.md) and [SCHEMA.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/_meta/SCHEMA.md).
+*   **System Architecture**: Detailed internal system structure and Trilho A/B pathways are documented in [architecture.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/knowledge/architecture.md).
+*   **Development Standards**: For coding style guidelines, skill requirements, and automated validation gates, see [development-standards.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/contracts/development-standards.md).
+*   **Skill vs. MCP Choice**: Deciding when to build a custom skill vs. adding an MCP server is documented in [skill-vs-mcp-selection.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md) (ADR-006).
+*   **Creating Custom Skills**: Step-by-step workflow (SOP) to scaffold, compile, and test skills is available in [create-custom-skill.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/workflows/create-custom-skill.md).
+*   **Running Preflight Audits**: Process to execute deterministic and semantic checks before committing code can be found in [run-preflight-checks.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/workflows/run-preflight-checks.md).
+
+Always check this Microverso memory first to ensure your development aligns with the active conventions and architectural guidelines of the Exocortex.
+
+---
+
 ## 🏃 Daily Operation
 
 ### 1. Interactive Session (Execution & Evolution)

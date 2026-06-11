@@ -1,14 +1,32 @@
 ---
 name: excrtx-assess-repofit
-description: Evaluate whether an existing repository is suitable as a base for an Exocortex product. Technical feasibility, architecture, and debt analysis.
+description: Evaluate whether an existing repository is suitable as a base for an
+  Exocortex product. Technical feasibility, architecture, and debt analysis.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [assessment, architecture, due-diligence, repo, fit-gap, runtime-validation]
+    tags:
+    - assessment
+    - architecture
+    - due-diligence
+    - repo
+    - fit-gap
+    - runtime-validation
+    calibration:
+    - feature_id: EX-04
+      calibration_prompt: Você deve garantir que as operações e regras da skill Repo
+        Fit Assessment (excrtx-assess-repofit) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se a skill de repo fit assessment tem procedimento completo
+        no SKILL.md.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Repo Fit Assessment.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Repo
+        Fit Assessment em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Technical Repo Fit Assessment
 
 Use esta skill quando o executivo pedir para estudar um sistema existente e decidir se ele atende a um propósito maior: virar engine, backend, parser, serviço, intake pipeline, viewer, ou base de produto.

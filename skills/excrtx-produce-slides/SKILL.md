@@ -1,17 +1,43 @@
 ---
 name: excrtx-produce-slides
-description: "Use when creating premium HTML/PDF/ZIP presentation exports from Markdown, Marp Markdown, PPTX, or deck briefs inside Exocórtex. Keeps Markdown as canonical source, resolves Design System by microverso, and uses Google Drive as the default private export destination."
+description: Use when creating premium HTML/PDF/ZIP presentation exports from Markdown,
+  Marp Markdown, PPTX, or deck briefs inside Exocórtex. Keeps Markdown as canonical
+  source, resolves Design System by microverso, and uses Google Drive as the default
+  private export destination.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
-    tags: [exocortex, presentations, html, markdown, marp, drive, visual, artifacts]
-    related_skills: [excrtx-quality-designsys, excrtx-quality-taste, excrtx-produce-artifacts, google-workspace, excrtx-govern-draftfirst]
+    tags:
+    - exocortex
+    - presentations
+    - html
+    - markdown
+    - marp
+    - drive
+    - visual
+    - artifacts
+    related_skills:
+    - excrtx-quality-designsys
+    - excrtx-quality-taste
+    - excrtx-produce-artifacts
+    - google-workspace
+    - excrtx-govern-draftfirst
+    calibration:
+    - feature_id: EX-23
+      calibration_prompt: Você deve garantir que as operações e regras da skill Gerador
+        de Slides (excrtx-produce-slides) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Verifique se os scripts de slides existem e são executáveis.
+      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
+        as regras e procedimentos da skill Gerador de Slides.
+      remediation_tip: Certifique-se de que a documentação e os limites da skill Gerador
+        de Slides em seu SKILL.md estão sendo estritamente seguidos.
 ---
-
 # Exocórtex Slides
 
 Gera apresentações HTML premium a partir de fontes Markdown, Marp Markdown, PPTX ou brief de deck.
