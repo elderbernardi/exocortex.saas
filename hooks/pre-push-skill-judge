@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Git pre-push hook — D1 skill regression gate.
+# Prevents pushing if any excrtx skill regresses below the frozen baseline.
+#
+# Install: cp hooks/pre-push-skill-judge .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+# Bypass:  git push --no-verify
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+BASELINE="$REPO_ROOT/.dogfood/baselines/d1-40-40-baseline.json"
+
+# Only run if skills were modified in the push
+CHANGED_SKILLS=$(git diff --name-only @{push}.. -- 'skills/excrtx-*/' 2>/dev/null || true)
+
+if [ -z "$CHANGED_SKILLS" ]; then
+    exit 0  # No skill changes — skip
+fi
+
+echo "🔍 [pre-push] Running D1 skill regression gate..."
+
+if [ ! -f "$BASELINE" ]; then
+    echo "⚠️  Baseline not found: $BASELINE — skipping gate."
+    exit 0
+fi
+
+python "$REPO_ROOT/scripts/skill_judge.py" --all --d1-only \
+    --compare-baseline "$BASELINE"
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ D1 skill regression detected. Push blocked."
+    echo "   Fix the issues above or bypass with: git push --no-verify"
+    exit 1
+fi
+
+echo "✅ [pre-push] D1 gate passed."

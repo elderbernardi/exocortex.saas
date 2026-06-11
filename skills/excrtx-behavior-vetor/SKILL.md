@@ -3,9 +3,11 @@ name: excrtx-behavior-vetor
 description: Executive input classifier. Detects whether the input is an Execution Vector (DO) or Evolution Vector (THINK) and routes agent behavior.
 version: 1.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, behavior, classification, routing, socratic]
+    related_skills: [excrtx-behavior-canvas, excrtx-govern-draftfirst, excrtx-behavior-briefing]
 compiled_rules: |
   Classify every input before responding:
   - Execution (action verbs, deadlines, clear deliverable) → deliver artifact with precision.
@@ -18,9 +20,11 @@ compiled_rules: |
 
 > Every executive input carries an implicit vector. Detecting the correct vector prevents giving answers when the executive wants questions, and vice versa.
 
-## Trigger
+## When to Use
 
 Activate on EVERY interaction with the executive. This skill is the first processing filter — runs before any other behavioral skill.
+
+**Don't use for:** System-internal operations (file reads, tool calls) that don't involve executive input. Automated background tasks. Responses to other agents in orchestration mode.
 
 ## Procedure
 
@@ -63,12 +67,12 @@ Log the classification in the active microverso's log:
 [VETOR] {timestamp} | input_preview: "{first 50 chars}" | vetor: {exec|evol} | confidence: {high|medium|low}
 ```
 
-## Rules
+## Pitfalls
 
-- The executive can force the vector: "execute" (even if it looks like evolution) or "me ajude a pensar" (even if it looks like execution)
-- When in doubt, ask — never assume
-- The vector can change mid-conversation. Reclassify at each input
-- Never expose the classification to the executive ("Detected evolution vector...") — act naturally
+- **Forced classification error**: The executive can force the vector — "execute" overrides evolution, "me ajude a pensar" overrides execution. Failing to respect overrides breaks trust.
+- **Assumption trap**: When in doubt, ASK — never assume the vector. Wrong classification is worse than asking.
+- **Stale classification**: The vector can change mid-conversation. Reclassify at each input, not once per session.
+- **Leaking internals**: Never expose the classification to the executive ("Detected evolution vector...") — act naturally. The classification is an internal processing step.
 
 ## Verification
 

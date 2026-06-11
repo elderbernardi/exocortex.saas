@@ -2,6 +2,8 @@
 name: excrtx-memory-wikiadapt
 description: "Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo v2."
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 metadata:
   hermes:
@@ -16,11 +18,13 @@ Safe bridge between the native `research/llm-wiki` skill and the Acervo Cognitiv
 
 `research/llm-wiki` writes to `~/.hermes/wiki/` — outside the Acervo. Without this adapter, wiki writes bypass the Domain Filter and scope isolation of `excrtx-memory-manager`.
 
-## Trigger
+## When to Use
 
 Activate when:
 - The agent calls `research/llm-wiki` to create or update wiki pages
 - Content needs to be synced between `~/.hermes/wiki/` and the Acervo
+
+**Don't use for:** Direct Acervo writes without wiki involvement (use `excrtx-memory-manager`). Microverso installation (use `excrtx-memory-mvinstall`). Knowledge intake from external sources (use `excrtx-memory-intake`).
 
 ## Procedure
 
@@ -61,3 +65,8 @@ Wiki is a cache/pointer, never the source of truth.
 - [ ] Content lands in correct Acervo path
 - [ ] Wiki pointer references Acervo location
 - [ ] Scope restrictions respected
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

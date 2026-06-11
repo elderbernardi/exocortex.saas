@@ -3,6 +3,7 @@ name: excrtx-integrate-nlmroute
 description: Operational policy for learning with NotebookLM (CLI-first), automatic source ingestion, and fallback via deep research/web search when documentary sources are unavailable.
 version: 1.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, notebooklm, nlm, knowledge, research, mcp]
@@ -97,3 +98,24 @@ nlm login --check
 ## Internal References
 
 - `references/ensino-alignment.md` — alignment criteria with the standard already adopted in the teaching workspace (official installation + source routing).
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

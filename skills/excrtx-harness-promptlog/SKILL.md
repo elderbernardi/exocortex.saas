@@ -1,7 +1,9 @@
 ---
 name: excrtx-harness-promptlog
-description: Registra prompts de configuração no MEMORY.md para auditoria e reprodutibilidade
+description: Log configuration prompts to MEMORY.md for audit and reproducibility.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, logging, audit, configuration]
@@ -9,8 +11,11 @@ metadata:
 
 # Exocortex Prompt Log
 
-## Trigger
-Ativar AUTOMATICAMENTE após cada prompt de configuração que altere SOUL.md, MEMORY.md, config.yaml ou instale skills/tools.
+## When to Use
+
+Activate AUTOMATICALLY after any configuration prompt that modifies SOUL.md, MEMORY.md, config.yaml, or installs skills/tools.
+
+**Don't use for:** Normal conversation or task execution. Code changes without configuration impact. Briefings or status checks (use `excrtx-behavior-briefing`). Self-diagnostics (use `excrtx-assess-selftest`).
 
 ## Procedure
 1. Registrar em MEMORY.md uma entrada com:
@@ -30,3 +35,14 @@ Ativar AUTOMATICAMENTE após cada prompt de configuração que altere SOUL.md, M
 
 ## Objective
 Manter um log auditável que permite REPRODUZIR a configuração em uma nova instância Hermes. Qualquer agente deve poder ler MEMORY.md e entender o histórico completo de configuração.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

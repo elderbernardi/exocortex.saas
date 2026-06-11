@@ -97,6 +97,66 @@ def format_section_title(skill_name: str) -> str:
     return mapping.get(skill_name, skill_name.replace("excrtx-", "").replace("-", " ").title())
 
 
+# ─── Validation ─────────────────────────────────────────────────────────────
+
+def validate_compiled_rules(skills_dir: Path) -> list[dict]:
+    """Cross-check compiled_rules against body content for each skill.
+
+    Returns a list of {name, issues} dicts for skills with desynchronized rules.
+    A desynchronized rule is one where >50% of the non-trivial keywords in
+    compiled_rules don't appear anywhere in the body.
+    """
+    TRIVIAL_WORDS = {
+        "o", "a", "os", "as", "de", "do", "da", "dos", "das", "em", "no", "na",
+        "nos", "nas", "por", "para", "com", "sem", "que", "se", "não", "e", "ou",
+        "um", "uma", "uns", "umas", "ao", "à", "aos", "às", "the", "is", "are",
+        "and", "or", "to", "in", "of", "for", "a", "an", "be", "if", "it", "on",
+        "at", "as", "by", "do", "no", "so", "up", "we", "he", "me", "my",
+    }
+    results = []
+
+    for skill_dir in sorted(skills_dir.iterdir()):
+        skill_md = skill_dir / "SKILL.md"
+        if not skill_md.exists():
+            continue
+
+        result = extract_compiled_rules(skill_md)
+        if not result:
+            continue
+
+        name, rules = result
+
+        # Read body (everything after frontmatter)
+        raw = skill_md.read_text(encoding="utf-8")
+        clean = re.sub(r"^\d+\|", "", raw, flags=re.MULTILINE)
+        fm_match = re.search(r"\n---\s*\n", clean[3:]) if clean.lstrip().startswith("---") else None
+        body = clean[fm_match.end() + 3:] if fm_match else clean
+        body_lower = body.lower()
+
+        # Extract non-trivial keywords from compiled_rules
+        rule_words = set(re.findall(r"[a-záàâãéêíóôõúçü]{4,}", rules.lower()))
+        rule_words -= TRIVIAL_WORDS
+
+        if not rule_words:
+            continue
+
+        # Check how many rule keywords appear in body
+        missing = [w for w in rule_words if w not in body_lower]
+        missing_ratio = len(missing) / len(rule_words) if rule_words else 0
+
+        issues = []
+        if missing_ratio > 0.5:
+            issues.append(
+                f"Desync: {len(missing)}/{len(rule_words)} rule keywords "
+                f"({missing_ratio:.0%}) absent from body. "
+                f"Missing: {', '.join(sorted(missing)[:10])}"
+            )
+        if issues:
+            results.append({"name": name, "issues": issues})
+
+    return results
+
+
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 def compile_rules(skills_dir: Path) -> str:
@@ -161,6 +221,10 @@ def main():
     parser.add_argument("--skills-dir", type=Path, help="Skills directory")
     parser.add_argument("--soul", type=Path, help="Path to SOUL_SEED.md")
     parser.add_argument("--dry-run", action="store_true", help="Preview without writing")
+    parser.add_argument(
+        "--validate-compiled-rules", action="store_true",
+        help="Cross-check compiled_rules against body content. Exit 1 if desync found.",
+    )
     args = parser.parse_args()
 
     # Resolve paths relative to script location
@@ -175,6 +239,20 @@ def main():
     if not soul_path.is_file():
         print(f"ERROR: SOUL_SEED.md not found: {soul_path}", file=sys.stderr)
         sys.exit(1)
+
+    # Validate compiled_rules sync if requested
+    if args.validate_compiled_rules:
+        desyncs = validate_compiled_rules(skills_dir)
+        if desyncs:
+            print(f"\n❌ COMPILED_RULES DESYNC ({len(desyncs)} skills):", file=sys.stderr)
+            for d in desyncs:
+                for issue in d["issues"]:
+                    print(f"  - {d['name']}: {issue}", file=sys.stderr)
+            sys.exit(1)
+        else:
+            print("✅ All compiled_rules are synchronized with their body content.")
+            if args.dry_run:
+                sys.exit(0)
 
     # Compile
     compiled = compile_rules(skills_dir)

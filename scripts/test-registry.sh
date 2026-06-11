@@ -857,6 +857,27 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       done
       python "$REPO_ROOT/scripts/dogfood_features.py" summarize "$REPO_ROOT/.dogfood/runs/$run_id"
       ;;
+    skill-judge-d1)
+      # Fast deterministic D1 structural compliance check (no LLM needed).
+      # Compares against the frozen 40/40 baseline to catch regressions.
+      python "$REPO_ROOT/scripts/skill_judge.py" --all --d1-only \
+        --compare-baseline "$REPO_ROOT/.dogfood/baselines/d1-40-40-baseline.json"
+      ;;
+    skill-judge-full)
+      # Full D1-D5 sweep including LLM evaluation (requires LLM API).
+      # Produces a timestamped report under .dogfood/baselines/.
+      local ts
+      ts="$(date +%Y%m%d-%H%M%S)"
+      python "$REPO_ROOT/scripts/skill_judge.py" --all \
+        --output "$REPO_ROOT/.dogfood/baselines/d1d5-sweep-${ts}.json" \
+        --report "$REPO_ROOT/.dogfood/baselines/d1d5-sweep-${ts}-report.md" \
+        --compare-baseline "$REPO_ROOT/.dogfood/baselines/d1-40-40-baseline.json"
+      ;;
+    skill-judge)
+      # Default: runs fast D1 regression gate (same as skill-judge-d1).
+      python "$REPO_ROOT/scripts/skill_judge.py" --all --d1-only \
+        --compare-baseline "$REPO_ROOT/.dogfood/baselines/d1-40-40-baseline.json"
+      ;;
     ""|--help|-h)
       cat <<'USAGE'
 Uso direto:
@@ -864,6 +885,9 @@ Uso direto:
   ./scripts/test-registry.sh dogfood-p0
   ./scripts/test-registry.sh dogfood-real-ex08
   ./scripts/test-registry.sh dogfood-real-p0
+  ./scripts/test-registry.sh skill-judge         # D1 regression gate (fast)
+  ./scripts/test-registry.sh skill-judge-d1      # D1 only, compare baseline
+  ./scripts/test-registry.sh skill-judge-full    # D1-D5 with LLM (slow)
 
 Uso tradicional:
   source scripts/test-registry.sh  # feito por run-provisioning-tests.sh

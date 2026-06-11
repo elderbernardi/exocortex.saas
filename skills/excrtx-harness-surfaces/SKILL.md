@@ -2,6 +2,11 @@
 name: excrtx-harness-surfaces
 description: Decide, explain, and package Hermes user-facing surfaces (gateways, web UI, dashboard, TUI, embedded chat) for low-friction delivery, especially when the operator and end user are different people.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
+metadata:
+  hermes:
+    tags: [exocortex, harness, surfaces]
 ---
 
 # Hermes Surface Architecture
@@ -378,3 +383,19 @@ For this class of request, structure the response in this order:
 - `references/artifact-publishing-architecture.md` — artifact delivery pattern for final user deliverables: GitHub for code, S3-compatible signed URLs + native gateway attachment fallback for docs/PDFs/spreadsheets/ZIPs/HTML.
 - `references/hermes-remote-file-surfaces-github-landscape.md` — GitHub research taxonomy for Hermes remote-file projects: backend operators, workspace UIs, and runtime adapters, plus English query patterns that reduce repo-search noise.
 - `references/workspace-ui-bases.md` — decision notes for choosing between Hermes workspace UIs, launch/verification notes for `pyrate-llama/hermes-ui`, and local discovery rules before cloning alternative surfaces.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

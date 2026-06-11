@@ -2,12 +2,13 @@
 name: excrtx-produce-artifacts
 description: "Create, organize, export, and publish final Exocórtex artifacts in the user's workspace, maintaining reproducibility in the Acervo."
 version: 1.0.1
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
     tags: [exocortex, artifacts, drive, acervo, publishing, reproducibility]
-    category: exocortex
     related_skills: [excrtx-memory-manager, google-workspace, excrtx-govern-draftfirst, excrtx-quality-antislop]
 ---
 
@@ -338,3 +339,13 @@ Every replicable implementation must contain:
 - `references/replication-checklist.md` — portability checklist for another Exocórtex-Hermes.
 - `references/pdd-v2-doc-alignment.md` — documentary alignment between PDD v2, provisioner, and microverso.
 - `templates/manifest-template.md` — annotated `manifest.json` template.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

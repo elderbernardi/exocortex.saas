@@ -2,6 +2,8 @@
 name: excrtx-quality-taste
 description: Visual Quality Gate — auto-selects the correct sub-skill for premium visual outputs
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, quality, visual, design, anti-slop]
@@ -53,3 +55,24 @@ Before delivering any visual output:
 - Generic meta-labels (SECTION 01)? Remove.
 - Invisible button text? Fix contrast.
 - Repetitive layout (always left/right)? Vary.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

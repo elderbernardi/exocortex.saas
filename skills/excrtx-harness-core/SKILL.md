@@ -1,10 +1,14 @@
 ---
 name: excrtx-harness-core
 description: "Homegrown harness to operate Codex CLI (exec) with traceability and lightweight verification, without third-party plugins."
-version: 0.2.0
+version: 0.3.0
+category: excrtx
 created_by: agent
 platforms: [linux]
 metadata:
+  hermes:
+    tags: [exocortex, harness, core, codex, execution]
+    related_skills: [excrtx-harness-codexint, excrtx-harness-hermesops, excrtx-govern-draftfirst]
   intent: class-level
 ---
 
@@ -20,65 +24,80 @@ Not a *learning* skill; it's an execution + evidence harness.
 - The executive wants to delegate executions to Codex without coupling to the Hermes gateway model.
 - You need a local trace of what was requested/done (prompt + output + git evidence).
 
-## Artifacts (local)
+**Don't use for:** General LLM queries that don't involve code/file changes. Hermes subagent delegation without Codex (use `excrtx-harness-hermesops`). Model selection or provider switching (use `excrtx-govern-tools`).
 
-Recommended pattern: use the wrapper at `~/.hermes/scripts/codex_learning/` which records to:
+## Procedure
 
-- `~/.hermes/codex-learning/runs/*.json`
-- `~/.hermes/codex-learning/events/*.json`
+### 1. Select Execution Mode
 
-## Modes
+| Condition | Mode | Why |
+|---|---|---|
+| Task doesn't depend on a real repo | **Scratch** (safe default) | Isolates changes in a temp dir |
+| Executive explicitly directs to a non-critical repo | **Repo** (open) | Operates on real files |
 
-### 1) Scratch (safe default)
+Never use Repo mode without explicit executive authorization.
 
-Use when the task doesn't depend on a real repo.
+### 2. Execute Codex CLI
 
-- Creates temporary directory
-- Initializes git
-- Runs Codex
-- Captures evidence
-
-Example:
-
+**Scratch mode:**
 ```bash
 python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py \
   --scratch \
   --full-auto \
-  --prompt 'Create hello.py that prints "hello" and run python3 hello.py.'
+  --prompt '<task description>'
 ```
 
-### 2) Non-critical repo (open)
-
-Use only when explicitly directed and the repo is non-critical.
-
+**Repo mode (explicitly authorized):**
 ```bash
 python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py \
   --cd /path/to/repo \
   --full-auto \
-  --prompt '...'
+  --prompt '<task description>'
 ```
 
-## Flags and Semantics
+Flag semantics:
+- `--full-auto`: allows writes. Maps to `--sandbox workspace-write` (Codex is deprecating `--full-auto`).
+- `--yolo`: avoid as default; only with explicit executive request.
 
-- `--full-auto`: allows writes. Internally, **maps to** `--sandbox workspace-write` (Codex is deprecating `--full-auto`).
-- `--yolo`: avoid as default; only when the executive explicitly requests it.
+### 3. Capture Evidence (non-negotiable)
 
-## Evidence: What to Capture (non-negotiable)
+Every execution MUST capture:
+1. **Prompt and command** executed
+2. **stdout/stderr** (with truncation for large output)
+3. **Git evidence:**
+   - `git status --porcelain` (includes untracked files)
+   - `git diff --stat`
+   - List of changed files **including untracked** (`git ls-files --others --exclude-standard`)
 
-1) Prompt and command executed.
-2) stdout/stderr (with truncation).
-3) Git evidence:
-   - `git status --porcelain`
-   - `git_diff_stat`
-   - List of changed files **including untracked** (important).
+Evidence is stored at:
+- `~/.hermes/codex-learning/runs/*.json`
+- `~/.hermes/codex-learning/events/*.json`
 
-## Pitfalls (learned in production)
+### 4. Verify Results
 
-- `git diff --name-only` and `git diff --stat` **don't show untracked files** (`??`). To measure "changed files" correctly, derive from `git status --porcelain` and/or `git ls-files --others --exclude-standard`.
-- Codex can fall into read-only sandbox without a write flag. For tasks expecting file creation/editing, use `--full-auto` (or equivalent `--sandbox workspace-write`).
-- `--full-auto` may appear as deprecated in recent builds; prefer `--sandbox workspace-write`.
+After execution:
+1. Check `git status --porcelain` for expected changes
+2. Run tests/lint commands appropriate to the stack
+3. If failure: retry with context (log + diff) or escalate to executive
+
+## Pitfalls
+
+- **Untracked files invisible**: `git diff --name-only` and `git diff --stat` don't show untracked files (`??`). Derive changed files from `git status --porcelain` and/or `git ls-files --others --exclude-standard`.
+- **Read-only sandbox**: Codex can fall into read-only sandbox without a write flag. For tasks expecting file creation/editing, use `--full-auto` (or `--sandbox workspace-write`).
+- **Deprecated flags**: `--full-auto` may appear deprecated in recent builds; prefer `--sandbox workspace-write`.
+- **Missing git repo**: Codex CLI requires a git repo. Scratch mode handles this via `git init`.
 
 ## References
 
-- `references/codex-cli-gotchas.md` (gotchas + stderr signals + how to interpret)
-- `references/harness-truth-contract.md` (checklist to align feature promises, actual files, `setup.sh`, `HERMES_HOME` and dogfood before declaring PASS)
+- `references/codex-cli-gotchas.md` — gotchas, stderr signals, interpretation
+- `references/harness-truth-contract.md` — checklist for feature promises vs actual state
+
+## Verification
+
+- [ ] Scratch mode creates temp dir with `git init` before executing
+- [ ] Repo mode only activates with explicit executive authorization
+- [ ] Evidence JSON includes prompt, stdout/stderr, and git status
+- [ ] Untracked files appear in the changed-files list (not just `git diff`)
+- [ ] Failed executions produce diagnostic output for retry
+- [ ] `--full-auto` or `--sandbox workspace-write` flag is set for write tasks
+

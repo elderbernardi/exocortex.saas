@@ -2,11 +2,16 @@
 name: excrtx-integrate-oauth
 description: Configure and validate remote MCP servers in Hermes when the provider uses HTTP transport plus OAuth, then document the integration cleanly for future reuse.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 triggers:
   - User wants to connect Hermes to a remote MCP server over HTTP.
   - Provider docs mention OAuth or PKCE instead of static headers.
   - Task involves adding, testing, or documenting a third-party cloud integration for Hermes.
   - You need to translate generic provider docs into the exact Hermes CLI flow.
+metadata:
+  hermes:
+    tags: [exocortex, integrate, oauth]
 ---
 
 # Hermes MCP OAuth Integrations
@@ -109,3 +114,13 @@ Reuse this skill for any future remote MCP provider that:
 - authenticates with OAuth/PKCE,
 - publishes generic client docs that need translation into Hermes CLI steps,
 - or requires project documentation after configuration.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

@@ -5,6 +5,8 @@ description: >
   conversão de intelligence index para escala 1-10, sistema de warnings e
   formatação de resposta transparente. 100% determinístico, sem uso de LLM.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 triggers:
   - "imbroke"
   - "modo imbroke"
@@ -12,6 +14,9 @@ triggers:
   - "rating de modelo gratuito"
   - "/xc imbroke"
 tags: [exocortex, openrouter, imbroke, deterministic, rating, warnings]
+metadata:
+  hermes:
+    tags: [exocortex, harness, imbroke]
 ---
 
 # excrtx-harness-imbroke
@@ -291,3 +296,19 @@ Ele apenas limpa o sentinel e os crons.
 - Issue #48: [Feature][EX-48] Modo imbroke: classificar modelos 1-10 com transparência
 - Benchmark source: fox-in-the-box-ai/hermes-best-models
 - OpenRouter catalog: https://openrouter.ai/api/v1/models
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

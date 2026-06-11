@@ -2,6 +2,8 @@
 name: excrtx-integrate-docbrain
 description: Use when Hermes or Exocórtex needs to parse documents through DocBrain, validate the local parser engine, or reproduce the DocBrain integration in a new Exocortex install.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 license: MIT
 metadata:
@@ -260,3 +262,7 @@ The setup microverso is the reproducibility source for future Exocortex installs
 - [ ] Parse job contains `document_id`, `job_id` and `revision`.
 - [ ] `raw_text` is omitted unless requested.
 - [ ] `npx vitest run --pool=forks` passes before committing DocBrain changes.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

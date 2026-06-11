@@ -2,11 +2,12 @@
 name: excrtx-memory-opsmemory
 description: Govern, deploy, and audit operational memory providers for the agent in Exocórtex/Hermes without replacing the Acervo Cognitivo.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 metadata:
   hermes:
     tags: [exocortex, hermes, memory, hindsight, operational-memory, acervo, setup, governance]
-    category: exocortex
     related_skills: [excrtx-memory-manager, hermes-agent]
 ---
 
@@ -188,3 +189,19 @@ provider observation
 - Don't start with raw fact recall if the provider offers consolidated observations.
 - Don't turn a setup error into a permanent rule against the provider.
 - Don't register secrets, credentials, or unapproved drafts as operational memory.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

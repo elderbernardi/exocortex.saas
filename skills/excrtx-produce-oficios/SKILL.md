@@ -1,19 +1,20 @@
 ---
 name: excrtx-produce-oficios
-description: "Gera ofícios profissionais do gabinete (IFSul Campus Passo Fundo) em DOCX, PDF ou HTML a partir de templates."
+description: Generate professional official documents (IFSul Campus Passo Fundo) in DOCX, PDF, or Markdown format.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 metadata:
   hermes:
     tags: [exocortex, gabinete, documentos, oficio, word, pdf, html]
-    category: exocortex
 ---
 
 # Gerador de Ofícios — Gabinete IFSul
 
 Gera ofícios em DOCX, PDF ou HTML usando templates persistidos no acervo.
 
-## When This Skill Activates
+## When to Use
 
 - Executivo pede para gerar/redigir um ofício
 - Pedido menciona "ofício", "convite formal", "comunicação oficial"
@@ -110,10 +111,19 @@ Após gerar um ofício, logar no `micro/gabinete/log.md`:
 ## [YYYY-MM-DD] oficio | OFÍCIO Nº {numero}/{ano} — {assunto resumido}
 ```
 
-## Quality Gate
+## Verification
 
 Antes de entregar, aplique o Quality Gate Unificado (`excrtx-quality-gate`) como passo final obrigatório:
 - A prosa do ofício deve passar pelo gate de anti-slop (`excrtx-quality-antislop`).
 - A redação oficial do gabinete deve ser extremamente formal e polida, sem qualquer uso de linguagem neutra, adjetivações vazias, ou palavras de enchimento.
 - A conformidade do texto será auditada pelo harness de verificação (`validate_artifact_manifest.py`).
 
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

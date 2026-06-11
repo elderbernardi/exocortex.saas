@@ -1,0 +1,1964 @@
+[
+  {
+    "skill_name": "excrtx-assess-repofit",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-assess-repofit/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7460B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "27 sections provide comprehensive assessment procedure. Numbered steps. References directory has supporting material.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Assesses repository fitness for Exocortex adoption. Aligned with onboarding pipeline.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. Comprehensive scoring model.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "7108B body is reasonable for a complex assessment skill. Structured output format.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-assess-selftest",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-assess-selftest/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2657B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Self-test concept is clear but procedure relies on agent self-assessment which is inherently subjective. Code block shows expected output format.",
+        "issues": [
+          "Self-assessment procedure is inherently subjective"
+        ],
+        "recommendations": [
+          "Add more objective checkpoints to the self-test protocol"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Part of the assessment pipeline. Tests Exocortex behavioral compliance.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. Verification section exists but self-testing is hard to make deterministic.",
+        "issues": [
+          "Self-test determinism is limited"
+        ],
+        "recommendations": [
+          "Add concrete test fixtures with expected outputs"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "2359B body is concise. No waste.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add more objective checkpoints to the self-test protocol",
+      "[D4_FITNESS] Add concrete test fixtures with expected outputs"
+    ]
+  },
+  {
+    "skill_name": "excrtx-behavior-accuracy",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-accuracy/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4678B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Excellent action verification table. Clear before/after examples with incorrect and correct scenarios. Integration with Draft-First documented. Report format specified.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Explicitly integrates with Draft-First. Respects precision-first philosophy. Anti-patterns list prevents common LLM hallucination behaviors.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Verification checklist is testable. Anti-patterns are real production issues. compiled_rules present. Usage examples show concrete right/wrong behavior.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3846B body is concise. Tables and code blocks used effectively. No redundancy.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-behavior-briefing",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-briefing/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3965B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Structured briefing pipeline with numbered steps. Memory layer access defined. Output format specified. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Reads from Acervo 4-layer model (macro, global, micro). Respects vector classification. References memory manager.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "compiled_rules synchronized with body vocabulary (PT-BR). Verification checklist testable with 6 specific criteria. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3965B body is concise. Well-structured with tables.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-behavior-canvas",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-canvas/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 9717B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Procedure has numbered steps but v0.4 schema fields are complex. Some steps reference internal concepts (sharing_constraints, macroverso.status) without defining them inline. An agent unfamiliar with the Exocortex domain would need to guess some field meanings.",
+        "issues": [
+          "Complex schema fields lack inline definitions"
+        ],
+        "recommendations": [
+          "Add brief inline descriptions for v0.4 schema fields"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Core Exocortex behavioral skill. Multi-microverso support with sharing constraints. Persistence via canvas.yaml. Correctly models the cognitive space hierarchy.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. compiled_rules present and synced. Verification section exists. Pitfalls cover real scenarios (sala vs microverso confusion).",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "8889B body is moderately large for a behavioral skill. The v0.4 schema section could be extracted to references/ but is needed for inline reference. Some rules could be tables.",
+        "issues": [
+          "Body is on the larger side for a behavior skill"
+        ],
+        "recommendations": [
+          "Consider extracting v0.4 schema details to references/"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add brief inline descriptions for v0.4 schema fields",
+      "[D5_ECONOMY] Consider extracting v0.4 schema details to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-behavior-vetor",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-vetor/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4406B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Excellent signal table with PT-BR examples maps inputs to vectors unambiguously. Counter-triggers present. Socratic mode has clear 4-step protocol. Logging format is exact.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References Draft-First for execution vector. Socratic mode for evolution is core Exocortex philosophy. Respects executive authority. Acervo integration mentioned.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Verification checklist covers all 3 vectors + override. Pitfalls are real learnings (forced classification, stale classification, leaking internals). compiled_rules present and synced.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3500B body is concise. Tables for structured data. No redundancy. Description is search-optimized English.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-govern-draftfirst",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-draftfirst/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 8591B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Excellent taxonomy tables for internal vs external actions. Channel taxonomy with examples. 5-step procedure with clear approval flow. Degraded mode addressed. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "This IS the Draft-First protocol that other skills reference. Correctly defines the core governance contract. References executive authority.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. compiled_rules synced. Verification checklist is testable. Pitfalls reflect real production learnings (approval fatigue, edge cases).",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "7744B body is justified by the complexity of the protocol. Taxonomy tables are dense and useful. Some overlap between the overview and the detailed procedure steps.",
+        "issues": [
+          "Minor overlap between taxonomy overview and procedure details"
+        ],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-govern-tools",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-tools/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7669B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Tool classification taxonomy is well-structured. Config mutation validation documented with references. Counter-triggers present. Numbered procedure steps.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Defines the tool governance contract referenced by other skills. Logging requirements. Classification system aligns with Exocortex harness architecture.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists with detailed documentation. compiled_rules present. Verification checklist testable. Pitfalls from real production.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6911B body is reasonable. References directory used correctly to offload detailed docs.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-harness-codexint",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-codexint/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4410B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "5-step procedure with routing table, code blocks for commands, prompt contracts for both tracks. Counter-triggers present. Track selection criteria explicit.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Codex integration within Exocortex harness. References harness-core, govern-tools, govern-draftfirst. Gateway independence documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification has 6 testable checkboxes covering both tracks and hybrid mode. Pitfalls are real production issues. related_skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "Restructured body is concise. Redundant Architecture/Routing sections merged into Procedure. Tables and code blocks used effectively.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-harness-core",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-core/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3170B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Core harness concept documented but procedure relies on external scripts without inline explanation. No counter-triggers.",
+        "issues": [
+          "No counter-triggers",
+          "External script dependencies"
+        ],
+        "recommendations": [
+          "Add counter-triggers",
+          "Add inline script usage examples"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Foundation for the Exocortex harness. References directory exists.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "References directory exists but scripts are external. Verification section could be more specific.",
+        "issues": [
+          "Scripts not documented inline"
+        ],
+        "recommendations": [
+          "Add script documentation to body or references/"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "2849B body. Concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add counter-triggers",
+      "[D2_CLARITY] Add inline script usage examples",
+      "[D4_FITNESS] Add script documentation to body or references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-harness-hermesops",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-hermesops/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4046B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Trilho A (CLI) and Trilho B (Delegation) documented but selection criteria are implicit. No counter-triggers.",
+        "issues": [
+          "No counter-triggers",
+          "Trilho selection criteria implicit"
+        ],
+        "recommendations": [
+          "Add counter-triggers",
+          "Make trilho selection explicit"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Hermes operations within Exocortex. References harness-core and harness-codexint.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "References directory exists but trilho system needs clearer verification criteria.",
+        "issues": [
+          "Trilho verification not specific enough"
+        ],
+        "recommendations": [
+          "Add trilho-specific test cases"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3704B body. Concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add counter-triggers",
+      "[D2_CLARITY] Make trilho selection explicit",
+      "[D4_FITNESS] Add trilho-specific test cases"
+    ]
+  },
+  {
+    "skill_name": "excrtx-harness-imbroke",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-imbroke/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 10212B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "29 sections cover imbroke mode comprehensively. Rating scale 1-10. Free model router script. Counter-triggers present. Tables.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Degraded-mode operation for cost management. Script-backed with openrouter_free_model_router.py.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Script exists and tests pass (--status exit 0). Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "9610B body approaches 10KB. Justified by the complexity of the cost management system.",
+        "issues": [
+          "Body approaches 10KB"
+        ],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-harness-kanban",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-kanban/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 5544B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "20 sections. Kanban operations defined. Code blocks for commands. Numbered steps.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References produce-artifacts and memory-manager. Task management within Exocortex.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. Hermes kanban integration documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "5216B body. Code examples add value.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-harness-promptlog",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-promptlog/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 1342B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "5 sections is very thin. Procedure is minimal. No counter-triggers. Logging format shown but few details.",
+        "issues": [
+          "Thin procedure",
+          "No counter-triggers"
+        ],
+        "recommendations": [
+          "Add counter-triggers",
+          "Expand procedure with logging examples"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Prompt logging for the harness. Foundation skill.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. 1095B body is too thin for production readiness. Verification exists but minimal.",
+        "issues": [
+          "Very thin body (1095B)",
+          "No references"
+        ],
+        "recommendations": [
+          "Expand with logging format examples and integration points"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "1095B body. Maximally concise — arguably too concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add counter-triggers",
+      "[D2_CLARITY] Expand procedure with logging examples",
+      "[D4_FITNESS] Expand with logging format examples and integration points"
+    ]
+  },
+  {
+    "skill_name": "excrtx-harness-surfaces",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-surfaces/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 18358B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "22 sections. Gateway, UI/Web, TUI surfaces defined. Comprehensive architecture. Counter-triggers present. Code blocks.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Surface architecture for Exocortex harness. Defines the communication layer.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. 17996B body is large but justified by architectural scope. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "17996B body is close to 20KB limit. Consider extracting some surface definitions to references/.",
+        "issues": [
+          "Body close to 20KB limit"
+        ],
+        "recommendations": [
+          "Extract individual surface specs to references/"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D5_ECONOMY] Extract individual surface specs to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-harness-tooldev",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-tooldev/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4078B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "13 sections. Tool development procedure with numbered steps. Code blocks for tool patterns.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Hermes tool development within Exocortex framework.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. Verification exists but tool development is a broad topic.",
+        "issues": [
+          "No references directory"
+        ],
+        "recommendations": [
+          "Add references/ with tool template examples"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3531B body. Well-organized.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D4_FITNESS] Add references/ with tool template examples"
+    ]
+  },
+  {
+    "skill_name": "excrtx-hermes-extensions",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-hermes-extensions/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 5855B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "12 sections. Slash command dispatch debug guide in references. Numbered procedure.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Extends Hermes agent within Exocortex. References directory with debug guide.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists with debug guide. Verification testable. Slash command examples.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "5547B body. Reasonable for an extension development skill.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-integrate-browser",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-browser/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7211B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "20 sections. Runtime dependency management documented. browser-use.sh script. Counter-triggers present. Tables for status.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Browser automation within Exocortex. Respects tool governance.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory. Script exists. Runtime management documented. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6639B body. Reasonable for a complex integration skill.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-integrate-docbrain",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-docbrain/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7915B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "15 sections. Build and integration procedure with numbered steps. Code blocks for commands. References directory.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References memory-intake for document processing. Related skills declared. OPENROUTER_API_KEY dependency documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. External dependencies documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "7459B body. Well-structured.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-integrate-gdrive",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-gdrive/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2193B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "9 sections but procedure is sparse. OAuth setup referenced but details are in external scripts, not in the SKILL.md body.",
+        "issues": [
+          "OAuth setup procedure relies on external scripts"
+        ],
+        "recommendations": [
+          "Add inline summary of OAuth setup flow"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Drive integration for the production pipeline. References directory exists.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "References directory exists but the skill body is thin (1891B). Verification depends on external OAuth state.",
+        "issues": [
+          "Thin procedure body",
+          "External auth dependency"
+        ],
+        "recommendations": [
+          "Expand procedure with inline troubleshooting steps"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "1891B body is very concise. Almost too concise — clarity suffers.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add inline summary of OAuth setup flow",
+      "[D4_FITNESS] Expand procedure with inline troubleshooting steps"
+    ]
+  },
+  {
+    "skill_name": "excrtx-integrate-nlmops",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-nlmops/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2939B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "6-stage NLM workflow documented. 13 sections. Procedure with numbered steps. Code blocks.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "NLM operations within Exocortex. References nlmroute for routing.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. Verification exists but NLM dependency makes testing difficult without auth.",
+        "issues": [
+          "No references directory"
+        ],
+        "recommendations": [
+          "Add references/ with NLM workflow diagrams"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "2599B body. Concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D4_FITNESS] Add references/ with NLM workflow diagrams"
+    ]
+  },
+  {
+    "skill_name": "excrtx-integrate-nlmroute",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-nlmroute/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4293B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "12 sections. Router configuration documented. Counter-triggers present. Code blocks for commands.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "NLM routing within Exocortex integration layer. References directory exists.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. Auth flow documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3930B body. Well-organized.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-integrate-oauth",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-oauth/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6264B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "3-layer validation documented (mcp list, mcp test, session). Counter-triggers present. 9 sections.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "OAuth integration for the Exocortex platform. References directory exists.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. 3-layer validation is a hardened pattern. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "5626B body. Reasonable for an OAuth skill.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-memory-intake",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-intake/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 12038B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "4-stage pipeline (incoming→processing→promoted→archive) well-documented. IntakeEnvelope schema defined. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References Draft-First for external sources. Operates within Acervo 4-layer model. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. Pipeline stages are concrete and verifiable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "11491B body exceeds 10KB recommended size. The pipeline documentation is thorough but could be more concise.",
+        "issues": [
+          "Body exceeds 10KB recommended size"
+        ],
+        "recommendations": [
+          "Extract IntakeEnvelope schema to references/"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D5_ECONOMY] Extract IntakeEnvelope schema to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-memory-manager",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-manager/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 11007B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "4-layer model (macro/global/micro/shared) well-documented. Operations table. Directory structure specified. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Root memory skill for the Acervo Cognitivo. Defines the 4-layer model referenced by all other memory skills.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Verification testable. Related skills declared. Extensive procedure with real pitfalls.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "10361B body is on the larger side but justified by the complexity of the 4-layer model. Some sections could be slimmed.",
+        "issues": [
+          "Body approaches 10KB threshold"
+        ],
+        "recommendations": [
+          "Consider extracting the directory structure template to references/"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D5_ECONOMY] Consider extracting the directory structure template to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-memory-mvinstall",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-mvinstall/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4109B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Schema excrtx/v1 referenced but not fully defined inline. Installation procedure exists but some steps assume familiarity with the package format.",
+        "issues": [
+          "Package schema not fully defined inline"
+        ],
+        "recommendations": [
+          "Add excrtx/v1 schema summary to body or reference"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Part of the microverso pipeline. References memory-manager and memory-newmicro.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. Schema definition is implied but not documented.",
+        "issues": [
+          "Missing schema documentation"
+        ],
+        "recommendations": [
+          "Create references/excrtx-v1-schema.md"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3789B body. Concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add excrtx/v1 schema summary to body or reference",
+      "[D4_FITNESS] Create references/excrtx-v1-schema.md"
+    ]
+  },
+  {
+    "skill_name": "excrtx-memory-mvsetup",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-mvsetup/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6617B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Base microverso setup well-documented. References to required files (microverso.yaml, SCHEMA.md, etc.) are specific.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References memory-manager and memory-newmicro. Part of the microverso pipeline. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable with specific file checks.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6218B body is reasonable. Code blocks for file templates.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-memory-newmicro",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-newmicro/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4227B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Template structure defined. 15+ directory listing. Procedure is actionable with specific directory names.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Part of the microverso creation pipeline. References memory-manager.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Template directory exists as concrete evidence. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3925B body. Tables for directory listing. Well-organized.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-memory-opsmemory",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-opsmemory/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6877B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Provider precedence documented. Memory operations clear. Counter-triggers present. Numbered procedure.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Operational memory within Acervo model. References memory-manager. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. Provider model is concrete.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6451B body is reasonable. Well-structured.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-memory-wikiadapt",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-wikiadapt/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2143B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "Procedure references Ontologia Multifocal v2 without defining it inline. Agent needs external context to understand the ontology mapping.",
+        "issues": [
+          "Ontologia Multifocal v2 referenced but not defined inline"
+        ],
+        "recommendations": [
+          "Add brief inline summary of the target ontology or link to reference"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Operates within Acervo model. References memory-manager. Wiki adapter for LLM Wiki categories.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "References directory exists but the ontology mapping itself is not testable without the ontology definition.",
+        "issues": [
+          "Mapping testability depends on undefined external ontology"
+        ],
+        "recommendations": [
+          "Add ontology reference document to references/"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "1865B body is concise. Minimal waste.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add brief inline summary of the target ontology or link to reference",
+      "[D4_FITNESS] Add ontology reference document to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-onboard-interview",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-onboard-interview/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3666B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "5 interview blocks defined. Procedure is actionable. Numbered steps.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Part of the onboarding pipeline. References excrtx-onboard-welcome.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "NEEDS_HARDENING",
+        "reasoning": "No references directory. Interview blocks could benefit from example responses.",
+        "issues": [
+          "No references directory",
+          "Missing example interview responses"
+        ],
+        "recommendations": [
+          "Add references/ with example interview flows"
+        ]
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3221B body. Concise.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D4_FITNESS] Add references/ with example interview flows"
+    ]
+  },
+  {
+    "skill_name": "excrtx-onboard-welcome",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-onboard-welcome/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7074B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Welcome sequence well-documented. 11 sections cover the complete onboarding flow. Tables for status tracking. References directory.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Entry point for new Exocortex sessions. Properly introduces the behavioral contract.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. WELCOME.md fixture exists.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6781B body. Reasonable for an onboarding skill that needs comprehensive coverage.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-produce-artifacts",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-artifacts/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 17250B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Comprehensive artifact management. 20 sections. Views system (by_microverso, by_task, by_status, by_type). Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References memory-manager. Operates within Acervo model. Quality gate integration. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Verification testable. View directories exist as concrete evidence.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "16769B body exceeds 10KB but the artifact management system is complex enough to justify it. References used for delegation.",
+        "issues": [
+          "Body exceeds recommended 10KB limit"
+        ],
+        "recommendations": [
+          "Consider splitting into core + views reference"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D5_ECONOMY] Consider splitting into core + views reference"
+    ]
+  },
+  {
+    "skill_name": "excrtx-produce-oficios",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-oficios/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4781B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Ofício generation procedure with numbered steps. Script gerar_oficio.py referenced. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References quality-antislop for text quality. Script exists. Part of production pipeline.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists. Script exists and compiles. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "4469B body. Concise and well-structured.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-produce-slides",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-slides/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 14687B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "25 sections cover complete slide production. Scripts directory with 4 scripts. References directory. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References quality-designsys and quality-taste. Drive integration for export. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Scripts directory with export-pdf.sh, extract-pptx.py, package-deck.sh, setup-frontend-slides.sh. References directory. Verification testable.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "14039B body exceeds 10KB but slide production is inherently complex with multiple export formats.",
+        "issues": [
+          "Body exceeds recommended 10KB limit"
+        ],
+        "recommendations": [
+          "Consider extracting script usage docs to references/"
+        ]
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D5_ECONOMY] Consider extracting script usage docs to references/"
+    ]
+  },
+  {
+    "skill_name": "excrtx-quality-antislop",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-antislop/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3843B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Slop detection table with specific anti-patterns is very actionable. Scoring formula defined. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Core quality gate skill. Referenced by quality-gate orchestrator. Anti-slop philosophy is fundamental to Exocortex.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "compiled_rules present and synced. Verification testable. Anti-patterns are production-sourced.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "3064B body is tight. Tables for structured data. No waste.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-quality-designsys",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-designsys/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6839B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "5 operations (RESOLVE, CREATE, UPDATE, LINT, EXPORT) clearly defined. Procedure is actionable. Tables for structured data.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "References memory-manager for design system storage. Part of quality pipeline. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "Verification testable. Operations are concrete and verifiable. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6398B body. Well-structured with tables for operations.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-quality-gate",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-gate/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7269B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "Orchestrator role clearly defined. Classification into prosa/visual/técnico documented. Integration points with antislop and taste specified.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Gate orchestrator that enforces the quality pipeline. References all subordinate quality skills. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "compiled_rules present. Verification checklist testable. Integration points documented. Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "6405B body is reasonable for an orchestrator skill. Tables and code blocks used.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-quality-skilljudge",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-skilljudge/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 8257B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "CLEAR",
+        "reasoning": "5-dimension rubric clearly defined. Scripts directory with skill_judge.py. Procedure has numbered steps for running sweeps. Counter-triggers present.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Meta-skill that evaluates other skills. Respects the rubric's PT-BR body text policy. Self-tests pass.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory with extensive NLM knowledge. Scripts directory with working judge script. Verification is self-referential (passes its own D1 judge). Related skills declared.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "ACCEPTABLE",
+        "reasoning": "7632B body. Reasonable for a complex meta-skill. Tables for rubric dimensions.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": []
+  },
+  {
+    "skill_name": "excrtx-quality-taste",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-taste/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2675B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      },
+      "D2_clarity": {
+        "label": "AMBIGUOUS",
+        "reasoning": "References 3 sub-skills (gpt-taste, brandkit, brutalist) but their content and procedures are in sub-files, not in the main SKILL.md body. Agent needs to read additional files.",
+        "issues": [
+          "Sub-skill content not in main body"
+        ],
+        "recommendations": [
+          "Add brief summaries of each sub-skill's procedure"
+        ]
+      },
+      "D3_alignment": {
+        "label": "ALIGNED",
+        "reasoning": "Visual anti-slop quality gate. References designsys. Counter-triggers present. Part of quality pipeline.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D4_fitness": {
+        "label": "PRODUCTION_READY",
+        "reasoning": "References directory exists with sub-skill definitions. Verification testable. Related sub-skills documented.",
+        "issues": [],
+        "recommendations": []
+      },
+      "D5_economy": {
+        "label": "EFFICIENT",
+        "reasoning": "2411B body is concise. Delegates detail to references/.",
+        "issues": [],
+        "recommendations": []
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D2_CLARITY] Add brief summaries of each sub-skill's procedure"
+    ]
+  }
+]

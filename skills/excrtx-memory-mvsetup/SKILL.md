@@ -1,12 +1,13 @@
 ---
 name: excrtx-memory-mvsetup
-description: Provisionar microversos base do Exocórtex como parte do setup replicável Hermes/Exocórtex, com Acervo v2, Draft-First, idempotência e validação isolada.
+description: Provision base microversos for Exocortex as part of the replicable Hermes/Exocortex setup.
 version: 1.0.0
 author: Exocórtex
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, acervo, microverso, setup, reproducibility, shell, idempotency]
-    category: exocortex
     related_skills: [excrtx-memory-manager, excrtx-memory-newmicro, hermes-agent]
 ---
 
@@ -31,7 +32,7 @@ Ativar quando:
 - Use esta skill para promover o microverso ao setup replicável.
 - `hermes-agent` é protegido: consulte quando precisar de comandos Hermes, mas não edite.
 
-## Procedimento
+## Procedure
 
 ### 1. Criar ou validar o microverso
 
@@ -195,7 +196,7 @@ Mesmo sendo local, `setup.sh` altera comportamento futuro. Tratar como ação se
 - Detalhes e checklist de microverso base: `references/base-microverso-setup.md`.
 - Propagação de identidade Exocórtex sobre Hermes em SOULs, perfis, Acervo e setup: `references/exocortex-hermes-identity-propagation.md`.
 
-## Verificação rápida
+## Verification
 
 - [ ] Microverso criado com diretórios v2.
 - [ ] Núcleo sem contexto pessoal.
@@ -207,3 +208,4 @@ Mesmo sendo local, `setup.sh` altera comportamento futuro. Tratar como ação se
 - [ ] Patch aprovado antes de aplicar.
 - [ ] `bash -n` OK.
 - [ ] Teste isolado em `HERMES_HOME` temporário OK.
+

@@ -1,7 +1,9 @@
 ---
 name: excrtx-harness-tooldev
-description: "Desenvolvimento de Tools Hermes e extensão via chamada direta (sem LLM)."
+description: Hermes Tool development and extension via direct invocation (no LLM). Build, test, and deploy tools.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex.IA
 license: MIT
 tags: [hermes, tool-development, harness, extension, python]
@@ -12,13 +14,16 @@ trigger:
   - "implementar /tool"
   - "entender harness do hermes"
   - "como criar uma tool"
+metadata:
+  hermes:
+    tags: [exocortex, harness, tooldev]
 ---
 
 # Hermes Tool Development (Harness Extension)
 
 Skill de nível de classe para criar ferramentas no Hermes Agent e estender o comportamento via chamada direta (slash command `/tool`), sem passar pelo LLM.
 
-## Quando Usar
+## When to Use
 
 - Quando o Exocórtex precisa de uma nova capacidade que o Hermes não tem nativamente.
 - Quando se quer economizar tokens chamando uma tool diretamente via chat.
@@ -106,3 +111,13 @@ Crie o método `_handle_tool_command`:
 - `references/hermes-tool-anatomy.md`: Anatomia de uma Tool Hermes.
 - `references/direct-call-pattern.md`: Padrão de chamada direta sem LLM.
 - Skill `hermes-agent` (documentação oficial, protegida).
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

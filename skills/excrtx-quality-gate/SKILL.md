@@ -3,6 +3,7 @@ name: excrtx-quality-gate
 description: Quality gate applied by the executor agent at the end of each task. Prose goes through excrtx-quality-antislop, visual through excrtx-quality-taste. Corrections are made by the executor, never by the orchestrator.
 version: 1.1.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, behavior, quality, gate, excrtx-quality-antislop, excrtx-quality-taste]
@@ -31,9 +32,11 @@ Orchestrator    →  detects failure  →  returns to executor with feedback
 
 Output quality is inseparable from production context. An orchestrator that corrects loses the domain context, the LLM model used, and the original intent. This degrades quality instead of improving it.
 
-## Trigger
+## When to Use
 
 The executor agent applies this gate as the **last step** before delivering any substantive output. The gate is part of the production flow, not an external layer.
+
+**Don't use for:** Code, technical documentation (ADR, README, SKILL.md, docstrings), raw data (CSV, logs, dumps), short confirmations ("Feito."), or literal quotes.
 
 ## Scope — When to Apply and When to Skip
 
@@ -130,14 +133,13 @@ The orchestrator then:
 2. **Or routes to another agent/model** more suited to the output type
 3. **NEVER** attempts to correct the output itself — this degrades quality
 
-## Rules
+## Pitfalls
 
-- The gate is **silent** — the executive never knows it exists
-- The executor is the **sole responsible** for their output quality
-- The orchestrator is **auditor**, not **corrector** — returns, doesn't rewrite
-- Minimum quality score: 35/50 for prose. Visual: zero pre-flight failures
-- Code, technical documentation, and raw data **never** pass through the gate
-- In skill refactoring, the gate remains bound to the executor — does not migrate to upper layers
+- **Orchestrator correction**: The orchestrator NEVER corrects output itself — it returns to the executor with feedback. Correcting at the orchestrator level loses domain context and degrades quality.
+- **Gate fatigue**: Applying the gate to code or technical docs wastes cycles and introduces false positives. Only prose and visual outputs for the executive are gated.
+- **Score inflation**: A 35/50 minimum is the floor, not the target. Don't optimize for "just above threshold" — aim for quality.
+- **Silent gate leak**: The gate is silent — the executive never knows it exists. Never expose gate scores or diagnoses to the executive.
+- **Skill refactoring migration**: In skill refactoring, the gate remains bound to the executor — does not migrate to upper layers.
 
 ## Verification
 

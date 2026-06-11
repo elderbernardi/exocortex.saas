@@ -3,10 +3,11 @@ name: excrtx-quality-designsys
 description: "Persist, resolve, and validate visual tokens in the Acervo Cognitivo. Fork of design-md adapted to the macro→micro cascade of Exocórtex."
 version: 1.0.0
 author: Exocórtex
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, design, tokens, style, brand, visual, cascade]
-    category: exocortex
     related_skills: [excrtx-memory-manager, excrtx-quality-taste, design-md, brandkit]
 ---
 
@@ -20,7 +21,7 @@ Complements the ecosystem:
 - **excrtx-quality-designsys** (this one) → *persists and resolves* tokens in the Acervo
 - **excrtx-quality-taste** → *validates quality* of visual output
 
-## When This Skill Activates
+## When to Use
 
 Activate when:
 - A task needs visual tokens (colors, typography, spacing) to generate output

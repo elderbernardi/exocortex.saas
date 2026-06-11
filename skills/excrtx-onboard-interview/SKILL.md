@@ -6,6 +6,7 @@ description: >-
   and initial microversos. Activate after welcome or when executive requests re-onboarding.
 version: 2.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, onboard, interview, soul, setup, personalization]
@@ -84,3 +85,8 @@ After confirmation: update SOUL.md, create microversos via `excrtx-memory-newmic
 - [ ] Microversos created for each Block C domain
 - [ ] Summary presented for confirmation before activation
 - [ ] Configuration State updated to OPERATIONAL
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

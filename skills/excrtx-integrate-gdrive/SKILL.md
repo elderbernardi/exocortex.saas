@@ -2,6 +2,8 @@
 name: excrtx-integrate-gdrive
 description: Configure and operate Google Drive via direct API (no Composio), with focus on search robustness and validation.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocortex
 metadata:
   hermes:
@@ -12,12 +14,14 @@ metadata:
 
 Direct Google Drive API integration without Composio, focusing on search robustness and validation.
 
-## Trigger
+## When to Use
 
 Activate when:
 - The executive requests file upload, search, or management on Google Drive
 - An artifact needs to be exported to Drive
 - `excrtx-produce-artifacts` needs a Drive destination
+
+**Don't use for:** Local file operations without Drive involvement. OAuth setup (use `excrtx-integrate-oauth`). NotebookLM integration (use `excrtx-integrate-nlmops`). Browser-based Drive access.
 
 ## Procedure
 
@@ -64,3 +68,8 @@ When `excrtx-produce-artifacts` requests Drive export:
 - [ ] Search results verified (MIME, date, owner)
 - [ ] Duplicate check before upload
 - [ ] Drive URL registered in manifest after upload
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

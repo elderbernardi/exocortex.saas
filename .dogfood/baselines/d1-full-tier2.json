@@ -1,0 +1,918 @@
+[
+  {
+    "skill_name": "excrtx-assess-repofit",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-assess-repofit/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7460B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-assess-selftest",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-assess-selftest/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2657B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-accuracy",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-accuracy/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4678B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-briefing",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-briefing/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3931B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-canvas",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-canvas/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 9717B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-vetor",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-vetor/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4406B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-govern-draftfirst",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-draftfirst/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 8591B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-govern-tools",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-tools/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7669B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-codexint",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-codexint/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 5098B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-core",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-core/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3170B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-hermesops",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-hermesops/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4046B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-imbroke",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-imbroke/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 10212B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-kanban",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-kanban/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 5544B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-promptlog",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-promptlog/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 1342B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-surfaces",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-surfaces/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 18358B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-harness-tooldev",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-tooldev/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': False, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4078B.",
+        "issues": [
+          "Missing section: trigger_or_when"
+        ],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": false,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: trigger_or_when"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-hermes-extensions",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-hermes-extensions/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 5855B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-browser",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-browser/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7211B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-docbrain",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-docbrain/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7915B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-gdrive",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-gdrive/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2193B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-nlmops",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-nlmops/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "NON_COMPLIANT",
+        "reasoning": "Found 2 issues. Sections present: {'trigger_or_when': True, 'procedure': False, 'pitfalls': True, 'verification': False}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2960B.",
+        "issues": [
+          "Missing section: procedure",
+          "Missing section: verification"
+        ],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": false,
+          "pitfalls": true,
+          "verification": false
+        }
+      }
+    },
+    "overall_verdict": "REWRITE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: procedure",
+      "[D1-SECTION] Missing section: verification"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-nlmroute",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-nlmroute/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4293B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-integrate-oauth",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-integrate-oauth/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6264B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-intake",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-intake/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 12038B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-manager",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-manager/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 11007B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-mvinstall",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-mvinstall/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4108B.",
+        "issues": [
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-mvsetup",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-mvsetup/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': False, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6629B.",
+        "issues": [
+          "Missing section: procedure"
+        ],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": false,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: procedure"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-newmicro",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-newmicro/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4227B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-opsmemory",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-opsmemory/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6877B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-memory-wikiadapt",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-memory-wikiadapt/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2143B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-onboard-interview",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-onboard-interview/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3666B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-onboard-welcome",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-onboard-welcome/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7073B.",
+        "issues": [
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-produce-artifacts",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-artifacts/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 17250B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-produce-oficios",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-oficios/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': False}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4795B.",
+        "issues": [
+          "Missing section: verification"
+        ],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": false
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: verification"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-produce-slides",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-produce-slides/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': False, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 14687B.",
+        "issues": [
+          "Missing section: trigger_or_when"
+        ],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": false,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: trigger_or_when"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-antislop",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-antislop/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3843B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-designsys",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-designsys/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6840B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-gate",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-gate/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 7269B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-skilljudge",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-skilljudge/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 8257B.",
+        "issues": [],
+        "recommendations": [],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-taste",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-taste/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "COMPLIANT",
+        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2675B.",
+        "issues": [],
+        "recommendations": [
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": true,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "PASS",
+    "priority_fixes": [],
+    "judge_prompt": null
+  }
+]

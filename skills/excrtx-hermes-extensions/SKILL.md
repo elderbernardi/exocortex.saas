@@ -2,9 +2,12 @@
 name: excrtx-hermes-extensions
 description: "Deep-dive: Add slash commands (CLI + Gateway) and call tools directly (bypass LLM) in Hermes Agent."
 version: 1.1.0
+category: excrtx
 created_by: agent
 platforms: [linux]
 metadata:
+  hermes:
+    tags: [exocortex, hermes, extensions]
   intent: class-level
 ---
 
@@ -156,3 +159,13 @@ registry.register(
 - `references/harness-layers.md` (Hermes layers: Input, Agent, Specialization, Tools)
 - `references/direct-tool-call.md` (/tool command implementation)
 - `references/slash-command-dispatch-debug.md` (Debugging flow when slash command doesn't work in gateway)
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

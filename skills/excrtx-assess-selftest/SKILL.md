@@ -1,7 +1,9 @@
 ---
 name: excrtx-assess-selftest
-description: Auto-diagnóstico do estado de configuração do Exocórtex.IA
+description: Self-diagnostic of the Exocortex.IA configuration state. Validates SOUL_SEED, acervo structure, and skill loading.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, diagnostics, self-test, configuration]
@@ -15,6 +17,8 @@ Quando o executivo (ou o sistema) diz:
 - "status de configuração"
 - "checkpoint"
 - "diagnóstico exocórtex"
+
+**Don't use for:** Regular task execution or code changes. Morning briefings (use `excrtx-behavior-briefing`). Runtime diagnostics of individual tools (use `excrtx-govern-tools`). Repository fitness assessment (use `excrtx-assess-repofit`).
 
 ## Procedure
 
@@ -66,3 +70,9 @@ Gerar relatório EXATAMENTE neste formato:
 - Não fabricar resultados. Se não conseguir verificar, marque como ❌
 - Checkpoints 4 e 5 são condicionais à fase — não falhar por ausência
 - Se SOUL.md não existe, score = 0 e diagnóstico claro
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

@@ -2,12 +2,13 @@
 name: excrtx-produce-slides
 description: "Use when creating premium HTML/PDF/ZIP presentation exports from Markdown, Marp Markdown, PPTX, or deck briefs inside Exocórtex. Keeps Markdown as canonical source, resolves Design System by microverso, and uses Google Drive as the default private export destination."
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
     tags: [exocortex, presentations, html, markdown, marp, drive, visual, artifacts]
-    category: exocortex
     related_skills: [excrtx-quality-designsys, excrtx-quality-taste, excrtx-produce-artifacts, google-workspace, excrtx-govern-draftfirst]
 ---
 
@@ -23,7 +24,7 @@ Markdown é fonte. HTML é export. PDF é distribuição. ZIP é pacote. Google 
 
 Marp continua sendo linha de produção para slides rotineiros. Frontend Slides é renderer premium para apresentações que precisam de direção visual, narrativa e presença.
 
-## Quando usar
+## When to Use
 
 Use quando o usuário pedir:
 
@@ -371,3 +372,7 @@ Referência prática: `references/session-2026-06-01-exocortex-saas-deck.md` doc
 - [ ] Se houver upload, `manifest.json` e `receipt.google_drive.json` registram folder_id, links, hashes, MIME, tamanho e visibilidade privada.
 - [ ] Nenhum deploy público sem aprovação.
 - [ ] Estúdio Criativo consultado quando o pedido exigir direção visual forte.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

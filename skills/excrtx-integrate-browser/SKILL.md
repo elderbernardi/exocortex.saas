@@ -2,6 +2,8 @@
 name: excrtx-integrate-browser
 description: Autonomous browser automation via CLI. Navigate, interact, extract data from web pages. Use when agents need to perform web research, fill forms, scrape content, or automate browser-based workflows.
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 triggers:
   - "browse"
   - "open website"
@@ -13,6 +15,9 @@ triggers:
   - "extract from page"
 priority: P2
 setup: scripts/browser-use.sh
+metadata:
+  hermes:
+    tags: [exocortex, integrate, browser]
 ---
 
 # Browser-Use CLI Skill
@@ -199,3 +204,24 @@ asyncio.run(run())
 ```
 
 **Required env**: `OPENROUTER_API_KEY`
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.
+
+## Verification
+
+- [ ] Skill trigger conditions were correctly matched
+- [ ] Output follows the skill's defined format and rules
+- [ ] No governance violations occurred

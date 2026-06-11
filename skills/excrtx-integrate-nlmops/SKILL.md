@@ -3,6 +3,7 @@ name: excrtx-integrate-nlmops
 description: Standard executable workflow for learning with NotebookLM in Exocórtex (CLI-first, MCP fallback), with automatic source ingestion and quality criteria.
 version: 1.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, notebooklm, workflow, nlm, mcp, research]
@@ -14,7 +15,7 @@ metadata:
 
 Use when the request requires learning, synthesizing, organizing, or expanding knowledge.
 
-## Standard Protocol
+## Procedure
 
 ### Step 0 — Quick Gate
 
@@ -89,7 +90,7 @@ Every delivery must contain:
 
 If the CLI track fails due to environment issues, use MCP tools `notebooklm-*` with the same logical protocol (auth, notebook, sources, query, gap, delivery).
 
-## Quality (quick checklist)
+## Verification
 
 - [ ] `nlm login --check` passed
 - [ ] Correct notebook selected/created
@@ -97,3 +98,8 @@ If the CLI track fails due to environment issues, use MCP tools `notebooklm-*` w
 - [ ] Final query executed after ingestion
 - [ ] Deep research/web search triggered when needed
 - [ ] Sources cited in final output
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

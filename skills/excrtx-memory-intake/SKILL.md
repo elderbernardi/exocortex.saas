@@ -2,12 +2,13 @@
 name: excrtx-memory-intake
 description: "Receive, normalize, extract, triage, and promote files and media sent to Exocórtex through multiple channels, without contaminating the semantic Acervo with uncurated raw material."
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 license: MIT
 metadata:
   hermes:
     tags: [exocortex, intake, inbox, ingestion, multicanal, acervo, triage, voice, files]
-    category: exocortex
     related_skills: [excrtx-memory-manager, excrtx-harness-surfaces, excrtx-produce-artifacts, excrtx-govern-draftfirst]
 ---
 
@@ -301,3 +302,13 @@ Every replicable implementation must contain:
 - `references/multichannel-intake-contract-and-rollout.md` — canonical `IntakeEnvelope` contract, `_inbox` shape, rollout order, and v1 implementation baseline.
 - `references/intake-control-plane-seed.md` — practical HTTP control plane seed between GUI/gateway and `intake_ingest.py`, with minimum endpoints and rollout order.
 - `references/docbrain-processing-engine-mode.md` — pattern for adapting legacy documentary processors with their own wiki: prefer `process-only` mode, `DocumentParseResult` contract, downstream projections, hash-based idempotency as next hardening, and web policy including `excrtx-integrate-browser`.
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.

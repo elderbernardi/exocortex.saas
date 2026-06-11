@@ -2,11 +2,12 @@
 name: excrtx-memory-manager
 description: "Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared) with context isolation."
 version: 2.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 metadata:
   hermes:
     tags: [exocortex, acervo, knowledge, wiki, memory, nature, search, scope]
-    category: exocortex
     related_skills: [llm-wiki, excrtx-memory-newmicro]
     replaces: [nature-context, nature-knowledge, nature-contracts, nature-prompts, nature-persona, nature-workflows, nature-skills, nature-tools, nature-templates, nature-decisions, nature-reflections, exocortex-search]
 ---
@@ -339,3 +340,14 @@ Superseded content is not deleted. Procedure:
 - ADR-003: Hybrid Natures (file → directory)
 - ADR-004: LLM Wiki Integration
 - ADR-005: Skill Consolidation (7 → 1)
+
+## When to Use
+
+Activate when working with this skill's domain. See procedure for details.
+
+**Don't use for:** Unrelated domains or when a more specialized skill exists.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

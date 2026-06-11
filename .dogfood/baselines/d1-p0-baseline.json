@@ -1,0 +1,251 @@
+[
+  {
+    "skill_name": "excrtx-behavior-accuracy",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-accuracy/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 4355B.",
+        "issues": [
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-briefing",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-briefing/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 2 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: True. Size: 3729B.",
+        "issues": [
+          "Line-numbering artifacts detected (^\\d+|)",
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Strip line-numbering prefixes from markdown body",
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-MECHANICAL] Line-numbering artifacts detected (^\\d+|)",
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-canvas",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-canvas/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 2 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: True. Size: 9432B.",
+        "issues": [
+          "Line-numbering artifacts detected (^\\d+|)",
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Strip line-numbering prefixes from markdown body",
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-MECHANICAL] Line-numbering artifacts detected (^\\d+|)",
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-behavior-vetor",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-behavior-vetor/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 3848B.",
+        "issues": [
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-govern-draftfirst",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-draftfirst/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "NON_COMPLIANT",
+        "reasoning": "Found 3 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: True. Size: 8208B.",
+        "issues": [
+          "Description appears to be in PT-BR (should be English for Hermes search)",
+          "Line-numbering artifacts detected (^\\d+|)",
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Translate frontmatter description to English",
+          "Strip line-numbering prefixes from markdown body",
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "REWRITE",
+    "priority_fixes": [
+      "[D1-TRANSLATE] Description appears to be in PT-BR (should be English for Hermes search)",
+      "[D1-MECHANICAL] Line-numbering artifacts detected (^\\d+|)",
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-govern-tools",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-govern-tools/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "NON_COMPLIANT",
+        "reasoning": "Found 4 issues. Sections present: {'trigger_or_when': False, 'procedure': False, 'pitfalls': False, 'verification': False}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6037B.",
+        "issues": [
+          "Missing section: trigger_or_when",
+          "Missing section: procedure",
+          "Missing section: pitfalls",
+          "Missing section: verification"
+        ],
+        "recommendations": [
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": false,
+          "procedure": false,
+          "pitfalls": false,
+          "verification": false
+        }
+      }
+    },
+    "overall_verdict": "REWRITE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: trigger_or_when",
+      "[D1-SECTION] Missing section: procedure",
+      "[D1-SECTION] Missing section: pitfalls",
+      "[D1-SECTION] Missing section: verification"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-antislop",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-antislop/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "NON_COMPLIANT",
+        "reasoning": "Found 5 issues. Sections present: {'trigger_or_when': False, 'procedure': False, 'pitfalls': False, 'verification': False}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 2292B.",
+        "issues": [
+          "Missing 'category' field",
+          "Missing section: trigger_or_when",
+          "Missing section: procedure",
+          "Missing section: pitfalls",
+          "Missing section: verification"
+        ],
+        "recommendations": [
+          "Add 'category: excrtx' to frontmatter",
+          "Add 'platforms: [linux]' to frontmatter",
+          "Consider adding 'related_skills' to metadata.hermes"
+        ],
+        "sections_found": {
+          "trigger_or_when": false,
+          "procedure": false,
+          "pitfalls": false,
+          "verification": false
+        }
+      }
+    },
+    "overall_verdict": "REWRITE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: trigger_or_when",
+      "[D1-SECTION] Missing section: procedure",
+      "[D1-SECTION] Missing section: pitfalls",
+      "[D1-SECTION] Missing section: verification"
+    ],
+    "judge_prompt": null
+  },
+  {
+    "skill_name": "excrtx-quality-gate",
+    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-quality-gate/SKILL.md",
+    "dimensions": {
+      "D1_structural": {
+        "label": "PARTIAL",
+        "reasoning": "Found 1 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': False, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 6766B.",
+        "issues": [
+          "Missing section: pitfalls"
+        ],
+        "recommendations": [
+          "Add 'platforms: [linux]' to frontmatter"
+        ],
+        "sections_found": {
+          "trigger_or_when": true,
+          "procedure": true,
+          "pitfalls": false,
+          "verification": true
+        }
+      }
+    },
+    "overall_verdict": "IMPROVE",
+    "priority_fixes": [
+      "[D1-SECTION] Missing section: pitfalls"
+    ],
+    "judge_prompt": null
+  }
+]

@@ -2,6 +2,8 @@
 name: excrtx-memory-newmicro
 description: Criar novos Microversos no Acervo Cognitivo com estrutura wiki completa (SCHEMA, index, log, raw, 7 Natures).
 version: 2.0.0
+category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, microverso, acervo, creation, onboarding, wiki]
@@ -114,3 +116,8 @@ rm -rf ~/.hermes/acervo/micro/{slug}/
 ```
 Remover slug de `shared/groups.md`.
 Registrar remoção no MEMORY.md.
+
+## Pitfalls
+
+- **Over-application**: Only activate when the skill's trigger conditions are met.
+- **Missing context**: Ensure required dependencies and related skills are loaded.

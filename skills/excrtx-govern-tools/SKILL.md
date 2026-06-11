@@ -3,9 +3,11 @@ name: excrtx-govern-tools
 description: Governance rules for tool usage by Exocórtex.IA. Defines when and how tools should be used, mandatory logging, and classification by type.
 version: 1.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, governance, tools, policy]
+    related_skills: [excrtx-govern-draftfirst, excrtx-behavior-accuracy, excrtx-behavior-vetor]
 compiled_rules: |
   Least privilege: use the simplest tool that solves the task.
   Log destructive actions. Sandbox operations by active microverso.
@@ -18,7 +20,11 @@ compiled_rules: |
 
 > Controls HOW and WHEN the agent uses external tools.
 
-## Tool Classification
+## When to Use
+
+Activate on EVERY tool call. This skill defines the governance contract for all tool usage.
+
+**Don't use for:** Reading files, searching acervo, internal reasoning. Only governs tool calls that produce side effects or access external resources.
 
 | Type | Examples | Policy |
 |---|---|---|
@@ -31,7 +37,7 @@ compiled_rules: |
 | **External creation** | Google Docs, Drive, shared resources | **Draft-First mandatory.** Create as local draft first. |
 | **Configuration** | hermes skills install, pip install, mcp add | **Explicit approval mandatory.** Log in session log. Update setup.sh. |
 
-## Usage Rules
+## Procedure
 
 ### R1: Principle of Least Privilege
 Use the simplest tool that solves the problem.
@@ -119,3 +125,21 @@ Any skill outside the bundle requires explicit executive mention.
 | Direct email/message send to third parties without post-DRAFT approval | Violates Draft-First |
 | System package installation (`apt`, `brew`) | Requires manual approval |
 | Access to other tenants' data | Isolation violation |
+
+## Pitfalls
+
+- **Privilege escalation**: Using `rm -rf`, `apt install`, or `pip install` without explicit approval is a contract violation. Even "harmless" package installs can break the environment.
+- **Silent mutation**: Tools that fail silently (exit 0 but no effect) must be detected. Always verify tool output before asserting success.
+- **Cross-microverso leak**: File writes must be scoped to the active microverso. Cross-domain operations require explicit mention by the executive.
+- **Draft-First bypass**: Self-delivery to executive's home channel does NOT authorize communication to third parties. Ambiguous recipients always require DRAFT.
+- **Config contamination**: Configuration changes (hermes config set, provider routing) must use isolated validation (PATH shim) before applying to the main runtime.
+
+## Verification
+
+- [ ] Tool classification table covers all current tool categories
+- [ ] Least privilege principle followed (simplest tool first)
+- [ ] Destructive actions logged with `[TOOL]` format
+- [ ] Communication classified correctly (self-delivery vs third-party)
+- [ ] Draft-First applied for all external communication
+- [ ] Configuration changes validated in isolation before applying
+- [ ] Blacklisted tools/actions never executed without approval

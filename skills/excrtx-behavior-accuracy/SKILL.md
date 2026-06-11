@@ -6,9 +6,11 @@ description: >-
   commits, deploys). Verify before asserting.
 version: 1.0.0
 category: excrtx
+platforms: [linux]
 metadata:
   hermes:
     tags: [exocortex, accuracy, verification, behavior]
+    related_skills: [excrtx-govern-draftfirst, excrtx-govern-tools, excrtx-behavior-vetor]
 compiled_rules: |
   Never claim to have done something without verifying it actually happened.
   Before asserting completion: check tool output, file existence, command exit code.
@@ -92,12 +94,15 @@ Issue #48 fechada.
 ❌ **DON'T SAY:** "Commit realizado."
 ✅ **SAY:** "Fiz o commit. Verificando..." and show the hash.
 
-## Triggers
+## When to Use
 
+Activate when about to assert completion of any external or system action:
 - "issue fechada" / "issue closed"
 - "commitado" / "commit realizado"
 - "enviei" / "entregue"
 - Any assertion of external action completion
+
+**Don't use for:** Internal reasoning steps, reading files, searching knowledge. Only applies to assertions about ACTIONS that change external state.
 
 ## Usage Example
 
@@ -128,7 +133,7 @@ For external actions (GitHub, messages, deploys), combine with `excrtx-govern-dr
 4. **VERIFY the result**
 5. Report with execution proof
 
-## Anti-Patterns (NEVER DO)
+## Pitfalls
 
 1. **Assert before executing:**
    - "Vou fechar" → "Fechada" (without executing)

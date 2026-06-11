@@ -2,11 +2,12 @@
 name: excrtx-harness-hermesops
 description: "Operate Codex in the Hermes/Exocórtex ecosystem with two tracks (delegation vs CLI), with local evidence and safety patterns."
 version: 1.0.0
+category: excrtx
+platforms: [linux]
 author: Exocórtex
 metadata:
   hermes:
     tags: [codex, hermes, delegation, cli, harness, evidence, safety]
-    category: exocortex
 ---
 
 # Codex Ops (Hermes)
@@ -22,6 +23,8 @@ Use this skill when the executive asks for anything like:
 - "integre Codex no Hermes"
 - "faça o Codex codar/refatorar/executar comandos"
 - "use Codex só para pensar/planejar"
+
+**Don't use for:** Direct CLI Codex execution in a git repo (use `excrtx-harness-core`). Tool configuration or model switching (use `excrtx-govern-tools`). Non-Codex Hermes subagent delegation.
 
 ## Principle: Two Tracks (never mix)
 
@@ -106,3 +109,7 @@ In real repos:
 
 3) Without evidence, you don't know if it executed
 - Require wrapper JSON as proof, not narrative.
+
+## Procedure
+
+Follow the steps and rules defined in this skill's body sections above.
