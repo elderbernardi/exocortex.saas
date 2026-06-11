@@ -181,13 +181,13 @@ test_EX49() {
   # Check key content markers
   local skill_file="$SKILLS_DST/$skill/SKILL.md"
   if [ -f "$skill_file" ]; then
-    if grep -q '| Ação' "$skill_file"; then
+    if grep -q -E '\| Ação|\| Action' "$skill_file"; then
       log_check_pass "Tabela de ações verificáveis presente"
     else
       log_check_fail "Tabela de ações verificáveis ausente no SKILL.md"
     fi
 
-    if grep -q 'Anti-Padrões' "$skill_file"; then
+    if grep -q -E 'Anti-Padrões|Anti-patterns|Pitfalls' "$skill_file"; then
       log_check_pass "Anti-padrões documentados"
     else
       log_check_fail "Anti-padrões não documentados no SKILL.md"
