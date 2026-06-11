@@ -52,11 +52,17 @@ Manter um log auditável que permite REPRODUZIR a configuração em uma nova ins
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **ID collision:** Use sequential IDs from the last entry in MEMORY.md (`grep -c '^\[PDD-' MEMORY.md` + 1). Don't guess or hardcode.
+- **MEMORY.md location:** Always resolve via `$ACERVO/global/MEMORY.md` or `$HERMES_HOME/MEMORY.md` — never assume path.
+- **Timestamp drift:** Use `date -u +%Y-%m-%dT%H:%M:%SZ` for consistent UTC timestamps.
+- **Logging non-config changes:** Only log prompts that modify SOUL.md, MEMORY.md, config.yaml, or install skills/tools. Normal conversation is not logged.
+- **Concurrent session writes:** If multiple sessions may write MEMORY.md simultaneously, append-only and verify the last PDD-ID before writing.
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] MEMORY.md contains a new `[PDD-{ID}]` entry with correct sequential ID
+- [ ] Timestamp is ISO 8601 UTC format
+- [ ] Phase (P1-P6) is specified and matches the actual operation phase
+- [ ] Artifacts list includes all created/modified files
+- [ ] Status is one of: `success`, `partial`, `failed`
+- [ ] Summary is a single descriptive line

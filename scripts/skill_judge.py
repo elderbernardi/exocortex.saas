@@ -484,19 +484,39 @@ def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | 
         "Content-Type": "application/json",
         "User-Agent": "exocortex-skill-judge/1.0",
     }
+    system_prompt = (
+        "You are an expert skill quality judge for the Exocortex cognitive system. "
+        "You evaluate skills across 4 dimensions (D2-D5) using STRICT categorical labels.\n\n"
+        "GRADING RULES (apply consistently):\n"
+        "- D2 CLEAR: Agent can execute the full procedure autonomously from this text alone\n"
+        "- D2 AMBIGUOUS: Agent could execute but would guess on 1-2 steps\n"
+        "- D2 VAGUE: Agent would frequently guess or produce incorrect behavior\n"
+        "- D3 ALIGNED: Fully respects behavioral contract\n"
+        "- D3 PARTIAL: Generally aligned but missing 1-2 governance references\n"
+        "- D3 MISALIGNED: Contradicts or ignores key behavioral rules\n"
+        "- D4 PRODUCTION_READY: Verification is testable, pitfalls are real, references exist\n"
+        "- D4 NEEDS_HARDENING: Has verification but weak, or missing real pitfalls\n"
+        "- D4 PROTOTYPE: No testable verification, no pitfalls, or references missing\n"
+        "- D5 EFFICIENT: Tight, well-organized, no waste\n"
+        "- D5 ACCEPTABLE: Some redundancy but within reasonable bounds\n"
+        "- D5 BLOATED: Significant redundancy, debris, or unnecessary duplication\n\n"
+        "IMPORTANT: PT-BR body text is EXPECTED for user-facing skills. Do NOT penalize it.\n"
+        "IMPORTANT: compiled_rules is a valid custom extension. Do NOT treat it as a violation.\n\n"
+        "Respond ONLY with valid JSON. No markdown fences, no commentary."
+    )
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": "You are a skill quality judge. Respond ONLY with valid JSON."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
         ],
         "max_tokens": 4000,
-        "temperature": 0.1,
+        "temperature": 0.0,
     }
 
-    # DeepSeek V4 Pro: enforce JSON output and disable thinking mode for clean JSON
-    is_deepseek_direct = "deepseek.com" in api_url
-    if is_deepseek_direct:
+    # DeepSeek: enforce JSON output for clean parsing
+    is_deepseek = "deepseek.com" in api_url or "deepseek" in model.lower()
+    if is_deepseek:
         payload["response_format"] = {"type": "json_object"}
 
     data = json.dumps(payload).encode("utf-8")
@@ -517,20 +537,36 @@ def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | 
 
 def _parse_llm_response(response_text: str) -> dict:
     """Parse LLM JSON response into D2-D5 dimensional labels."""
-    # Extract JSON from potential markdown code fences
+    # Strip markdown code fences if present
     clean = response_text.strip()
-    if clean.startswith("```"):
-        clean = re.sub(r"^```(?:json)?\s*", "", clean)
-        clean = re.sub(r"\s*```$", "", clean)
+    # Handle ```json ... ``` wrapping
+    clean = re.sub(r'^```(?:json)?\s*', '', clean)
+    clean = re.sub(r'\s*```\s*$', '', clean)
+    # Strip any leading/trailing non-JSON text (e.g., reasoning prefix)
+    clean = clean.strip()
 
     try:
         parsed = json.loads(clean)
     except json.JSONDecodeError:
-        # Try to find JSON object within the response
-        match = re.search(r'\{[^{}]*"D2_clarity"[^{}]*\}', clean, re.DOTALL)
-        if match:
+        # Try to extract the outermost JSON object containing D2_clarity
+        # Use brace matching for nested objects
+        start = clean.find('{')
+        if start == -1:
+            return {}
+        depth = 0
+        end = start
+        for i in range(start, len(clean)):
+            if clean[i] == '{':
+                depth += 1
+            elif clean[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    break
+        candidate = clean[start:end]
+        if '"D2_clarity"' in candidate:
             try:
-                parsed = json.loads(match.group())
+                parsed = json.loads(candidate)
             except json.JSONDecodeError:
                 return {}
         else:

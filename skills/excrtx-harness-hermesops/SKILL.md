@@ -17,6 +17,9 @@ metadata:
     - harness
     - evidence
     - safety
+    related_skills:
+    - excrtx-harness-core
+    - excrtx-govern-tools
     calibration:
     - feature_id: EX-34
       calibration_prompt: Você deve garantir que as operações e regras da skill Hermes
@@ -41,6 +44,11 @@ Use this skill when the executive asks for anything like:
 - "integre Codex no Hermes"
 - "faça o Codex codar/refatorar/executar comandos"
 - "use Codex só para pensar/planejar"
+
+Routing heuristic:
+- "needs to write/edit files / touch repo" → TRACK A
+- "needs to think/plan/summarize" → TRACK B
+- Hybrid → decompose: TRACK B (plan) → TRACK A (execution) → verify
 
 **Don't use for:** Direct CLI Codex execution in a git repo (use `excrtx-harness-core`). Tool configuration or model switching (use `excrtx-govern-tools`). Non-Codex Hermes subagent delegation.
 
@@ -105,29 +113,25 @@ Minimum checklist:
 In real repos:
 - Run project tests/build and record output/exit code.
 
-## Routing Heuristic (simple rule)
+## Pitfalls
 
-- "needs to write/edit files / touch repo" → TRACK A
-- "needs to think/plan/summarize" → TRACK B
-- Hybrid → decompose: TRACK B (plan) → TRACK A (execution) → final verification
-
-## Supporting Artifacts
-
-- Configuration and gotchas reference (session): `references/codex-hermes-two-tracks.md`
-- Configuration prompt template (paste into another instance): `templates/config-prompt-codex-hermes.md`
-
-## Pitfalls (the ones that actually bite)
-
-1) Untracked files don't appear in diff
-- `git diff --name-only` doesn't list `??` files.
-- Use `git status --porcelain` (or wrapper evidence) to enumerate changes.
-
-2) Scratch can be read-only
-- If writes are expected, declare and enable `--full-auto`.
-
-3) Without evidence, you don't know if it executed
-- Require wrapper JSON as proof, not narrative.
+- **Untracked files don't appear in diff:** `git diff --name-only` doesn't list `??` files. Use `git status --porcelain` (or wrapper evidence) to enumerate all changes.
+- **Scratch can be read-only:** If writes are expected, declare and enable `--full-auto`. Without it, Codex falls into read-only sandbox.
+- **No evidence = no proof:** Require wrapper JSON as proof of execution, not narrative. If evidence JSON doesn't exist, the task didn't run.
+- **Track mixing:** Never mix TRACK A and TRACK B in the same step. Declare explicitly before execution.
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+1. Classify intent using the routing heuristic in "When to Use"
+2. Execute using the appropriate track section above (TRACK A or TRACK B)
+3. For hybrid tasks: TRACK B first (plan) → TRACK A (execute) → verify
+4. Post-execution: `python ~/.hermes/scripts/codex_learning/review_latest_run.py`
+
+## Verification
+
+- [ ] Track explicitly declared before execution (A or B, never mixed)
+- [ ] `hermes auth list` shows `openai-codex` provider (TRACK B)
+- [ ] Evidence JSON exists in `~/.hermes/codex-learning/runs/` with `git_status_porcelain` (TRACK A)
+- [ ] `git_changed_files` includes untracked files (not just `git diff --name-only`)
+- [ ] Project tests/build pass after TRACK A execution
+- [ ] Delegation contract contains objective + acceptance criteria + restrictions (TRACK B)

@@ -393,11 +393,21 @@ Superseded content is not deleted. Procedure:
 
 ## When to Use
 
-Activate when working with this skill's domain. See procedure for details.
+Activate when:
+- The executive asks about facts, data, rules, processes, or tools in a domain
+- A task needs to read or write to the Acervo Cognitivo
+- The agent needs to search information across multiple microversos
+- A Nature needs to be promoted (file → directory)
+- The agent needs to resolve access scope between microversos
 
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
+**Don't use for:** Creating new microversos (use `excrtx-memory-newmicro`). Installing microverso structure (use `excrtx-memory-mvinstall`). Operational memory providers like Hindsight (use `excrtx-memory-opsmemory`). Wiki adapter setup (use `excrtx-memory-wikiadapt`).
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **Domain contamination:** Writing domain A info in domain B violates the Domain Filter. Always classify content scope before writing. Use `shared/cross-refs/` for cross-domain content.
+- **Scope conflicts:** When multiple microversos have similar content, verify `shared/groups.md` scope resolution. `allow` always overrides `deny`.
+- **Stale frontmatter:** Files with old `updated` dates may be outdated. Flag data with `updated` > 90 days as potentially stale.
+- **Promotion threshold:** Don't promote a Nature file to directory prematurely. Only at ~150 lines. Check with `wc -l`.
+- **raw/ immutability:** Never modify files in `raw/` directories — sources are immutable by contract. Only Acervo pages may be edited.
+- **Missing index.md update:** Every new wiki page requires updating both `index.md` and `log.md`. Forgetting either breaks discoverability or audit trail.
+- **Large wiki search:** In microversos with 50+ pages, searching by `_index.md` then targeted page read is mandatory — never `cat` entire directories.

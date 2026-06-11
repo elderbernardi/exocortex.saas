@@ -118,5 +118,9 @@ If the CLI track fails due to environment issues, use MCP tools `notebooklm-*` w
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **Source ingestion timeout:** Large documents (>50 pages) may timeout during ingestion. Split into chunks or prefer URL sources over file uploads.
+- **MCP connection drops:** Long-running MCP sessions to `notebooklm-mcp` can silently disconnect. Verify connection with a lightweight operation before heavy queries.
+- **Auth token expiry mid-workflow:** NLM tokens can expire during multi-step workflows. Re-check `nlm login --check` before each major operation if the workflow exceeds ~30 minutes.
+- **False auth positive:** `hermes mcp test notebooklm` validates transport only. Always confirm functional auth with `nlm login --check` or a real operation like `nlm notebook list`.
+- **Source quality variance:** NotebookLM answers degrade with low-quality sources. Apply the Top 10 criteria strictly — one authoritative source is worth more than ten mediocre ones.
+- **CLI vs MCP confusion:** Use CLI (`nlm`) as primary. MCP is fallback only for environment issues. Don't mix both in the same session.
