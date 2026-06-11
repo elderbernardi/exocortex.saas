@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exocórtex.IA — Sua Extensão Cognitiva Personalizada</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --secondary: #34a853;
+    --dark: #202124;
+    --neutral: #f8f9fa;
+    --radius: 12px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 48px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--neutral);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 0 var(--space-lg); }
+
+  .hero {
+    background: linear-gradient(135deg, #1a365d 0%, #1a73e8 100%);
+    color: white;
+    padding: var(--space-xl) 0;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: var(--space-sm); }
+  .hero .subtitle { font-size: 1.15rem; color: #d4e2fc; max-width: 580px; margin: 0 auto; font-weight: 450; }
+  .hero .tagline {
+    margin-top: var(--space-lg);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #b6cdf0;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    padding-top: var(--space-md);
+    display: inline-block;
+  }
+
+  section { padding: var(--space-xl) 0; }
+  section + section { border-top: 1px solid rgba(0,0,0,0.06); }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--dark);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    margin-top: var(--space-lg);
+    color: var(--dark);
+  }
+
+  p, li { font-size: 0.95rem; color: #444; margin-bottom: var(--space-sm); }
+  ul, ol { padding-left: var(--space-lg); margin-bottom: var(--space-md); }
+  li { margin-bottom: 6px; }
+  strong { color: var(--dark); }
+
+  code {
+    background: #e8eaed;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+  }
+
+  .callout {
+    padding: var(--space-md);
+    border-radius: 8px;
+    margin-bottom: var(--space-md);
+    font-size: 0.9rem;
+  }
+  .callout-info { background: #e8f0fe; border-left: 4px solid var(--primary); color: #174ea6; }
+  .callout-success { background: #e6f4ea; border-left: 4px solid var(--secondary); color: #1e7e34; }
+  .callout-warning { background: #fef7e0; border-left: 4px solid #fbbc04; color: #594300; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--primary);
+  }
+  .card .icon { font-size: 1.8rem; margin-bottom: var(--space-sm); display: block; }
+
+  .pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .pill-blue { background: #e8f0fe; color: #174ea6; }
+  .pill-green { background: #e6f4ea; color: #1e7e34; }
+  .pill-amber { background: #fef7e0; color: #594300; }
+
+  .step-list {
+    counter-reset: step;
+  }
+  .step-list li {
+    list-style: none;
+    padding-left: 44px;
+    position: relative;
+    margin-bottom: var(--space-md);
+    min-height: 32px;
+  }
+  .step-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: var(--space-xl) 0;
+    font-size: 0.82rem;
+  }
+  .footer strong { color: rgba(255,255,255,0.85); }
+  .footer a { color: rgba(255,255,255,0.7); }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>🧠 Exocórtex.IA</h1>
+    <p class="subtitle">Sua extensão cognitiva personalizada — um exoesqueleto para a mente executiva.</p>
+    <p class="tagline">"IA não tem alma. Você tem."</p>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- O que é -->
+<section>
+  <h2>📖 O que é o Exocórtex?</h2>
+  <p>
+    O <strong>Exocórtex.IA</strong> é um sistema de extensão cognitiva feito sob medida para
+    executivos. Não é um chatbot genérico nem um assistente autônomo — é uma <strong>camada
+    estrutural</strong> entre você e a inteligência artificial.
+  </p>
+  <p>
+    Enquanto a IA tem conhecimento do passado, você tem intenção e visão. O Exocórtex
+    traduz sua intenção em direção precisa para a IA, garantindo que ela trabalhe
+    <strong>para você</strong>, não no seu lugar.
+  </p>
+  <div class="callout callout-info">
+    <strong>🧱 Como funciona em uma frase:</strong> Você pensa, decide e cria.
+    O Exocórtex organiza, lembra, executa e garante qualidade. Sua cognição permanece
+    no comando.
+  </div>
+</section>
+
+<!-- Para quem é -->
+<section>
+  <h2>🎯 Para quem é feito</h2>
+  <div class="grid-2">
+    <div class="card">
+      <span class="icon">🏢</span>
+      <h4>Executivos</h4>
+      <p style="font-size:0.87rem;color:#555">Gestores que precisam de consistência entre projetos, clientes e decisões sem perder tempo com organização manual.</p>
+    </div>
+    <div class="card">
+      <span class="icon">📊</span>
+      <h4>Analistas Estratégicos</h4>
+      <p style="font-size:0.87rem;color:#555">Profissionais que produzem relatórios, briefings e artefatos com identidade visual padronizada e qualidade garantida.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⚖️</span>
+      <h4>Consultores</h4>
+      <p style="font-size:0.87rem;color:#555">Quem atende múltiplos clientes com contextos separados e precisa de memória persistente por projeto.</p>
+    </div>
+    <div class="card">
+      <span class="icon">🚀</span>
+      <h4>Empreendedores</h4>
+      <p style="font-size:0.87rem;color:#555">Fundadores que querem escalar sua capacidade de produção sem contratar mais pessoas para tarefas operacionais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- O que ele faz -->
+<section>
+  <h2>⚡ O que ele faz por você</h2>
+
+  <h3>🧠 Memória que não falha</h3>
+  <p>
+    Cada projeto, cliente e área de conhecimento vira um <strong>Microverso</strong> —
+    uma cápsula isolada com regras, memória e identidade própria. O Exocórtex sabe o que
+    pertence aonde e nunca mistura contextos.
+  </p>
+  <p>
+    Você nunca mais precisa repetir "como falei na reunião passada" — ele lembra.
+  </p>
+
+  <h3>🎨 Identidade visual consistente</h3>
+  <p>
+    Todos os artefatos seguem um <strong>Design System</strong> unificado. Cores, fontes,
+    espaçamentos e componentes são validados automaticamente contra critérios de
+    acessibilidade (WCAG AA). Cada cliente pode ter sua própria paleta sem quebrar a
+    consistência do sistema.
+  </p>
+
+  <h3>📄 Produção de artefatos premium</h3>
+  <p>
+    Relatórios, apresentações, ofícios, dashboards e documentos oficiais — todos gerados
+    com qualidade profissional, passando por <strong>gates de qualidade</strong>
+    automáticos que rejeitam texto prolixo, layouts genéricos e violações de identidade
+    visual.
+  </p>
+
+  <h3>🔗 Integrações estratégicas</h3>
+  <p>
+    Conecta-se com Google Drive, Gmail, Google Calendar, NotebookLM, navegador
+    automatizado e sistemas de arquivos locais. Cada integração passa por um
+    <strong>protocolo de segurança Draft-First</strong> — nada é enviado sem sua
+    aprovação explícita.
+  </p>
+
+  <div class="callout callout-success">
+    <strong>✅ Segurança primeiro:</strong> Toda ação externa (envio de email,
+    publicação, commit) é exibida como rascunho para sua revisão antes de executar.
+    Você aprova, ele executa.
+  </div>
+</section>
+
+<!-- Modos de Interação -->
+<section>
+  <h2>🧭 Três modos de trabalhar</h2>
+  <p>O Exocórtex se adapta automaticamente ao seu objetivo a cada interação:</p>
+  <div class="grid-2">
+    <div class="card" style="border-top: 3px solid #8e44ad">
+      <h4>🧠 Evolução — Pensar junto</h4>
+      <p style="font-size:0.87rem;color:#555">Quando você está explorando uma ideia, ele faz perguntas, desafia premissas e expande seu pensamento. Nunca dá respostas prontas — o caminho é o produto.</p>
+    </div>
+    <div class="card" style="border-top: 3px solid #2ecc71">
+      <h4>⚡ Execução — Fazer acontecer</h4>
+      <p style="font-size:0.87rem;color:#555">Quando você precisa de um artefato pronto — relatório, apresentação, documento — ele entrega completo, validado e com qualidade.</p>
+    </div>
+    <div class="card" style="border-top: 3px solid #f39c12">
+      <h4>🧹 Manutenção — Cuidar da casa</h4>
+      <p style="font-size:0.87rem;color:#555">Auditoria silenciosa: verifica links quebrados, atualiza índices, limpa logs e mantém o ecossistema saudável.</p>
+    </div>
+    <div class="card" style="border-top: 3px solid #e74c3c">
+      <h4>🎯 Classificação automática</h4>
+      <p style="font-size:0.87rem;color:#555">O sistema detecta sozinho qual modo ativar baseado na sua frase. Você não precisa escolher — ele percebe.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Como usar -->
+<section>
+  <h2>📱 Como usar no dia a dia</h2>
+  <p>Você interage com o Exocórtex pelo <strong>Telegram</strong> — direto do seu celular ou desktop:</p>
+
+  <ol class="step-list">
+    <li><strong>Abra o Telegram</strong> e inicie uma conversa com o bot do Exocórtex.</li>
+    <li><strong>Fale como se estivesse falando com um assistente</strong> — "prepare um relatório sobre o cliente X", "me ajuda a pensar na estratégia do trimestre".</li>
+    <li><strong>O Exocórtex classifica seu pedido</strong> e responde com a postura certa: investigando, executando ou revisando.</li>
+    <li><strong>Para ações externas</strong>, ele apresenta um rascunho. Você confirma com "ok" ou "enviar" e ele executa.</li>
+    <li><strong>Artefatos e arquivos</strong> chegam como documentos no próprio Telegram.</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <strong>💡 Dica:</strong> O sistema está sempre rodando. Você pode pedir coisas
+    assíncronas — agendar relatórios, monitorar mudanças, revisar pendências — e
+    receber os resultados depois.
+  </div>
+</section>
+
+<!-- Design System (resumo) -->
+<section>
+  <h2>🎨 Sistema Visual</h2>
+  <p>
+    Todo artefato gerado pelo Exocórtex segue um <strong>Design System padronizado</strong>.
+    Seu projeto pode ter identidade própria sem perder a qualidade do conjunto.
+  </p>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🎯 Paleta validada</h4>
+      <p style="font-size:0.87rem;color:#555">Cores extraídas da sua marca com contraste WCAG AA verificado. Texto legível em qualquer fundo.</p>
+    </div>
+    <div class="card">
+      <h4>🔤 Tipografia</h4>
+      <p style="font-size:0.87rem;color:#555">Inter para texto corrido, JetBrains Mono para dados e código. Hierarquia visual consistente.</p>
+    </div>
+    <div class="card">
+      <h4>📐 Escala 8px</h4>
+      <p style="font-size:0.87rem;color:#555">Espaçamentos e bordas seguem múltiplos de 8 — sm (8px), md (16px), lg (24px), xl (48px). Layout harmônico sem esforço.</p>
+    </div>
+    <div class="card">
+      <h4>🧩 Componentes</h4>
+      <p style="font-size:0.87rem;color:#555">Botões, badges, cards, alertas e tabelas com tokens consistentes. Novo schema? Só mudar as cores.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Exemplo de fluxo -->
+<section>
+  <h2>🔁 Exemplo de fluxo real</h2>
+  <div class="callout callout-success">
+    <strong>Cenário:</strong> Você fecha uma reunião com um cliente e quer um resumo visual da identidade dele para o time.
+  </div>
+  <ol class="step-list">
+    <li><strong>Você envia a logo do cliente</strong> pelo Telegram.</li>
+    <li><strong>O Exocórtex extrai as cores</strong> dominantes e valida contraste WCAG.</li>
+    <li><strong>Gera um DESIGN.md</strong> com a paleta, tokens e regras visuais.</li>
+    <li><strong>Cria um showcase visual</strong> — página HTML com a identidade aplicada em componentes reais.</li>
+    <li><strong>Registra no sistema global</strong> — o schema do cliente vira parte do acervo, disponível para consulta futura.</li>
+    <li><strong>Promove o conhecimento</strong> — decisões de design ficam documentadas para o time.</li>
+  </ol>
+  <p>
+    Tudo isso em <strong>minutos</strong>, sem abrir Photoshop, Figma ou planilha de cores.
+  </p>
+</section>
+
+<!-- O que vem incluso -->
+<section>
+  <h2>📦 O que está incluso</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🔧 Acervo Cognitivo</h4>
+      <p style="font-size:0.87rem;color:#555">Base de conhecimento viva com memória persistente por cliente/projeto. Decisões, contextos e aprendizados nunca se perdem.</p>
+    </div>
+    <div class="card">
+      <h4>📋 Skills sob medida</h4>
+      <p style="font-size:0.87rem;color:#555">Mais de 40 habilidades especializadas — criação de artefatos, integrações, qualidade, governança, produção de slides e documentos oficiais.</p>
+    </div>
+    <div class="card">
+      <h4>✅ Quality Gates</h4>
+      <p style="font-size:0.87rem;color:#555">Filtros automáticos de qualidade textual e visual. Texto prolixo e layout genérico são rejeitados antes de chegar até você.</p>
+    </div>
+    <div class="card">
+      <h4>⛑️ Draft-First</h4>
+      <p style="font-size:0.87rem;color:#555">Nada é enviado, publicado ou commitado sem sua aprovação. Você vê o rascunho, aprova, ele executa. Zero surpresas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Início rápido -->
+<section>
+  <h2>🚀 Como começar</h2>
+  <div class="callout callout-warning">
+    <strong>⚠️</strong> O Exocórtex é um produto sob medida. Cada instalação é
+    configurada para o executivo e seu ecossistema. Não é um SaaS self-service.
+  </div>
+  <ol class="step-list">
+    <li><strong>Contato inicial</strong> — conversa para entender seus projetos, ferramentas e preferências de comunicação.</li>
+    <li><strong>Onboarding</strong> — configuração do perfil, identidade visual e integrações (Google, Telegram, sistemas internos).</li>
+    <li><strong>Calibração</strong> — ajuste fino do tom, qualidade e comportamento em 12 cenários reais.</li>
+    <li><strong>Primeiros artefatos</strong> — geração de relatórios, dashboards ou documentos para validar o fluxo.</li>
+    <li><strong>Uso contínuo</strong> — você usa no dia a dia pelo Telegram; o sistema evolui conforme seus padrões de trabalho.</li>
+  </ol>
+</section>
+
+<!-- FAQ -->
+<section>
+  <h2>❓ Perguntas frequentes</h2>
+
+  <h3>Precisa instalar algo no meu computador?</h3>
+  <p>Não. A interação é pelo Telegram. A infraestrutura roda em servidor próprio. Você só precisa do Telegram instalado.</p>
+
+  <h3>Meus dados ficam seguros?</h3>
+  <p>Sim. Cada cliente tem seu próprio <strong>Microverso isolado</strong>. Dados de clientes diferentes nunca se misturam. Toda ação externa passa pelo protocolo Draft-First — nada é enviado sem sua aprovação.</p>
+
+  <h3>Funciona em português?</h3>
+  <p>Sim. Interface, documentos e comunicação são em <strong>português brasileiro</strong>. O sistema preserva seu estilo de comunicação — artefatos soam como você, não como IA genérica.</p>
+
+  <h3>Posso usar no celular?</h3>
+  <p>Sim. O Telegram funciona no celular, tablet e desktop. Você pode pedir relatórios do celular e receber os arquivos onde estiver.</p>
+
+  <h3>E se eu quiser mudar algo no meio do caminho?</h3>
+  <p>O sistema é <strong>calibrável</strong>. Preferências de comunicação, identidade visual, tom e qualidade podem ser ajustados a qualquer momento.</p>
+</section>
+
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <strong>Exocórtex.IA</strong> — Sua extensão cognitiva personalizada<br>
+    Construído sobre o ecossistema Hermes Agent · MIT License<br>
+    <a href="#">exocortex.saas</a>
+  </div>
+</footer>
+
+</body>
+</html>

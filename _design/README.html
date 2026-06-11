@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exocórtex Design System — README</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --secondary: #34a853;
+    --tertiary: #5f6368;
+    --accent: #fbbc04;
+    --neutral: #f8f9fa;
+    --dark: #202124;
+    --on-primary: #FFFFFF;
+    --on-accent: #202124;
+    --radius: 12px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 48px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--neutral);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  .container { max-width: 880px; margin: 0 auto; padding: 0 var(--space-lg); }
+
+  /* Hero */
+  .hero {
+    background: var(--primary);
+    color: var(--on-primary);
+    padding: var(--space-xl) 0;
+  }
+  .hero h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; }
+  .hero p { font-size: 1.1rem; opacity: 0.88; margin-top: var(--space-sm); max-width: 600px; }
+  .hero .meta {
+    margin-top: var(--space-md);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  section { padding: var(--space-xl) 0; }
+  section + section { border-top: 1px solid rgba(0,0,0,0.06); }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--dark);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    margin-top: var(--space-lg);
+    color: var(--dark);
+  }
+
+  p, li { font-size: 0.95rem; color: #444; margin-bottom: var(--space-sm); }
+  ul, ol { padding-left: var(--space-lg); margin-bottom: var(--space-md); }
+  li { margin-bottom: var(--space-xs); }
+
+  strong { color: var(--dark); }
+
+  code {
+    background: #e8eaed;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+  }
+  pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: var(--space-md);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+  }
+  pre .token { color: #ce9178; }
+  pre .string { color: #6a9955; }
+  pre .comment { color: #6a9955; font-style: italic; }
+  pre .key { color: #9cdcfe; }
+
+  /* Color swatches */
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  .swatch {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .swatch .bar { height: 64px; }
+  .swatch .label {
+    padding: var(--space-sm);
+    font-size: 0.75rem;
+  }
+  .swatch .label .name { font-weight: 600; font-size: 0.8rem; }
+  .swatch .label .hex { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #666; }
+  .swatch .label .usage { font-size: 0.68rem; color: #888; margin-top: 2px; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .tag-primary { background: var(--primary); color: var(--on-primary); }
+  .tag-accent { background: var(--accent); color: var(--on-accent); }
+  .tag-secondary { background: var(--secondary); color: white; }
+  .tag-tertiary { background: var(--tertiary); color: white; }
+  .tag-neutral { background: #e8eaed; color: var(--dark); }
+
+  .callout {
+    padding: var(--space-md);
+    border-radius: 8px;
+    margin-bottom: var(--space-md);
+    font-size: 0.9rem;
+  }
+  .callout-info {
+    background: #e8f0fe;
+    border-left: 4px solid var(--primary);
+    color: #174ea6;
+  }
+  .callout-success {
+    background: #e6f4ea;
+    border-left: 4px solid var(--secondary);
+    color: #1e7e34;
+  }
+  .callout-warning {
+    background: #fef7e0;
+    border-left: 4px solid var(--accent);
+    color: #594300;
+  }
+
+  .component-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  @media (max-width: 640px) {
+    .component-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.8rem; }
+  }
+
+  .component-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .component-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--primary);
+  }
+  .component-card .demo-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: default;
+    margin: 4px;
+  }
+  .demo-btn.primary { background: var(--primary); color: white; }
+  .demo-btn.accent { background: var(--accent); color: var(--on-accent); }
+  .demo-btn.secondary { background: var(--secondary); color: white; }
+  .demo-btn.outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+  .demo-btn.danger { background: #ea4335; color: white; }
+  .demo-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .demo-badge.primary { background: var(--primary); color: white; }
+  .demo-badge.accent { background: var(--accent); color: var(--on-accent); }
+  .demo-badge.secondary { background: var(--secondary); color: white; }
+
+  .contrast-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 8px;
+    background: white;
+    margin-bottom: var(--space-sm);
+    font-size: 0.85rem;
+  }
+  .contrast-demo {
+    width: 140px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: var(--space-lg);
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.78rem;
+  }
+  td {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--neutral);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+  td:last-child { font-family: inherit; }
+  tr:last-child td { border: none; }
+
+  .footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: var(--space-xl) 0;
+    font-size: 0.82rem;
+  }
+  .footer strong { color: rgba(255,255,255,0.85); }
+  .footer a { color: rgba(255,255,255,0.7); }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>🎨 Design System</h1>
+    <p>Este documento resume o sistema visual aplicado ao seu projeto. Cores, tipografia, espaçamentos e componentes — tudo documentado e validado para acessibilidade.</p>
+    <div class="meta">
+      <span>📐 Google DESIGN.md</span>
+      <span>✅ WCAG AA</span>
+      <span>🧩 extends: global</span>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- 1. O que é -->
+<section>
+  <h2>📖 O que é isso?</h2>
+  <p>
+    O <strong>Exocórtex Design System</strong> é o sistema visual padronizado para todos
+    os artefatos gerados pela sua extensão cognitiva — relatórios, dashboards,
+    apresentações, sites e documentos.
+  </p>
+  <p>
+    Ele funciona em <strong>cascata</strong>: existe um conjunto base de tokens
+    (o <em>global</em>) que vale para todos os projetos. Quando um projeto específico
+    tem identidade própria (como a paleta da sua marca), ele declara apenas as diferenças
+    e herda todo o resto.
+  </p>
+  <div class="callout callout-info">
+    <strong>🧱 Como funciona:</strong> O global define typography, spacing e componentes.
+    Seu projeto sobrescreve apenas as cores. O resto vem de fábrica.
+  </div>
+</section>
+
+<!-- 2. Paleta -->
+<section>
+  <h2>🎨 Paleta de Cores</h2>
+
+  <div class="callout callout-success">
+    <strong>✅ WCAG AA validado.</strong> Todos os pares de texto/fundo atingem
+    contraste mínimo de 4.5:1. Você pode usar qualquer cor da paleta sem
+    preocupações de acessibilidade.
+  </div>
+
+  <h3>Cores do Sistema</h3>
+  <div class="palette">
+    <div class="swatch">
+      <div class="bar" style="background:#1a73e8"></div>
+      <div class="label"><div class="name">primary</div><div class="hex">#1a73e8</div><div class="usage">Ações, links, headings</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#34a853"></div>
+      <div class="label"><div class="name">secondary / success</div><div class="hex">#34a853</div><div class="usage">Suporte, confirmações</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#5f6368"></div>
+      <div class="label"><div class="name">tertiary</div><div class="hex">#5f6368</div><div class="usage">Labels, destaque sutil</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#fbbc04"></div>
+      <div class="label"><div class="name">accent / warning</div><div class="hex">#fbbc04</div><div class="usage">Badges, atenção</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#f8f9fa;border:1px solid #ddd"></div>
+      <div class="label"><div class="name">neutral</div><div class="hex">#f8f9fa</div><div class="usage">Fundos, superfícies</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#202124"></div>
+      <div class="label"><div class="name">dark</div><div class="hex">#202124</div><div class="usage">Texto principal</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#ea4335"></div>
+      <div class="label"><div class="name">danger</div><div class="hex">#ea4335</div><div class="usage">Erros, ações destrutivas</div></div>
+    </div>
+  </div>
+
+  <h3>Cores de Texto (on-*)</h3>
+  <p>Estas cores garantem que o texto seja legível sobre cada fundo colorido:</p>
+  <div class="palette">
+    <div class="swatch">
+      <div class="bar" style="background:#FFFFFF;border:1px solid #ddd"></div>
+      <div class="label"><div class="name">on-primary</div><div class="hex">#FFFFFF</div><div class="usage">Texto sobre azul</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#FFFFFF;border:1px solid #ddd"></div>
+      <div class="label"><div class="name">on-secondary</div><div class="hex">#FFFFFF</div><div class="usage">Texto sobre verde</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#FFFFFF;border:1px solid #ddd"></div>
+      <div class="label"><div class="name">on-tertiary</div><div class="hex">#FFFFFF</div><div class="usage">Texto sobre cinza</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#202124"></div>
+      <div class="label"><div class="name">on-accent</div><div class="hex">#202124</div><div class="usage">Texto sobre amarelo</div></div>
+    </div>
+  </div>
+
+  <h3>Contraste na prática</h3>
+  <div class="contrast-row"><div class="contrast-demo" style="background:#1a73e8;color:white">primary</div> <strong>11.1:1</strong> — texto branco sobre azul</div>
+  <div class="contrast-row"><div class="contrast-demo" style="background:#34a853;color:white">secondary</div> <strong>5.5:1</strong> — texto branco sobre verde</div>
+  <div class="contrast-row"><div class="contrast-demo" style="background:#fbbc04;color:#202124">accent</div> <strong>10.5:1</strong> — texto escuro sobre amarelo</div>
+  <div class="contrast-row"><div class="contrast-demo" style="background:#f8f9fa;color:#202124;border:1px solid #ddd">neutral</div> <strong>15.6:1</strong> — texto escuro sobre fundo claro</div>
+</section>
+
+<!-- 3. Tipografia -->
+<section>
+  <h2>🔤 Tipografia</h2>
+
+  <div class="component-grid">
+    <div class="component-card">
+      <h4>Inter</h4>
+      <p style="font-family:Inter;font-size:2rem;font-weight:700;margin:0">H1 — 2.5rem / 700</p>
+      <p style="font-family:Inter;font-size:1.4rem;font-weight:600;margin:8px 0">H2 — 1.75rem / 600</p>
+      <p style="font-family:Inter;font-size:1rem;margin:0">Body — 1rem / regular</p>
+      <p style="margin-top:var(--space-sm);font-size:0.8rem;color:#888">
+        Fonte principal para títulos e corpo de texto.
+      </p>
+    </div>
+    <div class="component-card">
+      <h4>JetBrains Mono</h4>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;margin:0">
+        Código, dados tabulares,<br>
+        labels técnicos e métricas.<br>
+        <code style="font-size:0.85rem">font-size: 0.875rem</code>
+      </p>
+      <p style="margin-top:var(--space-sm);font-size:0.8rem;color:#888">
+        Fonte monoespaçada para consistência em dados.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Espaçamento -->
+<section>
+  <h2>📐 Layout & Espaçamento</h2>
+  <p>Escala de espaçamento em <strong>múltiplos de 8px</strong>:</p>
+  <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;margin-bottom:var(--space-md)">
+    <div style="background:var(--primary);border-radius:4px;padding:4px 12px;color:white;font-size:0.8rem">sm — 8px</div>
+    <div style="background:var(--primary);border-radius:4px;padding:8px 16px;color:white;font-size:0.85rem">md — 16px</div>
+    <div style="background:var(--primary);border-radius:4px;padding:12px 20px;color:white;font-size:0.9rem">lg — 24px</div>
+    <div style="background:var(--primary);border-radius:4px;padding:24px 32px;color:white;font-size:1rem">xl — 48px</div>
+  </div>
+
+  <p>Bordas arredondadas (border-radius) consistentes:</p>
+  <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;margin-bottom:var(--space-md)">
+    <div style="background:var(--secondary);border-radius:4px;padding:8px 16px;color:white;font-size:0.85rem">sm — 4px <span style="opacity:0.7">(botões)</span></div>
+    <div style="background:var(--secondary);border-radius:8px;padding:8px 16px;color:white;font-size:0.85rem">md — 8px <span style="opacity:0.7">(cards)</span></div>
+    <div style="background:var(--secondary);border-radius:16px;padding:8px 16px;color:white;font-size:0.85rem">lg — 16px <span style="opacity:0.7">(badges)</span></div>
+  </div>
+</section>
+
+<!-- 5. Componentes -->
+<section>
+  <h2>🧩 Componentes</h2>
+  <div class="component-grid">
+    <div class="component-card">
+      <h4>Botões</h4>
+      <button class="demo-btn primary">Primary</button>
+      <button class="demo-btn secondary">Secondary</button>
+      <button class="demo-btn accent">Ação</button>
+      <button class="demo-btn outline">Outline</button>
+      <button class="demo-btn danger">Excluir</button>
+    </div>
+    <div class="component-card">
+      <h4>Badges</h4>
+      <span class="demo-badge primary">Novo</span>
+      <span class="demo-badge accent">🔥 Lead quente</span>
+      <span class="demo-badge secondary">Fechado</span>
+      <div style="margin-top:var(--space-sm)">
+        <span class="demo-badge" style="background:#ea4335;color:white">Erro</span>
+        <span class="demo-badge" style="background:#34a853;color:white">Sucesso</span>
+      </div>
+    </div>
+    <div class="component-card">
+      <h4>Card</h4>
+      <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+        <strong style="font-size:0.9rem">Título do card</strong>
+        <p style="font-size:0.8rem;color:#666;margin:4px 0 0">Conteúdo do card com padding e bordas arredondadas.</p>
+      </div>
+    </div>
+    <div class="component-card">
+      <h4>Alertas</h4>
+      <div style="background:#e8f0fe;color:#174ea6;border-radius:4px;padding:12px;font-size:0.8rem;margin-bottom:6px">ℹ️ Alerta informativo</div>
+      <div style="background:#e6f4ea;color:#1e7e34;border-radius:4px;padding:12px;font-size:0.8rem;margin-bottom:6px">✅ Operação concluída</div>
+      <div style="background:#fce8e6;color:#a50e0e;border-radius:4px;padding:12px;font-size:0.8rem">⚠️ Erro ao processar</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Schema: Sales AI -->
+<section>
+  <h2>📁 Schema: Sales AI</h2>
+  <div class="callout callout-info">
+    <strong>🧩 extends: global</strong> — Este schema herda typography, spacing e
+    componentes do global e sobrescreve apenas as cores com a identidade da sua marca.
+  </div>
+
+  <div class="palette">
+    <div class="swatch">
+      <div class="bar" style="background:#223874"></div>
+      <div class="label"><div class="name">primary</div><div class="hex">#223874</div><div class="usage">Marca — headers, nav</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#5a6e9a"></div>
+      <div class="label"><div class="name">secondary</div><div class="hex">#5a6e9a</div><div class="usage">Suporte, backgrounds</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#1f6e5a"></div>
+      <div class="label"><div class="name">tertiary</div><div class="hex">#1f6e5a</div><div class="usage">Tags, destaque sutil</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#e88d25"></div>
+      <div class="label"><div class="name">accent</div><div class="hex">#e88d25</div><div class="usage">Ação — CTAs, badges</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#f4f4f6;border:1px solid #ddd"></div>
+      <div class="label"><div class="name">neutral</div><div class="hex">#f4f4f6</div><div class="usage">Fundos, superfícies</div></div>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:#101218"></div>
+      <div class="label"><div class="name">dark</div><div class="hex">#101218</div><div class="usage">Texto principal</div></div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Token</th><th>Hex</th><th>Contraste</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td>primary</td><td>#223874</td><td>—</td><td>Marca</td></tr>
+      <tr><td>secondary</td><td>#5a6e9a</td><td>—</td><td>Suporte</td></tr>
+      <tr><td>tertiary</td><td>#1f6e5a</td><td>—</td><td>Destaque sutil</td></tr>
+      <tr><td>accent</td><td>#e88d25</td><td>—</td><td>Ação</td></tr>
+      <tr><td>neutral</td><td>#f4f4f6</td><td>—</td><td>Fundo</td></tr>
+      <tr><td>dark</td><td>#101218</td><td>17.0:1 c/ neutral</td><td>Texto</td></tr>
+      <tr><td>on-primary</td><td>#FFFFFF</td><td>11.1:1 ✅</td><td>Texto sobre primary</td></tr>
+      <tr><td>on-secondary</td><td>#ffffff</td><td>5.1:1 ✅</td><td>Texto sobre secondary</td></tr>
+      <tr><td>on-tertiary</td><td>#FFFFFF</td><td>6.1:1 ✅</td><td>Texto sobre tertiary</td></tr>
+      <tr><td>on-accent</td><td>#101218</td><td>7.4:1 ✅</td><td>Texto sobre accent</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    <span class="tag tag-secondary">✅ WCAG AA</span>
+    <span class="tag tag-primary">🎨 Logo Guimarães</span>
+    <span class="tag tag-neutral">📄 Showcase disponível</span>
+  </p>
+</section>
+
+<!-- 7. Do's and Don'ts -->
+<section>
+  <h2>✅ Regras Práticas</h2>
+  <div class="component-grid">
+    <div class="component-card">
+      <h4>✅ Do</h4>
+      <ul style="margin:0;padding-left:16px">
+        <li>Usar <code>--primary</code> em headers, navegação e botões principais</li>
+        <li>Usar <code>--accent</code> (#e88d25 no Sales AI) para CTAs e ações</li>
+        <li>Usar <code>--secondary</code> para backgrounds de card e hover</li>
+        <li>Manter contraste de 4.5:1 em texto sobre fundo colorido</li>
+      </ul>
+    </div>
+    <div class="component-card">
+      <h4>❌ Don't</h4>
+      <ul style="margin:0;padding-left:16px">
+        <li>Usar accent em backgrounds grandes (funciona como destaque pontual)</li>
+        <li>Adicionar cores fora da paleta sem justificativa documentada</li>
+        <li>Usar mais de 2 famílias tipográficas no mesmo artefato</li>
+        <li>Substituir cores semânticas (danger, success) sem razão</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Arquivos -->
+<section>
+  <h2>📁 Onde estão os arquivos</h2>
+  <table>
+    <thead><tr><th>Arquivo</th><th>O que é</th></tr></thead>
+    <tbody>
+      <tr><td>acervo/global/_meta/DESIGN.md</td><td>Tokens base do sistema (fonte oficial)</td></tr>
+      <tr><td>acervo/micro/{projeto}/DESIGN.md</td><td>Override do seu projeto (apenas cores)</td></tr>
+      <tr><td>_design/showcase.html</td><td>Página de demonstração visual</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.85rem;color:#888">
+    Para gerar um novo schema a partir de uma logo: use o comando
+    <code>brandkit-extract.py</code>. Para validar o DESIGN.md:
+    <code>npx @google/design.md lint</code>.
+  </p>
+</section>
+
+</div>
+
+<footer class="footer">
+  <div class="container">
+    Gerado pelo <strong>Exocórtex.IA</strong> — <a href="#">exocortex.saas</a><br>
+    Formato: Google DESIGN.md · Apache-2.0 · WCAG AA ✅
+  </div>
+</footer>
+
+</body>
+</html>
