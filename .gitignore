@@ -6,3 +6,7 @@ __pycache__/
 .hermes/
 .tmp/
 .agents
+
+# Personal microversos (generated per-user by onboarding)
+acervo/micro/gabinete/
+acervo/micro/ensino/
