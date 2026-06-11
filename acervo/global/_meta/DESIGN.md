@@ -5,10 +5,17 @@ description: Tokens visuais do executivo. Aplicado a artefatos visuais sob deman
 colors:
   primary: "#1a73e8"
   secondary: "#34a853"
+  tertiary: "#5f6368"
   accent: "#fbbc04"
   neutral: "#f8f9fa"
   dark: "#202124"
   danger: "#ea4335"
+  success: "#34a853"
+  warning: "#fbbc04"
+  on-primary: "#FFFFFF"
+  on-secondary: "#FFFFFF"
+  on-tertiary: "#FFFFFF"
+  on-accent: "#202124"
 typography:
   h1:
     fontFamily: Inter
@@ -71,6 +78,31 @@ components:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.dark}"
     rounded: "{rounded.lg}"
+
+## Schemas
+
+### sales-ai
+
+Esquema cromático derivado da marca Guimarães (#223874). Azul confiança + Laranja ação.
+Ativado por microversos que usam `extends: global` e sobrescrevem tokens de cor.
+
+| Token | Hex | Função |
+|---|---|---|
+| primary | `#223874` | Marca, headers, nav |
+| secondary | `#5a6e9a` | Suporte, hover, backgrounds |
+| tertiary | `#1f6e5a` | Destaque sutil, tags |
+| accent | `#e88d25` | Ação, CTAs, badges |
+| neutral | `#f4f4f6` | Fundos e superfícies |
+| dark | `#101218` | Texto principal |
+| on-primary | `#FFFFFF` | Texto sobre primary (11.1:1) |
+| on-secondary | `#ffffff` | Texto sobre secondary (5.1:1) |
+| on-tertiary | `#FFFFFF` | Texto sobre tertiary (6.1:1) |
+| on-accent | `#101218` | Texto sobre accent (7.4:1) |
+
+**Showcase:** `sales-AI/_design/showcase.html`
+
+Microverso correspondente: `acervo/micro/sales-ai/DESIGN.md`
+
 ---
 
 ## Overview
@@ -85,11 +117,18 @@ quando uma tarefa produz output visual (relatórios, dashboards, decks, etc.).
 ## Colors
 
 - **Primary (#1a73e8):** Ações, links, headings de destaque.
-- **Secondary (#34a853):** Sucesso, métricas positivas, confirmações.
+- **Secondary (#34a853):** Suporte, métricas positivas, confirmações.
+- **Tertiary (#5f6368):** Destaque sutil — tags secundárias, labels informativos.
 - **Accent (#fbbc04):** Alertas, destaques, badges, atenção.
 - **Neutral (#f8f9fa):** Fundos, superfícies, cards.
 - **Dark (#202124):** Texto principal, contraste alto.
 - **Danger (#ea4335):** Erros, alertas críticos, ações destrutivas.
+- **Success (#34a853):** Confirmações, métricas positivas (igual secondary por default).
+- **Warning (#fbbc04):** Alertas de atenção (igual accent por default).
+- **on-primary (#FFFFFF):** Texto sobre primary (contraste garantido).
+- **on-secondary (#FFFFFF):** Texto sobre secondary.
+- **on-tertiary (#FFFFFF):** Texto sobre tertiary.
+- **on-accent (#202124):** Texto sobre accent.
 
 ## Typography
 

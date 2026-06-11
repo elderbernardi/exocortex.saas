@@ -83,7 +83,7 @@ brandkit (guia criativo/extração)
 
 ## Estado atual
 
-- **Global:** 6 cores (primary, secondary, accent, neutral, dark, danger), tipografia (Inter + JetBrains Mono), spacing (8px scale), 7 componentes
-- **Microversos:** Nenhum tem `DESIGN.md` real — o template do _template tem SCHEMA.md que menciona, mas o arquivo não existe
+- **Global:** 13 cores (primary, secondary, tertiary, accent, neutral, dark, danger, success, warning, on-primary, on-secondary, on-tertiary, on-accent), tipografia (Inter + JetBrains Mono), spacing (8px scale), 7 componentes
+- **Microversos:** sales-ai tem DESIGN.md próprio (esquema cromático Guimarães #223874). Template _template tem SCHEMA.md mas DESIGN.md não existe.
 - **Consumo:** Sob demanda — ninguém carrega DESIGN.md no boot
 - **Issue #18:** Propõe skill `excrtx-brandkit-generator` que extrai paleta de logo (Pillow + K-Means) e escreve `DESIGN.md` automaticamente

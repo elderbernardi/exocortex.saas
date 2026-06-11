@@ -10,3 +10,6 @@ __pycache__/
 # Personal microversos (generated per-user by onboarding)
 acervo/micro/gabinete/
 acervo/micro/ensino/
+
+# Client-specific microversos (sensitive brand assets)
+acervo/micro/sales-ai/
