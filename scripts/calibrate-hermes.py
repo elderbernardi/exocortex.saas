@@ -28,11 +28,11 @@ MAGENTA = "\033[0;35m"
 BOLD = "\033[1m"
 NC = "\033[0m"
 
-# LLM Judge API settings
+# LLM Judge API settings — aligned with skill_judge.py
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-JUDGE_MODEL_PRIMARY = "anthropic/claude-sonnet-4"
-JUDGE_MODEL_FALLBACK = "deepseek/deepseek-chat"
+JUDGE_MODEL_PRIMARY = "deepseek-chat"  # DeepSeek V4 Pro (direct API)
+JUDGE_MODEL_FALLBACK = "deepseek/deepseek-chat"  # DeepSeek via OpenRouter
 
 
 def get_api_key(var_name):
@@ -189,7 +189,8 @@ def call_llm_api(prompt, api_url, api_key, model):
             {"role": "user", "content": prompt}
         ],
         "max_tokens": 1000,
-        "temperature": 0.1
+        "temperature": 0.0,
+        **(({"response_format": {"type": "json_object"}} if "deepseek" in model.lower() or "deepseek.com" in api_url else {}))
     }).encode("utf-8")
 
     try:
@@ -228,22 +229,36 @@ Provide a JSON response with the following keys:
 """
 
     response = None
-    if openrouter_key:
-        response = call_llm_api(judge_prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_PRIMARY)
-        
-    if not response and deepseek_key:
-        response = call_llm_api(judge_prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_FALLBACK)
-        
+    deepseek_key = get_api_key("DEEPSEEK_API_KEY")
+    openrouter_key = get_api_key("OPENROUTER_API_KEY")
+
+    # Primary: DeepSeek V4 Pro (direct)
+    if deepseek_key:
+        response = call_llm_api(judge_prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_PRIMARY)
+
+    # Fallback: DeepSeek via OpenRouter
     if not response and openrouter_key:
         response = call_llm_api(judge_prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_FALLBACK)
 
     if response:
         try:
-            # Extract JSON from potential code blocks
             clean = response.strip()
-            if clean.startswith("```"):
-                clean = re.sub(r"^```(?:json)?\s*", "", clean)
-                clean = re.sub(r"\s*```$", "", clean)
+            clean = re.sub(r"^```(?:json)?\s*", "", clean)
+            clean = re.sub(r"\s*```\s*$", "", clean)
+            # Handle brace-depth matching for nested JSON
+            start = clean.find("{")
+            if start != -1:
+                depth = 0
+                end = start
+                for i in range(start, len(clean)):
+                    if clean[i] == "{":
+                        depth += 1
+                    elif clean[i] == "}":
+                        depth -= 1
+                        if depth == 0:
+                            end = i + 1
+                            break
+                clean = clean[start:end]
             parsed = json.loads(clean)
             return parsed.get("verdict"), parsed.get("reasoning")
         except Exception:
@@ -255,7 +270,9 @@ Provide a JSON response with the following keys:
 def run_calibration_flow():
     parser = argparse.ArgumentParser(description="Smart Hermes Cognitive Calibration Suite")
     parser.add_argument("--model", type=str, default=None, help="Override Hermes LLM model")
-    parser.add_argument("--all", action="store_true", help="Run all 40 features without asking")
+    parser.add_argument("--all", action="store_true", help="Run all features without asking")
+    parser.add_argument("--dry-run", action="store_true", help="Load and validate cases without running Hermes")
+    parser.add_argument("--report", type=str, default=None, help="Save JSON results to file")
     args = parser.parse_args()
 
     # --- Banner ---
@@ -265,11 +282,14 @@ def run_calibration_flow():
     print(f"{CYAN}╚══════════════════════════════════════════════════════════╝{NC}\n")
 
     hermes_bin = detect_hermes_bin()
-    if not hermes_bin:
-        print(f"{RED}✗ Error: hermes executable not found.{NC}")
+    if not hermes_bin and not args.dry_run:
+        print(f"{RED}✗ Error: hermes executable not found. Use --dry-run to validate cases without Hermes.{NC}")
         sys.exit(1)
-        
-    print(f"{GREEN}✓{NC} Hermes CLI:           {BOLD}{hermes_bin}{NC}")
+
+    if args.dry_run:
+        print(f"{YELLOW}⚡ DRY-RUN MODE — validating calibration cases only{NC}")
+    else:
+        print(f"{GREEN}✓{NC} Hermes CLI:           {BOLD}{hermes_bin}{NC}")
     print(f"{GREEN}✓{NC} Acervo do Exocórtex: {BOLD}{ACERVO}{NC}")
     
     # Ingest Personalization Profile
@@ -283,6 +303,32 @@ def run_calibration_flow():
     # Load Cases
     cases = load_calibration_cases()
     print(f"{GREEN}✓{NC} Loaded {BOLD}{len(cases)}{NC} calibration cases from skills.\n")
+
+    # Dry-run mode: just validate and exit
+    if args.dry_run:
+        results = []
+        for idx, case in enumerate(cases):
+            feat_id = case.get("feature_id", "EX-??")
+            skill = case.get("skill_name", "unknown")
+            has_prompt = bool(case.get("test_prompt", "").strip())
+            has_criteria = bool(case.get("acceptance_criteria", "").strip())
+            has_remediation = bool(case.get("remediation_tip", "").strip())
+            status = "✅" if (has_prompt and has_criteria and has_remediation) else "⚠️"
+            print(f"  {status} [{feat_id}] {skill} — prompt={'✓' if has_prompt else '✗'} criteria={'✓' if has_criteria else '✗'} remediation={'✓' if has_remediation else '✗'}")
+            results.append({
+                "feature_id": feat_id,
+                "skill_name": skill,
+                "has_prompt": has_prompt,
+                "has_criteria": has_criteria,
+                "has_remediation": has_remediation,
+                "valid": has_prompt and has_criteria and has_remediation,
+            })
+        valid = sum(1 for r in results if r["valid"])
+        print(f"\n  {GREEN}{valid}/{len(results)}{NC} cases fully valid.")
+        if args.report:
+            Path(args.report).write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"  Report saved to {args.report}")
+        return
     
     total_passed = 0
     total_failed = 0

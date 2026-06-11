@@ -190,10 +190,29 @@ registry.register(
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+1. **Identify extension type:** Slash command (`/my_command`) or direct tool call (LLM bypass)?
+2. **For slash commands:**
+   - Register in `hermes_cli/commands.py` → `COMMAND_REGISTRY` list
+   - Add to `ACTIVE_SESSION_BYPASS_COMMANDS` frozenset if Gateway-compatible
+   - Add CLI handler in `cli.py` → `process_command` method
+   - Add Gateway handler in `gateway/run.py` at **BOTH** locations:
+     - Main chain (~line 8136): `if canonical == "command_name":`
+     - `_DEDICATED_HANDLERS` (~line 7902): for active session dispatch
+3. **For direct tool calls:**
+   - Import `handle_function_call` from `tools/model_tools.py`
+   - Pass `function_name`, `function_args`, set `task_id`/`session_id` as needed
+4. **For custom tools:**
+   - Create `tools/my_tool.py` with `registry.register()` call
+   - Return valid JSON string from handler
+5. **Restart** CLI/Gateway after changes to `commands.py` or `cli.py`
+6. **Test** in both CLI and Gateway (Telegram) — verify command doesn't fall through as message
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] Command appears in `/help` output (registration in `COMMAND_REGISTRY`)
+- [ ] Command works in CLI: `hermes> /my_command` returns expected output
+- [ ] Command works in Gateway (Telegram): not treated as normal message to agent
+- [ ] Command works during active agent session (dispatch via `_DEDICATED_HANDLERS`)
+- [ ] `ACTIVE_SESSION_BYPASS_COMMANDS` includes the command name
+- [ ] `event.source` used instead of `event.session_id` in Gateway handler
+- [ ] Tool returns valid JSON string (not dict or plain text)

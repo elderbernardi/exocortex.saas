@@ -13,6 +13,17 @@ metadata:
   hermes:
     tags: [exocortex, quality, judge, llm-as-judge, skill-evaluation, rubric]
     related_skills: [excrtx-quality-gate, excrtx-quality-antislop]
+    calibration:
+    - feature_id: EX-54
+      calibration_prompt: Você deve garantir que as operações e regras da skill Skill
+        Judge (excrtx-quality-skilljudge) estão totalmente ativas no seu comportamento
+        e integridade.
+      test_prompt: Explique as 5 dimensões do rubric de avaliação de skills e como
+        o verdict geral é calculado a partir das labels dimensionais.
+      acceptance_criteria: O agente deve listar D1 a D5 com labels categóricas corretas
+        e demonstrar a tabela de verdicts (all best=PASS, 1-2 middle=IMPROVE, any worst=REWRITE).
+      remediation_tip: Certifique-se de que o agente conhece a rubric completa em
+        .dogfood/schemas/skill-judge-rubric.md e a lógica de compute_overall_verdict.
 ---
 
 # Skill Judge — LLM-as-Judge Framework for Agent Skills
