@@ -8,6 +8,7 @@ require_cmd python3
 load_env
 ensure_env_file
 load_env
+normalize_ui_bind_settings
 validate_security_envelope
 ensure_dirs
 
@@ -22,7 +23,7 @@ bash "$SCRIPT_DIR/smoke.sh"
 
 echo ""
 log "Provisionamento concluído"
-info "UI:                http://127.0.0.1:${EXOCORTEX_UI_PORT}"
+info "UI:                http://${EXOCORTEX_UI_BIND_IP}:${EXOCORTEX_UI_PORT}"
 info "Usuário admin:     ${EXOCORTEX_ADMIN_USERNAME:-admin}"
 info "Segredos em:       $ENV_FILE"
 info "Hermes runtime:    ${EXOCORTEX_HERMES_HOME}"

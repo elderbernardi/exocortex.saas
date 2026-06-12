@@ -56,13 +56,13 @@ O instalador:
 
 ## Princípios de operação
 
-- bind host publicado em `127.0.0.1` por padrão
+- bind host publicado em `127.0.0.1` por padrão; `tailscale-auto` resolve o IPv4 atual da tailnet
 - `AUTH_JWT_SECRET` sempre explícito
 - senha default do upstream nunca é mantida
 - ref upstream default pinada em `v0.6.14`
 - refs flutuantes (`main`/`master`/`HEAD`) só passam com `EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF=1`
 - perfis elegíveis para autostart ficam limitados a `default,manut`
-- `CORS_ORIGINS` é obrigatório quando `EXOCORTEX_UI_BIND_IP` sai de loopback
+- `CORS_ORIGINS` é obrigatório quando `EXOCORTEX_UI_BIND_IP` sai de loopback; no modo `tailscale-auto` ele é derivado se estiver vazio
 - `setup.sh` roda com `EXOCORTEX_SKIP_HERMES_WEB_UI_SETUP_STEP=1` para evitar recursão
 
 ## Limites desta primeira entrega

@@ -40,11 +40,36 @@ load_env() {
   export EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF="${EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF:-0}"
 }
 
+resolve_tailscale_ipv4() {
+  require_cmd tailscale
+  local ts_ip
+  ts_ip="$(tailscale ip -4 2>/dev/null | head -n1 | tr -d '[:space:]')"
+  [ -n "$ts_ip" ] || fail "Não foi possível resolver IPv4 do Tailscale para EXOCORTEX_UI_BIND_IP=tailscale-auto"
+  printf '%s' "$ts_ip"
+}
+
+normalize_ui_bind_settings() {
+  local requested_bind="${EXOCORTEX_UI_BIND_IP:-127.0.0.1}"
+  local resolved_bind="$requested_bind"
+
+  if [ "$requested_bind" = "tailscale-auto" ]; then
+    resolved_bind="$(resolve_tailscale_ipv4)"
+    export EXOCORTEX_UI_BIND_IP="$resolved_bind"
+    log "EXOCORTEX_UI_BIND_IP resolvido via Tailscale: $resolved_bind"
+
+    if [ -z "${CORS_ORIGINS:-}" ]; then
+      export CORS_ORIGINS="http://${resolved_bind}:${EXOCORTEX_UI_PORT}"
+      log "CORS_ORIGINS derivado automaticamente para bind Tailscale"
+    fi
+  fi
+}
+
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || fail "Comando obrigatório ausente: $1"
 }
 
 compose() {
+  normalize_ui_bind_settings
   docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
 }
 
@@ -143,7 +168,8 @@ validate_security_envelope() {
 
 wait_for_health() {
   local tries="${1:-60}"
-  local url="http://127.0.0.1:${EXOCORTEX_UI_PORT}/health"
+  local host="${EXOCORTEX_UI_BIND_IP:-127.0.0.1}"
+  local url="http://${host}:${EXOCORTEX_UI_PORT}/health"
   local i=1
   while [ "$i" -le "$tries" ]; do
     if curl -fsS "$url" >/dev/null 2>&1; then
