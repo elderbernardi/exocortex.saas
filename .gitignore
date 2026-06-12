@@ -6,6 +6,8 @@ __pycache__/
 .hermes/
 .tmp/
 .agents
+.runtime-test/
+provision/hermes-web-ui/env/.env
 
 # Personal microversos (generated per-user by onboarding)
 acervo/micro/gabinete/

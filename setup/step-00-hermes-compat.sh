@@ -51,8 +51,9 @@ check_hermes_version() {
     fail "hermes CLI not found in PATH. Install Hermes first."
   fi
 
-  local raw_version
-  raw_version=$(hermes --version 2>/dev/null | head -1)
+  local raw_version version_output
+  version_output=$(hermes --version 2>/dev/null || true)
+  raw_version=${version_output%%$'\n'*}
 
   local version
   version=$(echo "$raw_version" | grep -oP '\d{4}\.\d+\.\d+' | head -1)

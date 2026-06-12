@@ -63,6 +63,11 @@ if [ -n "${CONTEXT7_API_KEY:-}" ]; then
 else
   info "CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)"
 fi
+if [ -n "${FIRECRAWL_API_KEY:-}" ]; then
+  log "FIRECRAWL_API_KEY definida"
+else
+  info "FIRECRAWL_API_KEY não definida (opcional — crawling/extract pode ser adicionado depois)"
+fi
 
 # ─── OpenRouter Free Router ─────────────────────────────────────────────────
 

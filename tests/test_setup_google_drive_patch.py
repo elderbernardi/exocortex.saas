@@ -10,11 +10,11 @@ from pathlib import Path
 class SetupGoogleDrivePatchTest(unittest.TestCase):
     @staticmethod
     def _patch_script() -> str:
-        setup_path = Path(__file__).resolve().parents[1] / "setup.sh"
-        setup_text = setup_path.read_text(encoding="utf-8")
-        match = re.search(r"python3 - \"\$gapi\" <<'PY'\n(.*?)\nPY", setup_text, re.DOTALL)
+        patch_path = Path(__file__).resolve().parents[1] / "setup" / "step-06-hardening.sh"
+        patch_text = patch_path.read_text(encoding="utf-8")
+        match = re.search(r"python3 - \"\$gapi\" <<'PY'\n(.*?)\nPY", patch_text, re.DOTALL)
         if match is None:
-            raise AssertionError("python patch block not found in setup.sh")
+            raise AssertionError("python patch block not found in setup/step-06-hardening.sh")
         return match.group(1)
 
     @staticmethod

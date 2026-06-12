@@ -1,0 +1,43 @@
+services:
+  hermes-web-ui:
+    build:
+      context: ../../..
+      dockerfile: provision/hermes-web-ui/docker/Dockerfile.ui
+      args:
+        HERMES_WEB_UI_REPO_URL: ${EXOCORTEX_HERMES_WEB_UI_REPO_URL}
+        HERMES_WEB_UI_REF: ${EXOCORTEX_HERMES_WEB_UI_REF}
+    image: ${EXOCORTEX_HERMES_WEB_UI_IMAGE}
+    container_name: ${EXOCORTEX_HERMES_WEB_UI_CONTAINER_NAME}
+    restart: unless-stopped
+    ports:
+      - "${EXOCORTEX_UI_BIND_IP}:${EXOCORTEX_UI_PORT}:${EXOCORTEX_UI_CONTAINER_PORT}"
+      - "${EXOCORTEX_UI_BIND_IP}:${EXOCORTEX_UI_PREVIEW_PORT}:8651"
+      - "${EXOCORTEX_UI_BIND_IP}:${EXOCORTEX_UI_XAI_OAUTH_PORT}:56121"
+    environment:
+      PORT: ${EXOCORTEX_UI_CONTAINER_PORT}
+      BIND_HOST: 0.0.0.0
+      HERMES_HOME: /srv/hermes
+      HERMES_WEB_UI_HOME: /srv/hermes-web-ui
+      HERMES_WEBUI_STATE_DIR: /srv/hermes-web-ui
+      HERMES_BIN: /opt/hermes/.venv/bin/hermes
+      HERMES_WEB_UI_MANAGED_GATEWAY: 1
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
+      PROFILE: ${EXOCORTEX_DEFAULT_PROFILE}
+      LOG_LEVEL: ${LOG_LEVEL}
+      BRIDGE_LOG_LEVEL: ${BRIDGE_LOG_LEVEL}
+      WORKSPACE_BASE: ${WORKSPACE_BASE}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
+    volumes:
+      - ${EXOCORTEX_HERMES_HOME}:/srv/hermes
+      - ${EXOCORTEX_HOME}:/srv/exocortex
+      - ${EXOCORTEX_WEB_UI_HOME}:/srv/hermes-web-ui
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:${EXOCORTEX_UI_CONTAINER_PORT}/health >/dev/null || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 25s
+    stdin_open: true
+    tty: true
