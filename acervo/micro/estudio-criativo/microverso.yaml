@@ -6,9 +6,9 @@ kind: Microverso
 metadata:
   name: estudio-criativo
   version: 1.0.0
-  description: "Microverso para produção criativa — slides, apresentações, design thinking, artefatos visuais e documentos com estética."
+  description: "Microverso transversal do Exocórtex para criação, pesquisa, linguagem, design, produção e aprendizado criativo aplicados a demandas próprias ou de outros microversos."
   author: exocortex-team
-  tags: [criativo, design, slides, produção, apresentações]
+  tags: [criativo, pesquisa, linguagem, design, produção, aprendizado, transversal]
 
 # Dependências
 requires:
@@ -25,16 +25,18 @@ requires:
 
 # Estrutura (relativa ao diretório do pacote)
 tree:
-  contracts/: "Contratos de produção criativa"
-  workflows/: "Workflows de produção (slides, docs, design)"
-  templates/: "Templates reutilizáveis (apresentações, documentos)"
-  persona/: "Personas criativas (designer, diretor de arte, editor)"
-  prompts/: "Prompts testados para produção criativa"
-  knowledge/: "Base de conhecimento (design principles, tipografia, cor)"
-  decisions/: "ADRs locais do microverso"
-  reflections/: "Meta-reflexões sobre processos criativos"
-  tools/: "Scripts utilitários (converters, validators)"
-  skills/: "Skills locais do microverso (se houver)"
+  contracts/: "Contratos operacionais, de governança e de preservação canônica do Estúdio"
+  workflows/: "Workflows de intake, pesquisa, produção, crítica e aprendizagem"
+  templates/: "Templates reutilizáveis de briefing, campanha, learning card e pós-projeto"
+  persona/: "Personas operacionais do Estúdio"
+  prompts/: "Prompts testados para briefing, crítica e produção criativa"
+  knowledge/: "Base de capacidades, repertório e mapa de ferramentas"
+  decisions/: "Decisões locais do microverso"
+  reflections/: "Reflexões canônicas sobre método e evolução do Estúdio"
+  tools/: "Documentação da stack criativa acionável"
+  skills/: "Skills locais do microverso"
+  context/: "Contexto estrutural do modo de operação do Estúdio"
+  _meta/: "Índice canônico e schema local do microverso"
 
 # Hooks (opcionais)
 hooks: {}
