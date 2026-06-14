@@ -46,3 +46,15 @@ tags: [log, creative-studio, audit]
 - criados workflows de `creative-qa-before-publication` e `prototype-a-validation-asset`
 - criados templates de scorecard de crítica, matriz de formato e brief de artefato de validação
 - a camada de capabilities locais agora consome o knowledge novo sem duplicar sua heurística central
+
+## 2026-06-14 — retrospecto | fronteira com Produto
+
+- registrado no acervo o efeito estrutural da issue `#62`, que formalizou a fronteira entre Produto e Estúdio
+- consolidado o princípio de paridade entre Produto, Estúdio e Engenharia sem reduzir o Estúdio a apoio visual
+- mantida aberta a frente equivalente com Engenharia como próximo contrato relevante
+
+## 2026-06-14 — receipts | casos reais e pós-projetos fundacionais
+
+- canonizados três casos reais ligados às issues `#60`, `#61` e `#62`, todos com receipts em issue, commit e arquivos alterados
+- os primeiros receipts do Estúdio registram a própria construção do microverso como acervo vivo verificável
+- permanece aberta a necessidade de receipts recorrentes de operação sobre microversos atendidos

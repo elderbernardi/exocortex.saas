@@ -47,6 +47,9 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 
 ### Reflections
 - `reflections/initial-thesis.md` — tese inicial do Estúdio.
+- `reflections/2026-06-estudio-index-sanitization.md` — caso real do saneamento estrutural do índice e manifesto.
+- `reflections/2026-06-estudio-current-state-log-bootstrap.md` — caso real do bootstrap de estado corrente e log.
+- `reflections/2026-06-estudio-product-boundary.md` — caso real da fronteira operacional com Produto.
 
 ## Corpus operacional existente
 
