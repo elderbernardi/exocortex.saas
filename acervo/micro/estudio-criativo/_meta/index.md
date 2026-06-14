@@ -40,6 +40,7 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 - `contracts/tool-and-skill-governance.md` — governança de instalação e uso de ferramentas e skills.
 - `contracts/canonical-preservation-and-versioning.md` — preservação canônica e versionamento integral.
 - `contracts/exocortex-hermes-identity.md` — contrato local de identidade Exocórtex sobre Hermes.
+- `contracts/boundary-with-product.md` — fronteira operacional entre Estúdio e Produto.
 
 ### Decisions
 - `decisions/create-estudio-criativo.md` — decisão de criação do microverso.

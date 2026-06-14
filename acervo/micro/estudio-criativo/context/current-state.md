@@ -30,7 +30,7 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 ## O que já está maduro
 
 - constituição básica do microverso, com schema, índice canônico e manifesto alinhados
-- contratos operacionais do Estúdio, incluindo briefing mínimo, pesquisa antes de produção, conceito antes de peça, crítica antes de entrega e Draft-First para saídas externas
+- contratos operacionais do Estúdio, incluindo briefing mínimo, pesquisa antes de produção, conceito antes de peça, crítica antes de entrega, Draft-First para saídas externas e fronteira explícita com Produto
 - workflows de intake, pesquisa, apoio misto, ingestão de conhecimento, aprendizado pós-projeto e trilha de estudo
 - prompts-base de briefing e crítica
 - templates mínimos de briefing, one-pager, learning card e pós-projeto
@@ -48,7 +48,7 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 ## O que ainda está em consolidação
 
 - densificação do corpus de knowledge além do núcleo fundador atual
-- formalização mais nítida da fronteira entre Estúdio, Produto e Engenharia
+- formalização mais ampla do triângulo Estúdio, Produto e Engenharia, especialmente na camada ainda pendente com Engenharia
 - trilha cumulativa de receipts, casos reais e aprendizados pós-projeto
 - estudo guiado com learning cards preenchidas e relatório de conclusão do corpus fundador
 
@@ -56,18 +56,18 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 
 - ainda não existem artefatos canônicos para study cycle, learning cards preenchidas e study completion report
 - ainda não existem receipts e reflexões de pós-projeto específicas do Estúdio como acervo recorrente
-- a fronteira com Produto e Engenharia já é intuída na operação, mas ainda não foi formalizada no microverso com a precisão prevista em issue própria
+- a fronteira com Engenharia ainda não foi formalizada com a mesma precisão já estabelecida para Produto
 
 ## Relação atual com Produto e Engenharia
 
-Hoje o Estúdio já pode colaborar com Produto e Engenharia, mas essa relação ainda está registrada mais pelo método do que por um contrato de fronteira formal.
+Hoje o Estúdio já possui fronteira operacional explícita com Produto, enquanto a camada equivalente com Engenharia ainda depende de formalização própria.
 
 Leitura operacional atual:
 - Produto define hipótese, problema, escopo, prioridade e validação do que merece existir
 - Estúdio define forma percebida, narrativa, tangibilização, conceito expressivo e artefatos de validação
 - Engenharia define viabilidade técnica, implementação, testes e operação real
 
-Essa leitura já orienta colaboração, mas a formalização completa dessa fronteira continua fora deste arquivo.
+Essa leitura já orienta colaboração. O recorte Estúdio ↔ Produto agora está formalizado em contrato próprio; a governança mais ampla com Engenharia continua fora deste arquivo.
 
 ## Regra de leitura para agentes menores
 
