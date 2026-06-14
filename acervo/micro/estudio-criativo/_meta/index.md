@@ -30,9 +30,9 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 ## Fundação operacional existente
 
 ### Context
+- `context/current-state.md` — fotografia factual do que o Estúdio sustenta hoje.
 - `context/mixed-task-model.md` — como o Estúdio atua em tarefas mistas com outros microversos.
-
-> Estado operacional corrente e trilha de log ainda não foram canonizados neste microverso. Essa camada fica para a issue de estado e trilha operacional.
+- `log.md` — trilha operacional cumulativa do microverso.
 
 ### Contracts
 - `contracts/operating-principles.md` — princípios bloqueantes do Estúdio.
@@ -92,7 +92,6 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 ## Lacunas já conhecidas
 
 As trilhas abaixo pertencem ao backlog do microverso, mas ainda não existem como artefatos canônicos nesta árvore:
-- estado corrente e log operacional
 - ciclo de estudo guiado e learning cards preenchidas
 - relatório de conclusão do corpus fundador
 - receipts e reflexões de pós-projeto específicas
