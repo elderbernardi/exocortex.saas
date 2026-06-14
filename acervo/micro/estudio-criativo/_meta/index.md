@@ -70,6 +70,9 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 ### Skills
 - `skills/creative-campaign-development.md` — procedimento inicial de campanha.
 - `skills/creative-tool-selection.md` — procedimento para escolher ferramentas de criação.
+- `skills/structured-creative-critique.md` — rotina executável para revisão crítica de drafts e peças.
+- `skills/delivery-format-selection.md` — seleção do formato de entrega mais útil para a pergunta atual.
+- `skills/hypothesis-to-validation-artifact.md` — transformação de hipótese em artefato de validação.
 
 ### Workflows
 - `workflows/demand-intake.md` — entrada e triagem de demandas.
@@ -78,6 +81,8 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 - `workflows/post-project-learning.md` — registro de aprendizado e evolução.
 - `workflows/knowledge-ingestion.md` — ingestão de obras e referências.
 - `workflows/study-sprint-90d.md` — trilha de estudo em 90 dias.
+- `workflows/creative-qa-before-publication.md` — QA criativo antes de qualquer publicação ou envio.
+- `workflows/prototype-a-validation-asset.md` — passagem de hipótese para artefato tangível de validação.
 
 ### Tools
 - `tools/creative-tool-stack.md` — mapa de stack criativa instalável e acionável.
@@ -87,6 +92,9 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 - `templates/campaign-one-pager.md` — uma página de conceito de campanha.
 - `templates/post-project-learning.md` — pós-projeto e aprendizado.
 - `templates/learning-card.md` — ficha de aprendizado por obra.
+- `templates/creative-critique-scorecard.md` — scorecard curto para revisão crítica.
+- `templates/format-selection-matrix.md` — matriz para comparar formatos candidatos.
+- `templates/validation-artifact-brief.md` — brief mínimo para artefato de validação.
 
 ### Persona
 - `persona/creative-director.md` — direção criativa.

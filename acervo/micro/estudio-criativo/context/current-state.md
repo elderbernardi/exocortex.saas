@@ -33,8 +33,9 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 - contratos operacionais do Estúdio, incluindo briefing mínimo, pesquisa antes de produção, conceito antes de peça, crítica antes de entrega, Draft-First para saídas externas e fronteira explícita com Produto
 - corpus de knowledge com heurísticas operáveis para crítica criativa, seleção de formato, narrativa, briefing e tangibilização de hipóteses
 - workflows de intake, pesquisa, apoio misto, ingestão de conhecimento, aprendizado pós-projeto e trilha de estudo
+- workflows mínimos de QA criativo e prototipação para validação
 - prompts-base de briefing e crítica
-- templates mínimos de briefing, one-pager, learning card e pós-projeto
+- templates mínimos de briefing, one-pager, learning card, pós-projeto, scorecard de crítica, matriz de formato e brief de validação
 - personas operacionais para direção criativa, estratégia, copy, arte, produção e pesquisa
 - mapa inicial de capacidades, repertório e stack criativa
 
@@ -44,6 +45,9 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 - estruturação de briefing mínimo
 - apoio criativo misto a outros microversos sem absorver o domínio atendido
 - seleção de ferramentas criativas já disponíveis no ambiente
+- crítica estruturada de drafts, decks, textos e artefatos de validação
+- escolha de formato por estágio do produto e pergunta de validação
+- transformação de hipótese em artefato tangível de baixa inércia
 - produção de drafts conceituais e artefatos de validação sob governança Draft-First
 
 ## O que ainda está em consolidação

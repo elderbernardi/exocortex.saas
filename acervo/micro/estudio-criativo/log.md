@@ -39,3 +39,10 @@ tags: [log, creative-studio, audit]
 - criadas páginas de knowledge para crítica criativa estruturada, escolha de formato por estágio do produto, narrativa e posicionamento, heurísticas de briefing e tangibilização rápida para validação
 - criado `knowledge/open-gaps-map.md` para tratar lacunas como backlog explícito e não como maturidade implícita
 - o Estúdio agora possui corpus mínimo mais legível para subagentes escolherem quando analisar, prototipar, estruturar briefing ou trocar formato
+
+## 2026-06-14 — capabilities | skills, workflows e templates locais
+
+- criadas skills locais para crítica criativa, seleção de formato e transformação de hipótese em artefato de validação
+- criados workflows de `creative-qa-before-publication` e `prototype-a-validation-asset`
+- criados templates de scorecard de crítica, matriz de formato e brief de artefato de validação
+- a camada de capabilities locais agora consome o knowledge novo sem duplicar sua heurística central
