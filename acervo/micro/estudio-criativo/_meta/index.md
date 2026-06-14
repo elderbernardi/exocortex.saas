@@ -54,8 +54,14 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 - `knowledge/creative-capabilities.md` — mapa inicial de capacidades criativas.
 - `knowledge/tooling-landscape.md` — categorias de ferramentas com IA e sem IA.
 - `knowledge/reference-corpus.md` — corpus fundador de obras e referências.
+- `knowledge/structured-creative-critique.md` — método de crítica criativa com eixos e próximos passos.
+- `knowledge/format-selection-by-product-stage.md` — escolha de formato conforme a pergunta e o estágio do produto.
+- `knowledge/narrative-and-positioning.md` — recorte operacional para promessa, tese e linguagem percebida.
+- `knowledge/briefing-heuristics.md` — heurísticas para transformar pedido solto em problema criativo operável.
+- `knowledge/rapid-tangibilization-for-validation.md` — como tornar hipótese tangível antes de produção completa.
+- `knowledge/open-gaps-map.md` — lacunas abertas e backlog explícito do Estúdio.
 
-> O corpus de estudo guiado, learning cards e relatório de conclusão ainda não foi canonizado na árvore atual.
+> O núcleo de knowledge agora cobre crítica, formato, narrativa, briefing e tangibilização. O aprofundamento por mídia e a fronteira com Engenharia continuam como lacunas explícitas.
 
 ### Prompts
 - `prompts/creative-brief-interview.md` — prompt-base para levantar briefing.
@@ -95,4 +101,6 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 As trilhas abaixo pertencem ao backlog do microverso, mas ainda não existem como artefatos canônicos nesta árvore:
 - ciclo de estudo guiado e learning cards preenchidas
 - relatório de conclusão do corpus fundador
-- receipts e reflexões de pós-projeto específicas
+- fronteira operacional equivalente com Engenharia
+- trilhas por tipo de entrega com maior profundidade
+- receipts recorrentes de operação sobre microversos atendidos

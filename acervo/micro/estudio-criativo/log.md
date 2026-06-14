@@ -33,3 +33,9 @@ tags: [log, creative-studio, audit]
 - criado este `log.md` para preservar trilha operacional mínima e cumulativa do microverso
 - após a conclusão da issue `#60`, o índice e o manifesto já refletiam a árvore real; esta etapa adiciona estado corrente e auditabilidade
 - mantida a separação entre base já operável do Estúdio e lacunas ainda abertas para densificação, fronteira e receipts
+
+## 2026-06-14 — knowledge | densificação operacional do corpus
+
+- criadas páginas de knowledge para crítica criativa estruturada, escolha de formato por estágio do produto, narrativa e posicionamento, heurísticas de briefing e tangibilização rápida para validação
+- criado `knowledge/open-gaps-map.md` para tratar lacunas como backlog explícito e não como maturidade implícita
+- o Estúdio agora possui corpus mínimo mais legível para subagentes escolherem quando analisar, prototipar, estruturar briefing ou trocar formato

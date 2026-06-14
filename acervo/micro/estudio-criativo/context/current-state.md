@@ -31,6 +31,7 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 
 - constituição básica do microverso, com schema, índice canônico e manifesto alinhados
 - contratos operacionais do Estúdio, incluindo briefing mínimo, pesquisa antes de produção, conceito antes de peça, crítica antes de entrega, Draft-First para saídas externas e fronteira explícita com Produto
+- corpus de knowledge com heurísticas operáveis para crítica criativa, seleção de formato, narrativa, briefing e tangibilização de hipóteses
 - workflows de intake, pesquisa, apoio misto, ingestão de conhecimento, aprendizado pós-projeto e trilha de estudo
 - prompts-base de briefing e crítica
 - templates mínimos de briefing, one-pager, learning card e pós-projeto
@@ -47,16 +48,15 @@ O Estúdio Criativo opera como capacidade transversal do Exocórtex para transfo
 
 ## O que ainda está em consolidação
 
-- densificação do corpus de knowledge além do núcleo fundador atual
 - formalização mais ampla do triângulo Estúdio, Produto e Engenharia, especialmente na camada ainda pendente com Engenharia
-- trilha cumulativa de receipts, casos reais e aprendizados pós-projeto
 - estudo guiado com learning cards preenchidas e relatório de conclusão do corpus fundador
+- aprofundamento por mídia e por tipo de entrega além do conjunto mínimo agora canonizado
 
 ## Lacunas conhecidas
 
 - ainda não existem artefatos canônicos para study cycle, learning cards preenchidas e study completion report
-- ainda não existem receipts e reflexões de pós-projeto específicas do Estúdio como acervo recorrente
 - a fronteira com Engenharia ainda não foi formalizada com a mesma precisão já estabelecida para Produto
+- ainda faltam trilhas próprias para landing, deck, campanha, manifesto, vídeo curto e branding exploratório
 
 ## Relação atual com Produto e Engenharia
 
