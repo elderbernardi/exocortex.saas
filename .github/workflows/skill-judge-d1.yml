@@ -1,0 +1,53 @@
+name: skill-judge-d1
+
+on:
+  push:
+    paths:
+      - 'skills/**/SKILL.md'
+      - 'scripts/skill_judge.py'
+      - 'scripts/exocortex_runtime_guard.py'
+      - 'tests/test_skill_judge.py'
+      - 'tests/test_runtime_enforcement.py'
+      - 'tests/test_skill_judge_gate_metadata.py'
+      - '.dogfood/baselines/skill-judge-baseline.json'
+      - '.github/workflows/skill-judge-d1.yml'
+  pull_request:
+    paths:
+      - 'skills/**/SKILL.md'
+      - 'scripts/skill_judge.py'
+      - 'scripts/exocortex_runtime_guard.py'
+      - 'tests/test_skill_judge.py'
+      - 'tests/test_runtime_enforcement.py'
+      - 'tests/test_skill_judge_gate_metadata.py'
+      - '.dogfood/baselines/skill-judge-baseline.json'
+      - '.github/workflows/skill-judge-d1.yml'
+
+jobs:
+  d1-regression-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip pyyaml
+
+      - name: Unit tests
+        run: |
+          python -m unittest \
+            tests.test_skill_judge \
+            tests.test_runtime_enforcement \
+            tests.test_skill_judge_gate_metadata -v
+
+      - name: SkillJudge D1 regression gate
+        run: |
+          python scripts/skill_judge.py \
+            --all \
+            --d1-only \
+            --compare-baseline .dogfood/baselines/skill-judge-baseline.json

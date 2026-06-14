@@ -25,6 +25,12 @@ SKILLS_DIR = REPO_ROOT / "skills"
 RUBRIC_PATH = REPO_ROOT / ".dogfood" / "schemas" / "skill-judge-rubric.md"
 SOUL_SEED_PATH = REPO_ROOT / "SOUL_SEED.md"
 FEATURES_PATH = REPO_ROOT / "FEATURES.md"
+DEFAULT_BASELINE_PATH = REPO_ROOT / ".dogfood" / "baselines" / "skill-judge-baseline.json"
+PRODUCTION_SKILLS_REQUIRING_GATE = {
+    "excrtx-produce-artifacts",
+    "excrtx-produce-slides",
+    "excrtx-produce-oficios",
+}
 
 # P0 behavioral skills + their related skills for context
 P0_SKILLS = [
@@ -159,6 +165,29 @@ def check_d1_structural(parsed: dict) -> dict:
     if not fm.get("category") and not hermes_meta.get("category"):
         issues.append("Missing 'category' field")
         recommendations.append("Add 'category: excrtx' to frontmatter")
+
+    # Runtime gate metadata
+    gate = fm.get("gate")
+    skill_name = fm.get("name")
+    if skill_name in PRODUCTION_SKILLS_REQUIRING_GATE and not gate:
+        issues.append("Missing 'gate' block for production skill")
+        recommendations.append("Add gate.require_quality_gate and gate.max_context_tokens to frontmatter")
+    elif gate is not None:
+        if not isinstance(gate, dict):
+            issues.append("'gate' frontmatter must be a mapping")
+            recommendations.append("Use YAML mapping syntax for gate metadata")
+        else:
+            if "require_quality_gate" not in gate:
+                issues.append("Missing gate.require_quality_gate")
+            elif not isinstance(gate.get("require_quality_gate"), bool):
+                issues.append("gate.require_quality_gate must be boolean")
+
+            if "max_context_tokens" not in gate:
+                issues.append("Missing gate.max_context_tokens")
+            else:
+                max_context_tokens = gate.get("max_context_tokens")
+                if not isinstance(max_context_tokens, int) or max_context_tokens <= 0:
+                    issues.append("gate.max_context_tokens must be a positive integer")
 
     # Line-numbering artifacts
     if parsed["has_line_numbers"]:
@@ -644,6 +673,12 @@ def main():
     group.add_argument("--p0", action="store_true", help="Evaluate P0 behavioral skills + related")
     group.add_argument("--skill", type=str, help="Evaluate a single skill by name")
     parser.add_argument("--output", type=str, help="Save JSON results to file")
+    parser.add_argument(
+        "--save-baseline",
+        nargs="?",
+        const=str(DEFAULT_BASELINE_PATH),
+        help="Save current results as a baseline JSON (optional path, default: .dogfood/baselines/skill-judge-baseline.json)",
+    )
     parser.add_argument("--report", type=str, help="Save human-readable report to file")
     parser.add_argument("--compare-baseline", type=str, help="Compare against baseline JSON")
     parser.add_argument("--d1-only", action="store_true", help="Only run deterministic D1 checks (no LLM)")
@@ -716,6 +751,12 @@ def main():
     if args.output:
         Path(args.output).write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"Results saved to {args.output}", file=sys.stderr)
+
+    if args.save_baseline:
+        baseline_path = Path(args.save_baseline)
+        baseline_path.parent.mkdir(parents=True, exist_ok=True)
+        baseline_path.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"Baseline saved to {baseline_path}", file=sys.stderr)
 
     if args.report:
         report = generate_report(results)

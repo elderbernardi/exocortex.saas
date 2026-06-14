@@ -7,6 +7,9 @@ category: excrtx
 platforms:
 - linux
 author: Exocórtex
+gate:
+  require_quality_gate: true
+  max_context_tokens: 2000
 metadata:
   hermes:
     tags:

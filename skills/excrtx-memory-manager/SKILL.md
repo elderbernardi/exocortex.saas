@@ -187,7 +187,19 @@ Write content to the Acervo with Domain Filter.
       → DISCARD
    ```
 
-2. **Write format:**
+2. **Scope guard pré-WRITE (runtime obrigatório):**
+
+   ```bash
+   python scripts/exocortex_runtime_guard.py guard-write \
+     --path "$TARGET_PATH" \
+     --active-microverso "{slug}"
+   ```
+
+   - `allow` → prosseguir com a gravação
+   - `deny` → bloquear com erro explícito de cross-microverso
+   - Sem microverso ativo resolvido → falha dura; não escrever por adivinhação
+
+3. **Write format:**
    - If Nature is file → append to existing file
    - If Nature is directory → create new wiki page with frontmatter
    - Mandatory YAML frontmatter on every new page:
@@ -204,12 +216,12 @@ Write content to the Acervo with Domain Filter.
      ---
      ```
 
-3. **Log operation** in `log.md` of the corresponding scope:
+4. **Log operation** in `log.md` of the corresponding scope:
    - Write to micro/ → `micro/{slug}/log.md`
    - Write to global/ → `global/log.md`
    - Write to shared/ → `shared/log.md`
 
-4. **Update index.md** if new page created.
+5. **Update index.md** if new page created.
 
 ### Rules
 
