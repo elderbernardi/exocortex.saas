@@ -2,7 +2,6 @@
 import os
 import tempfile
 import subprocess
-import shutil
 import unittest
 from pathlib import Path
 
@@ -43,18 +42,10 @@ class SetupHindsightTest(unittest.TestCase):
             )
             mock_docker.chmod(0o755)
             
-            # Copy setup.sh to isolated workspace to run it
+            # Run the Hindsight setup step directly in isolated environment
             repo_root = Path(__file__).resolve().parents[1]
-            shutil.copy(repo_root / "setup.sh", isolated_dir / "setup.sh")
-            
-            # We also need folders like "skills", "acervo", "profiles" etc. because setup.sh copies them
-            # Let's create dummy directories so setup.sh doesn't fail
-            (isolated_dir / "skills").mkdir()
-            (isolated_dir / "acervo").mkdir()
-            (isolated_dir / "profiles").mkdir()
-            (isolated_dir / "skill-bundles").mkdir()
-            
-            # Run setup.sh in isolated environment
+            step_script = repo_root / "setup" / "step-01-hindsight.sh"
+
             new_env = os.environ.copy()
             new_env["HERMES_HOME"] = str(hermes_home)
             new_env["EXOCORTEX_HOME"] = str(exocortex_home)
@@ -62,8 +53,8 @@ class SetupHindsightTest(unittest.TestCase):
             new_env["PATH"] = f"{bin_dir}:{new_env['PATH']}"
             
             result = subprocess.run(
-                ["bash", "./setup.sh"],
-                cwd=str(isolated_dir),
+                ["bash", str(step_script)],
+                cwd=str(repo_root),
                 env=new_env,
                 capture_output=True,
                 text=True
@@ -80,6 +71,12 @@ class SetupHindsightTest(unittest.TestCase):
             self.assertIn("HINDSIGHT_API_LLM_API_KEY=test-hindsight-llm-key", env_content)
             self.assertIn("HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash", env_content)
             self.assertIn("HINDSIGHT_API_LLM_BASE_URL=https://api.deepseek.com/v1", env_content)
+
+            # Check that setup aligned Hermes memory config for Hindsight without disabling built-in memory
+            config_content = parent_config.read_text()
+            self.assertIn("provider: hindsight", config_content)
+            self.assertIn("memory_enabled: true", config_content)
+            self.assertIn("user_profile_enabled: true", config_content)
 
 if __name__ == "__main__":
     unittest.main()

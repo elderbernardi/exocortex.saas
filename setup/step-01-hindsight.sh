@@ -151,6 +151,33 @@ EOF
       log "Corrigido modo de conexão Hindsight para local_external no config.json"
     fi
   fi
+
+  if [ -f "$parent_config" ] && command -v python3 >/dev/null 2>&1; then
+    python3 - "$parent_config" <<'PY'
+import sys
+from pathlib import Path
+import yaml
+
+cfg_path = Path(sys.argv[1])
+cfg = {}
+if cfg_path.exists():
+    cfg = yaml.safe_load(cfg_path.read_text()) or {}
+
+memory = cfg.get("memory")
+if not isinstance(memory, dict):
+    memory = {}
+cfg["memory"] = memory
+
+memory["provider"] = "hindsight"
+memory["memory_enabled"] = True
+memory["user_profile_enabled"] = True
+
+cfg_path.write_text(yaml.safe_dump(cfg, sort_keys=False, allow_unicode=True))
+PY
+    log "Config Hermes alinhada para Hindsight + memory built-in ativo"
+  else
+    warn "Não foi possível alinhar $parent_config para Hindsight automaticamente"
+  fi
 }
 
 info "Hindsight (memória operacional via Docker/ghcr.io)..."

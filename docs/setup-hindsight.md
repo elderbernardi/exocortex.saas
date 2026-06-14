@@ -60,9 +60,11 @@
 
    ```bash
    hermes config set memory.provider hindsight
-   hermes config set memory.memory_enabled false
-   hermes config set memory.user_profile_enabled false
+   hermes config set memory.memory_enabled true
+   hermes config set memory.user_profile_enabled true
    ```
+
+   > Mantenha a memória built-in ativa. O provider `hindsight` complementa o runtime; ele não substitui a tool `memory(...)`. Se os flags acima ficarem `false`, `hindsight_*` continua funcionando, mas `memory(...)` fica indisponível até abrir uma nova sessão com os flags corrigidos.
 
 5. **Reiniciar gateway** para carregar o provider:
 

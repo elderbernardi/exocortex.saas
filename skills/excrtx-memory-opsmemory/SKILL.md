@@ -90,10 +90,12 @@ Evaluate using this matrix:
 4. Configure in Hermes:
    ```bash
    hermes config set memory.provider hindsight
-   hermes config set memory.memory_enabled false
-   hermes config set memory.user_profile_enabled false
+   hermes config set memory.memory_enabled true
+   hermes config set memory.user_profile_enabled true
    ```
 5. Verify: `hermes memory status`
+
+> Keep built-in memory enabled. `hindsight_*` and `memory(...)` are distinct surfaces: Hindsight can be available while the built-in `memory(...)` tool is broken if these flags are `false`.
 
 > **Critical:** Hindsight may require `HINDSIGHT_API_KEY` even in `local_embedded` mode. If `hermes memory status` shows `Missing: HINDSIGHT_API_KEY`, provision the key or switch providers.
 
