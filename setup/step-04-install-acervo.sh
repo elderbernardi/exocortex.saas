@@ -66,6 +66,16 @@ if [ -d "$TEMPLATES_SRC" ]; then
   log "Templates v0.4: $(ls -1 "$TEMPLATES_DST" 2>/dev/null | wc -l) arquivos"
 fi
 
+# Instalar ferramentas globais do Acervo
+ROOT_TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools"
+ROOT_TOOLS_DST="$ACERVO/global/tools"
+if [ -d "$ROOT_TOOLS_SRC" ]; then
+  mkdir -p "$ROOT_TOOLS_DST"
+  find "$ROOT_TOOLS_SRC" -maxdepth 1 -type f -name '*.py' -exec cp {} "$ROOT_TOOLS_DST/" \;
+  chmod +x "$ROOT_TOOLS_DST"/*.py 2>/dev/null || true
+  log "Global tools: $(ls -1 "$ROOT_TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
+fi
+
 # Instalar ferramentas determinísticas do harness
 TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools/harness"
 TOOLS_DST="$ACERVO/global/tools/harness"

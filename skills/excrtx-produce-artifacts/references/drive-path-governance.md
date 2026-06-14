@@ -17,7 +17,30 @@ Consolidated session context:
 Use lowercase paths for consistency:
 
 - `exocortex/inbox` (fallback)
-- `exocortex/microverso/<domain>/...` when the microverso is clear
+- semantic domain paths only when explicitly requested or already present in `drive_target.folder_path`
+
+## Destination Precedence
+
+1. Explicit destination from the executive
+2. Existing `drive_target.folder_path` in the artifact
+3. Default fallback: `exocortex/inbox`
+
+Never infer Drive destination solely from the local filesystem path.
+
+## Interdependent files
+
+If two or more files belong together, publish them inside a dedicated subfolder under the resolved destination.
+
+Examples:
+
+- `exocortex/inbox/<artifact-slug>/`
+- `exocortex/inbox/<artifact-slug>/assets/`
+
+## Post-upload interaction
+
+After publishing, always inform the executive of the exact Drive path used and ask whether they want to move the artifact elsewhere.
+
+If they ask to move it, prefer moving the Drive file/folder to the new destination over creating a duplicate upload.
 
 ## Minimum Verification
 

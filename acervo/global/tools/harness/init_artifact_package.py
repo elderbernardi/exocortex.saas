@@ -83,6 +83,11 @@ def build_manifest(
         "semantic_links": [],
         "source_path": "source/source.md",
         "exports": [],
+        "drive_target": {
+            "provider": "google_drive",
+            "folder_path": "exocortex/inbox",
+            "visibility": "private",
+        },
         "evaluation": {
             "status": "pending",
             "personas": [],

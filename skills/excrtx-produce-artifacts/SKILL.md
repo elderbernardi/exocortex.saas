@@ -234,6 +234,31 @@ exocortex/dev/{year}/artefatos/{project}
 
 Don't ask for the folder if the intent is clear. Use Inbox when ambiguity doesn't change the delivery value.
 
+### Deterministic destination precedence
+
+Resolve Drive destination in this exact order:
+
+1. If the executive explicitly says where to save, use that exact Drive path.
+2. If the artifact or manifest already has a non-empty `drive_target.folder_path`, use it.
+3. If the executive did not specify a destination, default to `exocortex/inbox`.
+4. Do **not** infer the Drive path from the local filesystem path alone.
+5. Semantic paths like `exocortex/ensino/{year}/{discipline}/{type}` are opt-in publication destinations, not silent defaults.
+
+This removes ambiguity between Inbox and semantic publication folders: absent explicit direction, the harness defaults to Inbox.
+
+### Interdependent multi-file artifacts
+
+When there is more than one file and the files depend on each other, store them in a dedicated subfolder under the resolved Drive destination instead of scattering them side by side.
+
+Examples:
+
+```text
+exocortex/inbox/<artifact-slug>/
+exocortex/ensino/2026/<disciplina>/<artifact-slug>/
+```
+
+The goal is to preserve adjacency, reduce orphan files, and make later moves safer.
+
 ## Draft-First
 
 Private upload to the user's own Drive counts as personal delivery when the user requested the artifact.
@@ -253,13 +278,15 @@ In Exocórtex, email uses `productivity/google-workspace` as the operational sta
 When the executive asks for Drive upload and email send:
 
 1. Publish final files to Drive within the `exocortex/...` structure;
-2. Use `exocortex/inbox` as fallback when no more specific folder exists;
-3. For institutional lecture/event artifacts in the teaching harness, prefer `exocortex/ensino/{year}/palestras`;
+2. If the executive did not specify a destination, use `exocortex/inbox`;
+3. Use semantic folders like `exocortex/ensino/{year}/...` only when the executive explicitly asked for that destination or when the artifact already carries that `drive_target.folder_path`;
 4. Create missing intermediate folders explicitly and record the final `folder_id`;
 5. Write `receipt.google_drive.json` with `folder_id`, `drive_file_id`, links, MIME, SHA-256, and sizes;
-6. Compose the email with verified Drive links;
-7. Present the email as DRAFT and wait for explicit approval before sending;
-8. If the available Gmail backend doesn't support attachments in the current wrapper, don't improvise workarounds: keep sending with verified Drive links and record this in the receipt.
+6. After upload, tell the executive exactly where the artifact was saved and ask: `Você deseja mover para outro lugar?`;
+7. If the executive asks to move it, move the Drive file/folder to the new parent instead of uploading a duplicate when feasible;
+8. Compose the email with verified Drive links;
+9. Present the email as DRAFT and wait for explicit approval before sending;
+10. If the available Gmail backend doesn't support attachments in the current wrapper, don't improvise workarounds: keep sending with verified Drive links and record this in the receipt.
 
 This pattern separates two action classes: private upload to the user's own Drive is artifact execution; email sending is external communication and remains under Draft-First.
 
