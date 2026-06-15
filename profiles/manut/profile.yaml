@@ -3,6 +3,7 @@ description_auto: false
 bundle: exocortex-alpha
 skills:
 - excrtx-memory-manager
+- excrtx-harness-maintenance
 - excrtx-memory-wikiadapt
 - excrtx-memory-newmicro
 - excrtx-memory-mvsetup

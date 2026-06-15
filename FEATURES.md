@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais, totalizando **43 skills**.
+Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 
 ---
 
@@ -584,6 +584,16 @@ Organizadas em 7 categorias funcionais, totalizando **43 skills**.
 | **Dependências de Skills** | `excrtx-quality-skilljudge` (EX-54), `excrtx-quality-gate` (EX-21)                                                                                                                                                                                                                  |
 | **Dependências de Tools**  | Python 3.11+, DeepSeek V4 Pro API                                                                                                                                                                                                                                                   |
 
+#### EX-56. Manutenção & Síndico (`excrtx-harness-maintenance`)
+
+| Campo                      | Detalhe                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Funcionalidade**         | Skill orquestradora que encapsula a persona síndico para tarefas de zeladoria do ecossistema cognitivo. Executa varredura de saúde dos microversos, auditoria de artefatos, triagem de inbox, revisão de pendências e gera relatório padronizado. Usa `cronjob` e `todo` nativos do Hermes exclusivamente. Permissões restritas: `can_modify_acervo: false`, reports only. |
+| **Como usar**              | Via cron: `hermes cron create --schedule "0 8 * * 0" --name "maintenance-weekly" --prompt "Execute manutenção com persona síndico."` Ou sob demanda: "execute manutenção", "síndico, status", "o que precisa de atenção?".                                                                                                                                                   |
+| **Instalação**             | `setup.sh` copia skill. Rotinas YAML em `$ACERVO/global/workflows/rtn_*.yaml`.                                                                                                                                                                                                                                                                                              |
+| **Dependências de Skills** | `excrtx-memory-manager`, `excrtx-harness-kanban`, `excrtx-assess-selftest`                                                                                                                                                                                                                                                                                                  |
+| **Dependências de Tools**  | Hermes `cronjob`, `todo`, `send_message`                                                                                                                                                                                                                                                                                                                                     |
+
 ---
 
 ## Mapa de Dependências
@@ -647,6 +657,10 @@ graph TD
         EX30[EX-30 Browser]
     end
 
+    subgraph "Harness & Maintenance"
+        EX56[EX-56 Maintenance]
+    end
+
     H06 --> EX12
     H07 --> EX25
     H09 --> EX10[EX-10 Kanban]
@@ -656,6 +670,8 @@ graph TD
     EX22 --> EX52
     EX23 --> EX52
     EX24 --> EX52
+    EX11 --> EX56
+    H09 --> EX56
 ```
 
 ---
@@ -705,7 +721,7 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 
 ## Convenções para Evolução
 
-1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-55` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
+1. **IDs são estáveis.** `H-01` a `H-10` (Hermes) e `EX-01` a `EX-56` (Exocórtex) não mudam. Novas features recebem IDs sequenciais.
 2. **Cada feature é testável isoladamente.** Self-test (`EX-03`) valida checkpoints. Testes de regressão devem referenciar o ID da feature.
 3. **Dependências são explícitas.** Toda skill documenta de quais outras skills e tools depende.
 4. **Versionamento semântico.** Cada skill tem `version` no frontmatter. Bump obrigatório em mudanças funcionais.

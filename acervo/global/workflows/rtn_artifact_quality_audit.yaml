@@ -1,0 +1,29 @@
+routine_id: rtn_artifact_quality_audit
+name: "Auditoria de qualidade de artefatos"
+vector: manutencao
+status: active
+persona: auditor
+
+scope:
+  microversos: ["*"]
+  tasks: []
+  artifacts: ["*"]
+
+objective: "Verificar artefatos sem receipt ou hash válido. Checar manifests YAML. Identificar artefatos órfãos sem referência em index.md. Validar links em documentos canônicos."
+triggers:
+  - "hermes cron: 0 9 1,15 * *"
+  - "pedido explícito do executivo"
+outputs:
+  - "Relatório de integridade de artefatos"
+  - "Lista de artefatos que precisam de atenção"
+
+permissions:
+  can_modify_acervo: false
+  can_create_reports: true
+  can_publish: false
+  requires_user_approval_for_external_action: true
+
+state_path: state.json
+log_path: log.md
+created_at: "2026-06-15"
+updated_at: "2026-06-15"

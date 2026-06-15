@@ -1,0 +1,29 @@
+routine_id: rtn_ready_artifact_publication
+name: "Identificação de artefatos prontos para publicação"
+vector: manutencao
+status: active
+persona: operador
+
+scope:
+  microversos: ["*"]
+  tasks: []
+  artifacts: ["*"]
+
+objective: "Identificar artefatos com status 'ready' ou 'approved' que ainda não foram publicados. Verificar se passaram pelos quality gates (anti-slop + taste). Listar para o executivo com recomendação de canal de publicação."
+triggers:
+  - "hermes cron: 0 18 * * *"
+  - "pedido explícito do executivo"
+outputs:
+  - "Lista de artefatos prontos para publicação com canal recomendado"
+  - "Aviso se algum artefato pronto não passou pelo quality gate"
+
+permissions:
+  can_modify_acervo: false
+  can_create_reports: true
+  can_publish: false
+  requires_user_approval_for_external_action: true
+
+state_path: state.json
+log_path: log.md
+created_at: "2026-06-15"
+updated_at: "2026-06-15"
