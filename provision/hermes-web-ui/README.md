@@ -59,12 +59,25 @@ O instalador:
 - bind host publicado em `127.0.0.1` por padrão; `tailscale-auto` resolve o IPv4 atual da tailnet
 - `AUTH_JWT_SECRET` sempre explícito
 - senha default do upstream nunca é mantida
-- ref upstream default pinada em `v0.6.14`
+- repo/ref da Web UI resolvidos por `provision/sources/sources.lock.yaml` quando `env/.env` deixa `EXOCORTEX_HERMES_WEB_UI_REPO_URL` e `EXOCORTEX_HERMES_WEB_UI_REF` em branco
+- refs auditadas usam commit SHA completo; `main`/`master`/`HEAD` não são refs de produção
 - refs flutuantes (`main`/`master`/`HEAD`) só passam com `EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF=1`
 - perfis elegíveis para autostart ficam limitados a `default,manut`
 - `CORS_ORIGINS` é obrigatório quando `EXOCORTEX_UI_BIND_IP` sai de loopback; no modo `tailscale-auto` ele é derivado se estiver vazio
 - `setup.sh` roda com `EXOCORTEX_SKIP_HERMES_WEB_UI_SETUP_STEP=1` para evitar recursão
 
+## Fontes controladas
+
+A trilha barebone usa `provision/sources/` como camada de proveniência. O lock atual registra:
+
+- Hermes Agent oficial: `NousResearch/hermes-agent`, licença `MIT`;
+- Web UI/Studio: `EKKOLearnAI/hermes-web-ui` com redirecionamento observado para `EKKOLearnAI/hermes-studio`;
+- alerta de licença da Web UI/Studio: `BSL 1.1`, `Change Date 2029-05-10`, `Change License Apache-2.0`, `commercial_use_requires_license: true`.
+
+O script `provision/sources/sync-upstreams.sh` é dry-run por padrão e nunca faz `push`, `merge`, `rebase`, tag, PR ou mutação remota.
+
 ## Limites desta primeira entrega
 
-Esta camada ainda não altera o upstream `hermes-web-ui`. Ela prepara o provisionamento, o bootstrap e os pontos de coalizão operacional. Hardening profundo de ownership, write-approval nativo e superfícies cognitivas próprias ficam na próxima rodada.
+Esta camada ainda mantém o provisionador Docker legado como trilha operacional, mas já resolve repo/ref da Web UI a partir do lock de fontes quando o env deixa esses campos em branco. A migração barebone por usuário Unix, o hardening profundo de ownership, write-approval nativo e superfícies cognitivas próprias ficam na próxima rodada.
+
+Política de fontes controladas da trilha barebone: `provision/sources/README.md`.

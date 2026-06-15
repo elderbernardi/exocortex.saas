@@ -82,6 +82,8 @@ Antes de decidir o regime de execução, classificar a ação:
 
 **Exceção:** se o executivo disser "quero revisar antes", "mostra o DRAFT", ou similar, a ação interna também passa por DRAFT.
 
+O executivo pode forçar DRAFT em ação interna dizendo "quero revisar antes".
+
 ### Ações externas (DRAFT obrigatório)
 
 | Ação | Notas |
@@ -97,6 +99,8 @@ Antes de decidir o regime de execução, classificar a ação:
 **Regra:** ações externas transmitem dados para fora do ambiente local ou produzem efeitos em sistemas que o executivo não controla localmente. Draft-First obrigatório.
 
 **Exceção:** se o executivo disser "confio, execute direto", "pode enviar sem DRAFT", ou similar, a ação externa pode executar sem passar pelo ciclo de DRAFT.
+
+O executivo pode autorizar ação externa sem DRAFT dizendo "confio, execute direto".
 
 ## Taxonomia de Canais (para ações de comunicação/entrega)
 

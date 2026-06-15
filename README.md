@@ -190,10 +190,11 @@ The installer will automatically invoke `setup.sh`. If you want to customize hom
 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 ```
 
-The repository also ships a container-first cockpit provisioner under `provision/hermes-web-ui/`. It builds `hermes-web-ui` from a pinned upstream ref, binds it locally, bootstraps the Exocortex runtime inside the container, rotates the default admin credential, and constrains gateway autostart to the allowed Exocortex profiles.
+The repository also ships a legacy container-first cockpit provisioner under `provision/hermes-web-ui/`. The current barebone plan keeps that provisioner available, but repo/ref selection now resolves through `provision/sources/sources.lock.yaml` when the Web UI env leaves source fields blank. This keeps the setup away from upstream floating refs while the barebone user-instance runtime matures.
 
 Defaults de hardening desta trilha:
-- upstream pinado em `v0.6.14`
+- repo/ref da Web UI resolvidos por `provision/sources/sources.lock.yaml` quando `env/.env` deixa os campos em branco
+- refs auditadas por commit SHA completo
 - bind local em `127.0.0.1`
 - bloqueio de refs flutuantes (`main`/`master`/`HEAD`) sem override explícito
 - exigência de `CORS_ORIGINS` quando o bind sair de loopback

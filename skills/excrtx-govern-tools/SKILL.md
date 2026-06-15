@@ -51,11 +51,11 @@ Activate on EVERY tool call. This skill defines the governance contract for all 
 | Type | Examples | Policy |
 |---|---|---|
 | **Internal (local execution)** | file_read, file_write, terminal, hermes-cli | Free use. Log only destructive actions (delete, overwrite). |
-| **Internal actions (git/tests)** | git commit (local), git add, git branch, tests, py_compile, lint, patches | Direct execution. No DRAFT. |
-| **External actions (git push/deploy)** | git push, deploy scripts, remote artifact publication | **Draft-First mandatory.** |
+| **Ações internas (git/tests)** | git commit (local), git add, git branch, tests, py_compile, lint, patches | Execução direta. Sem DRAFT. |
+| **Ações externas (git push/deploy)** | git push, deploy scripts, remote artifact publication | **Draft-First mandatory.** |
 | **Research** | duckduckgo-search, excrtx-integrate-browser, arxiv | Free use. Log query + result count. |
-| **Delivery to executive** | `send_message` to the user's own home channel | Can execute without DRAFT for operational self-delivery, with unambiguous recipient and not representing executive's speech to third parties. |
-| **Communication to third parties** | email, calendar, messaging, comments, DM, posts | **Draft-First mandatory.** Never send without post-DRAFT approval. |
+| **Entrega ao executivo** | `send_message` to the user's own home channel | Can execute without DRAFT for operational self-delivery, with unambiguous recipient and not representing executive's speech to third parties. |
+| **Comunicação para terceiros** | email, calendar, messaging, comments, DM, posts | **Draft-First mandatory.** Never send without post-DRAFT approval. |
 | **External creation** | Google Docs, Drive, shared resources | **Draft-First mandatory.** Create as local draft first. |
 | **Configuration** | hermes skills install, pip install, mcp add | **Explicit approval mandatory.** Log in session log. Update setup.sh. |
 
@@ -73,7 +73,7 @@ Every tool call that modifies external state MUST be logged:
 [TOOL] {timestamp} | {tool_name} | {action} | {target} | {result}
 ```
 
-### R3: Delivery and Communication Governance
+### R3: Governança de entrega e comunicação
 Before using a communication tool, classify the act:
 
 1. **Operational self-delivery**
@@ -81,12 +81,14 @@ Before using a communication tool, classify the act:
    - Channel: their home channel
    - Nature: operational system delivery, receipt, explicit technical test, or sending output back to the operator
    - Policy: can execute without DRAFT
+   - Política: pode executar sem DRAFT
 
 2. **Communication to third parties**
    - Any recipient that is not unambiguously the executive themselves
    - Any shared channel, group, or public surface
    - Any text representing the executive's speech to third parties
    - Policy: Draft-First mandatory
+   - Política: Draft-First obrigatório
 
 Draft-First flow:
 1. Generate draft locally
@@ -95,6 +97,7 @@ Draft-First flow:
 4. Executive rejects → discard or revise
 
 When in doubt about recipient, channel, or social effect, treat as communication to third parties.
+Na dúvida sobre destinatário, canal ou efeito social, tratar como comunicação para terceiros.
 
 ### R4: Sandbox by Microverso
 When operating within a microverso, tools must respect scope:
@@ -144,7 +147,7 @@ Any skill outside the bundle requires explicit executive mention.
 | Tool/Action | Reason |
 |---|---|
 | `rm -rf` on any path | Irreversible destruction |
-| Direct email/message send to third parties without post-DRAFT approval | Violates Draft-First |
+| Envio direto de email/mensagem para terceiros sem aprovação pós-DRAFT | Violates Draft-First |
 | System package installation (`apt`, `brew`) | Requires manual approval |
 | Access to other tenants' data | Isolation violation |
 

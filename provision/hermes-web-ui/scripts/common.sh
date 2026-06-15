@@ -18,6 +18,76 @@ REPO_ROOT="$(cd "$PROVISION_DIR/../.." && pwd)"
 ENV_FILE="${EXOCORTEX_PROVISION_ENV_FILE:-$PROVISION_DIR/env/.env}"
 ENV_EXAMPLE="$PROVISION_DIR/env/.env.example"
 COMPOSE_FILE="$PROVISION_DIR/docker/compose.yml"
+SOURCES_LOCK_FILE="${EXOCORTEX_SOURCES_LOCK_FILE:-$REPO_ROOT/provision/sources/sources.lock.yaml}"
+
+read_source_lock_field() {
+  local source_name="$1"
+  local section_name="$2"
+  local field_name="$3"
+
+  [ -f "$SOURCES_LOCK_FILE" ] || fail "sources.lock.yaml não encontrado: $SOURCES_LOCK_FILE"
+  python3 - "$SOURCES_LOCK_FILE" "$source_name" "$section_name" "$field_name" <<'PY'
+import sys
+from pathlib import Path
+
+lock_path, source_name, section_name, field_name = sys.argv[1:5]
+lines = Path(lock_path).read_text(encoding="utf-8").splitlines()
+
+in_sources = False
+current_source = None
+current_section = None
+
+for raw in lines:
+    if not raw.strip() or raw.lstrip().startswith("#"):
+        continue
+    indent = len(raw) - len(raw.lstrip(" "))
+    stripped = raw.strip()
+
+    if indent == 0 and stripped == "sources:":
+        in_sources = True
+        current_source = None
+        current_section = None
+        continue
+    if indent == 0 and not stripped.startswith("sources:"):
+        in_sources = False
+        current_source = None
+        current_section = None
+        continue
+    if not in_sources:
+        continue
+
+    if indent == 2 and stripped.endswith(":"):
+        current_source = stripped[:-1]
+        current_section = None
+        continue
+    if current_source != source_name:
+        continue
+    if indent == 4 and stripped.endswith(":"):
+        current_section = stripped[:-1]
+        continue
+    if current_section != section_name or indent != 6 or ":" not in stripped:
+        continue
+
+    key, value = stripped.split(":", 1)
+    if key.strip() == field_name:
+        print(value.strip().strip('"').strip("'"))
+        raise SystemExit(0)
+
+raise SystemExit(f"Campo não encontrado em {lock_path}: {source_name}.{section_name}.{field_name}")
+PY
+}
+
+resolve_web_ui_source_from_lock() {
+  if [ -z "${EXOCORTEX_HERMES_WEB_UI_REPO_URL:-}" ]; then
+    export EXOCORTEX_HERMES_WEB_UI_REPO_URL="$(read_source_lock_field hermes-web-ui upstream git)"
+    log "EXOCORTEX_HERMES_WEB_UI_REPO_URL resolvido via sources.lock.yaml"
+  fi
+
+  if [ -z "${EXOCORTEX_HERMES_WEB_UI_REF:-}" ]; then
+    export EXOCORTEX_HERMES_WEB_UI_REF="$(read_source_lock_field hermes-web-ui controlled ref)"
+    log "EXOCORTEX_HERMES_WEB_UI_REF resolvido via sources.lock.yaml"
+  fi
+}
 
 load_env() {
   if [ -f "$ENV_FILE" ]; then
@@ -38,6 +108,7 @@ load_env() {
   export EXOCORTEX_BOOTSTRAP_RUNTIME="${EXOCORTEX_BOOTSTRAP_RUNTIME:-1}"
   export EXOCORTEX_BOOTSTRAP_FORCE="${EXOCORTEX_BOOTSTRAP_FORCE:-0}"
   export EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF="${EXOCORTEX_ALLOW_FLOATING_UPSTREAM_REF:-0}"
+  resolve_web_ui_source_from_lock
 }
 
 resolve_tailscale_ipv4() {

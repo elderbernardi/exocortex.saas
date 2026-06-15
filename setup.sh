@@ -14,6 +14,9 @@
 #   --imbroke   Ativa explicitamente o modo de contingência OpenRouter free
 #   --calibrate Executa o alinhamento de calibração cognitivo interativo do Hermes pós-instalação
 #
+# Imbroke activation is implemented in setup/step-12-verify-keys.sh via
+# configure_openrouter_free_router and guarded by: if [ "$IMBROKE_MODE" = "1" ]
+#
 # Requer:
 #   - HERMES_HOME definido (runtime do Hermes)
 #   - EXOCORTEX_HOME definido (workspace cognitivo, default: ~/exocortex)
