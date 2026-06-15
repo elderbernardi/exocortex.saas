@@ -190,19 +190,6 @@ The installer will automatically invoke `setup.sh`. If you want to customize hom
 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 ```
 
-The repository also ships a legacy container-first cockpit provisioner under `provision/hermes-web-ui/`. The current barebone plan keeps that provisioner available, but repo/ref selection now resolves through `provision/sources/sources.lock.yaml` when the Web UI env leaves source fields blank. This keeps the setup away from upstream floating refs while the barebone user-instance runtime matures.
-
-Defaults de hardening desta trilha:
-- repo/ref da Web UI resolvidos por `provision/sources/sources.lock.yaml` quando `env/.env` deixa os campos em branco
-- refs auditadas por commit SHA completo
-- bind local em `127.0.0.1`
-- bloqueio de refs flutuantes (`main`/`master`/`HEAD`) sem override explícito
-- exigência de `CORS_ORIGINS` quando o bind sair de loopback
-
-Para também provisionar o cockpit web opinado do Exocórtex:
-```bash
-EXOCORTEX_ENABLE_HERMES_WEB_UI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
-```
 
 ##### What `setup.sh` Executes:
 *   **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
@@ -213,7 +200,7 @@ EXOCORTEX_ENABLE_HERMES_WEB_UI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocorte
     *   Applies a search paging patch to `google_api.py`.
     *   Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
     *   Removes `composio` from the MCP registry in favor of direct API clients.
-*   **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes Web UI cockpit, and links Context7 documentation MCP.
+*   **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, and links Context7 documentation MCP.
 *   **`step-12` to `step-14`**: Performs final key verifications and validates that all 40 skills are correctly mapped in the runtime.
 *   **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
 

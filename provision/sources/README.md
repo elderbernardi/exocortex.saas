@@ -1,13 +1,12 @@
-# Fontes controladas — Hermes Agent e Web UI/Studio
+# Fontes controladas — Hermes Agent
 
-Esta pasta registra a política local de fontes controladas para a trilha barebone da Hermes Web UI.
+Esta pasta registra a política local de fontes controladas para o runtime do Hermes Agent.
 
 Objetivo:
 
 - evitar consumo direto de upstream flutuante em produção;
 - manter proveniência explícita de cada código-base crítico;
-- separar estudo de upstream de promoção para runtime da instância;
-- preservar alerta de licença da Web UI/Studio.
+- separar estudo de upstream de promoção para runtime da instância.
 
 ## Regras operacionais
 
@@ -17,7 +16,6 @@ Objetivo:
 4. Qualquer clone/fetch local exige flags explícitas.
 5. O script nunca faz `push`, `merge`, `rebase`, criação de PR ou mutação remota.
 6. `sudo` é fora de escopo.
-7. Telegram, CLI e Web UI devem convergir para o mesmo plano de execução da instância; a camada de fontes controladas existe para reduzir drift entre superfícies.
 
 ## Fontes registradas
 
@@ -26,16 +24,6 @@ Objetivo:
 - URL: `https://github.com/NousResearch/hermes-agent.git`
 - licença: `MIT`
 - política: consumir apenas ref controlada e revisada localmente
-
-### hermes-web-ui / hermes-studio
-- upstream observado: `EKKOLearnAI/hermes-web-ui`
-- redirecionamento observado: `EKKOLearnAI/hermes-studio`
-- licença observada: `BSL 1.1`
-- `Change Date`: `2029-05-10`
-- `Change License`: `Apache-2.0`
-- alerta: `commercial_use_requires_license: true`
-
-Implicação: este componente não deve ser tratado como base liberada para uso comercial/SaaS do Exocórtex antes da revisão jurídica/comercial ou licença apropriada.
 
 ## Arquivos desta pasta
 
@@ -70,9 +58,7 @@ bash provision/sources/sync-upstreams.sh --apply --clone-missing --workspace /tm
 
 ## Notas de promoção
 
-O lock já contém refs auditadas por commit SHA completo para as duas fontes. O provisionador da Web UI consome o lock quando `EXOCORTEX_HERMES_WEB_UI_REPO_URL` e `EXOCORTEX_HERMES_WEB_UI_REF` ficam em branco no env.
-
-A camada criada aqui serve para:
+O lock contém ref auditada por commit SHA completo para o Hermes Agent. A camada criada aqui serve para:
 
 - registrar proveniência;
 - bloquear uso casual de upstream flutuante;

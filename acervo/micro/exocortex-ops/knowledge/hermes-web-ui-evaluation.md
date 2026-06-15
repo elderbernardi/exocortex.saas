@@ -1,76 +1,50 @@
 ---
-title: Avaliação do hermes-web-ui como base operacional do Exocórtex SaaS
+title: "[SUPERSEDED] Avaliação do hermes-web-ui (EKKOLearnAI) — descartado por licença BSL 1.1"
 created: 2026-06-12
-updated: 2026-06-12
+updated: 2026-06-15
 nature: knowledge
 kind: assessment
 scope_slug: exocortex-ops
 authority: observed
-stability: draft
-lifecycle_state: observed
-tags: [hermes-web-ui, dashboard, provisioning, saas, operator-surface]
+stability: superseded
+lifecycle_state: archived
+tags: [hermes-web-ui, dashboard, provisioning, saas, operator-surface, bsl-license, superseded]
 sources:
   - repo:/home/elder/work/repo-assessments/hermes-web-ui
-  - doc:docs/research/hermes-web-ui-provisioning-plan-2026-06-12.md
 confidence: high
 ---
 
-# Avaliação do hermes-web-ui como base operacional do Exocórtex SaaS
+# [SUPERSEDED] Avaliação do hermes-web-ui (EKKOLearnAI)
 
-## Veredito
+> **Status**: SUPERSEDED em 2026-06-15.
+>
+> O componente `EKKOLearnAI/hermes-web-ui` (redirecionado para `EKKOLearnAI/hermes-studio`) foi
+> removido do codebase por incompatibilidade de licença. A licença detectada é **BSL 1.1**
+> (Business Source License) com `Change Date: 2029-05-10`, que **não permite derivações comerciais**
+> até essa data.
+>
+> **Substituto avaliado**: `nesquena/hermes-webui` (licença MIT — uso comercial irrestrito).
+> A integração do substituto será feita em fase separada.
 
-`hermes-web-ui` serve bem como cockpit operacional do Hermes, mas não deve virar superfície pública do Exocórtex SaaS sem hardening explícito.
+---
 
-## O que foi validado
+## Veredito original (agora invalidado)
 
-- `npm ci --ignore-scripts` concluiu com sucesso.
-- `npm run test` concluiu com sucesso.
-- `npm run build` concluiu com sucesso.
-- O servidor compilado respondeu em `/health` durante smoke real em porta isolada.
-- Há cobertura explícita para write approvals, session sync, profiles, jobs, terminal, files e bridge com Hermes CLI.
+`hermes-web-ui` (EKKOLearnAI) servia bem como cockpit operacional do Hermes, mas foi descartado
+por risco jurídico da licença BSL 1.1.
 
-## Riscos observados
+## Motivo da remoção
 
-- Bootstrap administrativo inseguro e presença de defaults sensíveis no backend.
-- `npm audit --json` retornou vulnerabilidades abertas.
-- Forte acoplamento do backend com subprocessos da CLI Hermes.
-- Pacote desktop com runtime empacotado e sinais de auto-update, o que não é a trilha recomendada para o setup inicial do Exocórtex.
-- Superfície HTTP ampla demais para exposição pública direta sem camada de segurança, isolamento e política multi-tenant.
+- Licença BSL 1.1 detectada no LICENSE remoto do upstream.
+- `commercial_use_requires_license: true` — incompatível com uso SaaS comercial do Exocórtex.
+- Remoção completa de todos os artefatos, scripts, testes e referências em 2026-06-15.
 
-## Coalizão recomendada
+## Referências removidas
 
-### O que a UI faz bem
-
-- Operação do runtime Hermes.
-- Sessões, logs, jobs, profiles, MCPs, arquivos e terminal.
-- Aprovações pendentes de escrita.
-- Supervisão do estado do agente e do gateway.
-
-### O que continua sendo do Exocórtex
-
-- Identidade operacional.
-- Vetorização execução/evolução/manutenção.
-- Draft-First.
-- Macroverso, microversos e acervo.
-- Governança semântica, memória e promoção de conhecimento.
-
-## Implicação arquitetural
-
-A recomendação é manter a separação de superfícies:
-
-- **Executivo:** Telegram como interface primária.
-- **Operador:** `hermes-web-ui` como cockpit privado.
-- **Administrador:** CLI/TUI Hermes para manutenção e recuperação.
-
-## Trilha recomendada
-
-1. Fork controlado e CI reprodutível.
-2. Hardening obrigatório antes de qualquer exposição remota.
-3. Empacotamento container-first.
-4. Integração progressiva com o setup do `exocortex.saas`.
-
-## Artefato detalhado
-
-Plano completo migrado para:
-
-- `docs/research/hermes-web-ui-provisioning-plan-2026-06-12.md`
+- `provision/hermes-web-ui/` (diretório completo removido)
+- `setup/step-10b-hermes-web-ui.sh` (removido)
+- `tests/test_provision_env_bindings.py` (removido)
+- `docs/plans/hermes-web-ui-barebone-source-controlled-2026-06-14.md` (removido)
+- `docs/plans/hermes-web-ui-private-ops-hardening-2026-06-14.md` (removido)
+- `docs/research/hermes-web-ui-provisioning-plan-2026-06-12.md` (removido)
+- Entrada `hermes-web-ui` em `provision/sources/sources.lock.yaml` (removida)
