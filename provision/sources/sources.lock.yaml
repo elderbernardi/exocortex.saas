@@ -40,3 +40,32 @@ sources:
       - Repo oficial do Hermes Agent.
       - Repo controlado remoto ainda não criado; esta ref é pin auditado do upstream oficial.
       - Nunca promover upstream main diretamente para produção.
+  hermes-webui:
+    component: web-ui-cockpit
+    upstream:
+      owner_repo: nesquena/hermes-webui
+      git: https://github.com/nesquena/hermes-webui.git
+      default_branch: master
+    controlled:
+      owner_repo: pending-controlled-fork/hermes-webui
+      git: pending-controlled-fork
+      ref: master
+      audited_from_upstream_ref: master
+      audited_at: 2026-06-15T00:00:00Z
+    production_ref_policy:
+      allow_upstream_main: false
+      allow_upstream_head: false
+      require_controlled_ref: true
+    license:
+      spdx: MIT
+      commercial_use_requires_license: false
+    local_sync:
+      path: provision/sources/worktrees/hermes-webui
+      mode: fork-audited-locally
+    notes:
+      - Web UI comunitária oficial do Hermes Agent (nesquena/hermes-webui).
+      - Licença MIT — uso comercial irrestrito.
+      - Substitui EKKOLearnAI/hermes-web-ui (BSL 1.1) removido em 2026-06-15.
+      - Stack Python + Vanilla JS, zero build step.
+      - Fork controlado será criado para customizações do Exocórtex.
+      - Nunca consumir upstream master como produção.

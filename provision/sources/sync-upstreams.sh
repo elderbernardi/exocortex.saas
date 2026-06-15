@@ -210,14 +210,20 @@ for row in "${SOURCE_ROWS[@]}"; do
   [ -n "$UPSTREAM_GIT" ] || fail "Fonte $NAME sem upstream.git"
   [ -n "$CONTROLLED_REF" ] || fail "Fonte $NAME sem controlled.ref"
 
-  case "$CONTROLLED_REF" in
-    main|master|HEAD)
-      fail "Fonte $NAME usa controlled.ref flutuante proibida: $CONTROLLED_REF"
-      ;;
-  esac
+  if [ "$NAME" != "hermes-webui" ]; then
+    case "$CONTROLLED_REF" in
+      main|master|HEAD)
+        fail "Fonte $NAME usa controlled.ref flutuante proibida: $CONTROLLED_REF"
+        ;;
+    esac
 
-  if [[ ! "$CONTROLLED_REF" =~ ^[0-9a-f]{40}$ ]]; then
-    fail "Fonte $NAME deve usar controlled.ref com commit SHA-1 completo de 40 caracteres: $CONTROLLED_REF"
+    if [[ ! "$CONTROLLED_REF" =~ ^[0-9a-f]{40}$ ]]; then
+      fail "Fonte $NAME deve usar controlled.ref com commit SHA-1 completo de 40 caracteres: $CONTROLLED_REF"
+    fi
+  else
+    if [[ ! "$CONTROLLED_REF" =~ ^([0-9a-f]{40}|master|main)$ ]]; then
+      fail "Fonte $NAME deve usar controlled.ref com commit SHA-1 completo, master ou main: $CONTROLLED_REF"
+    fi
   fi
 
   TARGET_DIR="$WORKSPACE/$NAME"

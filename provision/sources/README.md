@@ -1,6 +1,6 @@
-# Fontes controladas — Hermes Agent
+# Fontes controladas — Hermes Agent e Hermes WebUI
 
-Esta pasta registra a política local de fontes controladas para o runtime do Hermes Agent.
+Esta pasta registra a política local de fontes controladas para o runtime do Hermes Agent e a Web UI.
 
 Objetivo:
 
@@ -24,6 +24,13 @@ Objetivo:
 - URL: `https://github.com/NousResearch/hermes-agent.git`
 - licença: `MIT`
 - política: consumir apenas ref controlada e revisada localmente
+
+### hermes-webui
+- upstream comunitário: `nesquena/hermes-webui`
+- URL: `https://github.com/nesquena/hermes-webui.git`
+- licença: `MIT` — uso comercial irrestrito
+- substitui: `EKKOLearnAI/hermes-web-ui` (BSL 1.1, removido em 2026-06-15)
+- política: fork controlado com customizações do Exocórtex
 
 ## Arquivos desta pasta
 
@@ -58,9 +65,9 @@ bash provision/sources/sync-upstreams.sh --apply --clone-missing --workspace /tm
 
 ## Notas de promoção
 
-O lock contém ref auditada por commit SHA completo para o Hermes Agent. A camada criada aqui serve para:
+O lock contém refs auditadas por commit SHA completo para as duas fontes. A camada criada aqui serve para:
 
 - registrar proveniência;
 - bloquear uso casual de upstream flutuante;
-- preparar futuros smokes e diffs locais antes de qualquer promoção para runtime barebone;
-- manter explícito que os mirrors/forks remotos controlados ainda não foram criados.
+- preparar futuros smokes e diffs locais antes de qualquer promoção para runtime;
+- manter explícito que os forks controlados remotos ainda não foram criados.

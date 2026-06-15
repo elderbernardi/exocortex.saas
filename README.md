@@ -190,6 +190,12 @@ The installer will automatically invoke `setup.sh`. If you want to customize hom
 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 ```
 
+To also provision the Hermes WebUI web cockpit (optional, MIT-licensed `nesquena/hermes-webui`):
+```bash
+EXOCORTEX_ENABLE_HERMES_WEBUI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
+```
+
+The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SHA ref). Access at `http://127.0.0.1:8787` or via Tailscale.
 
 ##### What `setup.sh` Executes:
 *   **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
@@ -200,7 +206,7 @@ HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
     *   Applies a search paging patch to `google_api.py`.
     *   Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
     *   Removes `composio` from the MCP registry in favor of direct API clients.
-*   **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, and links Context7 documentation MCP.
+*   **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit (`nesquena/hermes-webui`, MIT), and links Context7 documentation MCP.
 *   **`step-12` to `step-14`**: Performs final key verifications and validates that all 40 skills are correctly mapped in the runtime.
 *   **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
 

@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Hermes WebUI — Install Script
+# =============================================================================
+# Clona e provisiona o hermes-webui (nesquena/hermes-webui) no ambiente local.
+# Consome a ref controlada de provision/sources/sources.lock.yaml.
+#
+# Uso:
+#   bash provision/hermes-webui/scripts/install.sh
+# =============================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+LOCK_FILE="$REPO_ROOT/provision/sources/sources.lock.yaml"
+
+# ─── Helpers ─────────────────────────────────────────────────────────────────
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+log()  { echo -e "${GREEN}✓${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠${NC} $1"; }
+info() { echo -e "${CYAN}ℹ${NC} $1"; }
+fail() { echo -e "${RED}✗${NC} $1"; exit 1; }
+
+# ─── Environment ─────────────────────────────────────────────────────────────
+
+HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+WEBUI_HOME="${EXOCORTEX_HERMES_WEBUI_HOME:-$HERMES_HOME/hermes-webui}"
+WEBUI_PORT="${EXOCORTEX_HERMES_WEBUI_PORT:-8787}"
+WEBUI_HOST="${EXOCORTEX_HERMES_WEBUI_HOST:-127.0.0.1}"
+
+# ─── Resolve ref from sources.lock.yaml ──────────────────────────────────────
+
+resolve_webui_ref() {
+  [ -f "$LOCK_FILE" ] || fail "Lock file não encontrado: $LOCK_FILE"
+
+  local ref
+  ref=$(python3 - "$LOCK_FILE" <<'PY'
+import sys
+from pathlib import Path
+
+lock = Path(sys.argv[1]).read_text(encoding="utf-8")
+in_webui = False
+in_controlled = False
+
+for line in lock.splitlines():
+    stripped = line.strip()
+    indent = len(line) - len(line.lstrip(" "))
+
+    if indent == 2 and stripped == "hermes-webui:":
+        in_webui = True
+        continue
+    elif indent == 2 and stripped.endswith(":") and in_webui:
+        break
+
+    if in_webui and indent == 4 and stripped == "controlled:":
+        in_controlled = True
+        continue
+    elif in_webui and indent == 4 and stripped.endswith(":"):
+        in_controlled = False
+        continue
+
+    if in_webui and in_controlled and stripped.startswith("ref:"):
+        print(stripped.split(":", 1)[1].strip())
+        break
+PY
+  )
+
+  [ -n "$ref" ] || fail "Ref hermes-webui não encontrada em $LOCK_FILE"
+  echo "$ref"
+}
+
+resolve_webui_upstream() {
+  [ -f "$LOCK_FILE" ] || fail "Lock file não encontrado: $LOCK_FILE"
+
+  local url
+  url=$(python3 - "$LOCK_FILE" <<'PY'
+import sys
+from pathlib import Path
+
+lock = Path(sys.argv[1]).read_text(encoding="utf-8")
+in_webui = False
+in_upstream = False
+
+for line in lock.splitlines():
+    stripped = line.strip()
+    indent = len(line) - len(line.lstrip(" "))
+
+    if indent == 2 and stripped == "hermes-webui:":
+        in_webui = True
+        continue
+    elif indent == 2 and stripped.endswith(":") and in_webui:
+        break
+
+    if in_webui and indent == 4 and stripped == "upstream:":
+        in_upstream = True
+        continue
+    elif in_webui and indent == 4 and stripped.endswith(":"):
+        in_upstream = False
+        continue
+
+    if in_webui and in_upstream and stripped.startswith("git:"):
+        print(stripped.split(":", 1)[1].strip())
+        break
+PY
+  )
+
+  [ -n "$url" ] || fail "Upstream git hermes-webui não encontrado em $LOCK_FILE"
+  echo "$url"
+}
+
+# ─── Main ────────────────────────────────────────────────────────────────────
+
+main() {
+  local upstream_url upstream_ref
+
+  info "Provisionando Hermes WebUI..."
+  info "  HERMES_HOME:  $HERMES_HOME"
+  info "  WEBUI_HOME:   $WEBUI_HOME"
+  info "  WEBUI_PORT:   $WEBUI_PORT"
+  info "  WEBUI_HOST:   $WEBUI_HOST"
+
+  upstream_url="$(resolve_webui_upstream)"
+  upstream_ref="$(resolve_webui_ref)"
+
+  info "  Upstream:     $upstream_url"
+  info "  Ref pinada:   $upstream_ref"
+
+  # Validate ref format
+  if [[ ! "$upstream_ref" =~ ^([0-9a-f]{40}|master|main)$ ]]; then
+    fail "Ref inválida (esperado SHA-1 de 40 chars, master ou main): $upstream_ref"
+  fi
+
+  # Clone or fetch
+  if [ ! -d "$WEBUI_HOME/.git" ]; then
+    info "Clonando hermes-webui em $WEBUI_HOME..."
+    git clone "$upstream_url" "$WEBUI_HOME"
+    log "Clone concluído"
+  else
+    info "hermes-webui já presente em $WEBUI_HOME"
+    info "Atualizando (fetch)..."
+    git -C "$WEBUI_HOME" fetch --tags --prune origin
+    log "Fetch concluído"
+  fi
+
+  # Checkout pinned ref
+  info "Fazendo checkout da ref controlada..."
+  git -C "$WEBUI_HOME" checkout "$upstream_ref" --quiet 2>/dev/null \
+    || git -C "$WEBUI_HOME" checkout -b "controlled-$(echo "$upstream_ref" | head -c 8)" "$upstream_ref" --quiet
+  log "Checkout na ref controlada: $(git -C "$WEBUI_HOME" rev-parse HEAD | head -c 12)"
+
+  # Verify bootstrap.py exists
+  if [ ! -f "$WEBUI_HOME/bootstrap.py" ]; then
+    fail "bootstrap.py não encontrado em $WEBUI_HOME — clone pode estar corrompido"
+  fi
+
+  # Write .env with Exocórtex defaults if not present
+  if [ ! -f "$WEBUI_HOME/.env" ]; then
+    info "Criando .env com defaults do Exocórtex..."
+    cat > "$WEBUI_HOME/.env" <<EOF
+# Gerado pelo provisioner Exocórtex em $(date -Iseconds)
+HERMES_WEBUI_HOST=$WEBUI_HOST
+HERMES_WEBUI_PORT=$WEBUI_PORT
+HERMES_HOME=$HERMES_HOME
+EOF
+    log ".env criado"
+  else
+    info ".env já existe, preservando"
+  fi
+
+  echo
+  log "Hermes WebUI provisionado com sucesso."
+  info "Para iniciar:"
+  info "  cd $WEBUI_HOME && ./ctl.sh start"
+  info "Ou:"
+  info "  cd $WEBUI_HOME && python3 bootstrap.py"
+}
+
+main "$@"
