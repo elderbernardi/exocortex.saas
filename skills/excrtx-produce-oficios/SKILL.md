@@ -1,6 +1,6 @@
 ---
 name: excrtx-produce-oficios
-description: Generate professional official documents (IFSul Campus Passo Fundo) in
+description: Generate professional official documents in
   DOCX, PDF, or Markdown format.
 version: 1.0.0
 category: excrtx
@@ -20,6 +20,10 @@ metadata:
     - word
     - pdf
     - html
+    related_skills:
+    - excrtx-quality-gate
+    - excrtx-quality-antislop
+    - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-24
       calibration_prompt: Você deve garantir que as operações e regras da skill Gerador
@@ -32,7 +36,7 @@ metadata:
       remediation_tip: Certifique-se de que a documentação e os limites da skill Gerador
         de Ofícios em seu SKILL.md estão sendo estritamente seguidos.
 ---
-# Gerador de Ofícios — Gabinete IFSul
+# Gerador de Ofícios — Gabinete Institucional
 
 Gera ofícios em DOCX, PDF ou HTML usando templates persistidos no acervo.
 
@@ -41,6 +45,8 @@ Gera ofícios em DOCX, PDF ou HTML usando templates persistidos no acervo.
 - Executivo pede para gerar/redigir um ofício
 - Pedido menciona "ofício", "convite formal", "comunicação oficial"
 - Contexto é o gabinete (micro/gabinete)
+
+**Don't use for:** Memos, reports, or generic documents (use appropriate template skills). Drafting emails or messages (use `excrtx-govern-draftfirst`). Documents outside institutional context.
 
 ## Workflow Interativo
 
@@ -71,7 +77,7 @@ Cada template tem campos obrigatórios definidos no frontmatter. **Antes de gera
 - `numero_oficio`: apenas dígitos (ex: 042)
 - `data`: formato textual livre em português
 - `ano_atual`: sempre o ano corrente (preenchido automaticamente)
-- `localidade`: padrão "Passo Fundo" (preenchido automaticamente)
+- `localidade`: padrão "Localidade Padrão" (preenchido automaticamente)
 - Se `nome_signatario` não informado: usar "Lucas Vanini"
 - Se `cargo_signatario` não informado: usar "Diretor Geral"
 
@@ -135,17 +141,15 @@ Após gerar um ofício, logar no `micro/gabinete/log.md`:
 
 ## Verification
 
-Antes de entregar, aplique o Quality Gate Unificado (`excrtx-quality-gate`) como passo final obrigatório:
-- A prosa do ofício deve passar pelo gate de anti-slop (`excrtx-quality-antislop`).
-- A redação oficial do gabinete deve ser extremamente formal e polida, sem qualquer uso de linguagem neutra, adjetivações vazias, ou palavras de enchimento.
-- A conformidade do texto será auditada pelo harness de verificação (`validate_artifact_manifest.py`).
-
-## When to Use
-
-Activate when working with this skill's domain. See procedure for details.
-
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
+- [ ] All mandatory fields from template frontmatter were collected (not assumed)
+- [ ] Document generated successfully (script exit code 0)
+- [ ] Output file exists and is non-empty
+- [ ] Field validation passed (numero_oficio is digits, data is valid)
+- [ ] Draft presented to executive for review before delivery
+- [ ] Quality gate check passed (`excrtx-quality-gate`)
+- [ ] Anti-slop gate passed (no filler language, extreme formality)
+- [ ] Log entry appended to `micro/gabinete/log.md`
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+Follow the Workflow Interativo (steps 1-4) defined above.

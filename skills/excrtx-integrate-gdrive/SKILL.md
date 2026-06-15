@@ -43,6 +43,8 @@ Activate when:
 
 **Don't use for:** Local file operations without Drive involvement. OAuth setup (use `excrtx-integrate-oauth`). NotebookLM integration (use `excrtx-integrate-nlmops`). Browser-based Drive access. Read-only link sharing without API.
 
+> Upon activation, classify the input as **Execução** (uploading, searching, exporting) or **Manutenção** (token refresh, folder structure setup) for proper logging.
+
 ## Procedure
 
 ### Step 1 — Validate Authentication
@@ -72,10 +74,15 @@ All uploads are external actions — apply Draft-First protocol:
 
 1. Present DRAFT to the executive: target folder, filename, MIME type
 2. Await confirmation before proceeding
-3. Resolve target folder (create if missing, confirm with executive)
+3. Resolve target folder:
+   - Search by name first (`name = '<folder>' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`)
+   - If not found, prompt executive: "Folder '<name>' not found. Create it?"
+   - Never create folders silently without confirmation
 4. Check for existing file with same name (avoid duplicates)
 5. Upload with correct MIME type
 6. Return shareable link and log in microverso's `log.md`
+
+**Error handling:** If upload fails (network timeout, quota exceeded, auth error), retry once after 5s. If retry fails, save the file locally in `~/.hermes/acervo/_artifacts/{artifact_id}/exports/` and report the failure to the executive with the local path as fallback.
 
 ### Step 4 — Artifact Export
 

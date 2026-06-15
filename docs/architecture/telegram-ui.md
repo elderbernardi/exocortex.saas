@@ -65,7 +65,7 @@ Todos os comandos do Exocórtex usam prefixo `/xc`. Comandos nativos do Hermes (
 
 | Tópico | Microverso | Cor sugerida | Ícone |
 |--------|------------|-------------|-------|
-| `gabinete` | Prioridade máxima — ofícios, chefia, IFSul | 🔴 | 🏛️ |
+| `gabinete` | Prioridade máxima — ofícios, chefia, diretoria | 🔴 | 🏛️ |
 | `ensino` | Aulas, material didático, pedagógico | 🔵 | 🏫 |
 | `exocortex-dev` | Desenvolvimento do framework | 🟢 | ⚙️ |
 | `comercial` | Integrações e side projects | 🟡 | 💼 |

@@ -44,16 +44,14 @@ Arquivo YAML + markdown com extends: global
 acervo/micro/{slug}/DESIGN.md
 ```
 
-## Quando Ativar
+## When to Use
 
-- Executivo pede "gere identidade visual para [cliente]"
-- Executivo fornece caminho de logo + slug de microverso
-- Tarefa que precisa criar DESIGN.md de micro a partir de asset visual
+Activate when:
+- Executive asks "gere identidade visual para [cliente]"
+- Executive provides a logo path + microverso slug
+- Task requires creating a micro DESIGN.md from a visual asset
 
-**Não usar quando:**
-- Não há logo asset (apenas briefing textual) — use brandkit.md diretamente
-- O trabalho é puramente conceitual sem asset visual para extrair cores
-- A paleta precisa ser definida manualmente (editar DESIGN.md diretamente)
+**Don't use for:** Textual-only briefings without logo asset (use brandkit.md directly). Purely conceptual work without a visual to extract colors from. Manual palette definition (edit DESIGN.md directly). Editing existing tokens (use `excrtx-quality-designsys`).
 
 ## Entrada
 
@@ -100,6 +98,15 @@ python3 scripts/brandkit-extract.py --logo /tmp/acme-logo.png --slug acme --name
 # 📦 Lint: exit 0 ✅
 ```
 
+## Procedure
+
+1. **Collect inputs:** Get `logo_path` (absolute path to PNG/JPG/SVG) and `micro_slug` from executive. Optionally `brand_name`.
+2. **Dry-run first:** `python3 scripts/brandkit-extract.py --logo <path> --slug <slug> --name "<name>" --dry-run`
+3. **Present draft:** Show extracted palette and derived tokens to executive for review.
+4. **Execute:** `python3 scripts/brandkit-extract.py --logo <path> --slug <slug> --name "<name>"`
+5. **Verify lint:** Check `npx @google/design.md lint` passes on generated file.
+6. **Log:** Register operation in microverso's `log.md` via `excrtx-memory-manager`.
+
 ## Falhas e Tratamento de Erros
 
 | Fase | Condição de Erro | Comportamento |
@@ -132,7 +139,16 @@ python3 scripts/brandkit-extract.py --logo /tmp/acme-logo.png --slug acme --name
 - Geração de assets gráficos (favicon, ícones): fora do escopo (só tokens textuais)
 - Interface: CLI-only (sem UI visual)
 
-## Critérios de Aceitação
+## Pitfalls
+
+- **Logo with gradients:** Only solid colors are extracted; gradients are ignored. Warn the executive if palette looks sparse.
+- **SVGs with <3 explicit colors:** If cairosvg is missing and SVG has no fill/stroke, extraction fails. Install cairosvg as fallback.
+- **Large images (>10MB):** Resized to 256x256 before extraction — may lose subtle color details.
+- **WCAG auto-adjustment surprises:** on-primary/on-tertiary may be auto-modified to pass contrast. Always show the executive the final palette.
+- **Typography:** Always inherited from global. The logo carries no typographic information.
+- **Lint timeout:** npx lint can hang on complex files. 30s timeout applied; lint skip is non-fatal.
+
+## Acceptance Criteria
 
 | ID | Critério | Como verificar |
 |----|----------|----------------|
@@ -147,3 +163,15 @@ python3 scripts/brandkit-extract.py --logo /tmp/acme-logo.png --slug acme --name
 | EX-BRAND-08 | Herda tipografia e componentes do global | DESIGN.md não redefine typography/rounded/spacing/components |
 | EX-BRAND-09 | Rejeita paletas com < 3 cores | Erro claro, aborta com mensagem |
 | EX-BRAND-10 | Integra cascade excrtx-quality-designsys | Escrito em acervo/micro/{slug}/DESIGN.md |
+
+## Verification
+
+- [ ] Script imports without error: `python3 -c "import importlib; importlib.import_module('scripts.brandkit-extract')"` or `python3 scripts/brandkit-extract.py --help`
+- [ ] Dry-run produces 5 extracted colors from a test PNG
+- [ ] Generated DESIGN.md has valid YAML frontmatter with `extends: global`
+- [ ] WCAG AA contrast ≥ 4.5:1 for all on-* / background pairs
+- [ ] `npx @google/design.md lint` exits 0 on generated file
+- [ ] Output written to `$ACERVO/micro/{slug}/DESIGN.md`
+- [ ] Palette with <3 colors is rejected with clear error
+- [ ] Draft presented to executive before final write (Draft-First)
+

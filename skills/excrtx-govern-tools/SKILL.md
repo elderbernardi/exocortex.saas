@@ -44,7 +44,7 @@ compiled_rules: 'Least privilege: use the simplest tool that solves the task.
 
 ## When to Use
 
-Activate on EVERY tool call. This skill defines the governance contract for all tool usage.
+Activate on any tool call that produces side effects or accesses external resources, as defined in the classification table below.
 
 **Don't use for:** Reading files, searching acervo, internal reasoning. Only governs tool calls that produce side effects or access external resources.
 
@@ -68,7 +68,7 @@ Use the simplest tool that solves the problem.
 - Need browser? → `excrtx-integrate-browser` CLI before agent mode
 
 ### R2: Mandatory Logging
-Every tool call that modifies external state MUST be logged:
+Every tool call that modifies external state MUST be logged to the active session log file:
 ```
 [TOOL] {timestamp} | {tool_name} | {action} | {target} | {result}
 ```
@@ -139,7 +139,7 @@ This pattern is mandatory to avoid locking or contaminating the main agent durin
 
 ## Default Whitelist
 
-Skills in the `exocortex-alpha` bundle are pre-authorized.
+Skills in the `exocortex-alpha` bundle are pre-authorized. Verify membership: `hermes skills list --bundle exocortex-alpha` or check `~/.hermes/config.yaml` under `skill_bundles.exocortex-alpha`.
 Any skill outside the bundle requires explicit executive mention.
 
 ## Blacklist
@@ -163,8 +163,9 @@ Any skill outside the bundle requires explicit executive mention.
 
 - [ ] Tool classification table covers all current tool categories
 - [ ] Least privilege principle followed (simplest tool first)
-- [ ] Destructive actions logged with `[TOOL]` format
+- [ ] Destructive action logged: execute a destructive tool call and verify `[TOOL]` log entry appears in session log with correct fields
 - [ ] Communication classified correctly (self-delivery vs third-party)
 - [ ] Draft-First applied for all external communication
-- [ ] Configuration changes validated in isolation before applying
+- [ ] Configuration changes validated in isolation before applying (PATH shim used)
 - [ ] Blacklisted tools/actions never executed without approval
+- [ ] Cross-microverso file write blocked when not explicitly authorized

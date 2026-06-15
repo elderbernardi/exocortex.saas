@@ -134,10 +134,15 @@ Reuse this skill for any future remote MCP provider that:
 
 ## When to Use
 
-Activate when working with this skill's domain. See procedure for details.
+Activate when:
+- Hermes must connect to a remote MCP server over HTTP
+- Provider docs mention OAuth or PKCE instead of static bearer headers
+- Adding, testing, or documenting a third-party cloud integration for Hermes
+- Translating generic provider docs into the exact Hermes CLI flow
+- Connecting CLI-backed MCP providers like NotebookLM that use local auth + stdio transport
 
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
+**Don't use for:** MCP servers using static API keys or headers (configure directly in `config.yaml`). Hermes runtime modifications (use `excrtx-hermes-extensions`). General tool development (use `excrtx-harness-tooldev`).
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+Follow the Workflow section above (steps 1-7). For CLI-backed providers, use the Special Case section.

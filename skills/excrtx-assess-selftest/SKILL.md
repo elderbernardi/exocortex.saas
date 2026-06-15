@@ -13,6 +13,11 @@ metadata:
     - diagnostics
     - self-test
     - configuration
+    related_skills:
+    - excrtx-behavior-briefing
+    - excrtx-govern-tools
+    - excrtx-assess-repofit
+    - excrtx-harness-promptlog
     calibration:
     - feature_id: EX-03
       calibration_prompt: Você deve garantir que as operações e regras da skill Self-Test
@@ -88,6 +93,9 @@ Gerar relatório EXATAMENTE neste formato:
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] Report includes correct phase (matches `SOUL.md` Configuration State)
+- [ ] Score matches actual checklist results (e.g., 3/5 = 3 checkpoints passed)
+- [ ] Identity check reports SOUL.md presence and required sections
+- [ ] Skills count reflects actual phase requirements
+- [ ] No fabricated results — missing checks marked as ❌, not assumed ✅
+- [ ] Output follows the exact format defined in Output Format section

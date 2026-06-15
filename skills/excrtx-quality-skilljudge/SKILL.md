@@ -38,6 +38,7 @@ Activate when:
 - Skills are being refactored or migrated to a new runtime
 - A Self-Evolution pipeline needs a fitness function for skill optimization
 - The user says "judge my skills", "evaluate skills", "audit skills", "skill quality"
+- The user says (PT-BR): "julgue minhas skills", "avalie qualidade das skills", "auditoria de skills", "qualidade de skills"
 
 **Don't use for:** Evaluating agent runtime behavior (use session traces). Evaluating LLM output quality (use excrtx-quality-antislop). Evaluating code quality (use code-review or linters).
 

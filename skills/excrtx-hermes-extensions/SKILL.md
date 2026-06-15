@@ -13,6 +13,10 @@ metadata:
     - exocortex
     - hermes
     - extensions
+    related_skills:
+    - excrtx-harness-hermesops
+    - excrtx-harness-tooldev
+    - excrtx-govern-tools
     calibration:
     - feature_id: EX-51
       calibration_prompt: 'Ao estender comandos slash no Hermes Agent, você deve instruir
@@ -49,108 +53,94 @@ Advanced-level skill for developers who need to modify Hermes behavior or add ne
 - You want to call a tool directly without spending tokens on the LLM.
 - You are debugging the command execution flow in Hermes.
 
-## Anatomy of a Slash Command
+**Don't use for:**
+- General tool development (creating MCP tools) → use `excrtx-harness-tooldev`
+- Hermes operational workflows (starting/stopping, delegation) → use `excrtx-harness-hermesops`
+- Tool governance and classification → use `excrtx-govern-tools`
+- Modifying agent behavior at the prompt/persona level → use `excrtx-behavior-canvas`
 
-A Hermes slash command has two parts: the **registration** (for the user to see in `/help`) and the **handler** (the executed logic).
+## Procedure
 
-### 1. Registration (CLI and Gateway)
+### 1. Identify Extension Type
+
+Determine what you're building:
+
+| Type | When | Key files |
+|---|---|---|
+| **Slash command** | New `/my_command` for CLI + Gateway | `commands.py`, `cli.py`, `run.py` |
+| **Direct tool call** | Execute tool without LLM tokens | `tools/model_tools.py` |
+| **Custom tool** | New tool visible to Hermes | `tools/my_tool.py` + `registry` |
+
+### 2. Register the Command
 
 Edit `~/.hermes/hermes-agent/hermes_cli/commands.py`:
 
 ```python
-from dataclasses import dataclass
-
-@dataclass
-class CommandDef:
-    name: str
-    description: str
-    category: str
-    args_hint: str = ""
-
 # Add to COMMAND_REGISTRY list:
-COMMAND_REGISTRY.append(CommandDef("tool", "Call tool directly", "Tools & Skills", "<tool_name> [args...]"))
-```
+COMMAND_REGISTRY.append(
+    CommandDef("my_command", "Description here", "Category", "<args_hint>")
+)
 
-### 2. Active Session Bypass (Gateway only)
-
-To prevent the Gateway from queuing your command while the LLM is busy, add the name to `ACTIVE_SESSION_BYPASS_COMMANDS` (also in `commands.py`):
-
-```python
+# Add to ACTIVE_SESSION_BYPASS_COMMANDS frozenset (for Gateway compatibility):
 ACTIVE_SESSION_BYPASS_COMMANDS: frozenset[str] = frozenset({
-    "help", "tool", ...
+    "help", "my_command", ...
 })
 ```
 
-### 3. CLI Handler
+### 3. Add CLI Handler
 
 Edit `~/.hermes/hermes-agent/cli.py`:
-1. Find `process_command`.
-2. Add an `elif canonical == "tool":`.
-3. Create the method `_handle_tool_command(self, cmd_original)`.
 
-### 4. Gateway Handler
+1. Find the `process_command` method
+2. Add `elif canonical == "my_command":` branch
+3. Create `_handle_my_command(self, cmd_original)` method
 
-Edit `~/.hermes/hermes-agent/gateway/run.py` — **TWO mandatory locations**:
+### 4. Add Gateway Handler (TWO Mandatory Locations)
 
-**A) Main chain (~line 8136):**
+Edit `~/.hermes/hermes-agent/gateway/run.py` — **both locations are required**:
+
+**A) Main dispatch chain (~line 8136) — for sessions WITHOUT a running agent:**
 ```python
-# Inside the if/elif block for canonical commands
-if canonical == "tool":
-    return await self._handle_tool_command(event)
+if canonical == "my_command":
+    return await self._handle_my_command(event)
 ```
 
-**B) _DEDICATED_HANDLERS (~line 7902) — to work during agent execution:**
+**B) `_DEDICATED_HANDLERS` (~line 7902) — for sessions WITH a running agent:**
 ```python
-if _cmd_def_inner.name == "tool":
-    return await self._handle_tool_command(event)
-```
-
-**C) In `commands.py`, add to `ACTIVE_SESSION_BYPASS_COMMANDS`:**
-```python
-ACTIVE_SESSION_BYPASS_COMMANDS: frozenset[str] = frozenset({
-    "help", "tool", ...
-})
+if _cmd_def_inner.name == "my_command":
+    return await self._handle_my_command(event)
 ```
 
 Create the handler method:
 ```python
-async def _handle_tool_command(self, event: MessageEvent) -> str:
-    # Your logic here
+async def _handle_my_command(self, event: MessageEvent) -> str:
+    # Use event.source (NOT event.session_id) for platform/chat/user info
     return "result"
 ```
 
-**Warning about `MessageEvent`:** Do not use `event.session_id`. Use `event.source` to access platform, chat_id, and user_id.
+### 5. For Direct Tool Calls (LLM Bypass)
 
-## Direct Tool Call Pattern (LLM Bypass)
-
-If you want to execute a tool without going through the LLM loop (saving tokens and latency), use `handle_function_call` directly.
-
-Location: `tools/model_tools.py`
+Import `handle_function_call` from `tools/model_tools.py`:
 
 ```python
 from tools.model_tools import handle_function_call
 import json
 
-def execute_tool_directly(tool_name: str, params: dict) -> dict:
-    result_json = handle_function_call(
-        function_name=tool_name,
-        function_args=params,
-        task_id=None,
-        tool_call_id="direct-call",
-        session_id=None,  # Or session_id if context is needed
-        agent_state=None,
-        tool=None
-    )
-    return json.loads(result_json)
+result_json = handle_function_call(
+    function_name="tool_name",
+    function_args={"param": "value"},
+    task_id=None,
+    tool_call_id="direct-call",
+    session_id=None,
+    agent_state=None,
+    tool=None
+)
+result = json.loads(result_json)
 ```
 
-## Creating a Custom Tool
+### 6. For Custom Tools
 
-1. Create `tools/my_tool.py`.
-2. Use `registry.register()` to make it visible to Hermes.
-3. Always return a JSON string (Hermes expects valid JSON).
-
-Minimal example:
+Create `tools/my_tool.py`:
 
 ```python
 from tools.registry import registry
@@ -159,60 +149,48 @@ import json
 def my_tool_handler(param1: str, task_id: str = None) -> str:
     return json.dumps({"result": f"You sent {param1}"})
 
-def check_requirements():
-    return True  # No external dependencies
-
 registry.register(
     name="my_tool",
     toolset="custom",
     schema={"name": "my_tool", "parameters": {"type": "object", "properties": {"param1": {"type": "string"}}, "required": ["param1"]}},
     handler=lambda args, **kw: my_tool_handler(param1=args.get("param1"), task_id=kw.get("task_id")),
-    check_fn=check_requirements
+    check_fn=lambda: True
 )
 ```
 
-## Pitfalls (Learned in Production)
+### 7. Restart and Test
 
-1. **LSP Errors in `gateway/run.py`:** Pyright may complain about imports or attributes that only exist at runtime. Ignore if the test passes.
-2. **`event.session_id` doesn't exist:** Always use `event.source` to get context in the Gateway.
-3. **`frozenset` immutability:** `ACTIVE_SESSION_BYPASS_COMMANDS` is immutable. To add items, recreate the frozenset or edit the source file.
-4. **Restart required:** After changing `commands.py` or `cli.py`, restart CLI/Gateway for changes to take effect.
-5. **Handler exists but is never called (main trap):** The gateway has TWO independent dispatch chains. Writing the handler and adding it to `_DEDICATED_HANDLERS` is NOT enough — you MUST add `if canonical == "command_name":` in the **main chain** (the `if canonical == "new":` ... `if canonical == "voice":` block in `run.py` ~line 8136+). Without this, the command falls through as a normal message to the agent. ALWAYS verify both locations:
-    - **Main chain** (~line 8136): dispatch for sessions without a running agent
-    - **`_DEDICATED_HANDLERS`** (~line 7902): dispatch for sessions WITH a running agent
-    If either is missing, the command only works in half the scenarios.
+After any changes to `commands.py`, `cli.py`, or `run.py`:
+
+1. Restart CLI/Gateway for changes to take effect
+2. Test in CLI: `hermes> /my_command` — verify expected output
+3. Test in Gateway (Telegram): verify command is NOT treated as normal message
+4. Test during active agent session: verify command works via `_DEDICATED_HANDLERS`
+
+## Pitfalls
+
+1. **Handler exists but is never called (main trap):** The gateway has TWO independent dispatch chains. Writing the handler and adding it to `_DEDICATED_HANDLERS` is NOT enough — you MUST add `if canonical == "command_name":` in the **main chain** (~line 8136). Without this, the command falls through as a normal message. Always verify BOTH locations:
+   - **Main chain** (~line 8136): for sessions without a running agent
+   - **`_DEDICATED_HANDLERS`** (~line 7902): for sessions with a running agent
+2. **`event.session_id` doesn't exist:** Always use `event.source` to get platform, chat_id, and user_id in the Gateway handler.
+3. **`frozenset` immutability:** `ACTIVE_SESSION_BYPASS_COMMANDS` is immutable. To add items, edit the source frozenset definition — do not try to `.add()`.
+4. **Restart required:** Changes to `commands.py` or `cli.py` require CLI/Gateway restart.
+5. **LSP Errors in `gateway/run.py`:** Pyright may complain about imports or attributes that only exist at runtime. Ignore if the functional test passes.
+6. **Tool must return JSON string:** `handle_function_call` expects the handler to return a JSON string, not a dict or plain text.
+
+## Verification
+
+- [ ] Command appears in `/help` output (`COMMAND_REGISTRY` registration confirmed)
+- [ ] Run `/my_command` in CLI: returns expected output (not "unknown command")
+- [ ] Run `/my_command` in Gateway (Telegram): not treated as normal message to agent
+- [ ] Run `/my_command` during active agent session: dispatched via `_DEDICATED_HANDLERS`
+- [ ] `ACTIVE_SESSION_BYPASS_COMMANDS` includes the command name
+- [ ] `event.source` used instead of `event.session_id` in Gateway handler
+- [ ] Tool returns valid JSON string (verified with `json.loads()`)
+- [ ] Both dispatch locations in `run.py` verified: main chain AND `_DEDICATED_HANDLERS`
 
 ## References
 
 - `references/harness-layers.md` (Hermes layers: Input, Agent, Specialization, Tools)
 - `references/direct-tool-call.md` (/tool command implementation)
 - `references/slash-command-dispatch-debug.md` (Debugging flow when slash command doesn't work in gateway)
-
-## Procedure
-
-1. **Identify extension type:** Slash command (`/my_command`) or direct tool call (LLM bypass)?
-2. **For slash commands:**
-   - Register in `hermes_cli/commands.py` → `COMMAND_REGISTRY` list
-   - Add to `ACTIVE_SESSION_BYPASS_COMMANDS` frozenset if Gateway-compatible
-   - Add CLI handler in `cli.py` → `process_command` method
-   - Add Gateway handler in `gateway/run.py` at **BOTH** locations:
-     - Main chain (~line 8136): `if canonical == "command_name":`
-     - `_DEDICATED_HANDLERS` (~line 7902): for active session dispatch
-3. **For direct tool calls:**
-   - Import `handle_function_call` from `tools/model_tools.py`
-   - Pass `function_name`, `function_args`, set `task_id`/`session_id` as needed
-4. **For custom tools:**
-   - Create `tools/my_tool.py` with `registry.register()` call
-   - Return valid JSON string from handler
-5. **Restart** CLI/Gateway after changes to `commands.py` or `cli.py`
-6. **Test** in both CLI and Gateway (Telegram) — verify command doesn't fall through as message
-
-## Verification
-
-- [ ] Command appears in `/help` output (registration in `COMMAND_REGISTRY`)
-- [ ] Command works in CLI: `hermes> /my_command` returns expected output
-- [ ] Command works in Gateway (Telegram): not treated as normal message to agent
-- [ ] Command works during active agent session (dispatch via `_DEDICATED_HANDLERS`)
-- [ ] `ACTIVE_SESSION_BYPASS_COMMANDS` includes the command name
-- [ ] `event.source` used instead of `event.session_id` in Gateway handler
-- [ ] Tool returns valid JSON string (not dict or plain text)

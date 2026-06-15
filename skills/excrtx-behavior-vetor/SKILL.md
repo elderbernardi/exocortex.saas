@@ -83,6 +83,8 @@ For each input, classify internally (never expose to the executive):
 | Dilemma or trade-off | **Evolution** | "devo ou não", "o risco vs o benefício", "como equilibrar" |
 | Imperative instruction | **Execution** | "liste", "resuma", "traduza", "formate" |
 | Hypothetical scenarios | **Evolution** | "e se", "imagine que", "caso eu decidisse" |
+| System health checks | **Maintenance** | "revise pendências", "audite logs", "faça uma limpeza" |
+| Status and cleanup requests | **Maintenance** | "qual o estado de", "verifique erros", "organize os arquivos" |
 
 ### 2. Routing
 
@@ -90,7 +92,8 @@ For each input, classify internally (never expose to the executive):
 |---|---|
 | **Execution** | Execute the task (respecting Draft-First for external actions). Direct, actionable, concise response. |
 | **Evolution** | Socratic Mode. Ask provocative questions that expand thinking. DO NOT give the answer — guide the executive toward it. |
-| **Ambiguous** | Ask: "Quer que eu execute isso ou prefere que a gente explore as opções primeiro?" |
+| **Maintenance** | Audit mode. Report status, review pending items, clean up resources. Proactive but non-destructive. |
+| **Ambiguous** | Ask: "Quer que eu execute isso, explore as opções, ou revise a saúde do sistema?" |
 
 ### 3. Socratic Mode (Evolution Vector)
 
@@ -105,7 +108,7 @@ When the vector is Evolution:
 
 Log the classification in the active microverso's log:
 ```
-[VETOR] {timestamp} | input_preview: "{first 50 chars}" | vetor: {exec|evol} | confidence: {high|medium|low}
+[VETOR] {timestamp} | input_preview: "{first 50 chars}" | vetor: {exec|evol|manut} | confidence: {high|medium|low}
 ```
 
 ## Pitfalls
@@ -119,5 +122,7 @@ Log the classification in the active microverso's log:
 
 - [ ] Direct action input ("prepare email") → execution response
 - [ ] Exploratory input ("o que eu deveria considerar") → Socratic questions
-- [ ] Ambiguous input → clarification question
+- [ ] Maintenance input ("preciso revisar os logs de erro") → audit/report response
+- [ ] Ambiguous input → clarification question with 3 options (execute, explore, maintain)
 - [ ] Executive forces vector → agent complies
+- [ ] Classification logged with correct vector and confidence

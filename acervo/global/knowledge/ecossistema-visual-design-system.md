@@ -6,7 +6,13 @@ nature: knowledge
 type: reference
 tags: [design-system, tokens, brandkit, visual, DESIGN.md, cascade]
 confidence: high
-sources: [skills/excrtx-quality-designsys/SKILL.md, skills/excrtx-quality-taste/brandkit.md, acervo/global/_meta/DESIGN.md, acervo/micro/_template/_meta/SCHEMA.md]
+sources:
+  [
+    skills/excrtx-quality-designsys/SKILL.md,
+    skills/excrtx-quality-taste/brandkit.md,
+    acervo/global/_meta/DESIGN.md,
+    acervo/micro/_template/_meta/SCHEMA.md,
+  ]
 ---
 
 # Ecossistema Visual do Exocórtex
@@ -17,12 +23,12 @@ O Exocórtex adota o formato **Google DESIGN.md** (`google-labs-code/design.md`,
 
 ### Tipos de token
 
-| Tipo | Formato | Exemplo |
-|------|---------|---------|
-| Color | `#` + hex sRGB entre aspas | `"#1a73e8"` |
-| Dimension | número + unidade | `48px`, `"-0.02em"` |
-| Token reference | `{path.to.token}` | `{colors.primary}` |
-| Typography | objeto aninhado | `fontFamily`, `fontSize`, `fontWeight`, `lineHeight` |
+| Tipo            | Formato                    | Exemplo                                              |
+| --------------- | -------------------------- | ---------------------------------------------------- |
+| Color           | `#` + hex sRGB entre aspas | `"#1a73e8"`                                          |
+| Dimension       | número + unidade           | `48px`, `"-0.02em"`                                  |
+| Token reference | `{path.to.token}`          | `{colors.primary}`                                   |
+| Typography      | objeto aninhado            | `fontFamily`, `fontSize`, `fontWeight`, `lineHeight` |
 
 ### Regras rígidas
 
@@ -59,18 +65,21 @@ npx -y @google/design.md export --format dtcg DESIGN.md > tokens.json
 ## Skills envolvidas
 
 ### `excrtx-quality-designsys` — Persistência e resolução
+
 - **4 operações:** RESOLVE (cascade), WRITE (criar/atualizar), LINT (WCAG), EXPORT (Tailwind/DTCG)
 - Ativada quando tarefa precisa de tokens visuais
 - **Não carregada no boot** — economia de contexto
 - **Path mismatch conhecido:** skill referencia `acervo/global/DESIGN.md` mas o arquivo real está em `acervo/global/_meta/DESIGN.md`
 
 ### `brandkit` (sub-skill de `excrtx-quality-taste`) — Guia criativo
+
 - **Não é skill executável** — é quality gate textual que orienta a definição de identidade visual
 - Perguntas: posicionamento, personalidade, tensão visual, público
 - Define: cores proprietárias, sistema tipográfico, linguagem visual
 - **Não extrai cores de imagem** — é guia humano, não pipeline de processamento
 
 ### Fluxo completo
+
 ```
 brandkit (guia criativo/extração)
   → excrtx-quality-designsys (persistir tokens em DESIGN.md)
@@ -78,12 +87,12 @@ brandkit (guia criativo/extração)
 ```
 
 ### `excrtx-produce-slides` — Consumidor de tokens
+
 - Lê `global/DESIGN.md` + `micro/{slug}/DESIGN.md` para definir envelope visual
 - Envelopes: strict (institucional), balanced (padrão), expressive (palestra), experimental
 
 ## Estado atual
 
 - **Global:** 13 cores (primary, secondary, tertiary, accent, neutral, dark, danger, success, warning, on-primary, on-secondary, on-tertiary, on-accent), tipografia (Inter + JetBrains Mono), spacing (8px scale), 7 componentes
-- **Microversos:** sales-ai tem DESIGN.md próprio (esquema cromático Guimarães #223874). Template _template tem SCHEMA.md mas DESIGN.md não existe.
+- **Microversos:** sales-ai tem DESIGN.md próprio (esquema cromático de marca #223874). Template \_template tem SCHEMA.md mas DESIGN.md não existe.
 - **Consumo:** Sob demanda — ninguém carrega DESIGN.md no boot
-- **Issue #18:** Propõe skill `excrtx-brandkit-generator` que extrai paleta de logo (Pillow + K-Means) e escreve `DESIGN.md` automaticamente

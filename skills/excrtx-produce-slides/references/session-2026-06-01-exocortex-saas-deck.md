@@ -7,7 +7,7 @@ Created a premium HTML/PDF/ZIP deck about Exocórtex.SaaS from a free-form brief
 ## Durable workflow notes
 
 - Treat this class of request as `speaker-led` unless the user asks for reading-first slides.
-- For Exocórtex/Hermes product decks, a strong default visual direction is technical-editorial: dark navy/green-black background, bone paper contrast, restrained IFSul green accents, rare red accent.
+- For Exocórtex/Hermes product decks, a strong default visual direction is technical-editorial: dark navy/green-black background, bone paper contrast, restrained institutional green accents, rare red accent.
 - Preserve Markdown source even when the HTML is authored directly from the brief.
 - Use browser visual QA on at least the cover and one dense slide. Dense matrix slides can look acceptable in DOM overflow checks but still feel generic or crowded.
 - DOM overflow check used successfully:

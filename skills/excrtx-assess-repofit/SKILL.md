@@ -15,6 +15,9 @@ metadata:
     - repo
     - fit-gap
     - runtime-validation
+    related_skills:
+    - excrtx-govern-draftfirst
+    - excrtx-memory-manager
     calibration:
     - feature_id: EX-04
       calibration_prompt: Você deve garantir que as operações e regras da skill Repo
@@ -43,6 +46,8 @@ Ative quando o pedido tiver esta forma:
 - “escreva um relatório com melhorias necessárias”
 - auditoria arquitetural de um repo já existente
 
+**Don't use for:** Code review of individual PRs (use code-review skills). Debugging runtime errors (use `excrtx-govern-tools`). Evaluating Exocórtex's own skills (use `excrtx-quality-skilljudge`). Quick one-file analysis.
+
 ## Entrega esperada
 
 A saída padrão deve conter:
@@ -55,6 +60,8 @@ A saída padrão deve conter:
 6. recomendação final de adoção, adaptação ou descarte
 
 Se útil, grave um relatório em arquivo dentro do repo em `plans/`.
+
+> **Draft-First:** Before writing the final report, present a brief draft summary to the executive for approval. This ensures alignment on scope and depth before committing the analysis.
 
 ## Procedimento
 
@@ -214,10 +221,13 @@ A boa análise não responde só “serve ou não serve”. Ela mostra qual refa
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+Follow the Procedimento (steps 1-6) and Checklist de auditoria above. This skill typically operates in **Execução** mode.
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] Report contains all 6 required sections (verdict, strengths, gaps, risks, recommendations, final recommendation)
+- [ ] All four mismatch classes evaluated (claim vs impl, fallback, product vs internal, sufficient vs hardened)
+- [ ] Runtime validation attempted (`pytest`, `mypy`, smoke tests) — or documented why infeasible
+- [ ] Draft presented to executive before finalizing
+- [ ] Verdict uses direct language (not generic praise)
+- [ ] Report logged in microverso's `log.md` (if applicable)

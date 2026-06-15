@@ -47,6 +47,10 @@ Ativar quando:
 - `~/.hermes/setup.sh` precisa criar ou preservar um microverso;
 - o trabalho envolve Acervo v2 + setup replicável + script idempotente.
 
+**Don't use for:** Creating temporary or experimental microversos (use `excrtx-memory-newmicro`). Managing existing microverso content (use `excrtx-memory-manager`). Installing external packages (use `excrtx-memory-mvinstall`).
+
+> **Frontmatter v2:** All new content uses YAML frontmatter with fields: `title`, `created`, `updated`, `nature`, `type`, `tags`, `sources`, `confidence`. See `references/base-microverso-setup.md` for the complete specification.
+
 ## Relação com outras skills
 
 - Use `excrtx-memory-manager` para regras gerais de leitura/escrita no Acervo v2.

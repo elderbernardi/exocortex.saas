@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gerador de Ofícios — IFSul Campus Passo Fundo
+Gerador de Ofícios — Gabinete Institucional
 Gera DOCX, PDF ou HTML a partir de template + dados JSON.
 """
 import argparse
@@ -83,7 +83,7 @@ def fill_template(template_path, data):
     _, corpo = parse_template_frontmatter(template_path)
     # Injeta dados automáticos
     data.setdefault("ano_atual", date.today().year)
-    data.setdefault("localidade", "Passo Fundo")
+    data.setdefault("localidade", "Localidade Padrão")
     data.setdefault("nome_signatario", "Lucas Vanini")
     data.setdefault("cargo_signatario", "Diretor Geral")
 
@@ -286,7 +286,7 @@ def gerar_pdf(template_path, data, output_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Gerador de Ofícios IFSul")
+    parser = argparse.ArgumentParser(description="Gerador de Ofícios Institucionais")
     parser.add_argument("--template", required=True, help="Caminho do template Markdown")
     parser.add_argument("--dados", required=True, help="JSON com dados do ofício")
     parser.add_argument("--formato", required=True, choices=["docx", "pdf", "html"],

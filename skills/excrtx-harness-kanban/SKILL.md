@@ -15,6 +15,9 @@ metadata:
     - governance
     - architecture
     - resumption
+    related_skills:
+    - excrtx-govern-draftfirst
+    - excrtx-memory-manager
     calibration:
     - feature_id: EX-10
       calibration_prompt: Você deve garantir que as operações e regras da skill Kanban
@@ -42,6 +45,10 @@ Ative esta skill quando houver qualquer um destes sinais:
 - decisão arquitetural ainda sem martelo do executivo
 - trabalho que não deve virar implementação imediata
 
+**Don't use for:** Quick reminders that fit in session notes only. Decisions already made but not yet implemented (just implement them). Tasks already tracked in GitHub Issues. Ad-hoc TODOs without decision-blocking context.
+
+> Upon activation, classify the input as **Execução** or **Manutenção** to ensure proper logging per the Exocortex behavioral contract.
+
 ## Objetivo
 
 Transformar uma conversa em backlog durável, auditável e fácil de retomar, sem depender de memória implícita da sessão.
@@ -59,7 +66,7 @@ Transformar uma conversa em backlog durável, auditável e fácil de retomar, se
 ### 1. Consolidar a base documental
 
 Antes de criar o card, registrar ou atualizar:
-- plano do projeto
+- plano do projeto (check if `plans/STATUS.md` exists; if yes, update it; if not, create it under `docs/`)
 - ADR proposta ou decisão relacionada
 - status board / backlog textual
 - log do microverso, quando o tema for canônico no Acervo
@@ -103,7 +110,7 @@ Não deixar como `ready` por conveniência. Card pronto dispara execução antes
 ### 3A. Modo TODO leve
 
 Quando o executivo pedir explicitamente apenas para "anotar como TODO" ou "colocar no TODO", não force a criação imediata de card Kanban se a intenção aparente for só registrar uma pendência. Faça, no mínimo:
-- registrar no TODO da sessão, se a ferramenta de TODO estiver disponível;
+- registrar no TODO da sessão, se a ferramenta de TODO estiver disponível; se unavailable, create a simple markdown checklist in the project root (`TODO.md`) or append to `plans/STATUS.md`;
 - atualizar o backlog textual canônico do projeto, normalmente `plans/STATUS.md` na seção `Pending TODOs` quando esse arquivo existir;
 - preservar a formulação estratégica do executivo, especialmente restrições como "usar soluções prontas/consolidadas";
 - criar card Kanban apenas se o pedido mencionar kanban, decisão bloqueada, retomada formal, ou se o trabalho exigir rastreio operacional separado.
@@ -176,4 +183,4 @@ Corpo:
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+Follow the Fluxo padrão (steps 1-5) defined above. Use Template de retomada for card structure.

@@ -26,19 +26,19 @@ campos_requeridos:
 - Placeholders: `{{nome_campo}}` substituídos literalmente pelos dados
 - Placeholders automáticos (sempre disponíveis sem informar):
   - `{{ano_atual}}` — ano corrente via `date.today().year`
-  - `{{localidade}}` — padrão "Passo Fundo" (override via dados)
+  - `{{localidade}}` — padrão "Localidade Padrão" (override via dados)
 - Formatação Markdown suportada no corpo:
   - `**bold**` → renderizado como bold no DOCX/HTML
   - `# Título` → ignorado no DOCX (título já vem do cabeçalho)
   - Linhas em branco → quebras de parágrafo com espacejamento de 6pt
 
-## Campos Padrão para Ofícios IFSul Passo Fundo
-
+## Campos Padrão para Ofícios Institucionais
+ 
 | Campo | Padrão | Observação |
 |-------|--------|-----------|
-| `nome_signatario` | Lucas Vanini | Override se outro diretor |
+| `nome_signatario` | Lucas Vanini | Override se outro signatário |
 | `cargo_signatario` | Diretor Geral | Override se outro cargo |
-| `localidade` | Passo Fundo | Manter para campus PF |
+| `localidade` | Localidade Padrão | Manter localidade padrão |
 
 ## Margens DOCX (padrão ofício brasileiro)
 

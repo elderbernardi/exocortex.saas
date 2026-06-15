@@ -163,7 +163,11 @@ Create or update DESIGN.md in the Acervo.
    - Negative dimensions in quotes (`"-0.02em"`)
    - Sections in canonical order
 
-4. **Log operation** via `excrtx-memory-manager` (log.md of the scope).
+4. **Log operation** via `excrtx-memory-manager`:
+   ```bash
+   # Append to log.md with timestamp and scope
+   echo "## [$(date +%Y-%m-%d)] write | DESIGN.md updated ({scope})" >> "$ACERVO/{scope}/log.md"
+   ```
 
 5. **Update index.md** if new file.
 
@@ -209,6 +213,13 @@ npx -y @google/design.md lint "$ACERVO/micro/{slug}/DESIGN.md"
 - `wcag-contrast` — textColor vs backgroundColor contrast below WCAG AA (4.5:1)
 - `unknown-component-property` — property outside whitelist
 
+### Verification
+
+- [ ] Lint command ran without errors
+- [ ] Zero `wcag-contrast` violations (or justified exceptions documented)
+- [ ] Zero `broken-ref` issues
+- [ ] Output format matches expected (no JSON parse errors)
+
 ---
 
 ## Operation: EXPORT
@@ -251,11 +262,18 @@ If native export doesn't suffice, generate CSS manually from YAML tokens:
 
 ---
 
-## ADR
+## References
 
-- ADR-006: Design System — Google DESIGN.md as visual token format
-  - Machine-readable format with native tooling (lint, diff, export)
-  - Tokens in global/ (on demand) — not in macro/ (avoids context cost)
-  - Visual assets (logo) in macro/assets/ (binaries, no context cost)
-  - Cascade: global = base, micro = override (extends: global)
-  - brandkit = creative guide, excrtx-quality-designsys = persistence
+- Google DESIGN.md spec: `google-labs-code/design.md` (Apache-2.0) — [github.com/nicolo-ribaudo/tc39-proposal-structs](https://github.com/nicolo-ribaudo/tc39-proposal-structs) for format definition.
+- Current spec version: `alpha` (Apr 2026).
+
+## Verification
+
+- [ ] Global `DESIGN.md` readable and YAML-valid
+- [ ] Micro override has `extends: global` when present
+- [ ] Cascade resolves correctly (micro overrides global, no token loss)
+- [ ] Hex colors quoted in YAML
+- [ ] WRITE operation logged in scope's `log.md` with timestamp
+- [ ] LINT passes with zero critical violations
+- [ ] EXPORT generates valid JSON (parseable with `python3 -m json.tool`)
+- [ ] Sections follow canonical order

@@ -15,3 +15,7 @@ acervo/micro/ensino/
 
 # Client-specific microversos (sensitive brand assets)
 acervo/micro/sales-ai/
+
+# Marketing / promotion HTML overviews
+_design/*.html
+

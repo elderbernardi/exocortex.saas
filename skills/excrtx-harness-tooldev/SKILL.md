@@ -27,6 +27,10 @@ metadata:
     - exocortex
     - harness
     - tooldev
+    related_skills:
+    - excrtx-hermes-extensions
+    - excrtx-integrate-oauth
+    - excrtx-govern-tools
     calibration:
     - feature_id: EX-50
       calibration_prompt: 'Você é capaz de projetar e estender o harness do Hermes
@@ -110,14 +114,14 @@ CommandDef("tool", "Call a tool directly without LLM", "Tools & Skills",
 
 ### Step 3 — Implement the Handler
 
-In `cli.py`, add the handler method:
+In `cli.py`, inside the `HermesAgent.process_command()` method, add:
 
 ```python
 elif canonical == "tool":
     self._handle_tool_command(cmd_original)
 ```
 
-The handler must: split the command, parse `key=value` pairs (or JSON if input starts with `{`), convert basic types (int, float, bool), call `handle_function_call(function_name, function_args)`, and print the result.
+Then implement `_handle_tool_command(self, cmd_original: str)` in the same `HermesAgent` class. The handler must: split the command, parse `key=value` pairs (or JSON if input starts with `{`), convert basic types (int, float, bool), call `handle_function_call(function_name, function_args)`, and print the result.
 
 ### Step 4 — Test the Tool
 

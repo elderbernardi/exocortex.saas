@@ -72,7 +72,7 @@ are **data classification**, not distinct behaviors. This skill implements the c
 read, write, search, and promote — each Nature's semantics are defined by the SCHEMA
 and frontmatter of the files themselves.
 
-## When This Skill Activates
+## When to Use
 
 Activate when:
 - The executive asks about facts, data, rules, processes, or tools in a domain
@@ -80,6 +80,8 @@ Activate when:
 - The agent needs to search information across multiple microversos
 - A Nature needs to be promoted (file → directory)
 - The agent needs to resolve access scope between microversos
+
+**Don't use for:** Creating new microversos (use `excrtx-memory-newmicro`). Installing microverso structure (use `excrtx-memory-mvinstall`). Operational memory providers like Hindsight (use `excrtx-memory-opsmemory`). Wiki adapter setup (use `excrtx-memory-wikiadapt`).
 
 ## Acervo Location
 
@@ -403,16 +405,6 @@ Superseded content is not deleted. Procedure:
 - ADR-004: LLM Wiki Integration
 - ADR-005: Skill Consolidation (7 → 1)
 
-## When to Use
-
-Activate when:
-- The executive asks about facts, data, rules, processes, or tools in a domain
-- A task needs to read or write to the Acervo Cognitivo
-- The agent needs to search information across multiple microversos
-- A Nature needs to be promoted (file → directory)
-- The agent needs to resolve access scope between microversos
-
-**Don't use for:** Creating new microversos (use `excrtx-memory-newmicro`). Installing microverso structure (use `excrtx-memory-mvinstall`). Operational memory providers like Hindsight (use `excrtx-memory-opsmemory`). Wiki adapter setup (use `excrtx-memory-wikiadapt`).
 
 ## Pitfalls
 

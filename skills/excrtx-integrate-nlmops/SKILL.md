@@ -30,7 +30,9 @@ metadata:
 
 ## When to Use
 
-Use when the request requires learning, synthesizing, organizing, or expanding knowledge.
+Use when the request requires learning, synthesizing, organizing, or expanding knowledge via NotebookLM.
+
+**Don't use for:** Simple facts already known to the agent (answer directly). Creative writing or brainstorming (no sources needed). Tasks not requiring synthesis or multi-source analysis. Web search only (use Hermes web search tool directly).
 
 ## Procedure
 
@@ -73,7 +75,7 @@ nlm notebook create "<TOPIC>"
 Add and validate minimum coverage.
 
 #### Case B: user did not provide sources
-1. Find reliable sources.
+1. Find reliable sources using Hermes web search tool (`search_web`) or `excrtx-integrate-browser` for deep research. If both unavailable, ask the executive for URLs or documents.
 2. Select top 10 by authority, recency, coverage, and diversity.
 3. Add to notebook before querying.
 

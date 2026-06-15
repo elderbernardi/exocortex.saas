@@ -82,7 +82,18 @@ Evaluate using this matrix:
 | Cost/latency | Acceptable for production use? |
 | Acervo adherence | Does it respect the precedence hierarchy? |
 
-### Step 2 — Deploy (Hindsight Example)
+### Step 2 — Draft Deployment Plan
+
+Before making any system changes, prepare a brief deployment plan and present it to the executive for approval:
+
+- Provider selected and rationale
+- Hosting mode (local/cloud) and sovereignty implications
+- Configuration changes to be applied
+- Rollback procedure if deployment fails
+
+> **Draft-First:** System modifications (Docker containers, config changes, credential provisioning) require executive approval before execution.
+
+### Step 3 — Deploy (Hindsight Example)
 
 1. Create Hindsight directory: `mkdir -p ~/.hermes/hindsight-local/{data}`
 2. Create `docker-compose.yml` and `.env` in that directory
@@ -99,7 +110,7 @@ Evaluate using this matrix:
 
 > **Critical:** Hindsight may require `HINDSIGHT_API_KEY` even in `local_embedded` mode. If `hermes memory status` shows `Missing: HINDSIGHT_API_KEY`, provision the key or switch providers.
 
-### Step 3 — Integrate into Setup
+### Step 4 — Integrate into Setup
 
 Add to `~/.hermes/setup.sh` with opt-in guard:
 
@@ -109,14 +120,14 @@ EXOCORTEX_ENABLE_<PROVIDER>=1 bash ~/.hermes/setup.sh
 
 The script must: preserve existing configs, not overwrite credentials, not activate if config contains `CHANGE_ME`, not fail setup if provider isn't ready.
 
-### Step 4 — Validate and Activate
+### Step 5 — Validate and Activate
 
 1. Run `hermes memory status` — provider must show `available`
 2. Test recall: send a message, verify observation is stored
 3. Test retrieval: ask about a previous topic, verify recall
 4. Activate only after successful validation
 
-### Step 5 — Audit (7 and 14 days)
+### Step 6 — Audit (7 and 14 days)
 
 1. Review stored observations for relevance and accuracy
 2. Check context overload (is recall injecting too much?)

@@ -12,6 +12,9 @@ metadata:
     - logging
     - audit
     - configuration
+    related_skills:
+    - excrtx-behavior-briefing
+    - excrtx-assess-selftest
     calibration:
     - feature_id: EX-31
       calibration_prompt: Você deve garantir que as operações e regras da skill Prompt
@@ -32,19 +35,29 @@ Activate AUTOMATICALLY after any configuration prompt that modifies SOUL.md, MEM
 **Don't use for:** Normal conversation or task execution. Code changes without configuration impact. Briefings or status checks (use `excrtx-behavior-briefing`). Self-diagnostics (use `excrtx-assess-selftest`).
 
 ## Procedure
-1. Registrar em MEMORY.md uma entrada com:
+1. Append a formatted entry to the **end** of MEMORY.md:
    - Prompt ID (ex: 004)
    - Timestamp (ISO 8601)
-   - Fase (P1-P6)
-   - Artefatos criados ou modificados
+   - Phase (P1-P6)
+   - Artifacts created or modified
    - Status: success | partial | failed
-   - Resumo do que mudou
+   - One-line summary of what changed
 
-2. Formato de entrada:
+2. Entry format:
    ```
    [PDD-{ID}] {timestamp} | Phase: P{N} | Status: {status}
-   Artifacts: {lista}
-   Summary: {resumo em 1 linha}
+   Artifacts: {list}
+   Summary: {one-line summary}
+   ```
+
+3. Concrete example:
+   ```bash
+   # Get next sequential ID
+   NEXT_ID=$(( $(grep -c '^\[PDD-' "$HERMES_HOME/MEMORY.md" 2>/dev/null || echo 0) + 1 ))
+   # Append entry (create file if missing)
+   echo "[PDD-$(printf '%03d' $NEXT_ID)] $(date -u +%Y-%m-%dT%H:%M:%SZ) | Phase: P3 | Status: success" >> "$HERMES_HOME/MEMORY.md"
+   echo "Artifacts: skills/excrtx-foo/SKILL.md" >> "$HERMES_HOME/MEMORY.md"
+   echo "Summary: Installed skill excrtx-foo" >> "$HERMES_HOME/MEMORY.md"
    ```
 
 ## Objective

@@ -83,7 +83,7 @@ components:
 
 ### sales-ai
 
-Esquema cromático derivado da marca Guimarães (#223874). Azul confiança + Laranja ação.
+Esquema cromático derivado de marca institucional (#223874). Azul confiança + Laranja ação.
 Ativado por microversos que usam `extends: global` e sobrescrevem tokens de cor.
 
 | Token | Hex | Função |

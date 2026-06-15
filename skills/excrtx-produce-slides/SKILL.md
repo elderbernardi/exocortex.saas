@@ -1,13 +1,14 @@
 ---
 name: excrtx-produce-slides
-description: Use when creating premium HTML/PDF/ZIP presentation exports from Markdown,
+description:
+  Use when creating premium HTML/PDF/ZIP presentation exports from Markdown,
   Marp Markdown, PPTX, or deck briefs inside Exocórtex. Keeps Markdown as canonical
   source, resolves Design System by microverso, and uses Google Drive as the default
   private export destination.
 version: 1.0.0
 category: excrtx
 platforms:
-- linux
+  - linux
 author: Exocórtex
 license: MIT
 gate:
@@ -16,31 +17,35 @@ gate:
 metadata:
   hermes:
     tags:
-    - exocortex
-    - presentations
-    - html
-    - markdown
-    - marp
-    - drive
-    - visual
-    - artifacts
+      - exocortex
+      - presentations
+      - html
+      - markdown
+      - marp
+      - drive
+      - visual
+      - artifacts
     related_skills:
-    - excrtx-quality-designsys
-    - excrtx-quality-taste
-    - excrtx-produce-artifacts
-    - google-workspace
-    - excrtx-govern-draftfirst
+      - excrtx-quality-designsys
+      - excrtx-quality-taste
+      - excrtx-produce-artifacts
+      - google-workspace
+      - excrtx-govern-draftfirst
     calibration:
-    - feature_id: EX-23
-      calibration_prompt: Você deve garantir que as operações e regras da skill Gerador
-        de Slides (excrtx-produce-slides) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se os scripts de slides existem e são executáveis.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Gerador de Slides.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Gerador
-        de Slides em seu SKILL.md estão sendo estritamente seguidos.
+      - feature_id: EX-23
+        calibration_prompt:
+          Você deve garantir que as operações e regras da skill Gerador
+          de Slides (excrtx-produce-slides) estão totalmente ativas no seu comportamento
+          e integridade.
+        test_prompt: Verifique se os scripts de slides existem e são executáveis.
+        acceptance_criteria:
+          O agente deve demonstrar de forma clara e factual que compreende
+          as regras e procedimentos da skill Gerador de Slides.
+        remediation_tip:
+          Certifique-se de que a documentação e os limites da skill Gerador
+          de Slides em seu SKILL.md estão sendo estritamente seguidos.
 ---
+
 # Exocórtex Slides
 
 Gera apresentações HTML premium a partir de fontes Markdown, Marp Markdown, PPTX ou brief de deck.
@@ -112,7 +117,7 @@ Antes de gerar previews ou deck final:
 
 ```text
 ensino:
-  clareza didática, código legível, identidade IFSul contida, criatividade em aulas especiais.
+  clareza didática, código legível, identidade contida, criatividade em aulas especiais.
 
 gabinete:
   institucional, sóbrio, verde controlado, vermelho raro, sem motion ruidoso.
@@ -204,7 +209,7 @@ Aplicar `excrtx-quality-designsys`:
 - global primeiro;
 - override do microverso depois;
 - validar/lint quando tokens forem criados ou alterados;
-- nunca hardcodear estética IFSul fora dos tokens quando existir token canônico.
+- nunca hardcodear estética fora dos tokens quando existir token canônico.
 
 ### 4. Gerar 3 previews
 
@@ -289,6 +294,8 @@ Arquivos: HTML, PDF e ZIP completo.
 Se o usuário responder positivamente (`sim`, `suba`, `pode subir`, `ok`, etc.), execute o upload privado via `excrtx-produce-artifacts` e `productivity/google-workspace`.
 
 Se o usuário já pediu upload ou usou verbo de ação claro (`suba para o Drive`, `publique no meu Drive`, `manda para o Drive`), não pergunte de novo. Execute direto, pois upload privado para o Drive do próprio usuário conta como entrega pessoal do artefato solicitado.
+
+> **Draft-First exception:** Private Drive upload to the user's own account is classified as personal artifact delivery, not public sharing. A brief inline confirmation ("Uploading deck.html, deck.pdf, deck.zip to exocortex/{slug}/{year}/apresentacoes…") satisfies the behavioral contract without requiring a full DRAFT approval cycle.
 
 #### Regras de path no Drive
 
@@ -380,7 +387,7 @@ Referência prática: `references/session-2026-06-01-exocortex-saas-deck.md` doc
 4. Ignorar microverso e criar visual genérico.
 5. Copiar todo `bold-template-pack` para o prompt. Leia índice, depois previews, depois um design escolhido.
 6. Renderizar nomes internos no slide: “Option A”, “template”, “preview.md”, paths.
-7. Usar verde IFSul saturado como fundo constante. Verde sustenta hierarquia; não precisa ocupar tudo.
+7. Usar cores institucionais saturadas como fundo constante. Verde sustenta hierarquia; não precisa ocupar tudo.
 8. Gerar PDF sem ZIP. Para artefato visual, ZIP preserva fonte e assets.
 9. Deixar controles de navegação/editor muito visíveis no deck HTML. Eles ajudam a revisar, mas devem ficar discretos no browser e sumir no print/PDF.
 10. Confiar apenas em `scrollWidth/scrollHeight`. Use esse check para overflow, mas faça inspeção visual em slides densos; matrizes de cards podem estar tecnicamente corretas e ainda parecer genéricas.

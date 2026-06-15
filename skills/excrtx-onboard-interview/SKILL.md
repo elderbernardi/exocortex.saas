@@ -16,6 +16,10 @@ metadata:
     - soul
     - setup
     - personalization
+    related_skills:
+    - excrtx-onboard-welcome
+    - excrtx-memory-newmicro
+    - excrtx-quality-antislop
     calibration:
     - feature_id: EX-02
       calibration_prompt: Você deve garantir que as operações e regras da skill Entrevista
@@ -53,6 +57,8 @@ Activate when:
 - Executive says "configure para mim", "novo setup", "onboarding", "quero refazer a entrevista"
 - Re-calibration requested (without destroying existing data — merge)
 - SOUL.md detected with "Pendente" sections (Configuration State)
+
+**Don't use for:** Casual chat or debugging another skill. When SOUL.md is already fully populated without 'Pendente' sections (unless re-calibration explicitly requested). Infrastructure provisioning (handled by Provisioner Agent).
 
 ## Procedure
 
@@ -94,18 +100,24 @@ After confirmation: update SOUL.md, create microversos via `excrtx-memory-newmic
 - Executive can skip questions — use reasonable defaults
 - Faithfully map the executive's style, without judgment
 - Re-onboarding does not destroy existing data (merge)
+- If executive answers only some blocks: generate defaults for skipped blocks, present for review
+- If interview is terminated early: save partial results, mark unanswered blocks in Configuration State as 'Pendente'
 - This skill does NOT provision infrastructure — assumes the Provisioner already did it
 - Skill references use new names (excrtx-* convention, ADR-015)
 
 ## Verification
 
-- [ ] Interview covers all 5 blocks
-- [ ] Personalized SOUL.md with executive's responses
+- [ ] Interview covers all 5 blocks (or skipped blocks have documented defaults)
+- [ ] SOUL.md contains identifiable values from interview (not default template text)
+- [ ] Communication preferences from Block B reflected in `estilo.md`
 - [ ] Microversos created for each Block C domain
 - [ ] Summary presented for confirmation before activation
-- [ ] Configuration State updated to OPERATIONAL
+- [ ] Configuration State updated to OPERATIONAL (or PARTIAL if incomplete)
+- [ ] MEMORY.md updated with onboarding log entry
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **Long silence during interview:** Executive may lose engagement. Echo a prompt every 2 minutes if no response: "Posso continuar com defaults razoáveis se preferir." Session timeout may occur — save partial state.
+- **Over-application:** Only activate when trigger conditions are met. Do not re-interview if SOUL.md is already fully populated.
+- **Default leakage:** Defaults should be clearly marked in the generated SOUL.md. Executive must know which values were assumed vs stated.
+- **Block C domain explosion:** If executive lists 10+ domains, consolidate into 3-5 primary microversos. Additional domains can be created later.

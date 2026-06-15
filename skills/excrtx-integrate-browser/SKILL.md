@@ -222,21 +222,36 @@ asyncio.run(run())
 
 ## When to Use
 
-Activate when working with this skill's domain. See procedure for details.
+Activate when:
+- Executive requests web scraping, form filling, or browser-based research
+- A task requires navigating a web page to extract data or interact with UI
+- Screenshot evidence of a web page is needed
+- Automated login or form submission workflow is requested
 
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
+**Don't use for:** Simple HTTP GET requests (use `curl` or `read_url_content`). API-based data retrieval with known endpoints. PDF/document parsing (use document skills). Local file browsing.
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+1. Open target URL via wrapper: `$BU open <url>`
+2. Run `$BU state` to observe page structure and get element indices
+3. Interact: click, input, select, scroll as needed using element indices
+4. Verify: run `$BU state` again and/or `$BU screenshot` to confirm result
+5. Extract data if needed: `$BU get text`, `$BU get html`, `$BU eval`
+6. Close browser: `$BU close`
 
 ## Pitfalls
 
-- **Over-application**: Only activate when the skill's trigger conditions are met.
-- **Missing context**: Ensure required dependencies and related skills are loaded.
+- **Chromium may require `--no-sandbox`:** On some Linux systems (containers, WSL), Chromium fails without `--no-sandbox`. The wrapper should handle this, but if not, set `BROWSER_USE_ARGS="--no-sandbox"`.
+- **PATH shim conflict:** `mise`/`asdf` shims may resolve `browser-use` to wrong Python version (3.14 breaks asyncio). Always use the wrapper script path, never bare `browser-use`.
+- **Stale element indices:** After page navigation or dynamic content load, element indices change. Always run `state` before interacting.
+- **Session leak:** Forgetting `close` leaves Chromium processes running. Always close in finally blocks.
+- **Contract vs dependency:** If wrapper path doesn't exist, that's a contract failure (fix path). If `uv` is missing, that's a dependency block (install it).
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] Wrapper script is executable: `test -x skills/excrtx-integrate-browser/scripts/browser-use.sh`
+- [ ] `$BU state` returns valid JSON (or structured output) without fatal error
+- [ ] A test URL can be opened and screenshot captured
+- [ ] Element interaction works (click, input) with correct indices
+- [ ] Browser closes cleanly (`$BU close` returns 0)
+- [ ] Contract path in SKILL.md matches actual script location

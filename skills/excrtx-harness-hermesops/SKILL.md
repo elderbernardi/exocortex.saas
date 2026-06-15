@@ -56,13 +56,13 @@ Routing heuristic:
 
 Always explicitly declare which track you're using.
 
-TRACK A — Codex CLI (execution)
-- When: edit/create files, run commands, touch a repository, review with diffs.
-- Preferred method: **homegrown wrapper** that captures local evidence (JSON) to disk.
-
-TRACK B — Delegation via provider (reasoning/planning)
-- When: analysis, synthesis, plan, checklist, alternatives, hypotheses.
-- Method: `delegate_task` with provider `openai-codex` (independent of the gateway's main model).
+| Aspect | TRACK A — CLI (Execution) | TRACK B — Delegation (Reasoning) |
+|---|---|---|
+| **Purpose** | Edit/create files, run commands, touch repo | Analysis, synthesis, planning, checklist |
+| **Method** | Homegrown wrapper → `codex exec` | `delegate_task` with provider `openai-codex` |
+| **Safety flags** | `--scratch` (default), `--full-auto` (when writes needed) | N/A (no file system access) |
+| **Evidence** | JSON in `~/.hermes/codex-learning/runs/` | Delegation response text |
+| **Verification** | `git_status_porcelain` + `git_untracked_files` in JSON | Acceptance criteria met |
 
 ## TRACK B — Configure and Use Delegation via openai-codex
 
@@ -100,18 +100,16 @@ Write permissions (critical gotcha):
 - If the task requires writing files: pass `--full-auto`.
   - The wrapper maps `--full-auto` to `codex exec --sandbox workspace-write`.
 
-## Verification (don't trust "done")
+## Procedure
 
-After TRACK A, always check local evidence.
+1. Classify intent using the routing heuristic in "When to Use"
+2. Declare track explicitly: "Using TRACK A" or "Using TRACK B"
+3. Execute using the appropriate track section (TRACK A or TRACK B)
+4. For hybrid tasks: TRACK B first (plan) → TRACK A (execute) → verify
+5. Post-TRACK A: `python ~/.hermes/scripts/codex_learning/review_latest_run.py`
+6. Present results draft to executive for review
 
-Minimum checklist:
-- `git_status_porcelain` exists in the JSON
-- `git_changed_files` includes **untracked** (new files) — don't use `git diff --name-only` as sole source
-- `git_untracked_files` explicitly captured
-- `git_diff_stat` recorded
 
-In real repos:
-- Run project tests/build and record output/exit code.
 
 ## Pitfalls
 
@@ -120,18 +118,14 @@ In real repos:
 - **No evidence = no proof:** Require wrapper JSON as proof of execution, not narrative. If evidence JSON doesn't exist, the task didn't run.
 - **Track mixing:** Never mix TRACK A and TRACK B in the same step. Declare explicitly before execution.
 
-## Procedure
-
-1. Classify intent using the routing heuristic in "When to Use"
-2. Execute using the appropriate track section above (TRACK A or TRACK B)
-3. For hybrid tasks: TRACK B first (plan) → TRACK A (execute) → verify
-4. Post-execution: `python ~/.hermes/scripts/codex_learning/review_latest_run.py`
-
 ## Verification
 
 - [ ] Track explicitly declared before execution (A or B, never mixed)
 - [ ] `hermes auth list` shows `openai-codex` provider (TRACK B)
 - [ ] Evidence JSON exists in `~/.hermes/codex-learning/runs/` with `git_status_porcelain` (TRACK A)
 - [ ] `git_changed_files` includes untracked files (not just `git diff --name-only`)
+- [ ] `git_untracked_files` explicitly captured in evidence
+- [ ] `--full-auto` used only when writes needed; `--scratch` is default
 - [ ] Project tests/build pass after TRACK A execution
 - [ ] Delegation contract contains objective + acceptance criteria + restrictions (TRACK B)
+- [ ] Results presented as draft to executive before finalizing

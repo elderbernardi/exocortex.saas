@@ -15,6 +15,11 @@ metadata:
     - creation
     - onboarding
     - wiki
+    related_skills:
+    - excrtx-memory-manager
+    - excrtx-memory-mvinstall
+    - excrtx-memory-mvsetup
+    - excrtx-quality-designsys
     calibration:
     - feature_id: EX-13
       calibration_prompt: 'Ao ser solicitado a criar ou iniciar um novo domínio/contexto
@@ -38,46 +43,59 @@ metadata:
       remediation_tip: 'Falha no Provisionamento: O microverso deve ser inicializado
         copiando o template completo e ajustando todos os placeholders e SCHEMA.'
 ---
-# Criar Novo Microverso
+# Create New Microverso
 
-Provisiona um novo domínio de atuação no Acervo Cognitivo do executivo.
-Gera estrutura wiki completa compatível com `excrtx-memory-manager`.
+Provisions a new operational domain in the executive's Acervo Cognitivo.
+Generates a complete wiki structure compatible with `excrtx-memory-manager`.
 
-## Trigger
+## When to Use
 
-Ativar quando:
-- O executivo menciona um novo domínio de atuação
-- Uma tarefa requer contexto de domínio que ainda não existe no acervo
-- O executivo solicita explicitamente criar um novo Microverso
+- Executive mentions a new operational domain
+- A task requires domain context that doesn't yet exist in the acervo
+- Executive explicitly requests creating a new Microverso
 
-**Não usar para:** Edição de Microverso existente (use `excrtx-memory-manager`). Instalação de pacote externo (use `excrtx-memory-mvinstall`). Configuração de seed (use `excrtx-memory-mvsetup`).
+**Don't use for:**
+- Editing an existing Microverso → use `excrtx-memory-manager`
+- Installing an external package → use `excrtx-memory-mvinstall`
+- Seed configuration → use `excrtx-memory-mvsetup`
+- One-off notes that don't require persistent domain context
 
-> **Vetor:** Este pedido é classificado como **Evolução** (criação de novo domínio de atuação).
+> **Vector:** Classified as **Evolution** (new operational domain creation).
 
 ## Procedure
 
-### 1. Definir o Microverso
+### 1. Verify Prerequisites
 
-Pergunte ao executivo (se não especificado):
-- **Nome:** Nome legível do domínio (ex: "Financeiro", "Produto Alpha", "Cliente ACME")
-- **Slug:** Identificador em kebab-case (ex: `financeiro`, `produto-alpha`, `cliente-acme`)
-- **Type:** Classificação para aliases de grupo. Opções: `client`, `project`, `domain`, `role`
-- **Description:** Uma frase descrevendo o escopo do Microverso
+Confirm the template directory exists:
+```bash
+ls $EXOCORTEX_HOME/acervo/micro/_template/
+```
+If missing, abort and inform the executive that the base template must be created first via `excrtx-memory-mvsetup`.
 
-### 2. Criar Estrutura
+### 2. Collect Microverso Definition
+
+Ask the executive (if not already specified):
+
+| Field | Format | Example |
+|---|---|---|
+| **Name** | Human-readable | "Produto Alpha" |
+| **Slug** | kebab-case | `produto-alpha` |
+| **Type** | `client\|project\|domain\|role` | `project` |
+| **Description** | One-sentence scope | "Lifecycle management for Produto Alpha" |
+
+### 3. Copy Template
 
 ```bash
-# Copiar template para novo Microverso
-cp -r ~/.hermes/acervo/micro/_template/ ~/.hermes/acervo/micro/{slug}/
+cp -r $EXOCORTEX_HOME/acervo/micro/_template/ $EXOCORTEX_HOME/acervo/micro/{slug}/
 ```
 
-### 3. Preencher SCHEMA.md
+### 4. Fill SCHEMA.md
 
-Abrir `~/.hermes/acervo/micro/{slug}/SCHEMA.md` e preencher:
+Open `$EXOCORTEX_HOME/acervo/micro/{slug}/SCHEMA.md` and populate the frontmatter:
 
 ```yaml
 ---
-domain: {nome}
+domain: {name}
 slug: {slug}
 type: {client|project|domain|role}
 description: {description}
@@ -85,76 +103,69 @@ created: {YYYY-MM-DD}
 ---
 ```
 
-Preencher seções de convenções, taxonomia de tags e regras de escrita específicas do domínio.
+Fill domain-specific conventions, tag taxonomy, and writing rules.
 
-### 4. Preencher Contexto Inicial
+### 5. Replace Placeholders in All Files
 
-- Substituir `{MICROVERSO_NAME}` pelo nome
-- Substituir `{slug}` pelo slug
-- Preencher "Cenário Atual" com informações fornecidas pelo executivo
+Replace `{MICROVERSO_NAME}` and `{slug}` across **all** files in the Microverso. Scope:
 
-Repetir substituição de placeholders em todos os 7 Nature files:
-`context`, `decisions`, `processes`, `tools`, `people`, `goals`, `constraints`.
+- **7 Nature files:** `context.md`, `decisions.md`, `processes.md`, `tools.md`, `people.md`, `goals.md`, `constraints.md`
+- **index.md:** Catalog of 7 Natures (each starts as "Empty — awaiting context")
+- **log.md:** First creation entry
+- **SCHEMA.md:** Already filled in step 4
 
-### 5. Inicializar Wiki Files
-
-- **index.md:** Catálogo das 7 Natures com summaries (todas começam como "Vazio — aguardando contexto")
-- **log.md:** Primeira entrada:
-  ```
-  ## [{YYYY-MM-DD}] create | Microverso {nome} criado
-  Type: {type}. Natures: 7 (arquivo). Onboarding: {completo|parcial|mínimo}.
-  ```
-- **raw/:** Manter vazio (pronto para fontes)
-- **_archive/:** Manter vazio
-
-### 6. Entrevista de Onboarding (Opcional)
-
-Se o executivo estiver disponível, coletar:
-- **Ferramentas:** Quais MCPs/APIs usa neste domínio?
-- **Persona:** Tom de voz diferente do global?
-- **Regras:** Restrições específicas?
-- **Processos:** Workflows recorrentes?
-- **Estilo Visual:** Este domínio tem paleta visual própria diferente do padrão?
-  - Se SIM → Ativar `brandkit` como guia → Criar `DESIGN.md` com `extends: global` e apenas overrides via `excrtx-quality-designsys`
-  - Se NÃO → Não criar arquivo (herda `global/DESIGN.md` automaticamente)
-
-Registrar respostas nos respectivos Nature files.
-
-### 7. Registrar no Sistema
-
-- Adicionar entry no `MEMORY.md` via skill `excrtx-harness-promptlog`
-- Atualizar `~/.hermes/acervo/shared/glossario.md` com termos específicos do novo domínio
-- Atualizar `~/.hermes/acervo/shared/groups.md`:
-  - Adicionar slug ao alias de tipo correspondente (CLIENTS, PROJECTS, etc.)
-  - Alias `ALL` se resolve automaticamente (lista diretórios)
-
-## Verification
-
-- [ ] Diretório `~/.hermes/acervo/micro/{slug}/` existe
-- [ ] SCHEMA.md com frontmatter preenchido (domain, slug, type, description, created)
-- [ ] index.md com catálogo das 7 Natures
-- [ ] log.md com entrada de criação
-- [ ] raw/ e _archive/ existem (vazios)
-- [ ] 7 Nature files presentes: context, decisions, processes, tools, people, goals, constraints
-- [ ] Placeholders `{MICROVERSO_NAME}` e `{slug}` substituídos em todos os arquivos (`grep -r '{MICROVERSO_NAME}' micro/{slug}/` retorna vazio)
-- [ ] `context/` tem pelo menos o cenário atual preenchido
-- [ ] `shared/groups.md` atualizado com o slug no tipo correto
-- [ ] MEMORY.md registra a criação do Microverso
-
-## Cleanup
-
-Para remover um Microverso de teste:
+Verify no placeholders remain:
 ```bash
-rm -rf ~/.hermes/acervo/micro/{slug}/
+grep -r '{MICROVERSO_NAME}\|{slug}' $EXOCORTEX_HOME/acervo/micro/{slug}/
+# Expected: no results
 ```
-Remover slug de `shared/groups.md`.
-Registrar remoção no MEMORY.md.
+
+### 6. Initialize Log
+
+Create first entry in `log.md`:
+```
+## [{YYYY-MM-DD}] create | Microverso {name} created
+Type: {type}. Natures: 7. Onboarding: {complete|partial|minimal}.
+```
+
+### 7. Onboarding Interview (Optional)
+
+If the executive is available, collect:
+
+| Area | Question | Destination |
+|---|---|---|
+| Tools | Which MCPs/APIs for this domain? | `tools.md` |
+| Persona | Different tone of voice from global? | `context.md` |
+| Rules | Domain-specific constraints? | `constraints.md` |
+| Processes | Recurring workflows? | `processes.md` |
+| Visual style | Custom palette? | `DESIGN.md` via `excrtx-quality-designsys` |
+
+### 8. Register in System
+
+- Update `$EXOCORTEX_HOME/acervo/shared/groups.md`: add slug to the corresponding type alias (CLIENTS, PROJECTS, etc.)
+- Update `$EXOCORTEX_HOME/acervo/shared/glossario.md`: domain-specific terms
+- Register in MEMORY.md via `excrtx-harness-promptlog`
 
 ## Pitfalls
 
-- **Placeholder residue:** Forgetting `{MICROVERSO_NAME}` or `{slug}` in any file leaves broken references. Always search all files with `grep -r '{MICROVERSO_NAME}' micro/{slug}/` after creation.
-- **groups.md not updated:** The microverso exists on disk but `shared/groups.md` doesn't list it — alias resolution fails silently.
-- **Template drift:** If `_template/` is updated after existing microversos were created, older ones won't have new Nature files. Manually check template version.
-- **Wrong type classification:** Using `domain` when it should be `client` breaks group alias routing. Confirm type with executive before creating.
-- **SCHEMA.md frontmatter missing fields:** All 5 fields (domain, slug, type, description, created) are required. Partial SCHEMA breaks `excrtx-memory-manager` lookups.
-- **Path assumptions:** Use `$ACERVO/micro/{slug}/` (resolved from env), not hardcoded `~/.hermes/acervo/micro/`. The canonical path is `$EXOCORTEX_HOME/acervo/micro/`.
+1. **Placeholder residue:** Forgetting `{MICROVERSO_NAME}` or `{slug}` in any file leaves broken references. Always run `grep -r '{MICROVERSO_NAME}' micro/{slug}/` after creation. If residue found, re-execute step 5.
+2. **groups.md not updated:** Microverso exists on disk but `shared/groups.md` doesn't list it — alias resolution fails silently. Verify with `grep {slug} shared/groups.md`.
+3. **Template drift:** If `_template/` is updated after existing microversos were created, older ones won't have new Nature files. Check template version before creating.
+4. **Wrong type classification:** Using `domain` when it should be `client` breaks group alias routing. Confirm type with executive before creating.
+5. **Incomplete SCHEMA.md:** All 5 fields (domain, slug, type, description, created) are required. Partial SCHEMA breaks `excrtx-memory-manager` lookups.
+6. **Hardcoded path:** Use `$EXOCORTEX_HOME/acervo/micro/{slug}/` (resolved from env), not `~/.hermes/acervo/micro/`.
+7. **Missing template:** If `_template/` doesn't exist, `cp -r` fails silently with an empty directory. Always verify prerequisite (step 1).
+
+## Verification
+
+- [ ] Directory `$EXOCORTEX_HOME/acervo/micro/{slug}/` exists
+- [ ] SCHEMA.md has complete frontmatter (domain, slug, type, description, created)
+- [ ] index.md catalogs all 7 Natures
+- [ ] log.md has creation entry
+- [ ] raw/ and _archive/ exist (empty)
+- [ ] 7 Nature files present: context, decisions, processes, tools, people, goals, constraints
+- [ ] No residual placeholders: `grep -r '{MICROVERSO_NAME}' micro/{slug}/` returns empty
+- [ ] `grep -r '{slug}' micro/{slug}/` returns empty (except legitimate SCHEMA references)
+- [ ] context.md has at least the current scenario filled
+- [ ] `shared/groups.md` updated with slug in correct type
+- [ ] MEMORY.md records the Microverso creation

@@ -334,16 +334,23 @@ Ele apenas limpa o sentinel e os crons.
 
 ## When to Use
 
-Activate when working with this skill's domain. See procedure for details.
+Activate when:
+- Executive says "imbroke", "ativa modo imbroke", "quero modelo gratuito"
+- Payment error detected on primary provider
+- Executive asks for model rating or ranking of free models
+- `/xc imbroke` command received
 
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
+**Don't use for:** Selecting non-free models (use `excrtx-govern-tools`). Configuring provider credentials (use `excrtx-integrate-oauth`). Debugging model quality issues unrelated to cost.
 
 ## Procedure
 
-Follow the steps and rules defined in this skill's body sections above.
+Follow the Instruções para o Agente section above. All actions go through `scripts/openrouter_free_model_router.py`. If the script returns an error, report it verbatim and suggest manual debugging.
 
 ## Verification
 
-- [ ] Skill trigger conditions were correctly matched
-- [ ] Output follows the skill's defined format and rules
-- [ ] No governance violations occurred
+- [ ] After activation, model rating is computed correctly for known intelligence indices
+- [ ] Guard tripwire triggers on external provider change
+- [ ] Warning emoji matches rating faixas (🟢 ≥8, 🟡 5-7.9, 🔴 <5)
+- [ ] Script output presented verbatim (no LLM reformatting)
+- [ ] Executive reminded about `/new` session requirement after model switch
+- [ ] Circuit breaker sentinel created at `~/.hermes/model-routing/imbroke-state.json`
