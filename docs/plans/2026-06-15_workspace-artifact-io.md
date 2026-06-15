@@ -80,6 +80,16 @@ Três camadas de baixa complexidade, alto impacto, sem dependências entre si.
 - Sem polling automático — sempre explícito
 - Arquivos: `excrtx-memory-intake/SKILL.md`
 
+### Fase 2c — Internacionalização (issue #85)
+
+**5. Auditoria e tradução PT-BR das superfícies principais**
+- UI já tem `pt` (PT-BR) a 87.8% — 189 chaves faltando
+- Prioridade P1: `composer` (9), `workspace` (13), `terminal` (15), `session` (4), `profile` (16), `settings` (1), `model` (2), `media` (4)
+- Prioridade P2: `insights`, `skill`, `cmd`, `yolo`, `ctx`, `rename`
+- Fora do escopo: `mcp` (admin), previews de formato (`excalidraw`, `csv`, `pdf`, `html`)
+- Fallback automático para inglês nas chaves ausentes
+- Arquivos: `static/i18n.js`
+
 ---
 
 ## Grafo de Dependências
@@ -94,7 +104,9 @@ Fase 0 (Fork) ───┬──► Fase 1a (Inbox)
                   │
                   ├──► Fase 3 (Drive) ──────────── (independente, requer Fase 2b para UX)
                   │
-                  └──► Fase 4 (Agente inbox) ───── (independente)
+                  ├──► Fase 4 (Agente inbox) ───── (independente)
+                  │
+                  └──► Fase 2c (i18n) ──────────── (independente)
 ```
 
 Fase 0 bloqueia todas as demais (precisamos do fork antes de modificar).
