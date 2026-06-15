@@ -40,49 +40,53 @@ provision_exocortex_ops_seed() {
   fi
 }
 
-if [ -d "$ACERVO_SRC" ]; then
-  copy_acervo_seed
-  provision_exocortex_ops_seed
-  log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
+if [ "$ACERVO_SRC" -ef "$ACERVO" ]; then
+  log "Acervo source e destination são o mesmo diretório. Cópia local pulada."
 else
-  fail "Acervo source não encontrado: $ACERVO_SRC"
-fi
+  if [ -d "$ACERVO_SRC" ]; then
+    copy_acervo_seed
+    provision_exocortex_ops_seed
+    log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
+  else
+    fail "Acervo source não encontrado: $ACERVO_SRC"
+  fi
 
-# Verificar WELCOME.md
-WELCOME_SRC="$ACERVO_SRC/global/knowledge/WELCOME.md"
-if [ -f "$WELCOME_SRC" ]; then
-  mkdir -p "$ACERVO/global/knowledge"
-  cp "$WELCOME_SRC" "$ACERVO/global/knowledge/WELCOME.md"
-  log "WELCOME.md instalado em acervo/global/knowledge/"
-else
-  warn "WELCOME.md não encontrado em $WELCOME_SRC"
-fi
+  # Verificar WELCOME.md
+  WELCOME_SRC="$ACERVO_SRC/global/knowledge/WELCOME.md"
+  if [ -f "$WELCOME_SRC" ]; then
+    mkdir -p "$ACERVO/global/knowledge"
+    cp "$WELCOME_SRC" "$ACERVO/global/knowledge/WELCOME.md"
+    log "WELCOME.md instalado em acervo/global/knowledge/"
+  else
+    warn "WELCOME.md não encontrado em $WELCOME_SRC"
+  fi
 
-# Instalar templates canônicos v0.4
-TEMPLATES_SRC="$SCRIPT_DIR/acervo/global/templates/harness-v0.4"
-TEMPLATES_DST="$ACERVO/global/templates/harness-v0.4"
-if [ -d "$TEMPLATES_SRC" ]; then
-  cp -r "$TEMPLATES_SRC"/* "$TEMPLATES_DST/" 2>/dev/null || true
-  log "Templates v0.4: $(ls -1 "$TEMPLATES_DST" 2>/dev/null | wc -l) arquivos"
-fi
+  # Instalar templates canônicos v0.4
+  TEMPLATES_SRC="$SCRIPT_DIR/acervo/global/templates/harness-v0.4"
+  TEMPLATES_DST="$ACERVO/global/templates/harness-v0.4"
+  if [ -d "$TEMPLATES_SRC" ]; then
+    cp -r "$TEMPLATES_SRC"/* "$TEMPLATES_DST/" 2>/dev/null || true
+    log "Templates v0.4: $(ls -1 "$TEMPLATES_DST" 2>/dev/null | wc -l) arquivos"
+  fi
 
-# Instalar ferramentas globais do Acervo
-ROOT_TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools"
-ROOT_TOOLS_DST="$ACERVO/global/tools"
-if [ -d "$ROOT_TOOLS_SRC" ]; then
-  mkdir -p "$ROOT_TOOLS_DST"
-  find "$ROOT_TOOLS_SRC" -maxdepth 1 -type f -name '*.py' -exec cp {} "$ROOT_TOOLS_DST/" \;
-  chmod +x "$ROOT_TOOLS_DST"/*.py 2>/dev/null || true
-  log "Global tools: $(ls -1 "$ROOT_TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
-fi
+  # Instalar ferramentas globais do Acervo
+  ROOT_TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools"
+  ROOT_TOOLS_DST="$ACERVO/global/tools"
+  if [ -d "$ROOT_TOOLS_SRC" ]; then
+    mkdir -p "$ROOT_TOOLS_DST"
+    find "$ROOT_TOOLS_SRC" -maxdepth 1 -type f -name '*.py' -exec cp {} "$ROOT_TOOLS_DST/" \;
+    chmod +x "$ROOT_TOOLS_DST"/*.py 2>/dev/null || true
+    log "Global tools: $(ls -1 "$ROOT_TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
+  fi
 
-# Instalar ferramentas determinísticas do harness
-TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools/harness"
-TOOLS_DST="$ACERVO/global/tools/harness"
-if [ -d "$TOOLS_SRC" ]; then
-  cp -r "$TOOLS_SRC"/* "$TOOLS_DST/" 2>/dev/null || true
-  chmod +x "$TOOLS_DST"/*.py 2>/dev/null || true
-  log "Harness tools: $(ls -1 "$TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
+  # Instalar ferramentas determinísticas do harness
+  TOOLS_SRC="$SCRIPT_DIR/acervo/global/tools/harness"
+  TOOLS_DST="$ACERVO/global/tools/harness"
+  if [ -d "$TOOLS_SRC" ]; then
+    cp -r "$TOOLS_SRC"/* "$TOOLS_DST/" 2>/dev/null || true
+    chmod +x "$TOOLS_DST"/*.py 2>/dev/null || true
+    log "Harness tools: $(ls -1 "$TOOLS_DST"/*.py 2>/dev/null | wc -l) scripts"
+  fi
 fi
 
 # Instalar wrappers do Codex Core Harness (EX-33)

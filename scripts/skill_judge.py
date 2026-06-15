@@ -625,8 +625,8 @@ def _parse_llm_response(response_text: str) -> dict:
 
 
 def call_llm_judge(prompt: str) -> dict:
-    """Call the LLM judge API with failover: DeepSeek → OpenRouter → OpenRouter+DS.
-
+    """Call the LLM judge API using DeepSeek only.
+    
     Returns D2-D5 dimensional labels dict, or empty dict on total failure.
     """
     # Primary: DeepSeek direct API (fast, cheap)
@@ -637,28 +637,7 @@ def call_llm_judge(prompt: str) -> dict:
             dims = _parse_llm_response(response)
             if dims:
                 return dims
-            print(f"    ⚠️ Failed to parse DeepSeek response, trying fallback...", file=sys.stderr)
 
-    # Fallback 1: OpenRouter (Claude)
-    openrouter_key = _get_api_key()
-    if openrouter_key:
-        print(f"    🔄 Falling back to OpenRouter...", file=sys.stderr)
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
-
-    # Fallback 2: DeepSeek via OpenRouter (last resort)
-    if openrouter_key:
-        print(f"    🔄 Trying DeepSeek via OpenRouter...", file=sys.stderr)
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER_DS)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
-
-    print(f"    ❌ All LLM providers failed.", file=sys.stderr)
     return {}
 
 

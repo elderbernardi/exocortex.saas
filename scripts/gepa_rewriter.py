@@ -332,25 +332,12 @@ def validate_rewrite(original_content: str, rewritten_content: str) -> list[str]
 
 def _call_rewrite_llm(prompt: str) -> tuple[str | None, str]:
     """Call the LLM for rewriting. Returns (response, model_used)."""
-    # Primary: DeepSeek direct
+    # Primary: DeepSeek direct only
     deepseek_key = _get_deepseek_key()
     if deepseek_key:
         response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_DEEPSEEK)
         if response:
             return response, JUDGE_MODEL_DEEPSEEK
-
-    # Fallback 1: OpenRouter (Claude)
-    openrouter_key = _get_api_key()
-    if openrouter_key:
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER)
-        if response:
-            return response, JUDGE_MODEL_OPENROUTER
-
-    # Fallback 2: DeepSeek via OpenRouter
-    if openrouter_key:
-        response = _call_llm_api(prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_OPENROUTER_DS)
-        if response:
-            return response, JUDGE_MODEL_OPENROUTER_DS
 
     return None, "none"
 

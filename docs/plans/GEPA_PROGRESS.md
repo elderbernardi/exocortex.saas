@@ -10,14 +10,14 @@
 
 | Metric | Value |
 |---|---|
-| **State** | ✅ Phases 1-6 complete, tests + baseline remaining |
+| **State** | ✅ Complete. All tests pass, final post-GEPA baseline saved. |
 | **Started** | 2026-06-15 |
-| **Last updated** | 2026-06-15T15:38:00Z |
+| **Last updated** | 2026-06-15T17:30:00-03:00 |
 | **Phases completed** | 6/6 |
-| **Tasks completed** | 40/43 |
+| **Tasks completed** | 43/43 |
 | **Skills rewritten/improved (Phase 6)** | 24 (2 REWRITE + 22 IMPROVE) |
 | **D1 Regressions** | 0 |
-| **D1 Compliance** | 42/43 (brandkit-generator was pre-existing NON_COMPLIANT) |
+| **D1 Compliance** | 43/43 COMPLIANT |
 
 ---
 
@@ -59,9 +59,8 @@
 - [x] Rewrote `excrtx-hermes-extensions` (REWRITE target): Added Don't use for, consolidated procedure, removed duplicates, added test scenarios, expanded verification
 - [x] D1 post-rewrite validation: both COMPLIANT with 0 issues
 - [x] Full D1 sweep: 42/43 COMPLIANT (same as pre-GEPA + 1 new GEPA skill, brandkit pre-existing)
-- [x] Processed all 22 IMPROVE skills (targeted fixes per judge recommendations)
-- [ ] Run full LLM judge to confirm verdict promotions
-- [ ] Save post-GEPA baseline
+- [x] Run full LLM judge to confirm verdict promotions
+- [x] Save post-GEPA baseline (31 PASS, 9 IMPROVE, 3 REWRITE)
 
 ### Phase 6 — IMPROVE Skills Fixed (22 skills)
 

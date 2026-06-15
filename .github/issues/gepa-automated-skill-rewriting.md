@@ -49,11 +49,11 @@ skill_judge.py → verdict + priority_fixes → GEPA rewriter → modified SKILL
 
 ## Acceptance Criteria
 
-- [ ] `gepa_loop.py` can auto-promote at least 1 IMPROVE skill to PASS in a single run
-- [ ] D1 regression baseline remains 41/41 COMPLIANT after any GEPA run
-- [ ] Failed rewrites are cleanly rolled back (git checkout)
-- [ ] Audit log records: skill, attempt count, before/after verdicts, LLM model used
-- [ ] Unit tests cover: accept gate, reject gate, D1 hard-reject, rollback
+- [x] `gepa_loop.py` can auto-promote at least 1 IMPROVE skill to PASS in a single run
+- [x] D1 regression baseline remains 43/43 COMPLIANT after any GEPA run
+- [x] Failed rewrites are cleanly rolled back (git checkout / file restore)
+- [x] Audit log records: skill, attempt count, before/after verdicts, LLM model used
+- [x] Unit tests cover: accept gate, reject gate, D1 hard-reject, rollback
 
 ## Priority
 
