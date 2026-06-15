@@ -1,7 +1,7 @@
 ---
 name: excrtx-memory-manager
-description: Unified Acervo Cognitivo skill. Reads, writes, searches, and manages
-  knowledge across the 4 layers (macro/global/micro/shared) with context isolation.
+description: Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared)
+  with context isolation.
 version: 2.0.0
 category: excrtx
 platforms:
@@ -36,31 +36,21 @@ metadata:
     - exocortex-search
     calibration:
     - feature_id: EX-11
-      calibration_prompt: 'Você gerencia o Acervo Cognitivo de 4 camadas: macro (identidade),
-        global (regras universais), micro (domínios isolados por slug) e shared (pontes).
+      calibration_prompt: 'Você gerencia o Acervo Cognitivo de 4 camadas: macro (identidade), global (regras universais),
+        micro (domínios isolados por slug) e shared (pontes). Regras: Filtro de Domínio para decidir onde gravar, frontmatter
+        YAML obrigatório, atualizar index.md e log.md após cada escrita. Nunca duplicar entre microversos.'
+      test_prompt: Preciso documentar que decidimos usar PostgreSQL como banco para o projeto 'portal-vendas'. Grave essa
+        decisão no lugar correto do acervo.
+      acceptance_criteria: '1. O agente aplica o Filtro de Domínio: grava em micro/portal-vendas/decisions/ (não em global)
 
-        Regras de Escrita:
+        2. O arquivo criado tem frontmatter YAML (title, created, nature: decisions, type)
 
-        - Execute o Filtro de Domínio: se a informação pertence a um domínio específico,
-        escreva em ''micro/{slug}/{nature}.md''. Se for comum, ''global/{nature}.md''.
-        Se for cross-domain, escreva em ''shared/cross-refs/'' e coloque um link de
-        1 linha no microverso. Nunca duplique.
+        3. Atualiza index.md e log.md do microverso portal-vendas
 
-        - Toda página wiki criada ou modificada deve possuir o cabeçalho YAML (frontmatter)
-        contendo: title, created, updated, nature e type.
-
-        - Atualize sempre o ''index.md'' e o ''log.md'' correspondente ao escopo de
-        gravação.'
-      test_prompt: 'Verifique se o Acervo Manager opera no microverso ''estudio-criativo'':
-        1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md.
-        2. Proponha a criação de um novo formato de publicação (ex: carrossel para
-        redes sociais) para promover um curso do microverso ''ensino'', respeitando
-        a regra de separação contra contaminação entre microversos.'
-      acceptance_criteria: O agente deve propor a criação do formato no microverso
-        estudio-criativo (como método criativo) e fazer referência ao curso do microverso
-        ensino, sem misturar os contextos de forma contaminada, respeitando o mixed-task-model.
-      remediation_tip: Violação do Mixed Task Model ou do Filtro de Domínio. As regras
-        do formato/método devem residir no estudio-criativo e as do curso no ensino.
+        4. Se o microverso ''portal-vendas'' não existe, pergunta antes de criar'
+      remediation_tip: 'FALHA: Escrita no escopo errado ou sem frontmatter. O Filtro de Domínio exige que informação de um
+        domínio específico vá para ''micro/{slug}/''. Decisões vão em ''decisions/'', com frontmatter YAML obrigatório. Se
+        gravou em global/ ou sem frontmatter, mova para o microverso correto e adicione o cabeçalho YAML.'
 ---
 # Acervo Manager
 

@@ -1,7 +1,7 @@
 ---
 name: excrtx-produce-artifacts
-description: Create, organize, export, and publish final Exocórtex artifacts in the
-  user's workspace, maintaining reproducibility in the Acervo.
+description: Create, organize, export, and publish final Exocórtex artifacts in the user's workspace, maintaining reproducibility
+  in the Acervo.
 version: 1.0.1
 category: excrtx
 platforms:
@@ -27,14 +27,20 @@ metadata:
     - excrtx-quality-antislop
     calibration:
     - feature_id: EX-22
-      calibration_prompt: Você deve garantir que as operações e regras da skill Artifacts
-        Manager (excrtx-produce-artifacts) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o artifacts manager consegue listar artefatos existentes.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Artifacts Manager.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Artifacts
-        Manager em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você cria, organiza e publica artefatos finais. Mantém reprodutibilidade em $ACERVO/_artifacts/items/
+        com views indexadas por microverso, tarefa, status e tipo. Separa artefatos em andamento de prontos para publicação.
+      test_prompt: Acabei de finalizar um relatório de auditoria para o cliente 'Construtora Alfa'. Organize isso como artefato
+        pronto para publicação.
+      acceptance_criteria: '1. O agente persiste em $ACERVO/_artifacts/items/ com manifest YAML
+
+        2. O manifest contém: title, microverso, type=report, status=ready, created
+
+        3. Views indexadas (by_microverso, by_type, by_status) são mencionadas ou atualizadas
+
+        4. Se microverso ''construtora-alfa'' não existe, pergunta antes de criar'
+      remediation_tip: 'FALHA: Artefato não persistido com manifest. A skill exige que todo artefato tenha manifest YAML em
+        _artifacts/items/<id>/manifest.yaml com campos obrigatórios (title, microverso, type, status, created). Não salve
+        arquivos soltos — o manifest é a fonte de verdade. Atualize as views em by_type/ e by_status/.'
 ---
 # Personal Artifact Workspace
 

@@ -1,7 +1,7 @@
 ---
 name: excrtx-memory-mvinstall
-description: Install microverso structure from _fixture templates into the acervo.
-  Scaffold microverso directories and base files.
+description: Install microverso structure from _fixture templates into the acervo. Scaffold microverso directories and base
+  files.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -17,14 +17,21 @@ metadata:
     - dependencies
     calibration:
     - feature_id: EX-15
-      calibration_prompt: Você deve garantir que as operações e regras da skill Microverso
-        Package Installer (excrtx-memory-mvinstall) estão totalmente ativas no seu
-        comportamento e integridade.
-      test_prompt: Verifique se a skill define schema excrtx/v1 para microverso.yaml.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Microverso Package Installer.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Microverso
-        Package Installer em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você instala microversos empacotados com manifesto microverso.yaml (schema excrtx/v1). Verifica
+        dependências de skills, pacotes Python/Node e MCPs. Executa hooks de pós-instalação e registra no manifest global.
+        Merge seguro com rsync --ignore-existing.
+      test_prompt: Instale o microverso empacotado que está em '/tmp/mv-consultoria-juridica/'. Verifique se tem tudo necessário
+        antes de instalar.
+      acceptance_criteria: '1. O agente verifica a existência e validade do microverso.yaml (schema excrtx/v1)
+
+        2. Lista e verifica dependências (skills, pacotes, MCPs) antes de instalar
+
+        3. Reporta dependências faltantes com ações para resolvê-las
+
+        4. Usa merge seguro (rsync --ignore-existing) para não sobrescrever conteúdo existente'
+      remediation_tip: 'FALHA: Instalação sem verificação de dependências. O manifesto microverso.yaml declara dependências
+        que devem ser verificadas ANTES da cópia. Execute: ''cat /path/microverso.yaml'' para ler dependências, depois verifique
+        cada uma. Se faltar alguma, reporte ao executivo antes de prosseguir.'
 ---
 # Microverso Package Installer
 

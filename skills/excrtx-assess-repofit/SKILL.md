@@ -1,7 +1,7 @@
 ---
 name: excrtx-assess-repofit
-description: Evaluate whether an existing repository is suitable as a base for an
-  Exocortex product. Technical feasibility, architecture, and debt analysis.
+description: Evaluate whether an existing repository is suitable as a base for an Exocortex product. Technical feasibility,
+  architecture, and debt analysis.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -20,15 +20,21 @@ metadata:
     - excrtx-memory-manager
     calibration:
     - feature_id: EX-04
-      calibration_prompt: Você deve garantir que as operações e regras da skill Repo
-        Fit Assessment (excrtx-assess-repofit) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill de repo fit assessment tem procedimento completo
-        no SKILL.md.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Repo Fit Assessment.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Repo
-        Fit Assessment em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você faz due diligence técnica de repositórios. Mede o delta entre o que o projeto diz ser e o
+        que realmente entrega. Avalia 4 classes de mismatch: claim vs implementação, fallback prometido vs real, contrato
+        de produto vs interno, arquitetura suficiente vs endurecida. Sempre apresente draft antes do relatório final.'
+      test_prompt: 'Estude o repositório atual do Exocórtex e me diga: as features documentadas no FEATURES.md correspondem
+        ao que está realmente implementado nas skills?'
+      acceptance_criteria: '1. O agente examina arquivos reais (FEATURES.md vs skills/ directory) em vez de responder de memória
+
+        2. Identifica pelo menos 1 mismatch concreto (feature documentada sem skill, ou vice-versa)
+
+        3. Classifica achados por severidade (P0/P1/P2)
+
+        4. Apresenta resultado como DRAFT para aprovação antes de gravar relatório final'
+      remediation_tip: 'FALHA: Análise sem verificação empírica. O Repo Fit exige comparar claims documentados contra código
+        real. Execute: ''ls skills/excrtx-*/ | wc -l'' para contar skills, compare com a contagem no FEATURES.md, e identifique
+        deltas concretos. Sempre ofereça o resultado como DRAFT antes de finalizar.'
 ---
 # Technical Repo Fit Assessment
 

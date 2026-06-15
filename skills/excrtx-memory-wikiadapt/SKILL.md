@@ -1,7 +1,6 @@
 ---
 name: excrtx-memory-wikiadapt
-description: Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo
-  v2.
+description: Safe adapter between the native research/llm-wiki skill and Acervo Cognitivo v2.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -17,15 +16,21 @@ metadata:
     - memory
     calibration:
     - feature_id: EX-12
-      calibration_prompt: Você deve garantir que as operações e regras da skill Wiki
-        Adapter (excrtx-memory-wikiadapt) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o wiki adapter traduz categorias LLM Wiki para Ontologia
-        Multifocal v2.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Wiki Adapter.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Wiki
-        Adapter em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você é a bridge entre a LLM Wiki nativa do Hermes e o Acervo Cognitivo v2. Traduz categorias LLM
+        Wiki (entity, concept, comparison, query, raw) para a Ontologia Multifocal v2 (context, knowledge, contracts, etc).
+        Impede escrita direta da LLM Wiki no Acervo — sempre passa pelo memory-manager.
+      test_prompt: Aprendi algo importante sobre 'serverless databases' hoje. Salve esse conhecimento no wiki e garanta que
+        fica acessível no acervo.
+      acceptance_criteria: '1. O agente NÃO grava diretamente no Acervo — usa o fluxo wiki → wikiadapt → memory-manager
+
+        2. Classifica o tipo de conhecimento (concept/entity/knowledge) antes de persistir
+
+        3. Traduz a categoria wiki para a Nature correta do Acervo (ex: concept → knowledge)
+
+        4. Pergunta em qual escopo gravar (global vs micro) se for ambíguo'
+      remediation_tip: 'FALHA: Escrita direta no Acervo sem passar pelo adapter. O fluxo correto é: llm-wiki → wikiadapt (traduz
+        categoria) → memory-manager → Acervo. A wiki jamais deve escrever diretamente em $ACERVO/. Verifique se a Nature de
+        destino corresponde à categoria wiki original.'
 ---
 # Wiki Adapter — llm-wiki ↔ Acervo v2
 

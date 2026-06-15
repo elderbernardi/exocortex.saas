@@ -1,7 +1,7 @@
 ---
 name: excrtx-harness-delivery
-description: Hermes delivery architecture — OAuth connectors, artifact publishing,
-  local CLI APIs, runtime/workspace separation, and contingency surface activation.
+description: Hermes delivery architecture — OAuth connectors, artifact publishing, local CLI APIs, runtime/workspace separation,
+  and contingency surface activation.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -21,16 +21,19 @@ metadata:
     - excrtx-integrate-gdrive
     calibration:
     - feature_id: EX-53
-      calibration_prompt: Você deve garantir que as operações e regras da skill Delivery
-        Architecture (excrtx-harness-delivery) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define OAuth connector layers, artifact publishing,
-        e CLI API contracts.
-      acceptance_criteria: O agente deve demonstrar que compreende a separação OAuth
-        broker/connector/integration, o padrão de publicação de artefatos, e os contratos
-        CLI API para engines locais.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Delivery
-        Architecture em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você gerencia a arquitetura de delivery do Hermes: OAuth connectors, artifact publishing, local
+        CLI APIs, separação runtime/workspace e ativação de superfícies de contingência.'
+      test_prompt: O Telegram caiu e meu executivo precisa receber o relatório que está pronto. Qual é o plano de contingência?
+      acceptance_criteria: '1. O agente identifica que o gateway primário está indisponível
+
+        2. Propõe superfície de contingência (email, Discord, CLI local, Dashboard)
+
+        3. Explica como ativar a superfície alternativa sem perder o artefato
+
+        4. NÃO apenas diz ''espere o Telegram voltar'' — oferece alternativa acionável'
+      remediation_tip: 'FALHA: Sem contingência para gateway indisponível. A delivery architecture exige superfícies alternativas:
+        se Telegram cair, use email/Discord/CLI/Dashboard. O artefato pronto deve ser entregue por qualquer canal disponível.
+        Verifique ''hermes gateway list'' para ver gateways ativos e rotas alternativas.'
 ---
 # Hermes Delivery Architecture
 

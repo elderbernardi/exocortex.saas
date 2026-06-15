@@ -205,13 +205,19 @@ def call_llm_api(prompt, api_url, api_key, model):
 
 
 def call_llm_judge(test_prompt, agent_response, criteria):
-    """LLM-as-a-judge for validating calibration results."""
+    """LLM-as-a-judge for validating calibration results.
+
+    Returns (verdict, category, reasoning) where:
+      - verdict: 'PASS' | 'FAIL'
+      - category: 'BEHAVIORAL' | 'STRUCTURAL' | None (only on FAIL)
+      - reasoning: str
+    """
     openrouter_key = get_api_key("OPENROUTER_API_KEY")
     deepseek_key = get_api_key("DEEPSEEK_API_KEY")
-    
+
     if not openrouter_key and not deepseek_key:
         return None
-        
+
     judge_prompt = f"""Evaluate if the following Agent Response satisfies the Acceptance Criteria for the given Test Prompt.
 
 Test Prompt:
@@ -225,7 +231,9 @@ Acceptance Criteria:
 
 Provide a JSON response with the following keys:
 - "verdict": "PASS" or "FAIL"
-- "reasoning": "A concise explanation of why the response did or did not meet the criteria, highlighting any gaps."
+- "category": If FAIL, classify as "BEHAVIORAL" (agent understood the task but responded incorrectly — wrong tone, missing steps, fabricated data) or "STRUCTURAL" (agent did not activate the correct skill or completely missed the intent). If PASS, set to null.
+- "reasoning": "A concise explanation of why the response did or did not meet the criteria, highlighting specific gaps."
+- "criteria_met": A list of criterion numbers that were satisfied (e.g. [1, 3] if criteria 1 and 3 passed but 2 and 4 failed).
 """
 
     response = None
@@ -245,7 +253,6 @@ Provide a JSON response with the following keys:
             clean = response.strip()
             clean = re.sub(r"^```(?:json)?\s*", "", clean)
             clean = re.sub(r"\s*```\s*$", "", clean)
-            # Handle brace-depth matching for nested JSON
             start = clean.find("{")
             if start != -1:
                 depth = 0
@@ -260,26 +267,40 @@ Provide a JSON response with the following keys:
                             break
                 clean = clean[start:end]
             parsed = json.loads(clean)
-            return parsed.get("verdict"), parsed.get("reasoning")
+            return (
+                parsed.get("verdict"),
+                parsed.get("category"),
+                parsed.get("reasoning", ""),
+            )
         except Exception:
             pass
-            
+
     return None
 
 
+# --- Failure Category Constants ---
+CAT_BEHAVIORAL = "BEHAVIORAL"
+CAT_STRUCTURAL = "STRUCTURAL"
+CAT_INFRA = "INFRA"
+MAX_ATTEMPTS = 3
+
+
 def run_calibration_flow():
-    parser = argparse.ArgumentParser(description="Smart Hermes Cognitive Calibration Suite")
+    parser = argparse.ArgumentParser(description="Smart Hermes Cognitive Calibration Suite v2")
     parser.add_argument("--model", type=str, default=None, help="Override Hermes LLM model")
     parser.add_argument("--all", action="store_true", help="Run all features without asking")
     parser.add_argument("--dry-run", action="store_true", help="Load and validate cases without running Hermes")
     parser.add_argument("--report", type=str, default=None, help="Save JSON results to file")
+    parser.add_argument("--max-attempts", type=int, default=3, help="Max autocorrection attempts per feature (default: 3)")
     args = parser.parse_args()
 
+    max_attempts = args.max_attempts
+
     # --- Banner ---
-    print(f"{CYAN}╔══════════════════════════════════════════════════════════╗{NC}")
-    print(f"{CYAN}║     🧠 EXOCÓRTEX.IA — SMART CALIBRAÇÃO DO HERMES         ║{NC}")
-    print(f"{CYAN}║            Prompt-Driven Development (PDD)               ║{NC}")
-    print(f"{CYAN}╚══════════════════════════════════════════════════════════╝{NC}\n")
+    print(f"{CYAN}╔══════════════════════════════════════════════════════════════╗{NC}")
+    print(f"{CYAN}║    🧠 EXOCÓRTEX.IA — SMART CALIBRAÇÃO DO HERMES  v2.0      ║{NC}")
+    print(f"{CYAN}║         Prompt-Driven Development (PDD) + AutoCorreção     ║{NC}")
+    print(f"{CYAN}╚══════════════════════════════════════════════════════════════╝{NC}\n")
 
     hermes_bin = detect_hermes_bin()
     if not hermes_bin and not args.dry_run:
@@ -291,7 +312,7 @@ def run_calibration_flow():
     else:
         print(f"{GREEN}✓{NC} Hermes CLI:           {BOLD}{hermes_bin}{NC}")
     print(f"{GREEN}✓{NC} Acervo do Exocórtex: {BOLD}{ACERVO}{NC}")
-    
+
     # Ingest Personalization Profile
     profile = parse_personalization_profile()
     has_profile = any(profile.values())
@@ -299,10 +320,11 @@ def run_calibration_flow():
         print(f"{GREEN}✓{NC} Personalized Profile loaded from acervo/macro/SOUL.md")
     else:
         print(f"{YELLOW}⚠ No personalization profile found in acervo/macro/. Using defaults.{NC}")
-        
+
     # Load Cases
     cases = load_calibration_cases()
-    print(f"{GREEN}✓{NC} Loaded {BOLD}{len(cases)}{NC} calibration cases from skills.\n")
+    print(f"{GREEN}✓{NC} Loaded {BOLD}{len(cases)}{NC} calibration cases from skills.")
+    print(f"{GREEN}✓{NC} Max autocorrection attempts: {BOLD}{max_attempts}{NC}\n")
 
     # Dry-run mode: just validate and exit
     if args.dry_run:
@@ -329,10 +351,11 @@ def run_calibration_flow():
             Path(args.report).write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
             print(f"  Report saved to {args.report}")
         return
-    
-    total_passed = 0
-    total_failed = 0
-    
+
+    # --- Live Calibration ---
+    results = []
+    stats = {"passed": 0, "behavioral_fail": 0, "structural_fail": 0, "infra_fail": 0, "skipped": 0}
+
     for idx, case in enumerate(cases):
         feat_id = case.get("feature_id", "EX-??")
         skill = case.get("skill_name", "unknown")
@@ -340,23 +363,29 @@ def run_calibration_flow():
         calib_prompt = case.get("calibration_prompt", "")
         criteria = case.get("acceptance_criteria", "")
         remediation = case.get("remediation_tip", "")
-        
-        print(f"{BLUE}========================================================================={NC}")
+
+        print(f"{BLUE}═══════════════════════════════════════════════════════════════════{NC}")
         print(f"  [{idx + 1}/{len(cases)}] Feature: {BOLD}{feat_id}{NC} — Skill: {BOLD}{skill}{NC}")
-        print(f"{BLUE}========================================================================={NC}\n")
-        
+        print(f"{BLUE}═══════════════════════════════════════════════════════════════════{NC}\n")
+
         if not args.all:
             opt = ""
             while opt not in ["c", "p", "q"]:
-                opt = input(f"Choose: [c] Calibrate/Test | [p] Skip | [q] Quit: ").strip().lower()
+                opt = input("Choose: [c] Calibrate/Test | [p] Skip | [q] Quit: ").strip().lower()
             if opt == "q":
                 print("\nCalibration cancelled.")
                 break
             elif opt == "p":
                 print(f"Skipping {feat_id}...\n")
+                stats["skipped"] += 1
+                results.append({
+                    "feature_id": feat_id, "skill_name": skill,
+                    "verdict": "SKIPPED", "attempts": 0,
+                    "failure_category": None, "judge_reasoning": None,
+                })
                 continue
-                
-        # 1. Ingest Personalization Context as the first prompt of the session
+
+        # --- Session Setup ---
         session_id = None
         if has_profile:
             context_prompt = f"""[PERSONALIZATION CONTEXT - EXOCÓRTEX]
@@ -369,96 +398,213 @@ Use as seguintes definições personalizadas do executivo para governar suas res
 """
             print("1. Injecting personalization context...")
             _, session_id = run_hermes_command(hermes_bin, context_prompt, model_override=args.model)
-            
-        # 2. Inject PDD Calibration Prompt
+
         print("2. Sending cognitive calibration prompt (PDD)...")
         _, session_id = run_hermes_command(hermes_bin, calib_prompt, session_id=session_id, model_override=args.model)
-        
+
         if not session_id:
-            print(f"{RED}✗ Error: Failed to establish chat session with Hermes.{NC}\n")
-            total_failed += 1
+            print(f"{RED}✗ INFRA: Failed to establish Hermes session.{NC}\n")
+            stats["infra_fail"] += 1
+            results.append({
+                "feature_id": feat_id, "skill_name": skill,
+                "verdict": "FAIL", "attempts": 0,
+                "failure_category": CAT_INFRA,
+                "judge_reasoning": "Failed to establish Hermes chat session",
+            })
             continue
-            
-        print(f"{GREEN}✓{NC} Session established: {YELLOW}{session_id}{NC}\n")
-        
-        # 3. Run Smoke Test Prompt
-        print("3. Executing Smoke Test...")
-        print(f"   Query: {MAGENTA}\"{test_prompt}\"{NC}")
-        
-        response, _ = run_hermes_command(hermes_bin, test_prompt, session_id=session_id, model_override=args.model)
-        
-        # Remove session_id tags from agent output display
-        clean_response = re.sub(r"^session_id:\s*[a-zA-Z0-9_-]+", "", response, flags=re.MULTILINE).strip()
-        
-        print(f"\n{YELLOW}┌─ AGENT RESPONSE ───────────────────────────────────────────────────────{NC}")
-        print(clean_response)
-        print(f"{YELLOW}└────────────────────────────────────────────────────────────────────────{NC}\n")
-        
-        print(f"{CYAN}Acceptance Criteria:{NC}\n   {criteria}\n")
-        
-        # 4. LLM Judge Assist (if keys exist)
-        judge_verdict, judge_reason = None, None
-        judge_assisted = False
-        try:
-            judge_res = call_llm_judge(test_prompt, clean_response, criteria)
-            if judge_res:
-                judge_verdict, judge_reason = judge_res
-                judge_assisted = True
-                print(f"{CYAN}🤖 LLM Judge Verdict:{NC} "
-                      f"{GREEN if judge_verdict == 'PASS' else RED}{BOLD}{judge_verdict}{NC}")
-                print(f"   Reasoning: {judge_reason}\n")
-        except Exception:
-            pass
-            
-        # 5. User Decision
-        ans = ""
-        prompt_msg = "Does the response meet the criteria? (s/n/r for retry with remediation): "
-        if judge_assisted:
-            prompt_msg = f"Confirm LLM Judge Verdict? [s] Accept PASS / [n] Reject/FAIL / [r] Retry with remediation: "
-            
-        while ans not in ["s", "n", "r"]:
-            ans = input(prompt_msg).strip().lower()
-            if judge_assisted and ans == "s" and judge_verdict == "FAIL":
-                # If LLM said fail and user says 's' to confirm, it is a Fail
-                ans = "n"
-            elif judge_assisted and ans == "s" and judge_verdict == "PASS":
-                ans = "s"
-                
-        if ans == "s":
-            print(f"\n{GREEN}✓ Calibrated successfully!{NC}\n")
-            total_passed += 1
-            continue
-            
-        if ans == "r":
-            # Remediation Loop
-            print(f"\nSending remediation tip: {BLUE}\"{remediation}\"{NC}")
-            _, _ = run_hermes_command(hermes_bin, remediation, session_id=session_id, model_override=args.model)
-            
-            print("Re-executing Smoke Test...")
+
+        print(f"{GREEN}✓{NC} Session: {YELLOW}{session_id}{NC}\n")
+
+        # --- Progressive Autocorrection Loop ---
+        final_verdict = "FAIL"
+        final_category = None
+        final_reasoning = ""
+        attempt = 0
+
+        for attempt in range(1, max_attempts + 1):
+            attempt_label = f"Attempt {attempt}/{max_attempts}"
+
+            if attempt == 1:
+                print(f"3. [{attempt_label}] Executing Smoke Test...")
+            elif attempt == 2:
+                # Attempt 2: Send remediation tip, then re-test
+                print(f"\n{YELLOW}── [{attempt_label}] Sending remediation tip ──{NC}")
+                print(f"   {BLUE}{remediation[:200]}{'...' if len(remediation) > 200 else ''}{NC}")
+                _, _ = run_hermes_command(hermes_bin, remediation, session_id=session_id, model_override=args.model)
+                print(f"   Re-executing Smoke Test...")
+            else:
+                # Attempt 3: Re-inject full calibration prompt + remediation + warning
+                print(f"\n{RED}── [{attempt_label}] Full re-calibration (last chance) ──{NC}")
+                escalation = (
+                    f"ATENÇÃO: Esta é a tentativa {attempt} de {max_attempts}. "
+                    f"Você FALHOU nas tentativas anteriores. "
+                    f"Releia as instruções cuidadosamente:\n\n"
+                    f"INSTRUÇÃO OPERACIONAL:\n{calib_prompt}\n\n"
+                    f"CORREÇÃO NECESSÁRIA:\n{remediation}"
+                )
+                _, _ = run_hermes_command(hermes_bin, escalation, session_id=session_id, model_override=args.model)
+                print(f"   Re-executing Smoke Test...")
+
+            print(f"   Query: {MAGENTA}\"{test_prompt}\"{NC}")
             response, _ = run_hermes_command(hermes_bin, test_prompt, session_id=session_id, model_override=args.model)
+
+            # Check for infra errors
+            if response.startswith("TIMEOUT:") or response.startswith("ERROR:"):
+                print(f"\n{RED}✗ INFRA: {response}{NC}")
+                final_category = CAT_INFRA
+                final_reasoning = response
+                break
+
             clean_response = re.sub(r"^session_id:\s*[a-zA-Z0-9_-]+", "", response, flags=re.MULTILINE).strip()
-            
-            print(f"\n{YELLOW}┌─ NEW AGENT RESPONSE ───────────────────────────────────────────────────{NC}")
-            print(clean_response)
-            print(f"{YELLOW}└────────────────────────────────────────────────────────────────────────{NC}\n")
-            
+
+            print(f"\n{YELLOW}┌─ AGENT RESPONSE [{attempt_label}] ─────────────────────────────────────{NC}")
+            # Truncate very long responses for display
+            display = clean_response if len(clean_response) < 2000 else clean_response[:2000] + f"\n{YELLOW}... (truncated, {len(clean_response)} chars total){NC}"
+            print(display)
+            print(f"{YELLOW}└──────────────────────────────────────────────────────────────────────{NC}\n")
+
+            print(f"{CYAN}Acceptance Criteria:{NC}")
+            for line in criteria.strip().split("\n"):
+                print(f"   {line}")
+            print()
+
+            # LLM Judge
+            judge_verdict, judge_category, judge_reason = None, None, ""
+            judge_assisted = False
+            try:
+                judge_res = call_llm_judge(test_prompt, clean_response, criteria)
+                if judge_res:
+                    judge_verdict, judge_category, judge_reason = judge_res
+                    judge_assisted = True
+                    verdict_color = GREEN if judge_verdict == "PASS" else RED
+                    cat_str = f" [{judge_category}]" if judge_category else ""
+                    print(f"{CYAN}🤖 LLM Judge:{NC} {verdict_color}{BOLD}{judge_verdict}{cat_str}{NC}")
+                    print(f"   {judge_reason}\n")
+            except Exception:
+                pass
+
+            # User Decision — improved menu
             ans = ""
-            while ans not in ["s", "n"]:
-                ans = input("Does the new response meet the criteria? (s/n): ").strip().lower()
-                
-        if ans == "s":
-            print(f"\n{GREEN}✓ Calibrated after remediation!{NC}\n")
-            total_passed += 1
-        else:
-            print(f"\n{RED}✗ Calibration failed. Marked for manual review.{NC}\n")
-            total_failed += 1
-            
+            if judge_assisted and judge_verdict == "PASS":
+                prompt_msg = (
+                    f"   {GREEN}[p]{NC} Pass (confirm judge)  "
+                    f"{RED}[b]{NC} Behavioral fail  "
+                    f"{RED}[s]{NC} Structural fail  "
+                    f"{YELLOW}[i]{NC} Infra issue  "
+                    f"{BLUE}[r]{NC} Retry: "
+                )
+            elif judge_assisted and judge_verdict == "FAIL":
+                prompt_msg = (
+                    f"   {GREEN}[p]{NC} Pass (override judge)  "
+                    f"{RED}[b]{NC} Behavioral fail (confirm)  "
+                    f"{RED}[s]{NC} Structural fail  "
+                    f"{YELLOW}[i]{NC} Infra issue  "
+                    f"{BLUE}[r]{NC} Retry: "
+                )
+            else:
+                prompt_msg = (
+                    f"   {GREEN}[p]{NC} Pass  "
+                    f"{RED}[b]{NC} Behavioral fail  "
+                    f"{RED}[s]{NC} Structural fail  "
+                    f"{YELLOW}[i]{NC} Infra issue  "
+                    f"{BLUE}[r]{NC} Retry: "
+                )
+
+            while ans not in ["p", "b", "s", "i", "r"]:
+                ans = input(prompt_msg).strip().lower()
+
+            if ans == "p":
+                final_verdict = "PASS"
+                final_category = None
+                final_reasoning = judge_reason if judge_assisted else "Approved by operator"
+                print(f"\n{GREEN}✓ Calibrated on attempt {attempt}!{NC}\n")
+                break
+
+            if ans == "i":
+                final_category = CAT_INFRA
+                final_reasoning = "Infra issue reported by operator"
+                print(f"\n{YELLOW}⚠ Marked as INFRA issue (not a behavioral failure).{NC}\n")
+                break
+
+            if ans in ("b", "s"):
+                final_category = CAT_BEHAVIORAL if ans == "b" else CAT_STRUCTURAL
+                if attempt < max_attempts:
+                    print(f"\n{YELLOW}→ Auto-retrying ({final_category} failure)...{NC}")
+                    continue
+                else:
+                    final_reasoning = judge_reason if judge_assisted else f"{final_category} failure after {max_attempts} attempts"
+                    print(f"\n{RED}✗ Exhausted {max_attempts} attempts. Marked for manual review.{NC}\n")
+                    break
+
+            if ans == "r":
+                if attempt < max_attempts:
+                    continue
+                else:
+                    final_category = judge_category or CAT_BEHAVIORAL
+                    final_reasoning = "Retry exhausted"
+                    print(f"\n{RED}✗ Exhausted {max_attempts} attempts.{NC}\n")
+                    break
+
+        # Record result
+        result = {
+            "feature_id": feat_id,
+            "skill_name": skill,
+            "verdict": final_verdict,
+            "attempts": attempt,
+            "failure_category": final_category,
+            "judge_reasoning": final_reasoning,
+            "remediation_applied": attempt > 1,
+        }
+        results.append(result)
+
+        if final_verdict == "PASS":
+            stats["passed"] += 1
+        elif final_category == CAT_BEHAVIORAL:
+            stats["behavioral_fail"] += 1
+        elif final_category == CAT_STRUCTURAL:
+            stats["structural_fail"] += 1
+        elif final_category == CAT_INFRA:
+            stats["infra_fail"] += 1
+
     # --- Summary ---
-    print(f"{CYAN}╔══════════════════════════════════════════════════════════╗{NC}")
-    print(f"{CYAN}║                    CALIBRATION SUMMARY                   ║{NC}")
-    print(f"{CYAN}╚══════════════════════════════════════════════════════════╝{NC}")
-    print(f"  Features calibrated and aligned: {GREEN}{total_passed}{NC}")
-    print(f"  Features failing/marked review:   {RED}{total_failed}{NC}\n")
+    total_run = stats["passed"] + stats["behavioral_fail"] + stats["structural_fail"] + stats["infra_fail"]
+    print(f"{CYAN}╔══════════════════════════════════════════════════════════════╗{NC}")
+    print(f"{CYAN}║              CALIBRATION SUMMARY  v2.0                      ║{NC}")
+    print(f"{CYAN}╠══════════════════════════════════════════════════════════════╣{NC}")
+    print(f"{CYAN}║{NC}  ✅ Passed:             {GREEN}{BOLD}{stats['passed']}{NC}")
+    print(f"{CYAN}║{NC}  🔴 Behavioral fails:   {RED}{stats['behavioral_fail']}{NC}")
+    print(f"{CYAN}║{NC}  🟠 Structural fails:   {RED}{stats['structural_fail']}{NC}")
+    print(f"{CYAN}║{NC}  ⚙️  Infra issues:       {YELLOW}{stats['infra_fail']}{NC}")
+    print(f"{CYAN}║{NC}  ⏭️  Skipped:            {stats['skipped']}")
+    print(f"{CYAN}║{NC}  ─────────────────────────────")
+    if total_run > 0:
+        pass_rate = (stats['passed'] / total_run) * 100
+        print(f"{CYAN}║{NC}  Pass rate:             {BOLD}{pass_rate:.0f}%{NC} ({stats['passed']}/{total_run})")
+    print(f"{CYAN}╚══════════════════════════════════════════════════════════════╝{NC}\n")
+
+    # Failed features summary
+    failed = [r for r in results if r["verdict"] == "FAIL"]
+    if failed:
+        print(f"{RED}Features requiring manual review:{NC}")
+        for r in failed:
+            cat_icon = {"BEHAVIORAL": "🔴", "STRUCTURAL": "🟠", "INFRA": "⚙️"}.get(r["failure_category"], "❓")
+            print(f"  {cat_icon} [{r['feature_id']}] {r['skill_name']} — {r['failure_category']} ({r['attempts']} attempts)")
+            if r.get("judge_reasoning"):
+                print(f"     └─ {r['judge_reasoning'][:150]}")
+        print()
+
+    # Save report
+    if args.report:
+        report = {
+            "timestamp": __import__("datetime").datetime.now().isoformat(),
+            "stats": stats,
+            "total_run": total_run,
+            "pass_rate": (stats['passed'] / total_run * 100) if total_run > 0 else 0,
+            "max_attempts": max_attempts,
+            "results": results,
+        }
+        Path(args.report).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"  📄 Report saved to {args.report}")
 
 
 if __name__ == "__main__":

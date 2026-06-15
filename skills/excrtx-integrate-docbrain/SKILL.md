@@ -1,8 +1,7 @@
 ---
 name: excrtx-integrate-docbrain
-description: Use when Hermes or Exocórtex needs to parse documents through DocBrain,
-  validate the local parser engine, or reproduce the DocBrain integration in a new
-  Exocortex install.
+description: Use when Hermes or Exocórtex needs to parse documents through DocBrain, validate the local parser engine, or
+  reproduce the DocBrain integration in a new Exocortex install.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -23,14 +22,19 @@ metadata:
     - excrtx-memory-manager
     calibration:
     - feature_id: EX-27
-      calibration_prompt: Você deve garantir que as operações e regras da skill DocBrain
-        Parser (excrtx-integrate-docbrain) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o DocBrain repo está clonado e buildado.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill DocBrain Parser.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill DocBrain
-        Parser em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você integra a engine DocBrain para ingestão de PDFs e bases legadas. Valida engine local, reproduz
+        instalação em novas instâncias. Repo: github.com/ProjetoBB/docBrainBB.git.'
+      test_prompt: Preciso processar um lote de 20 PDFs de contratos antigos para alimentar o acervo. O DocBrain está instalado?
+      acceptance_criteria: '1. O agente verifica se o DocBrain está instalado e funcional (testa o path e o runtime)
+
+        2. Se não está instalado, explica o procedimento de instalação
+
+        3. Descreve o fluxo de processamento: PDFs → DocBrain → intake → Acervo
+
+        4. Alerta sobre necessidade de OPENROUTER_API_KEY ou DOCBRAIN_LLM_API_KEY'
+      remediation_tip: 'FALHA: DocBrain assumido como disponível sem verificação. Verifique: ''test -d ${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}''
+        e ''node --version''. Se não instalado, oriente: ''git clone github.com/ProjetoBB/docBrainBB.git && npm install &&
+        npm run build''.'
 ---
 # DocBrain CLI API
 

@@ -1,0 +1,59 @@
+#!/bin/bash
+# =============================================================================
+# hermes-stub — Mock do Hermes CLI para testes isolados
+# =============================================================================
+# Simula os subcommands mínimos usados pelo setup.sh para que os testes
+# possam rodar sem o Hermes real instalado.
+# =============================================================================
+
+case "${1:-}" in
+  --version)
+    echo "hermes 2026.4.10 (stub)"
+    ;;
+  mcp)
+    case "${2:-}" in
+      list)
+        # Return empty list (no MCP servers configured)
+        echo ""
+        ;;
+      add)
+        echo "OK: mock add ${3:-unknown}"
+        ;;
+      remove)
+        echo "OK: mock remove ${3:-unknown}"
+        ;;
+      *)
+        echo "hermes mcp: unknown subcommand ${2:-}"
+        ;;
+    esac
+    ;;
+  gateway)
+    case "${2:-}" in
+      list)
+        echo ""
+        ;;
+      setup)
+        echo "OK: mock gateway setup ${3:-unknown}"
+        ;;
+      *)
+        echo "hermes gateway: unknown subcommand ${2:-}"
+        ;;
+    esac
+    ;;
+  skills)
+    case "${2:-}" in
+      install)
+        echo "OK: mock skills install"
+        ;;
+      *)
+        echo "hermes skills: unknown subcommand ${2:-}"
+        ;;
+    esac
+    ;;
+  cron)
+    echo "hermes cron: mock"
+    ;;
+  *)
+    echo "hermes-stub: unhandled command: $*"
+    ;;
+esac

@@ -1,7 +1,6 @@
 ---
 name: excrtx-memory-mvsetup
-description: Provision base microversos for Exocortex as part of the replicable Hermes/Exocortex
-  setup.
+description: Provision base microversos for Exocortex as part of the replicable Hermes/Exocortex setup.
 version: 1.0.0
 author: Exocórtex
 category: excrtx
@@ -23,15 +22,20 @@ metadata:
     - hermes-agent
     calibration:
     - feature_id: EX-14
-      calibration_prompt: Você deve garantir que as operações e regras da skill Setup
-        de Microverso Base (excrtx-memory-mvsetup) estão totalmente ativas no seu
-        comportamento e integridade.
-      test_prompt: Verifique se exocortex-ops tem microverso.yaml, SCHEMA.md, index.md,
-        log.md.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Setup de Microverso Base.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Setup
-        de Microverso Base em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você promove um microverso ao setup inicial replicável do Exocórtex. Microversos base são provisionados
+        automaticamente em novas instalações via setup.sh. Garante idempotência e validação isolada.
+      test_prompt: Quero que o microverso 'exocortex-ops' faça parte do setup padrão. Novas instalações devem tê-lo automaticamente.
+      acceptance_criteria: '1. O agente verifica que exocortex-ops existe e tem os artefatos mínimos (microverso.yaml, SCHEMA.md,
+        index.md, log.md)
+
+        2. Explica o mecanismo de promoção (inclusão no setup.sh para provisioning automático)
+
+        3. Garante idempotência — re-rodar o setup não duplica nem sobrescreve
+
+        4. Apresenta DRAFT da mudança antes de modificar setup.sh'
+      remediation_tip: 'FALHA: Promoção sem validação de pré-requisitos. Antes de promover um microverso ao setup base, verifique:
+        ''test -f acervo/micro/exocortex-ops/microverso.yaml'' e confirme que SCHEMA.md, index.md e log.md existem. A promoção
+        deve ser idempotente — use ''rsync --ignore-existing'' ou equivalente.'
 ---
 # Exocórtex Base Microverso Setup
 

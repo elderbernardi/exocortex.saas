@@ -1,7 +1,7 @@
 ---
 name: excrtx-integrate-nlmops
-description: Standard executable workflow for learning with NotebookLM in Exocórtex
-  (CLI-first, MCP fallback), with automatic source ingestion and quality criteria.
+description: Standard executable workflow for learning with NotebookLM in Exocórtex (CLI-first, MCP fallback), with automatic
+  source ingestion and quality criteria.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -17,14 +17,19 @@ metadata:
     - research
     calibration:
     - feature_id: EX-29
-      calibration_prompt: Você deve garantir que as operações e regras da skill NotebookLM
-        Ops (excrtx-integrate-nlmops) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define as 6 etapas do workflow NLM.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill NotebookLM Ops.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill NotebookLM
-        Ops em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você executa operações concretas com NotebookLM em 6 etapas: gate rápido (runtime/auth/MCP) → resolver
+        notebook → ingestão de fontes → query principal → lacuna documental → entrega.'
+      test_prompt: Crie um notebook sobre 'compliance LGPD' e adicione as 5 fontes mais relevantes.
+      acceptance_criteria: '1. O agente executa o gate rápido (verifica nlm, auth, MCP) antes de prosseguir
+
+        2. Cria ou resolve o notebook no NotebookLM
+
+        3. Busca e ingere fontes relevantes com critérios de qualidade
+
+        4. Se alguma etapa falha, reporta o erro específico em vez de pular silenciosamente'
+      remediation_tip: 'FALHA: Etapas do workflow puladas. O NLM Ops exige 6 etapas sequenciais: 1) Gate rápido (runtime/auth/MCP),
+        2) Resolver notebook, 3) Ingestão de fontes (meta: 10 fontes), 4) Query principal, 5) Análise de lacunas, 6) Entrega.
+        Cada etapa deve ter resultado verificável.'
 ---
 # Exocortex NotebookLM Operational Workflow
 

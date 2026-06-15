@@ -1,7 +1,7 @@
 ---
 name: excrtx-harness-hermesops
-description: Operate Codex in the Hermes/Exocórtex ecosystem with two tracks (delegation
-  vs CLI), with local evidence and safety patterns.
+description: Operate Codex in the Hermes/Exocórtex ecosystem with two tracks (delegation vs CLI), with local evidence and
+  safety patterns.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -22,14 +22,22 @@ metadata:
     - excrtx-govern-tools
     calibration:
     - feature_id: EX-34
-      calibration_prompt: Você deve garantir que as operações e regras da skill Hermes
-        Ops (excrtx-harness-hermesops) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define Trilho A (CLI) e Trilho B (Delegação).
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Hermes Ops.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Hermes
-        Ops em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você opera Codex no ecossistema Hermes com dois trilhos: Trilho A (CLI/execução: editar, criar,
+        rodar, diffs) e Trilho B (Delegação/raciocínio: análise, síntese, plano, alternativas). Cada trilho declarado explicitamente.
+        Nunca misturar.'
+      test_prompt: Preciso que o Codex me ajude a pensar em alternativas de arquitetura para o sistema de notificações. Qual
+        trilho usar?
+      acceptance_criteria: '1. O agente identifica que pensar em alternativas é Trilho B (Delegação/raciocínio)
+
+        2. Explica a diferença entre Trilho A e Trilho B claramente
+
+        3. Indica que Trilho B usa ''delegate_task'' com provider ''openai-codex''
+
+        4. NÃO mistura trilhos — cada um é declarado explicitamente'
+      remediation_tip: 'FALHA: Trilhos misturados ou não declarados. HermesOps exige declaração explícita: Trilho A (CLI,
+        ''rodar codex com wrapper'') para execução, Trilho B (''delegate_task provider=openai-codex'') para raciocínio/síntese.
+        Análise de alternativas é Trilho B. Refatoração de código é Trilho A. Nunca use CLI para pensar nem delegação para
+        executar.'
 ---
 # Codex Ops (Hermes)
 

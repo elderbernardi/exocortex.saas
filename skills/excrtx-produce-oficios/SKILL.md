@@ -1,7 +1,6 @@
 ---
 name: excrtx-produce-oficios
-description: Generate professional official documents in
-  DOCX, PDF, or Markdown format.
+description: Generate professional official documents in DOCX, PDF, or Markdown format.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -26,15 +25,20 @@ metadata:
     - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-24
-      calibration_prompt: Você deve garantir que as operações e regras da skill Gerador
-        de Ofícios (excrtx-produce-oficios) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: 'Verifique se gerar_oficio.py importa sem erros: python3 -c ''import
-        importlib; importlib.import_module("gerar_oficio")''.'
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Gerador de Ofícios.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Gerador
-        de Ofícios em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você gera ofícios profissionais em DOCX, PDF ou HTML. Formatação institucional com cabeçalhos, numeração
+        e estilo oficial. Validação de campos obrigatórios antes de gerar. Quality gate anti-slop com formalidade extrema.
+      test_prompt: 'Prepare um ofício para o Ministério da Educação solicitando prorrogação do prazo de entrega do relatório
+        anual. Remetente: Elder Bernardi, Diretor Executivo.'
+      acceptance_criteria: '1. O agente valida campos obrigatórios (destinatário, remetente, assunto, corpo)
+
+        2. O texto usa linguagem formal institucional (sem coloquialismos, sem padrões de IA)
+
+        3. O formato segue estrutura de ofício (cabeçalho, numeração, vocativo, fecho)
+
+        4. Apresenta como DRAFT antes de gerar o documento final'
+      remediation_tip: 'FALHA: Ofício sem formato institucional ou com linguagem informal. Um ofício exige: cabeçalho institucional,
+        número de referência, vocativo formal, corpo em linguagem oficial, fecho protocolar (''Atenciosamente'' ou ''Respeitosamente''),
+        e identificação do signatário com cargo. Use o template DOCX da skill.'
 ---
 # Gerador de Ofícios — Gabinete Institucional
 

@@ -1,23 +1,36 @@
 ---
 name: excrtx-brandkit-generator
-description: "Extrai identidade visual da logo corporativa e gera DESIGN.md com tokens WCAG-ready no cascade global→micro do Exocórtex."
+description: Extrai identidade visual da logo corporativa e gera DESIGN.md com tokens WCAG-ready no cascade global→micro do
+  Exocórtex.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, design, brand, tokens, brandkit, wcag]
-    related_skills: [excrtx-quality-designsys, excrtx-quality-taste, design-md]
+    tags:
+    - exocortex
+    - design
+    - brand
+    - tokens
+    - brandkit
+    - wcag
+    related_skills:
+    - excrtx-quality-designsys
+    - excrtx-quality-taste
+    - design-md
     calibration:
-      - feature_id: EX-18
-        calibration_prompt: >
-          Quando o executivo pedir para gerar identidade visual a partir de uma
-          logo, ative esta skill. Consulte o Pipeline desta skill e o script
-          scripts/brandkit-extract.py para o fluxo completo.
-        test_prompt: Gere identidade visual para o cliente Acme Inc a partir da logo /tmp/acme-logo.png
-        acceptance_criteria: >
-          DESIGN.md gerado com extends:global, WCAG AA válido, lint passa,
-          cores extraídas e classificadas corretamente.
+    - feature_id: EX-55
+      calibration_prompt: 'Quando o executivo pedir para gerar identidade visual a partir de uma logo, ative esta skill. Consulte
+        o Pipeline desta skill e o script scripts/brandkit-extract.py para o fluxo completo.
+
+        '
+      test_prompt: Gere identidade visual para o cliente Acme Inc a partir da logo /tmp/acme-logo.png
+      acceptance_criteria: DESIGN.md gerado com extends:global, WCAG AA válido, lint passa, cores extraídas e classificadas
+        corretamente.
+      remediation_tip: 'FALHA: Pipeline de extração incompleto. O Brandkit Generator exige 5 fases: 1) Extração de paleta
+        (K-Means n=5), 2) Classificação + derivação cromática, 3) Validação WCAG AA (contraste >= 4.5:1), 4) Geração DESIGN.md
+        com extends: global, 5) Lint + persistência em micro/{slug}/DESIGN.md. Use dry-run primeiro e apresente DRAFT ao executivo.'
 ---
 # excrtx-brandkit-generator
 

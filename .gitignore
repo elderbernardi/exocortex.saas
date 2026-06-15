@@ -1,4 +1,5 @@
 .secrets
+.env.local
 .dogfood/runs/
 skills/*/.runtime/
 *.pyc

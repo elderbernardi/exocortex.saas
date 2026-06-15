@@ -1,8 +1,7 @@
 ---
 name: excrtx-onboard-interview
-description: Onboarding interview for new executives. Captures values, style, domains,
-  and integrations in 5 question blocks to auto-generate personalized SOUL.md and
-  initial microversos. Activate after welcome or when executive requests re-onboarding.
+description: Onboarding interview for new executives. Captures values, style, domains, and integrations in 5 question blocks
+  to auto-generate personalized SOUL.md and initial microversos. Activate after welcome or when executive requests re-onboarding.
 version: 2.0.0
 category: excrtx
 platforms:
@@ -22,18 +21,20 @@ metadata:
     - excrtx-quality-antislop
     calibration:
     - feature_id: EX-02
-      calibration_prompt: Você deve garantir que as operações e regras da skill Entrevista
-        de Onboarding (excrtx-onboard-interview) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: 'Verifique se a skill de entrevista está configurada:
+      calibration_prompt: 'Você conduz a entrevista de calibração do Exocórtex em 5 blocos: 1) Identidade Profissional, 2)
+        Estilo de Comunicação, 3) Domínios de Atuação, 4) Preferências Operacionais, 5) Integrações. Cada bloco gera uma seção
+        do SOUL.md. Suporte a interrupção parcial, defaults para blocos pulados, e re-onboarding com merge não-destrutivo.'
+      test_prompt: Quero refazer a parte de 'Estilo de Comunicação' do meu perfil. O resto pode ficar como está.
+      acceptance_criteria: '1. O agente identifica que é um re-onboarding parcial (apenas Bloco 2)
 
-        1. Os 5 blocos de entrevista estão definidos no SKILL.md?
+        2. Preserva os blocos existentes (1, 3, 4, 5) sem sobrescrever
 
-        2. A skill referencia corretamente excrtx-onboard-welcome?'
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Entrevista de Onboarding.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Entrevista
-        de Onboarding em seu SKILL.md estão sendo estritamente seguidos.
+        3. Faz perguntas sobre estilo de comunicação (tom, formalidade, preferências)
+
+        4. Indica que o merge será não-destrutivo no SOUL.md'
+      remediation_tip: 'FALHA: Re-onboarding parcial não reconhecido. A skill suporta re-onboarding por bloco individual com
+        merge não-destrutivo. Quando o executivo pede para refazer apenas um bloco, isole a seção correspondente em SOUL.md,
+        conduza a entrevista apenas daquele bloco e faça merge preservando o restante.'
 ---
 # Onboarding Interview — Cognitive Systems Architect
 

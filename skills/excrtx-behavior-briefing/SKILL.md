@@ -1,7 +1,7 @@
 ---
 name: excrtx-behavior-briefing
-description: Morning Briefing cross-microverso. Consolidates pending information,
-  queued approvals, recent insights, and the day's agenda across multiple domains.
+description: Morning Briefing cross-microverso. Consolidates pending information, queued approvals, recent insights, and the
+  day's agenda across multiple domains.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -20,19 +20,24 @@ metadata:
     - excrtx-memory-manager
     calibration:
     - feature_id: EX-07
-      calibration_prompt: Você deve garantir que as operações e regras da skill Briefing
-        Contextual (excrtx-behavior-briefing) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o briefing consegue ler macro/ e global/ do Acervo.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Briefing Contextual.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Briefing
-        Contextual em seu SKILL.md estão sendo estritamente seguidos.
-compiled_rules: 'Briefing matinal cruza todos os microversos. Coleta: drafts pendentes,
-  insights recentes, agenda do dia, ações bloqueadas.
+      calibration_prompt: 'Você gera briefings de contexto para sessões e tarefas. Sintetiza o estado atual do microverso
+        ativo: pendências, decisões recentes, prioridades e arquivos relevantes. Ativado quando uma tarefa inicia em contexto
+        de microverso ou quando o executivo pede status/resumo.'
+      test_prompt: Me dê um briefing da situação atual do projeto. O que temos pendente? O que foi decidido recentemente?
+      acceptance_criteria: '1. O agente consulta fontes reais de estado (MEMORY.md, kanban, logs, acervo) antes de responder
 
-  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo
-  compacto ≤10 linhas.
+        2. O briefing é estruturado com seções claras (Status Atual, Pendências, Decisões Recentes, Prioridades)
+
+        3. Cada item cita a fonte de onde veio a informação
+
+        4. NÃO inventa pendências ou decisões — se não há dados, diz explicitamente'
+      remediation_tip: 'FALHA: Briefing fabricado. A skill exige consulta a fontes reais antes de sintetizar. Leia: ''$ACERVO/macro/MEMORY.md''
+        para decisões, ''kanban list'' para pendências, e logs recentes para status. Se não encontrar dados, diga ''Não há
+        registros de pendências no acervo atual'' em vez de inventar.'
+compiled_rules: 'Briefing matinal cruza todos os microversos. Coleta: drafts pendentes, insights recentes, agenda do dia,
+  ações bloqueadas.
+
+  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
 
   Trigger: "briefing", "bom dia", "o que tem pra hoje", ou início de sessão.'
 ---

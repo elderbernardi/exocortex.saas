@@ -1,0 +1,37 @@
+FROM ubuntu:24.04
+
+LABEL maintainer="Exocórtex.IA" \
+      description="Isolated test environment for setup.sh interactive flow"
+
+# Install core dependencies that install.sh normally handles
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    git \
+    curl \
+    rsync \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-yaml \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install hermes-stub as a mock CLI
+COPY tests/fixtures/hermes-stub /usr/local/bin/hermes
+RUN chmod +x /usr/local/bin/hermes
+
+# Create isolated test home
+ENV HOME=/tmp/test-home
+ENV HERMES_HOME=/tmp/test-hermes
+ENV EXOCORTEX_HOME=/tmp/test-exocortex
+
+RUN mkdir -p $HOME $HERMES_HOME/skills $HERMES_HOME/memories $HERMES_HOME/profiles \
+    $EXOCORTEX_HOME
+
+WORKDIR /exocortex
+
+# Copy entire project
+COPY . /exocortex
+
+# Default: run tests
+CMD ["bash", "tests/test_interactive_setup.sh"]

@@ -1,8 +1,7 @@
 ---
 name: excrtx-harness-surfaces
-description: Decide, explain, and package Hermes user-facing surfaces (gateways, web
-  UI, dashboard, TUI, embedded chat) for low-friction delivery, especially when the
-  operator and end user are different people.
+description: Decide, explain, and package Hermes user-facing surfaces (gateways, web UI, dashboard, TUI, embedded chat) for
+  low-friction delivery, especially when the operator and end user are different people.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -18,14 +17,21 @@ metadata:
     - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-35
-      calibration_prompt: Você deve garantir que as operações e regras da skill Surface
-        Architecture (excrtx-harness-surfaces) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define Gateway, UI/Web e TUI como superfícies.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Surface Architecture.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Surface
-        Architecture em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você decide e explica as superfícies de entrega do Hermes: Gateway (Telegram, Discord), UI/Web
+        (Dashboard), TUI (CLI/terminal). Recomendação padrão: Telegram para executivo, Dashboard para operador, CLI para administrador.'
+      test_prompt: Quero que meu assistente pessoal me responda pelo Telegram, mas meu admin de TI precisa monitorar pelo
+        Dashboard. Como configuro isso?
+      acceptance_criteria: '1. O agente reconhece que executivo ≠ operador e recomenda superfícies diferentes
+
+        2. Telegram para o executivo (interface primária conversacional)
+
+        3. Dashboard para o operador/admin (cockpit de monitoramento)
+
+        4. Explica como configurar cada superfície (gateway setup telegram, hermes dashboard)'
+      remediation_tip: 'FALHA: Superfícies não separadas por persona. A skill distingue: Gateway (canal de entrega ao executivo
+        — Telegram/Discord), Dashboard (cockpit do operador — UI web), CLI/TUI (administrador). Quando operador ≠ executivo,
+        use superfícies diferentes. Configure: ''hermes gateway setup telegram --token <TOKEN>'' e ''hermes dashboard'' para
+        o operador.'
 ---
 # Hermes Surface Architecture
 

@@ -1,8 +1,7 @@
 ---
 name: excrtx-memory-intake
-description: Receive, normalize, extract, triage, and promote files and media sent
-  to Exocórtex through multiple channels, without contaminating the semantic Acervo
-  with uncurated raw material.
+description: Receive, normalize, extract, triage, and promote files and media sent to Exocórtex through multiple channels,
+  without contaminating the semantic Acervo with uncurated raw material.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -28,15 +27,19 @@ metadata:
     - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-17
-      calibration_prompt: Você deve garantir que as operações e regras da skill Intake
-        Multicanal (excrtx-memory-intake) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o pipeline _inbox tem os 4 estágios e o IntakeEnvelope
-        está documentado.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Intake Multicanal.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Intake
-        Multicanal em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você gerencia o pipeline de ingestão multicanal. Normaliza, extrai, tria e promove material para
+        o Acervo sem contaminar com bruto não curado. Cada item gera IntakeEnvelope com manifest, routing e log em $ACERVO/_inbox/.
+      test_prompt: Recebi um PDF de contrato do 'Cliente Alfa' por email. Processe e arquive no acervo correto.
+      acceptance_criteria: '1. O agente inicia o fluxo de intake: recepção → _inbox/incoming → processamento
+
+        2. Identifica o tipo de conteúdo (PDF de contrato) e sugere Nature correta (contracts)
+
+        3. Aplica o Filtro de Domínio para rotear ao microverso correto (cliente-alfa)
+
+        4. NÃO copia o PDF bruto diretamente para o Acervo semântico — passa pelo pipeline'
+      remediation_tip: 'FALHA: Material bruto copiado diretamente para o Acervo. O pipeline exige: 1) Receber em _inbox/incoming,
+        2) Processar (extrair texto, classificar), 3) Gerar IntakeEnvelope com manifest, 4) Promover para Acervo semântico.
+        Nunca copie um PDF bruto direto para micro/{slug}/contracts/.'
 ---
 # Personal Intake Workspace
 

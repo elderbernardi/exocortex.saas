@@ -1,7 +1,7 @@
 ---
 name: excrtx-memory-opsmemory
-description: Govern, deploy, and audit operational memory providers for the agent
-  in Exocórtex/Hermes without replacing the Acervo Cognitivo.
+description: Govern, deploy, and audit operational memory providers for the agent in Exocórtex/Hermes without replacing the
+  Acervo Cognitivo.
 version: 1.1.0
 category: excrtx
 platforms:
@@ -23,14 +23,20 @@ metadata:
     - hermes-agent
     calibration:
     - feature_id: EX-16
-      calibration_prompt: Você deve garantir que as operações e regras da skill Memória
-        Operacional (excrtx-memory-opsmemory) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define precedência de providers de memória.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Memória Operacional.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Memória
-        Operacional em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você governa providers de memória operacional (Hindsight, Holographic, Honcho, Mem0). Precedência:
+        SOUL > contratos > skills > built-in memory > Acervo > session search > provider. Avalia suitability de providers
+        sem substituir o Acervo Cognitivo. Apresenta DRAFT do plano de deploy antes de implantar.'
+      test_prompt: Quero usar o Mem0 como provider de memória. Isso vai substituir o Acervo? Como funciona a integração?
+      acceptance_criteria: '1. O agente explica a hierarquia de precedência (SOUL > Acervo > providers)
+
+        2. Esclarece que Mem0 NÃO substitui o Acervo Cognitivo — é complementar
+
+        3. Avalia suitability do provider para o caso de uso do executivo
+
+        4. Se recomendar deploy, apresenta DRAFT do plano antes de implantar'
+      remediation_tip: 'FALHA: Provider tratado como substituto do Acervo. A precedência é fixa: SOUL > contratos > skills
+        > built-in > Acervo > session search > provider. Nenhum provider externo substitui o Acervo Cognitivo. Explique claramente
+        que o provider é a camada MAIS BAIXA de prioridade e apresente DRAFT antes de deploy.'
 ---
 # Exocórtex Operational Memory
 

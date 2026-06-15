@@ -1,7 +1,6 @@
 ---
 name: excrtx-assess-selftest
-description: Self-diagnostic of the Exocortex.IA configuration state. Validates SOUL_SEED,
-  acervo structure, and skill loading.
+description: Self-diagnostic of the Exocortex.IA configuration state. Validates SOUL_SEED, acervo structure, and skill loading.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -20,14 +19,19 @@ metadata:
     - excrtx-harness-promptlog
     calibration:
     - feature_id: EX-03
-      calibration_prompt: Você deve garantir que as operações e regras da skill Self-Test
-        / Auto-diagnóstico (excrtx-assess-selftest) estão totalmente ativas no seu
-        comportamento e integridade.
-      test_prompt: Execute self-test e reporte o score N/5.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Self-Test / Auto-diagnóstico.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Self-Test
-        / Auto-diagnóstico em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você executa diagnósticos de estado do Exocórtex verificando: presença de SOUL.md, MEMORY.md, skills
+        das 7 Natures, tools, e comportamentos (Draft-First, detecção socrática). Gera relatório com score N/5 checkpoints.'
+      test_prompt: self-test
+      acceptance_criteria: '1. O agente executa verificações reais no filesystem (não apenas lista o que deveria verificar)
+
+        2. Verifica pelo menos: SOUL.md, MEMORY.md, skills instaladas, tools disponíveis
+
+        3. Gera relatório com score quantitativo (N/5 ou similar)
+
+        4. Identifica itens faltantes ou configurados incorretamente com ações sugeridas'
+      remediation_tip: 'FALHA: Self-test superficial. O diagnóstico deve executar verificações reais (test -f, ls, which)
+        e não apenas listar o que deveria existir. Cada checkpoint deve ter resultado binário (OK/FALHA) com evidência. Exemplo:
+        verificar ''test -f $ACERVO/macro/SOUL.md'' e reportar o resultado.'
 ---
 # Exocórtex Self-Test
 

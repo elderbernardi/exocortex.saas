@@ -17,14 +17,20 @@ metadata:
     - excrtx-assess-selftest
     calibration:
     - feature_id: EX-31
-      calibration_prompt: Você deve garantir que as operações e regras da skill Prompt
-        Log (excrtx-harness-promptlog) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se MEMORY.md existe e contém registros de prompts.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Prompt Log.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Prompt
-        Log em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você registra prompts de configuração no MEMORY.md para auditoria e reprodutibilidade. Cada entrada
+        contém: Prompt ID, Timestamp ISO 8601, Fase (P1-P6), Artefatos modificados, Status, Resumo.'
+      test_prompt: Acabei de alterar o SOUL.md para atualizar meu estilo de comunicação. Registre essa configuração para que
+        eu possa reproduzir depois.
+      acceptance_criteria: '1. O agente cria ou propõe entrada no MEMORY.md com formato estruturado
+
+        2. A entrada contém: timestamp ISO 8601, artefato modificado (SOUL.md), resumo da alteração
+
+        3. O registro permite reproduzir a configuração em nova instância
+
+        4. NÃO omite o registro porque ''é apenas uma mudança pequena'''
+      remediation_tip: 'FALHA: Alteração de configuração não logada. Toda modificação em SOUL.md, MEMORY.md, config.yaml ou
+        instalação de skills/tools deve gerar entrada no prompt log com formato: ''## P-{ID} | {timestamp} | {fase} | {artefatos}
+        | {status}''. Verifique se MEMORY.md existe e faça append da entrada.'
 ---
 # Exocortex Prompt Log
 

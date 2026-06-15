@@ -1,8 +1,7 @@
 ---
 name: excrtx-integrate-oauth
-description: Configure and validate remote MCP servers in Hermes when the provider
-  uses HTTP transport plus OAuth, then document the integration cleanly for future
-  reuse.
+description: Configure and validate remote MCP servers in Hermes when the provider uses HTTP transport plus OAuth, then document
+  the integration cleanly for future reuse.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -10,8 +9,7 @@ platforms:
 triggers:
 - User wants to connect Hermes to a remote MCP server over HTTP.
 - Provider docs mention OAuth or PKCE instead of static headers.
-- Task involves adding, testing, or documenting a third-party cloud integration for
-  Hermes.
+- Task involves adding, testing, or documenting a third-party cloud integration for Hermes.
 - You need to translate generic provider docs into the exact Hermes CLI flow.
 metadata:
   hermes:
@@ -21,15 +19,19 @@ metadata:
     - oauth
     calibration:
     - feature_id: EX-26
-      calibration_prompt: Você deve garantir que as operações e regras da skill OAuth
-        MCP (excrtx-integrate-oauth) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill documenta validação em 3 camadas (mcp list,
-        mcp test, sessão).
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill OAuth MCP.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill OAuth
-        MCP em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você configura e valida MCP servers remotos com HTTP transport + OAuth. Separa guidance genérica
+        de providers da guidance específica do Hermes. Valida em 3 camadas: mcp list, mcp test, sessão real.'
+      test_prompt: Preciso integrar um novo MCP server chamado 'notion-mcp' que usa OAuth. Como faço a configuração?
+      acceptance_criteria: '1. O agente explica o fluxo de configuração passo a passo (add → auth → test → sessão)
+
+        2. Menciona validação em 3 camadas (mcp list, mcp test, sessão real)
+
+        3. Separa guidance do provider (Notion) da configuração Hermes
+
+        4. Sugere documentar a integração para reuso futuro'
+      remediation_tip: 'FALHA: Configuração incompleta ou sem validação em 3 camadas. O fluxo completo é: 1) ''hermes mcp
+        add notion-mcp --transport http --url <URL>'', 2) Autenticação OAuth via browser, 3) ''hermes mcp list'' (verificar
+        registro), 4) ''hermes mcp test notion-mcp'' (verificar conexão), 5) Sessão real com teste funcional.'
 ---
 # Hermes MCP OAuth Integrations
 

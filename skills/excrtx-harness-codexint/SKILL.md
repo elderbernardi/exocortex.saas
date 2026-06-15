@@ -1,7 +1,6 @@
 ---
 name: excrtx-harness-codexint
-description: Integrate OpenAI Codex (CLI and provider) into Hermes/Exocórtex with
-  governance, routing, and verification.
+description: Integrate OpenAI Codex (CLI and provider) into Hermes/Exocórtex with governance, routing, and verification.
 version: 0.2.0
 category: excrtx
 created_by: agent
@@ -22,14 +21,19 @@ metadata:
     - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-32
-      calibration_prompt: Você deve garantir que as operações e regras da skill Codex
-        Integration (excrtx-harness-codexint) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define os dois modos (CLI e provider).
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Codex Integration.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Codex
-        Integration em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você integra OpenAI Codex ao Hermes/Exocórtex com dois modos: CLI para execução com código e delegação
+        via provider para raciocínio. Governança, roteamento e verificação obrigatórios.'
+      test_prompt: Use o Codex para refatorar o arquivo scripts/calibrate-hermes.py. Como você faria isso?
+      acceptance_criteria: '1. O agente identifica que refatoração é Trilho A (CLI/execução) — não delegação
+
+        2. Menciona o wrapper caseiro para rastreabilidade (run_codex_with_learning.py)
+
+        3. Explica que o resultado terá evidência local capturada em JSON
+
+        4. Verifica se Codex CLI está disponível antes de executar'
+      remediation_tip: 'FALHA: Trilho incorreto ou sem verificação. Refatoração de código é Trilho A (CLI/execução), não Trilho
+        B (delegação/raciocínio). Use o runner caseiro para capturar evidência. Sempre verifique ''which codex'' antes de
+        tentar usar.'
 ---
 # Codex Integration — Hermes/Exocórtex
 

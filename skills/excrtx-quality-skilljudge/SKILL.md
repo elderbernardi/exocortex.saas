@@ -1,31 +1,36 @@
 ---
 name: excrtx-quality-skilljudge
-description: >-
-  LLM-as-Judge framework for evaluating and improving agent skill files.
-  Runs a 5-dimension rubric (structural compliance, instructional clarity,
-  behavioral alignment, harness fitness, token economy) against SKILL.md
-  files, produces categorical verdicts, and generates actionable remediation.
-  Replicable across any Hermes-compatible skill set.
+description: LLM-as-Judge framework for evaluating and improving agent skill files. Runs a 5-dimension rubric (structural
+  compliance, instructional clarity, behavioral alignment, harness fitness, token economy) against SKILL.md files, produces
+  categorical verdicts, and generates actionable remediation. Replicable across any Hermes-compatible skill set.
 version: 1.0.0
 category: excrtx
-platforms: [linux]
+platforms:
+- linux
 metadata:
   hermes:
-    tags: [exocortex, quality, judge, llm-as-judge, skill-evaluation, rubric]
-    related_skills: [excrtx-quality-gate, excrtx-quality-antislop]
+    tags:
+    - exocortex
+    - quality
+    - judge
+    - llm-as-judge
+    - skill-evaluation
+    - rubric
+    related_skills:
+    - excrtx-quality-gate
+    - excrtx-quality-antislop
     calibration:
     - feature_id: EX-54
-      calibration_prompt: Você deve garantir que as operações e regras da skill Skill
-        Judge (excrtx-quality-skilljudge) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Explique as 5 dimensões do rubric de avaliação de skills e como
-        o verdict geral é calculado a partir das labels dimensionais.
-      acceptance_criteria: O agente deve listar D1 a D5 com labels categóricas corretas
-        e demonstrar a tabela de verdicts (all best=PASS, 1-2 middle=IMPROVE, any worst=REWRITE).
-      remediation_tip: Certifique-se de que o agente conhece a rubric completa em
-        .dogfood/schemas/skill-judge-rubric.md e a lógica de compute_overall_verdict.
+      calibration_prompt: 'Você avalia skills usando rubric de 5 dimensões: D1 Structural (determinístico), D2 Clarity, D3
+        Alignment, D4 Fitness, D5 Economy. Verdicts: all best=PASS, 1-2 middle=IMPROVE, any worst=REWRITE.'
+      test_prompt: Explique as 5 dimensões do rubric de avaliação de skills e como o verdict geral é calculado a partir das
+        labels dimensionais.
+      acceptance_criteria: O agente deve listar D1 a D5 com labels categóricas corretas e demonstrar a tabela de verdicts
+        (all best=PASS, 1-2 middle=IMPROVE, any worst=REWRITE).
+      remediation_tip: 'FALHA: Rubric incompleta ou verdict incorreto. As 5 dimensões são: D1 Structural Compliance (gate
+        determinístico, sem LLM), D2 Instructional Clarity, D3 Behavioral Alignment, D4 Harness Fitness, D5 Token Economy.
+        O verdict geral segue: todos ''best''=PASS, 1-2 ''middle''=IMPROVE, qualquer ''worst''=REWRITE. Consulte .dogfood/schemas/skill-judge-rubric.md.'
 ---
-
 # Skill Judge — LLM-as-Judge Framework for Agent Skills
 
 > Evaluate skill quality systematically, not by gut feeling. Categorical verdicts over numeric scores. Chain-of-thought reasoning before every label.

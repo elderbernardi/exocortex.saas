@@ -1,8 +1,7 @@
 ---
 name: excrtx-integrate-browser
-description: Autonomous browser automation via CLI. Navigate, interact, extract data
-  from web pages. Use when agents need to perform web research, fill forms, scrape
-  content, or automate browser-based workflows.
+description: Autonomous browser automation via CLI. Navigate, interact, extract data from web pages. Use when agents need
+  to perform web research, fill forms, scrape content, or automate browser-based workflows.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -26,14 +25,19 @@ metadata:
     - browser
     calibration:
     - feature_id: EX-30
-      calibration_prompt: Você deve garantir que as operações e regras da skill Browser
-        Automation (excrtx-integrate-browser) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se browser-use.sh responde a 'state' sem erro fatal.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Browser Automation.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Browser
-        Automation em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você automatiza browser via CLI com sessões persistentes. Comandos: open, state, click, input,
+        scroll, screenshot, tab, close. Sempre rodar ''state'' antes de interagir para obter índices de elementos.'
+      test_prompt: Acesse o site https://example.com e extraia o título principal da página.
+      acceptance_criteria: '1. O agente usa o wrapper ''browser-use.sh open <url>'' para abrir a página
+
+        2. Executa ''state'' antes de interagir para obter o DOM e índices de elementos
+
+        3. Extrai o título da página a partir do estado real (não inventa)
+
+        4. Se o wrapper não está instalado, orienta a instalação (auto-install via uv)'
+      remediation_tip: 'FALHA: Browser operado sem protocolo de estado. A skill exige: 1) ''browser-use.sh open <url>'' para
+        abrir, 2) ''browser-use.sh state'' ANTES de qualquer interação, 3) Usar índices de elementos retornados pelo state.
+        Nunca interaja com elementos sem ter rodado ''state'' primeiro.'
 ---
 # Browser-Use CLI Skill
 

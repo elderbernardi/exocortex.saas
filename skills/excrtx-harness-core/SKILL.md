@@ -1,7 +1,7 @@
 ---
 name: excrtx-harness-core
-description: Homegrown harness to operate Codex CLI (exec) with traceability and lightweight
-  verification, without third-party plugins.
+description: Homegrown harness to operate Codex CLI (exec) with traceability and lightweight verification, without third-party
+  plugins.
 version: 0.3.0
 category: excrtx
 created_by: agent
@@ -21,14 +21,19 @@ metadata:
     - excrtx-govern-draftfirst
     calibration:
     - feature_id: EX-33
-      calibration_prompt: Você deve garantir que as operações e regras da skill Codex
-        Core Harness (excrtx-harness-core) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se os scripts runner e review existem.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Codex Core Harness.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Codex
-        Core Harness em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você opera o harness caseiro do Codex CLI com rastreabilidade. Scripts: run_codex_with_learning.py
+        (runner) e review_latest_run.py (review). Evidência local em JSON em disco.'
+      test_prompt: Execute o Codex para analisar o arquivo FEATURES.md e capture a evidência da execução. Onde ficam os logs?
+      acceptance_criteria: '1. O agente indica os scripts corretos: run_codex_with_learning.py e review_latest_run.py
+
+        2. Indica o diretório de evidência: ~/.hermes/codex-learning/{runs,events,reviews}
+
+        3. Explica que a evidência é persistida em JSON para auditoria
+
+        4. Se Codex não está instalado, reporta em vez de simular'
+      remediation_tip: 'FALHA: Harness não utilizado ou evidência não capturada. O Codex Core Harness exige uso do runner
+        Python: ''python3 ~/.hermes/scripts/codex_learning/run_codex_with_learning.py''. Evidência fica em ~/.hermes/codex-learning/runs/.
+        Nunca rode Codex direto sem o wrapper — a rastreabilidade é obrigatória.'
   intent: class-level
 ---
 # Codex Harness (homegrown)

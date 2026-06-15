@@ -1,7 +1,7 @@
 ---
 name: excrtx-quality-designsys
-description: Persist, resolve, and validate visual tokens in the Acervo Cognitivo.
-  Fork of design-md adapted to the macro→micro cascade of Exocórtex.
+description: Persist, resolve, and validate visual tokens in the Acervo Cognitivo. Fork of design-md adapted to the macro→micro
+  cascade of Exocórtex.
 version: 1.0.0
 author: Exocórtex
 category: excrtx
@@ -24,15 +24,21 @@ metadata:
     - brandkit
     calibration:
     - feature_id: EX-20
-      calibration_prompt: Você deve garantir que as operações e regras da skill Design
-        System (excrtx-quality-designsys) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define operações RESOLVE, CREATE, UPDATE,
-        LINT, EXPORT.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Design System.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Design
-        System em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você persiste, resolve e valida tokens visuais no Acervo Cognitivo. Formato Google DESIGN.md (YAML
+        frontmatter + markdown prosa). Cascade: global/DESIGN.md (base) → micro/{slug}/DESIGN.md (override por deltas). Operações:
+        RESOLVE (cascade tokens), WRITE (create/update), LINT (WCAG), EXPORT.'
+      test_prompt: Preciso de uma paleta de cores para o microverso 'estudio-criativo'. Deve herdar a base do design global
+        mas com cores mais vibrantes.
+      acceptance_criteria: '1. O agente resolve primeiro os tokens globais (global/DESIGN.md) como base
+
+        2. Propõe override no micro/estudio-criativo/DESIGN.md com ''extends: global''
+
+        3. Os tokens propostos passam validação WCAG AA (contraste ≥ 4.5:1)
+
+        4. O formato é DESIGN.md com YAML frontmatter correto'
+      remediation_tip: 'FALHA: Tokens criados sem cascade ou validação. O Design System exige: 1) Ler global/DESIGN.md como
+        base, 2) Criar override em micro/{slug}/DESIGN.md com ''extends: global'', 3) Validar contraste WCAG AA. Nunca crie
+        tokens do zero sem resolver o cascade global primeiro.'
 ---
 # Exocórtex Design System
 

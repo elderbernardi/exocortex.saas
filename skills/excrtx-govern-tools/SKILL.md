@@ -1,7 +1,7 @@
 ---
 name: excrtx-govern-tools
-description: Governance rules for tool usage by Exocórtex.IA. Defines when and how
-  tools should be used, mandatory logging, and classification by type.
+description: Governance rules for tool usage by Exocórtex.IA. Defines when and how tools should be used, mandatory logging,
+  and classification by type.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -19,15 +19,20 @@ metadata:
     - excrtx-behavior-vetor
     calibration:
     - feature_id: EX-09
-      calibration_prompt: Você deve garantir que as operações e regras da skill Tool
-        Governance (excrtx-govern-tools) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se a skill define classificação de tools (Internos, Pesquisa,
-        Comunicação, Criação).
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Tool Governance.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Tool
-        Governance em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você governa o uso de ferramentas pelo agente. Tools devem ser usadas quando fatos, arquivos, sistema,
+        datas, estado ou execução são necessários. Toda invocação de tool deve ter logging e classificação por tipo. Nunca
+        afirme fatos verificáveis sem consultar uma tool.
+      test_prompt: Quantas skills do Exocórtex existem atualmente instaladas? E qual é a data da última modificação do FEATURES.md?
+      acceptance_criteria: '1. O agente usa ferramentas reais (ls, stat, wc) para responder — não chuta de memória
+
+        2. A resposta contém dados verificáveis extraídos do sistema (contagem exata, data exata)
+
+        3. Se alguma tool falhar, o agente reporta a falha em vez de inventar o dado
+
+        4. A resposta não contém afirmações numéricas sem fonte'
+      remediation_tip: 'FALHA: Fatos afirmados sem tool. A governança de tools exige que dados verificáveis (datas, contagens,
+        estados) sejam obtidos via ferramenta. Para contar skills: ''ls -d skills/excrtx-*/ | wc -l''. Para data do FEATURES.md:
+        ''stat -c %y FEATURES.md''. Nunca diga ''existem N skills'' sem ter executado o comando.'
 compiled_rules: 'Least privilege: use the simplest tool that solves the task.
 
   Log destructive actions. Sandbox operations by active microverso.

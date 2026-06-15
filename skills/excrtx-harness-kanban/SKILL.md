@@ -1,7 +1,7 @@
 ---
 name: excrtx-harness-kanban
-description: Register pending items, architectural decisions, and resumption points
-  for Exocortex sessions. Structured session state tracking.
+description: Register pending items, architectural decisions, and resumption points for Exocortex sessions. Structured session
+  state tracking.
 version: 1.0.0
 category: excrtx
 platforms:
@@ -20,15 +20,20 @@ metadata:
     - excrtx-memory-manager
     calibration:
     - feature_id: EX-10
-      calibration_prompt: Você deve garantir que as operações e regras da skill Kanban
-        Backlog (excrtx-harness-kanban) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se o Hermes Kanban nativo está acessível via hermes kanban
-        list.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Kanban Backlog.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Kanban
-        Backlog em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: Você registra pendências, decisões e pontos de retomada no backlog do Hermes Kanban. Cada card tem
+        caminhos absolutos de retomada, decisões pendentes e saída esperada. Modo TODO leve quando card Kanban não é necessário.
+      test_prompt: Preciso lembrar de revisar o contrato com o fornecedor 'TechServ' na semana que vem. Registre isso como
+        pendência.
+      acceptance_criteria: '1. O agente cria um card/TODO com descrição clara da pendência
+
+        2. Inclui prazo ou referência temporal (''semana que vem'')
+
+        3. Pergunta ou sugere o microverso correto para vincular o card
+
+        4. Usa modo TODO leve (append a STATUS.md/TODO.md) OU cria card Kanban, conforme complexidade'
+      remediation_tip: 'FALHA: Pendência não registrada em sistema durável. O Kanban exige que toda pendência seja registrada
+        com: descrição, prazo, microverso vinculado e saída esperada. Use ''hermes kanban add'' para card formal ou append
+        a ''plans/TODO.md'' para modo leve. Nunca apenas ''anote mentalmente''.'
 ---
 # Exocortex Kanban Backlog
 

@@ -1,8 +1,7 @@
 ---
 name: excrtx-integrate-nlmroute
-description: Operational policy for learning with NotebookLM (CLI-first), automatic
-  source ingestion, and fallback via deep research/web search when documentary sources
-  are unavailable.
+description: Operational policy for learning with NotebookLM (CLI-first), automatic source ingestion, and fallback via deep
+  research/web search when documentary sources are unavailable.
 version: 1.1.0
 category: excrtx
 platforms:
@@ -21,16 +20,20 @@ metadata:
     - excrtx-memory-manager
     calibration:
     - feature_id: EX-28
-      calibration_prompt: Você deve garantir que as operações e regras da skill NotebookLM
-        Router (excrtx-integrate-nlmroute) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: Verifique se nlm CLI está funcional (versão >= 0.7.0), auth OK,
-        operação real funciona, e MCP server notebooklm NÃO gera falso positivo quando
-        auth falha.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill NotebookLM Router.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill NotebookLM
-        Router em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você define a política operacional para aprendizado com NotebookLM. Rota CLI-first (nlm) com fallback
+        MCP (notebooklm-mcp). Quando sem fontes: busca as 10 melhores por autoridade e atualidade.'
+      test_prompt: Quero aprender sobre 'regulação de IA na União Europeia'. Use o NotebookLM para sintetizar as melhores
+        fontes.
+      acceptance_criteria: '1. O agente tenta usar a rota CLI-first (nlm) antes do MCP
+
+        2. Se não há fontes fornecidas, busca as melhores por autoridade e atualidade
+
+        3. O critério de seleção de fontes é transparente (explica por que escolheu cada uma)
+
+        4. Se nlm não está instalado, oferece fallback ou orienta instalação'
+      remediation_tip: 'FALHA: Rota incorreta ou fontes não curadas. A política exige: 1) CLI-first: ''nlm'' (verificar com
+        ''which nlm''), 2) Se sem fontes: buscar 10 melhores por autoridade+atualidade+cobertura+diversidade, 3) Se lacuna
+        documental: deep research → web search → re-query. Versão mínima do nlm: 0.7.0.'
 ---
 # Exocortex NotebookLM Knowledge Router
 

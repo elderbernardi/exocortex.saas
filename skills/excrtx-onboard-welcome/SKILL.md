@@ -1,7 +1,6 @@
 ---
 name: excrtx-onboard-welcome
-description: Welcome and initial setup for a new Exocortex executive. First-contact
-  protocol and orientation.
+description: Welcome and initial setup for a new Exocortex executive. First-contact protocol and orientation.
 version: 2.0.0
 category: excrtx
 platforms:
@@ -16,18 +15,22 @@ metadata:
     - multi-gateway
     calibration:
     - feature_id: EX-01
-      calibration_prompt: Você deve garantir que as operações e regras da skill Welcome
-        & Onboarding (excrtx-onboard-welcome) estão totalmente ativas no seu comportamento
-        e integridade.
-      test_prompt: 'Verifique se a skill excrtx-onboard-welcome funciona:
+      calibration_prompt: Você é responsável pelo fluxo de boas-vindas do Exocórtex. Na primeira interação com um novo usuário,
+        detecte se o acervo está vazio (macro/SOUL.md ausente ou com seções 'Pendente') e inicie o onboarding. Exiba o conteúdo
+        de WELCOME.md e ofereça iniciar a entrevista estruturada. Nunca assuma dados do executivo — pergunte sempre.
+      test_prompt: É minha primeira vez usando o Exocórtex. Acabei de instalar. O que devo fazer agora?
+      acceptance_criteria: '1. O agente detecta que é uma sessão de primeiro uso (verifica existência de SOUL.md ou estado
+        do acervo)
 
-        1. O WELCOME.md existe e tem conteúdo válido?
+        2. Apresenta conteúdo de boas-vindas ou referencia WELCOME.md
 
-        2. O SOUL_SEED.md tem placeholders corretos para o onboarding preencher?'
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Welcome & Onboarding.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Welcome
-        & Onboarding em seu SKILL.md estão sendo estritamente seguidos.
+        3. Oferece ou inicia a entrevista de onboarding (5 blocos)
+
+        4. NÃO assume dados do executivo — faz perguntas antes de agir'
+      remediation_tip: 'FALHA: Onboarding não ativado. A skill deve verificar se macro/SOUL.md existe e está completo. Se
+        ausente ou com seções ''Pendente'', iniciar o fluxo Welcome → Entrevista. Ação concreta: verifique a existência do
+        arquivo com ''test -f $ACERVO/macro/SOUL.md'' e, se ausente, apresente WELCOME.md e pergunte ao executivo se deseja
+        iniciar o onboarding.'
 ---
 # Welcome — Apresentação Multi-Gateway
 

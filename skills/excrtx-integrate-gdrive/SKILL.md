@@ -1,7 +1,6 @@
 ---
 name: excrtx-integrate-gdrive
-description: Configure and operate Google Drive via direct API (no Composio), with
-  focus on search robustness and validation.
+description: Configure and operate Google Drive via direct API (no Composio), with focus on search robustness and validation.
 version: 1.1.0
 category: excrtx
 platforms:
@@ -19,16 +18,18 @@ metadata:
     - excrtx-produce-artifacts
     calibration:
     - feature_id: EX-25
-      calibration_prompt: Você deve garantir que as operações e regras da skill Google
-        Drive Integration (excrtx-integrate-gdrive) estão totalmente ativas no seu
-        comportamento e integridade.
-      test_prompt: Verifique se google_api.py compila, hardening está aplicado, e
-        OAuth token está válido (google_token.json). gcloud ADC é alternativo — a
-        API direta usa OAuth.
-      acceptance_criteria: O agente deve demonstrar de forma clara e factual que compreende
-        as regras e procedimentos da skill Google Drive Integration.
-      remediation_tip: Certifique-se de que a documentação e os limites da skill Google
-        Drive Integration em seu SKILL.md estão sendo estritamente seguidos.
+      calibration_prompt: 'Você opera Google Drive via API direta com hardening: filtro ''trashed = false'', paginação com
+        nextPageToken, campos expandidos (id, name, mimeType, modifiedTime, webViewLink), suporte a --raw-query.'
+      test_prompt: Busque no meu Drive todos os documentos que mencionam 'relatório trimestral' e me liste os 5 mais recentes.
+      acceptance_criteria: '1. O agente usa a API do Drive (não Composio) para buscar
+
+        2. A query inclui filtro ''trashed = false''
+
+        3. Resultados incluem campos expandidos (nome, mimeType, data de modificação, link)
+
+        4. Se houver mais de uma página de resultados, usa nextPageToken para paginar'
+      remediation_tip: 'FALHA: Busca no Drive sem hardening. As regras exigem: 1) Sempre filtrar ''trashed = false'', 2) Usar
+        paginação com nextPageToken para não perder resultados, 3) Expandir campos retornados. Use o driver em $HERMES_HOME/skills/productivity/google-workspace/scripts/google_api.py.'
 ---
 # Google Drive Integration
 
