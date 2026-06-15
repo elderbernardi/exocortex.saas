@@ -33,6 +33,14 @@ setup_hermes_webui() {
 
   info "Provisionando Hermes WebUI opcional"
   bash "$installer"
+
+  echo ""
+  warn "====================================================================="
+  warn "  IMPORTANTE: O cockpit/servidor da Web UI foi instalado com sucesso."
+  warn "  Ele NÃO inicia automaticamente. Para utilizá-lo, você deve rodar:"
+  warn "    cd ~/.hermes/hermes-webui && ./ctl.sh start"
+  warn "====================================================================="
+  echo ""
 }
 
 info "Hermes WebUI (cockpit opcional)..."
