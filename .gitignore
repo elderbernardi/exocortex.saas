@@ -20,3 +20,6 @@ acervo/micro/sales-ai/
 # Marketing / promotion HTML overviews
 _design/*.html
 
+# Debug/runtime artifacts
+nohup.out
+

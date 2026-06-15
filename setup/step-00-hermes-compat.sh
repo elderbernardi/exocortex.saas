@@ -22,7 +22,7 @@ fi
 # ─── Version bounds ─────────────────────────────────────────────────────────
 # Update these when testing against new Hermes releases.
 HERMES_MIN_VERSION="2026.4.8"
-HERMES_MAX_TESTED="2026.4.16"
+HERMES_MAX_TESTED="2026.6.5"
 
 # ─── Helpers ────────────────────────────────────────────────────────────────
 

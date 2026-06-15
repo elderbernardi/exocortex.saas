@@ -30,7 +30,7 @@ Além disso, o repositório local **não é um fork**: `origin` aponta direto pa
 - Remotes: `origin` → fork, `upstream` → `nesquena/hermes-webui`
 - Branch `exocortex/stable` com modificações atuais consolidadas como commits limpos
 - Arquivo `EXOCRTX_MODIFICATIONS.md` catalogando cada modificação (arquivo, propósito, versão base)
-- Comando `ctl.sh update` para fetch + rebase + test + restart (ou rollback)
+- Comando `ctl.sh update` — escopo v1 (#77): fetch + diff + confirmação (rebase/restart manuais). Automação completa (rebase + test + restart/rollback) fica para versão futura.
 - Todas as modificações permanecem no fork — sem PRs upstream (divergência arquitetural elevada)
 
 ### Fase 1 — Input/Output de Alta Alavancagem
@@ -159,10 +159,16 @@ pytest tests/ -x -q
 
 ### Automação: `ctl.sh update`
 
-Estender `ctl.sh` com subcomando `update`:
+Estender `ctl.sh` com subcomando `update`.
+
+**v1 (escopo da #77):**
 1. fetch upstream
 2. mostrar diff stat
 3. pedir confirmação
+
+Nesta primeira versão, rebase e restart permanecem manuais (executados pelo dev seguindo o workflow acima).
+
+**Versão futura (fora do escopo da #77):**
 4. rebase + test + restart (se passar) ou rollback (se falhar)
 
 ### Política de modificação
@@ -176,7 +182,7 @@ Todas as modificações permanecem no fork. A divergência arquitetural (workspa
 - [ ] Fork criado e remotes configurados
 - [ ] `exocortex/stable` rodando na porta 8787 com todas as modificações
 - [ ] `EXOCRTX_MODIFICATIONS.md` atualizado para cada modificação
-- [ ] `ctl.sh update` funcional (fetch + rebase + test + restart)
+- [ ] `ctl.sh update` funcional — v1: fetch + diff + confirmação (rebase/restart manuais; automação completa em versão futura)
 - [ ] Inbox com badge numérico e ação "Mover para microverso"
 - [ ] Download de arquivos e ZIP de artefatos funcional
 - [ ] Upload no inbox → auto-preenchimento do prompt

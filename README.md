@@ -56,9 +56,9 @@ The Exocortex is strictly forbidden from claiming that a system action (e.g., cl
 
 ---
 
-## 🧩 The 40 Custom Skills Catalog
+## 🧩 The 47 Custom Skills Catalog
 
-This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. They are organized into 7 functional categories:
+This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. They are organized into 8 functional categories:
 
 ```mermaid
 graph TD
@@ -137,7 +137,8 @@ graph TD
 - **`excrtx-quality-taste` (EX-19)**: Visual quality gate. Rotes layouts to specialized sub-skills (`gpt-taste`, `brutalist`, `brandkit`). Rejects headers > 3 lines and repeating grid templates.
 - **`excrtx-quality-designsys` (EX-20)**: Design token cascade resolver (Global `DESIGN.md` -> Microverso `DESIGN.md`).
 - **`excrtx-quality-gate` (EX-21)**: Unified quality gate controller that intercepts all outbound responses.
-- **`excrtx-quality-gate-enforced` (EX-52)**: Strict validation engine ensuring all generated artifacts pass quality thresholds.
+- **`excrtx-quality-skilljudge`**: Automated skill quality evaluation using multi-dimensional rubric and LLM judge.
+- **`excrtx-quality-gepa`**: GEPA (Genkit Eval Prompt Audit) loop for automated skill rewriting and quality gating.
 
 ### 5. Production & Artifacts
 
@@ -164,6 +165,12 @@ graph TD
 - **`excrtx-harness-imbroke` (EX-48)**: financial contingency model fallback (OpenRouter free model watchdog and recovery router).
 - **`excrtx-harness-tooldev` (EX-50)**: Standard API for writing and registering custom `/tool` extensions.
 - **`excrtx-hermes-extensions` (EX-51)**: Guidelines for writing custom commands and dispatch paths in `gateway/run.py`.
+- **`excrtx-harness-delivery`**: Delivery pipeline orchestration for artifact publication and distribution.
+- **`excrtx-harness-maintenance` (EX-56)**: Síndico persona with 4 maintenance routines (weekly audit, inbox triage, artifact quality, publication check).
+- **`excrtx-integrate-mcp`**: MCP server discovery, registration, and lifecycle management.
+- **`excrtx-brandkit-generator`**: Brand identity kit generation from Macroverso design tokens.
+- **`excrtx-github-issue-planning`**: GitHub issue planning and roadmap coordination.
+- **`assessment-question-authoring`**: Structured assessment question creation for calibration and evaluation.
 
 ---
 
@@ -176,6 +183,8 @@ graph TD
 - **Containers**: `docker` & `docker compose` (Required only if Hindsight local memory is enabled).
 
 ---
+
+> **🤖 AI Agents**: If you are an AI agent (Claude, Gemini, GPT, etc.) installing or diagnosing this system via terminal, use [INSTALL.md](INSTALL.md) instead. It is a structured runbook with pre-conditions, executable commands, and verification steps designed for machine consumption.
 
 ### Step-by-Step Installation
 
@@ -221,13 +230,13 @@ The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SH
 - **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
 - **`step-01`**: Provision Hindsight database container if `EXOCORTEX_ENABLE_HINDSIGHT=1` is provided.
 - **`step-02`**: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.
-- **`step-03` to `step-05`**: Copies and installs all 40 `excrtx` skills, bundles, and execution profiles (`default` and `manut`).
+- **`step-03` to `step-05`**: Copies and installs all 47 `excrtx` skills, bundles, and execution profiles (`default` and `manut`).
 - **`step-06` (Hardening)**:
   - Applies a search paging patch to `google_api.py`.
   - Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
   - Removes `composio` from the MCP registry in favor of direct API clients.
 - **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit (`nesquena/hermes-webui`, MIT), and links Context7 documentation MCP.
-- **`step-12` to `step-14`**: Performs final key verifications and validates that all 40 skills are correctly mapped in the runtime.
+- **`step-12` to `step-14`**: Performs final key verifications and validates that all 47 skills are correctly mapped in the runtime.
 - **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
 
 ---

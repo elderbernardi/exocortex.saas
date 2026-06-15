@@ -37,21 +37,27 @@ skills:
   - excrtx-behavior-vetor
   - excrtx-behavior-canvas
   - excrtx-behavior-briefing
+  - excrtx-behavior-accuracy
   - excrtx-govern-tools
   - excrtx-harness-kanban
 
-  # ── Workspace: artefatos e intake ────────────────────────────────────
+  # ── Workspace: artefatos, intake e planning ───────────────────────────
   - excrtx-produce-artifacts
   - excrtx-memory-intake
+  - excrtx-github-issue-planning
 
-  # ── Production: slides e ofícios ─────────────────────────────────────
+  # ── Production: slides, ofícios e assessment ──────────────────────────
   - excrtx-produce-slides
   - excrtx-produce-oficios
+  - excrtx-brandkit-generator
+  - assessment-question-authoring
 
   # ── Integration: codex, docbrain, notebooklm ────────────────────────
   - excrtx-harness-core
   - excrtx-harness-codexint
   - excrtx-harness-hermesops
+  - excrtx-harness-delivery
+  - excrtx-harness-maintenance
   - excrtx-integrate-docbrain
   - excrtx-integrate-nlmroute
   - excrtx-integrate-nlmops
@@ -62,6 +68,7 @@ skills:
   # ── Platform: drive, mcp, hermes surface ─────────────────────────────
   - excrtx-integrate-gdrive
   - excrtx-integrate-oauth
+  - excrtx-integrate-mcp
   - excrtx-harness-surfaces
 
   # ── External: requerem tooling no host ───────────────────────────────
@@ -69,3 +76,7 @@ skills:
 
   # ── Assessment: análise técnica ──────────────────────────────────────
   - excrtx-assess-repofit
+
+  # ── Quality Automation ───────────────────────────────────────────────
+  - excrtx-quality-gepa
+

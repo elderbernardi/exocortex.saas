@@ -26,6 +26,7 @@ EXPECTED_SKILLS=(
   "excrtx-assess-selftest" "excrtx-harness-promptlog" "excrtx-onboard-welcome" "excrtx-onboard-interview"
   # Quality
   "excrtx-quality-antislop" "excrtx-quality-taste" "excrtx-quality-designsys" "excrtx-quality-gate"
+  "excrtx-quality-skilljudge" "excrtx-quality-gepa"
   # Memory
   "excrtx-memory-manager" "excrtx-memory-wikiadapt" "excrtx-memory-newmicro"
   "excrtx-memory-mvsetup" "excrtx-memory-mvinstall" "excrtx-memory-opsmemory"
@@ -34,15 +35,18 @@ EXPECTED_SKILLS=(
   "excrtx-behavior-briefing" "excrtx-govern-tools" "excrtx-harness-kanban"
   "excrtx-behavior-accuracy"
   # Workspace
-  "excrtx-produce-artifacts" "excrtx-memory-intake"
+  "excrtx-produce-artifacts" "excrtx-memory-intake" "excrtx-github-issue-planning"
   # Production
-  "excrtx-produce-slides" "excrtx-produce-oficios"
+  "excrtx-produce-slides" "excrtx-produce-oficios" "excrtx-brandkit-generator"
+  "assessment-question-authoring"
   # Integration
-  "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops" "excrtx-integrate-docbrain"
+  "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops"
+  "excrtx-harness-delivery" "excrtx-harness-maintenance"
+  "excrtx-integrate-docbrain"
   "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-imbroke" "excrtx-harness-tooldev"
   "excrtx-hermes-extensions"
   # Platform
-  "excrtx-integrate-gdrive" "excrtx-integrate-oauth" "excrtx-harness-surfaces"
+  "excrtx-integrate-gdrive" "excrtx-integrate-oauth" "excrtx-integrate-mcp" "excrtx-harness-surfaces"
   # External
   "excrtx-integrate-browser"
   # Assessment

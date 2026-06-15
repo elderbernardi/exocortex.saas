@@ -12,6 +12,49 @@ The key distinction: Hermes is the runtime (CLI, memory, tool execution); Exocó
 
 ---
 
+## Working Discipline
+
+Behavioral guidelines for changing code here. They bias toward caution over speed; for trivial tasks, use judgment.
+
+### 1. Think before coding
+
+Don't assume. Don't hide confusion. Surface tradeoffs.
+
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If something is unclear, stop, name what's confusing, and ask.
+
+This mirrors the **Evolução** vector: when the path is ambiguous, ask before concluding rather than fabricating a direction.
+
+### 2. Simplicity in code, fidelity in reasoning
+
+Write the minimum code that solves the problem. Nothing speculative — no unrequested abstractions, configurability, or error handling for impossible scenarios. If 200 lines could be 50, rewrite it. Ask: "Would a senior engineer call this overcomplicated?"
+
+**Important distinction** — this applies to *code and prompts*, not to *analysis*. SOUL_SEED.md's rule "nunca simplificar sem justificativa" governs reasoning and communication: never drop nuance to look clearer. Keep skill prompts compact (D5: Economy rewards this), but preserve the complexity of the actual problem when explaining it.
+
+### 3. Surgical changes
+
+Touch only what you must. Clean up only your own mess.
+
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor what isn't broken. Match existing skill conventions even if you'd do it differently.
+- Remove imports/variables your changes orphaned; leave pre-existing dead code unless asked.
+- Every changed line should trace directly to the request.
+
+**Repo-specific:** the Hermes runtime config files (`SOUL_SEED.md`, `FEATURES.md`, `skills/`, `profiles/`, `install.sh`, `setup.sh`, `acervo/`) follow Hermes conventions and must **not** be reshaped to fit external/monorepo style — see `HARNESS.md`. Note that `SOUL_SEED.md` is partly generated: edit skills' `compiled_rules:` and regenerate via `compile_soul.py` rather than hand-editing the compiled block.
+
+### 4. Goal-driven execution
+
+Define success criteria, then loop until verified.
+
+- "Add a skill" → "D1 structural check passes, then full `skill_judge` verdict is PASS"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- For multi-step work, state a brief plan with a `verify:` check per step.
+
+This is the code-level form of **EX-49**: never claim something works without printing the verification command's raw output as proof.
+
+---
+
 ## Common Commands
 
 ### Running the Agent
