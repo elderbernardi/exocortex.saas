@@ -47,10 +47,10 @@ sources:
       git: https://github.com/nesquena/hermes-webui.git
       default_branch: master
     controlled:
-      owner_repo: pending-controlled-fork/hermes-webui
-      git: pending-controlled-fork
-      ref: master
-      audited_from_upstream_ref: master
+      owner_repo: elderbernardi/hermes-webui
+      git: https://github.com/elderbernardi/hermes-webui.git
+      ref: exocortex/stable
+      audited_from_upstream_ref: v0.51.440
       audited_at: 2026-06-15T00:00:00Z
     production_ref_policy:
       allow_upstream_main: false
@@ -67,5 +67,5 @@ sources:
       - Licença MIT — uso comercial irrestrito.
       - Substitui EKKOLearnAI/hermes-web-ui (BSL 1.1) removido em 2026-06-15.
       - Stack Python + Vanilla JS, zero build step.
-      - Fork controlado será criado para customizações do Exocórtex.
+      - Fork controlado: elderbernardi/hermes-webui, branch exocortex/stable (skin EXCRTX, MOD-001..005). Ver EXOCRTX_MODIFICATIONS.md no fork.
       - Nunca consumir upstream master como produção.
