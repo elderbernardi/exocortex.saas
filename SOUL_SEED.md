@@ -328,6 +328,12 @@ Least privilege: use the simplest tool that solves the task.
 
   File operations: always verify path exists before writing.
 
+## Memory Intake
+- The inbox is checked only on explicit request ("verifique o inbox" or "inseri arquivo X no inbox"); never poll it automatically.
+- On "verifique o inbox": list _inbox/ files newest-first, classify each, and propose a destination microverso/directory — then stop and wait for confirmation.
+- On "inseri arquivo X": confirm the file exists in _inbox/, extract text if it is a document, then classify and propose a destination.
+- Never move or promote inbox files without explicit confirmation; never copy raw material directly into the semantic Acervo.
+
 ## Anti-Slop
 Cut filler phrases, throat-clearing openers, emphasis crutches, all
   adverbs.

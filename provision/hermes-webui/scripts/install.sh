@@ -115,10 +115,44 @@ PY
   echo "$url"
 }
 
+resolve_webui_controlled_git() {
+  [ -f "$LOCK_FILE" ] || fail "Lock file não encontrado: $LOCK_FILE"
+
+  python3 - "$LOCK_FILE" <<'PY'
+import sys
+from pathlib import Path
+
+lock = Path(sys.argv[1]).read_text(encoding="utf-8")
+in_webui = False
+in_controlled = False
+
+for line in lock.splitlines():
+    stripped = line.strip()
+    indent = len(line) - len(line.lstrip(" "))
+
+    if indent == 2 and stripped == "hermes-webui:":
+        in_webui = True
+        continue
+    elif indent == 2 and stripped.endswith(":") and in_webui:
+        break
+
+    if in_webui and indent == 4 and stripped == "controlled:":
+        in_controlled = True
+        continue
+    elif in_webui and indent == 4 and stripped.endswith(":"):
+        in_controlled = False
+        continue
+
+    if in_webui and in_controlled and stripped.startswith("git:"):
+        print(stripped.split(":", 1)[1].strip())
+        break
+PY
+}
+
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 main() {
-  local upstream_url upstream_ref
+  local upstream_url upstream_ref controlled_git clone_url
 
   info "Provisionando Hermes WebUI..."
   info "  HERMES_HOME:  $HERMES_HOME"
@@ -126,21 +160,30 @@ main() {
   info "  WEBUI_PORT:   $WEBUI_PORT"
   info "  WEBUI_HOST:   $WEBUI_HOST"
 
+  controlled_git="$(resolve_webui_controlled_git)"
   upstream_url="$(resolve_webui_upstream)"
   upstream_ref="$(resolve_webui_ref)"
 
+  # Prefer the controlled fork as clone source once it is a real URL;
+  # fall back to upstream while controlled.git is still a placeholder.
+  case "$controlled_git" in
+    http*|git@*) clone_url="$controlled_git" ;;
+    *)           clone_url="$upstream_url" ;;
+  esac
+
   info "  Upstream:     $upstream_url"
+  info "  Fonte clone:  $clone_url"
   info "  Ref pinada:   $upstream_ref"
 
-  # Validate ref format
-  if [[ ! "$upstream_ref" =~ ^([0-9a-f]{40}|master|main)$ ]]; then
-    fail "Ref inválida (esperado SHA-1 de 40 chars, master ou main): $upstream_ref"
+  # Validate ref format: SHA-40, master/main, or a controlled branch ref (ex.: exocortex/stable)
+  if [[ ! "$upstream_ref" =~ ^([0-9a-f]{40}|[A-Za-z][A-Za-z0-9._/-]*)$ ]]; then
+    fail "Ref inválida (esperado SHA-1, master/main ou branch controlada): $upstream_ref"
   fi
 
   # Clone or fetch
   if [ ! -d "$WEBUI_HOME/.git" ]; then
     info "Clonando hermes-webui em $WEBUI_HOME..."
-    git clone "$upstream_url" "$WEBUI_HOME"
+    git clone "$clone_url" "$WEBUI_HOME"
     log "Clone concluído"
   else
     info "hermes-webui já presente em $WEBUI_HOME"
