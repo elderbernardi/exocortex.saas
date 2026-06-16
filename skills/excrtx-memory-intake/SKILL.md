@@ -2,7 +2,7 @@
 name: excrtx-memory-intake
 description: Receive, normalize, extract, triage, and promote files and media sent to Exocórtex through multiple channels,
   without contaminating the semantic Acervo with uncurated raw material.
-version: 1.0.0
+version: 1.1.0
 category: excrtx
 platforms:
 - linux
@@ -40,6 +40,11 @@ metadata:
       remediation_tip: 'FALHA: Material bruto copiado diretamente para o Acervo. O pipeline exige: 1) Receber em _inbox/incoming,
         2) Processar (extrair texto, classificar), 3) Gerar IntakeEnvelope com manifest, 4) Promover para Acervo semântico.
         Nunca copie um PDF bruto direto para micro/{slug}/contracts/.'
+compiled_rules: |
+  - The inbox is checked only on explicit request ("verifique o inbox" or "inseri arquivo X no inbox"); never poll it automatically.
+  - On "verifique o inbox": list _inbox/ files newest-first, classify each, and propose a destination microverso/directory — then stop and wait for confirmation.
+  - On "inseri arquivo X": confirm the file exists in _inbox/, extract text if it is a document, then classify and propose a destination.
+  - Never move or promote inbox files without explicit confirmation; never copy raw material directly into the semantic Acervo.
 ---
 # Personal Intake Workspace
 
@@ -162,6 +167,36 @@ For lowest-friction adoption:
 2. Web GUI with dropzone for formal upload, desktop, and batches.
 
 Then expand to WhatsApp, email forward, webhook, and API.
+
+## Explicit Inbox Commands (#83)
+
+The inbox is checked only on explicit request — never by automatic polling — and files are never moved or promoted without confirmation.
+
+### Trigger: "verifique o inbox" (and variants)
+
+When the executive asks to check or review the inbox:
+
+1. List the files currently in `_inbox/`, newest first.
+2. For each, state what it appears to be (type/extension) and a one-line classification hypothesis.
+3. Propose a destination microverso/directory per file.
+4. Stop and wait. Do not promote or move anything without explicit confirmation.
+
+If the inbox is empty, say so plainly and stop.
+
+### Trigger: "inseri arquivo X no inbox" (and variants)
+
+When the executive says they added a specific file:
+
+1. Confirm the file exists in `_inbox/`. If not, say so and stop.
+2. If it is a document, extract text to Markdown (always preserve the original).
+3. Classify and propose a destination following the Standard Flow triage below.
+4. Process per type, but promote only after explicit confirmation.
+
+### Boundaries
+
+- Never check the inbox without an explicit trigger.
+- Never move or promote a file without explicit confirmation (route promotion via `excrtx-memory-manager`).
+- Never copy raw material directly into the semantic Acervo.
 
 ## Standard Flow
 
