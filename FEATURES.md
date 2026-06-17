@@ -5,8 +5,8 @@
 > é **Hermes Agent** (runtime, infraestrutura nativa). Cada item pode ser testado, auditado
 > e evoluído de forma independente.
 
-**Versão:** 1.1.0
-**Atualizado:** 2026-06-15
+**Versão:** 1.2.0
+**Atualizado:** 2026-06-16
 **Bundle de referência:** `exocortex-alpha.yaml`
 
 ---
@@ -594,6 +594,17 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Dependências de Skills** | `excrtx-memory-manager`, `excrtx-harness-kanban`, `excrtx-assess-selftest`                                                                                                                                                                                                                                                                                                  |
 | **Dependências de Tools**  | Hermes `cronjob`, `todo`, `send_message`                                                                                                                                                                                                                                                                                                                                     |
 
+#### EX-57. last30days Research (`last30days`)
+
+| Campo                      | Detalhe                                                                                                                                                                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Funcionalidade**         | Skill de pesquisa multi-plataforma (community skill de mvanhorn, 43k⭐, MIT) que varre 15 fontes nos últimos 30 dias. Pipeline: resolve → search → cluster → synthesize. Modos: comparação, hiring signals, deep research, briefing HTML, ELI5.                                     |
+| **Como usar**              | No Hermes: `/skill last30days` e depois `last30days "AI coding tools" --days=7 --search=reddit,x`. Ou diretamente pelo engine: `python3.13 skills/last30days/scripts/last30days.py "topic"`. O engine requer Python 3.12+.                                                          |
+| **Instalação**             | `setup.sh` verifica keys (step 12). Skill versionada em `skills/last30days/` com patch de provider customizável (DeepSeek V4 Flash). Symlink: `~/.hermes/skills/research/last30days` → repo canônico. Instalável também via `hermes skills install mvanhorn/last30days-skill`.     |
+| **Fontes gratuitas**       | Reddit (RSS público), Hacker News (Algolia), YouTube (yt-dlp), Polymarket (API pública), GitHub (gh CLI).                                                                                                                                                                           |
+| **Fontes com key**         | X/Twitter (`XAI_API_KEY`), TikTok/Instagram/Threads/Pinterest (`SCRAPECREATORS_API_KEY`), Bluesky (`BSKY_HANDLE`+`BSKY_APP_PASSWORD`), Web Search (`BRAVE_API_KEY`), Deep Research (`OPENROUTER_API_KEY`).                                                                          |
+| **Dependências de Tools**  | Python 3.12+, yt-dlp, Node.js, gh CLI. Opcionais: `DEEPSEEK_API_KEY` para reasoning (planner/reranker).                                                                                                                                                                            |
+
 ---
 
 ## Mapa de Dependências
@@ -655,6 +666,7 @@ graph TD
         EX28[EX-28 NLM Route]
         EX29[EX-29 NLM Ops] --> EX28
         EX30[EX-30 Browser]
+        EX57[EX-57 last30days]
     end
 
     subgraph "Harness & Maintenance"
@@ -716,6 +728,12 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 | `DOCBRAIN_LLM_API_KEY`       | Não                                             | Override de key específico para DocBrain    |
 | `CONTEXT7_API_KEY`           | Não                                             | Context7 MCP (docs técnicos)                |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | Não                                             | Ativar Hindsight Docker                     |
+| `DEEPSEEK_API_KEY`           | Não                                             | last30days reasoning (LLM planner/reranker)  |
+| `XAI_API_KEY`                | Não                                             | last30days X/Twitter                         |
+| `BRAVE_API_KEY`              | Não                                             | last30days web search (auto-resolve)         |
+| `SCRAPECREATORS_API_KEY`     | Não                                             | last30days TikTok/Instagram/Threads/Pinterest |
+| `BSKY_HANDLE`                | Não                                             | last30days Bluesky handle                    |
+| `BSKY_APP_PASSWORD`          | Não                                             | last30days Bluesky app password              |
 
 ---
 

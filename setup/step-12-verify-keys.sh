@@ -69,6 +69,35 @@ else
   info "FIRECRAWL_API_KEY não definida (opcional — crawling/extract pode ser adicionado depois)"
 fi
 
+# ─── last30days skill keys ───────────────────────────────────────────────────
+
+info "Verificando keys para last30days (pesquisa multi-plataforma)..."
+if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+  log "DEEPSEEK_API_KEY definida — last30days reasoning ativado"
+else
+  info "DEEPSEEK_API_KEY não definida (opcional — last30days usará fallback determinístico para planejamento)"
+fi
+if [ -n "${XAI_API_KEY:-}" ]; then
+  log "XAI_API_KEY definida — last30days X/Twitter ativado"
+else
+  info "XAI_API_KEY não definida (opcional — X/Twitter desabilitado no last30days)"
+fi
+if [ -n "${BRAVE_API_KEY:-}" ]; then
+  log "BRAVE_API_KEY definida — last30days web search ativado"
+else
+  info "BRAVE_API_KEY não definida (opcional — auto-resolve desabilitado no last30days)"
+fi
+if [ -n "${SCRAPECREATORS_API_KEY:-}" ]; then
+  log "SCRAPECREATORS_API_KEY definida — last30days TikTok/Instagram/Threads/Pinterest ativados"
+else
+  info "SCRAPECREATORS_API_KEY não definida (opcional — fontes sociais visuais desabilitadas)"
+fi
+if [ -n "${BSKY_HANDLE:-}" ] && [ -n "${BSKY_APP_PASSWORD:-}" ]; then
+  log "BSKY_HANDLE+BSKY_APP_PASSWORD definidos — last30days Bluesky ativado"
+else
+  info "BSKY_HANDLE/BSKY_APP_PASSWORD não definidos (opcional — Bluesky desabilitado no last30days)"
+fi
+
 # ─── OpenRouter Free Router ─────────────────────────────────────────────────
 
 if [ "$IMBROKE_MODE" = "1" ]; then
