@@ -47,12 +47,14 @@ _check_gws_skill() {
 
 # Install Python dependencies for OAuth flow
 _install_gws_deps() {
-  local pkgs=("google-auth-oauthlib" "google-api-python-client" "google-auth-httplib2")
+  # pkg name → import name (some differ from naive -/_ substitution)
+  local -a pkgs=("google-auth-oauthlib" "google-api-python-client" "google-auth-httplib2")
+  local -a imports=("google_auth_oauthlib" "googleapiclient" "google_auth_httplib2")
   local missing=()
 
-  for pkg in "${pkgs[@]}"; do
-    if ! python3 -c "import ${pkg//-/_}" 2>/dev/null; then
-      missing+=("$pkg")
+  for i in "${!pkgs[@]}"; do
+    if ! python3 -c "import ${imports[$i]}" 2>/dev/null; then
+      missing+=("${pkgs[$i]}")
     fi
   done
 
@@ -62,12 +64,24 @@ _install_gws_deps() {
   fi
 
   info "Instalando dependências Python: ${missing[*]}..."
-  if python3 -m pip install --quiet "${missing[@]}" 2>/dev/null; then
+  local pip_log
+  pip_log=$(mktemp)
+  if python3 -m pip install --quiet "${missing[@]}" >"$pip_log" 2>&1; then
     log "Dependências Python instaladas"
+    rm -f "$pip_log"
     return 0
   fi
 
   warn "Falha ao instalar dependências Python do Google Workspace"
+  info "Saída do pip (últimas linhas):"
+  tail -10 "$pip_log" | while IFS= read -r line; do
+    echo "    $line"
+  done
+  # PEP 668 hint
+  if grep -q 'externally-managed-environment' "$pip_log" 2>/dev/null; then
+    info "Sistema usa PEP 668 (externally-managed). Tente: python3 -m pip install --user ${missing[*]}"
+  fi
+  rm -f "$pip_log"
   return 1
 }
 
