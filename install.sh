@@ -30,6 +30,210 @@ warn() { echo -e "${YELLOW}⚠${NC} $1"; }
 info() { echo -e "${CYAN}ℹ${NC} $1"; }
 fail() { echo -e "${RED}✗${NC} $1"; exit 1; }
 
+has_setup_flag() {
+  local expected="$1"
+  local flag
+  for flag in "${SETUP_FLAGS[@]}"; do
+    if [ "$flag" = "$expected" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+mask_secret() {
+  local value="$1"
+  if [ -z "$value" ]; then
+    echo "(vazio)"
+    return
+  fi
+
+  local len=${#value}
+  if [ "$len" -le 8 ]; then
+    echo "****"
+  elif [ "$len" -le 16 ]; then
+    echo "${value:0:4}...${value: -4}"
+  else
+    echo "${value:0:6}...${value: -4}"
+  fi
+}
+
+sanitize_text() {
+  local text="$1"
+  local secret_name secret_value masked_value
+  for secret_name in OPENROUTER_API_KEY TELEGRAM_BOT_TOKEN CONTEXT7_API_KEY FIRECRAWL_API_KEY DOCBRAIN_LLM_API_KEY HINDSIGHT_API_KEY DEEPSEEK_API_KEY; do
+    secret_value="${!secret_name:-}"
+    if [ -n "$secret_value" ]; then
+      masked_value=$(mask_secret "$secret_value")
+      text="${text//$secret_value/$masked_value}"
+    fi
+  done
+  printf '%s' "$text"
+}
+
+print_sanitized_tail() {
+  local file="$1"
+  local max_lines="${2:-18}"
+
+  if [ ! -s "$file" ]; then
+    info "O comando falhou sem stderr capturado."
+    return
+  fi
+
+  local -a lines=()
+  mapfile -t lines < "$file"
+
+  local total=${#lines[@]}
+  local start=0
+  if [ "$total" -gt "$max_lines" ]; then
+    start=$((total - max_lines))
+  fi
+
+  local i
+  for ((i=start; i<total; i++)); do
+    printf '      %s\n' "$(sanitize_text "${lines[$i]}")"
+  done
+}
+
+run_command_with_context() {
+  local stage="$1"
+  local hint="$2"
+  shift 2
+
+  local log_file
+  log_file=$(mktemp)
+
+  if "$@" >"$log_file" 2>&1; then
+    rm -f "$log_file"
+    return 0
+  else
+    local exit_code=$?
+    echo ''
+    warn "Falha na etapa: $stage (exit $exit_code)"
+    if [ -n "$hint" ]; then
+      info "$hint"
+    fi
+    info "Comando: $(sanitize_text "$*")"
+    info "Últimas linhas úteis:"
+    print_sanitized_tail "$log_file"
+    rm -f "$log_file"
+    return "$exit_code"
+  fi
+}
+
+run_shell_with_context() {
+  local stage="$1"
+  local hint="$2"
+  local command="$3"
+  local log_file
+  log_file=$(mktemp)
+
+  if bash -o pipefail -c "$command" >"$log_file" 2>&1; then
+    rm -f "$log_file"
+    return 0
+  else
+    local exit_code=$?
+    echo ''
+    warn "Falha na etapa: $stage (exit $exit_code)"
+    if [ -n "$hint" ]; then
+      info "$hint"
+    fi
+    info "Comando: $(sanitize_text "$command")"
+    info "Últimas linhas úteis:"
+    print_sanitized_tail "$log_file"
+    rm -f "$log_file"
+    return "$exit_code"
+  fi
+}
+
+show_stage() {
+  local number="$1"
+  local title="$2"
+  echo ''
+  echo -e "${BOLD}→ Etapa ${number}: ${title}${NC}"
+}
+
+show_mode_narrative() {
+  if has_setup_flag "--yes" || has_setup_flag "-y"; then
+    info "Modo headless (--yes): sem prompts; vou narrar o progresso, persistir os valores atuais e seguir direto para o setup."
+    return
+  fi
+
+  if has_setup_flag "--step-by-step" || has_setup_flag "--guided"; then
+    info "Modo guiado (--step-by-step): depois do bootstrap, o setup vai parar em cada bloco para revisão explícita."
+    return
+  fi
+
+  info "Modo padrão: vou narrar cada etapa, mostrar o que foi detectado sem expor segredos e abrir o setup com confirmação final antes do provisionamento completo."
+}
+
+print_env_preflight_row() {
+  local name="$1"
+  local description="$2"
+  local value="${!name:-}"
+  local display="(ausente)"
+
+  if [ -n "$value" ]; then
+    display=$(mask_secret "$value")
+  fi
+
+  printf '  - %-22s %s — %s\n' "$name" "$display" "$description"
+}
+
+warn_if_secret_suspicious() {
+  local name="$1"
+  local hint="$2"
+  local value="${!name:-}"
+
+  if [ -z "$value" ]; then
+    return
+  fi
+
+  if printf '%s' "$value" | grep -q '[[:space:]]'; then
+    warn "$name contém espaço ou quebra de linha. Isso costuma indicar cópia parcial ou colagem com caracteres extras. $hint"
+    return
+  fi
+
+  if [ ${#value} -lt 12 ]; then
+    warn "$name parece curta demais para uma credencial completa. $hint"
+  fi
+}
+
+show_env_preflight() {
+  local firecrawl_url="${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
+
+  show_stage "3/7" "Preflight do bootstrap Hermes"
+  show_mode_narrative
+  info "Paths-alvo desta instalação:"
+  printf '  - HERMES_HOME          %s\n' "$HERMES_HOME"
+  printf '  - EXOCORTEX_HOME       %s\n' "$EXOCORTEX_HOME"
+  printf '  - INSTALLER_DIR        %s\n' "$INSTALLER_DIR"
+  echo ''
+  info "Env vars detectadas antes do Hermes (mascaradas quando sensíveis):"
+  print_env_preflight_row "OPENROUTER_API_KEY" "routing OpenRouter e integrações que exigem esse nome literal"
+  print_env_preflight_row "DEEPSEEK_API_KEY" "reasoning DeepSeek direto e fluxos compatíveis"
+  print_env_preflight_row "TELEGRAM_BOT_TOKEN" "gateway Telegram opcional"
+  print_env_preflight_row "FIRECRAWL_API_KEY" "crawling/extract opcional"
+  print_env_preflight_row "DOCBRAIN_LLM_API_KEY" "override de key só para DocBrain"
+  print_env_preflight_row "CONTEXT7_API_KEY" "docs técnicos opcionais"
+  printf '  - %-22s %s — endpoint esperado para Firecrawl local\n' "FIRECRAWL_BASE_URL" "$firecrawl_url"
+  echo ''
+
+  warn_if_secret_suspicious "OPENROUTER_API_KEY" "Se a chave veio por copy/paste, revise antes do setup."
+  warn_if_secret_suspicious "DEEPSEEK_API_KEY" "Se a chave veio por copy/paste, revise antes do setup."
+  warn_if_secret_suspicious "TELEGRAM_BOT_TOKEN" "Tokens do BotFather normalmente têm formato numérico + dois pontos + segredo."
+
+  if [ -z "${OPENROUTER_API_KEY:-}" ] && [ -z "${DEEPSEEK_API_KEY:-}" ]; then
+    warn "Nenhuma key de reasoning remoto foi detectada. O bootstrap continua, mas partes do ecossistema vão subir sem rota remota pronta."
+  elif [ -z "${OPENROUTER_API_KEY:-}" ] && [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+    info "DeepSeek direto foi detectado. Fluxos compatíveis funcionarão, mas componentes que ainda checam OPENROUTER_API_KEY por nome podem pedir essa env var depois."
+  fi
+
+  if [ -z "${FIRECRAWL_API_KEY:-}" ]; then
+    info "Firecrawl é opcional. Se você subir uma instância local, o default esperado aqui é $firecrawl_url."
+  fi
+}
+
 # ─── Configuration ───────────────────────────────────────────────────────────
 REPO_URL="${EXOCORTEX_REPO_URL:-https://github.com/elderbernardi/exocortex.saas.git}"
 REPO_API="${EXOCORTEX_REPO_API:-https://api.github.com/repos/elderbernardi/exocortex.saas}"
@@ -129,6 +333,8 @@ echo -e "                         ${BOLD}Instalador${NC}"
 echo ''
 
 # ─── Step 1: Detect OS ──────────────────────────────────────────────────────
+show_mode_narrative
+show_stage "1/7" "Detectando sistema operacional"
 OS="$(uname -s)"
 case "$OS" in
   Linux*)  OS_NAME="Linux" ;;
@@ -138,6 +344,7 @@ esac
 info "Sistema: $OS_NAME ($(uname -m))"
 
 # ─── Step 2: Check and install dependencies ─────────────────────────────────
+show_stage "2/7" "Verificando dependências locais"
 info "Verificando dependências..."
 
 # Detect package manager
@@ -164,20 +371,21 @@ install_packages() {
   local pkgs=("$@")
   if [ ${#pkgs[@]} -eq 0 ]; then return 0; fi
 
-  info "Instalando: ${pkgs[*]}..."
+  info "Dependências ausentes: ${pkgs[*]}"
+  info "Gerenciador detectado: ${PKG_MGR:-desconhecido}"
   case "$PKG_MGR" in
     apt)
-      $SUDO apt-get update -qq >/dev/null 2>&1
-      $SUDO apt-get install -y -qq "${pkgs[@]}" >/dev/null 2>&1
+      run_command_with_context "Instalação de dependências" "Falha ao preparar dependências com apt. Se o erro persistir, execute os comandos manualmente e rode o instalador de novo." $SUDO apt-get update -qq || return $?
+      run_command_with_context "Instalação de dependências" "Falha ao instalar dependências com apt. Verifique permissões sudo, lock do apt ou conectividade." $SUDO apt-get install -y -qq "${pkgs[@]}" || return $?
       ;;
     brew)
-      brew install "${pkgs[@]}" >/dev/null 2>&1
+      run_command_with_context "Instalação de dependências" "Falha ao instalar dependências com Homebrew. Revise o stderr sanitizado abaixo." brew install "${pkgs[@]}" || return $?
       ;;
     dnf)
-      $SUDO dnf install -y -q "${pkgs[@]}" >/dev/null 2>&1
+      run_command_with_context "Instalação de dependências" "Falha ao instalar dependências com dnf. Revise o stderr sanitizado abaixo." $SUDO dnf install -y -q "${pkgs[@]}" || return $?
       ;;
     pacman)
-      $SUDO pacman -S --noconfirm "${pkgs[@]}" >/dev/null 2>&1
+      run_command_with_context "Instalação de dependências" "Falha ao instalar dependências com pacman. Revise o stderr sanitizado abaixo." $SUDO pacman -S --noconfirm "${pkgs[@]}" || return $?
       ;;
     *)
       fail "Gerenciador de pacotes não detectado. Instale manualmente: ${pkgs[*]}"
@@ -220,18 +428,24 @@ fi
 log "Dependências OK (git, curl, rsync, python3)"
 
 # ─── Step 3: Install Hermes (if not present) ────────────────────────────────
+show_env_preflight
+
+show_stage "4/7" "Instalando ou validando Hermes"
 if command -v hermes >/dev/null 2>&1; then
   HERMES_VERSION=$(hermes --version 2>/dev/null | head -1)
   log "Hermes já instalado: $HERMES_VERSION"
+  info "Binário detectado em: $(command -v hermes)"
 else
   echo ''
   info "Hermes Agent não encontrado. Instalando..."
   info "Fonte: github.com/NousResearch/hermes-agent"
+  info "Instalador remoto: $HERMES_INSTALLER"
   echo ''
 
-  if curl -fsSL "$HERMES_INSTALLER" | bash; then
+  if run_shell_with_context "Bootstrap Hermes" "Falha ao executar o instalador do Hermes. Revise URL, conectividade e permissões de escrita em ~/.local/bin." "curl -fsSL \"$HERMES_INSTALLER\" | bash"; then
     # Reload PATH (Hermes installer adds to ~/.local/bin)
     export PATH="$HOME/.local/bin:$PATH"
+    info "Validando 'hermes' no PATH após o bootstrap..."
 
     if command -v hermes >/dev/null 2>&1; then
       HERMES_VERSION=$(hermes --version 2>/dev/null | head -1)
@@ -242,11 +456,12 @@ else
   E re-execute este instalador."
     fi
   else
-    fail "Falha ao instalar Hermes. Verifique sua conexão e tente novamente."
+    fail "Falha ao instalar Hermes. Contexto acima; URL do instalador: $HERMES_INSTALLER"
   fi
 fi
 
 # ─── Step 4: Resolve version ────────────────────────────────────────────────
+show_stage "5/7" "Resolvendo versão do Exocórtex"
 if [ -n "${VERSION:-}" ]; then
   INSTALL_VERSION="$VERSION"
   info "Versão solicitada: $INSTALL_VERSION"
@@ -270,7 +485,7 @@ else
 fi
 
 # ─── Step 5: Download/update installer ───────────────────────────────────────
-echo ''
+show_stage "6/7" "Baixando ou atualizando o instalador Exocórtex"
 info "Diretório do instalador: $INSTALLER_DIR"
 
 VERSION_FILE="$INSTALLER_DIR/.exocortex-version"
@@ -290,15 +505,19 @@ fi
 if $NEEDS_DOWNLOAD; then
   info "Baixando Exocórtex.IA ($INSTALL_VERSION)..."
 
-  if git clone --depth 1 --branch "$INSTALL_VERSION" "$REPO_URL" "$INSTALLER_DIR" 2>/dev/null; then
+  if run_command_with_context "Clone do Exocórtex" "Falha ao clonar a versão solicitada. Vou tentar um fallback sem --branch." git clone --depth 1 --branch "$INSTALL_VERSION" "$REPO_URL" "$INSTALLER_DIR"; then
     echo "$INSTALL_VERSION" > "$VERSION_FILE"
     log "Download completo"
   else
     # Fallback: try without --branch (might be a commit hash or branch name issue)
-    if git clone --depth 1 "$REPO_URL" "$INSTALLER_DIR" 2>/dev/null; then
+    if run_command_with_context "Clone do Exocórtex (fallback)" "Falha ao clonar o repositório mesmo sem fixar a branch/tag. Revise URL, tag e conectividade." git clone --depth 1 "$REPO_URL" "$INSTALLER_DIR"; then
       cd "$INSTALLER_DIR"
-      git fetch --depth 1 origin "refs/tags/$INSTALL_VERSION:refs/tags/$INSTALL_VERSION" 2>/dev/null || true
-      git checkout "$INSTALL_VERSION" 2>/dev/null || warn "Tag $INSTALL_VERSION não encontrada; usando main"
+      run_command_with_context "Fetch da tag solicitada" "Não consegui buscar a tag pedida; se ela não existir, sigo com o checkout disponível." git fetch --depth 1 origin "refs/tags/$INSTALL_VERSION:refs/tags/$INSTALL_VERSION" || true
+      if run_command_with_context "Checkout da versão solicitada" "Tag ou branch não encontrada localmente; vou manter a revisão padrão do clone fallback." git checkout "$INSTALL_VERSION"; then
+        :
+      else
+        warn "Tag $INSTALL_VERSION não encontrada; usando a revisão padrão do clone fallback."
+      fi
       echo "$INSTALL_VERSION" > "$VERSION_FILE"
       log "Download completo (fallback)"
     else
@@ -310,9 +529,8 @@ if $NEEDS_DOWNLOAD; then
 fi
 
 # ─── Step 6: Run setup.sh ───────────────────────────────────────────────────
-echo ''
-info "Executando setup..."
-echo ''
+show_stage "7/7" "Executando setup do Exocórtex"
+info "Executando setup (revisão final + provisionamento)."
 
 cd "$INSTALLER_DIR"
 

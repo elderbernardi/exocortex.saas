@@ -113,6 +113,7 @@ show_config_table
 
 if [ "$INTERACTIVE_MODE" = "1" ]; then
   info "Origem dos valores: shell atual → .env.local → defaults do setup"
+  info "Modo padrão: [continuar] mantém o que já foi detectado; [editar rápido] ajusta só o necessário; [passo a passo] revisa cada bloco com explicações."
   echo -en "  ${BOLD}Escolha:${NC} [c]ontinuar | [e]ditar rápido | [p]asso a passo ${DIM}[c]${NC}: "
   if ! read -r edit_choice; then
     fail "Setup interativo requer um terminal. Reexecute com --yes para modo não interativo ou conecte um TTY."
@@ -165,7 +166,7 @@ if [ "$INTERACTIVE_MODE" = "1" ]; then
       ;;
   esac
 else
-  info "Modo não-interativo (--yes): usando valores atuais."
+  info "Modo não-interativo (--yes): sem prompts; vou persistir os valores atuais e seguir direto para os steps."
   # Save current values for next run
   save_to_env_local "HERMES_HOME" "$HERMES_HOME"
   save_to_env_local "EXOCORTEX_HOME" "$EXOCORTEX_HOME"

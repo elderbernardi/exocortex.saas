@@ -209,8 +209,26 @@ TELEGRAM_BOT_TOKEN="your_telegram_bot_token" curl -fsSL https://raw.githubuserco
 To pin a specific tag or version:
 
 ```bash
-VERSION=v1.0.0-rc2 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
+VERSION=v1.0.1 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 ```
+
+##### Installer Flags
+
+| Flag | Effect |
+|---|---|
+| `--yes`, `-y` | Headless mode — no prompts, persists detected values and runs all steps |
+| `--step-by-step` | Guided mode — pauses at each config block for explicit review |
+| `--init-only` | Saves configuration to `.env.local` and skips provisioning steps |
+| `--skip-env-check` | Skips prerequisite validation in `setup.sh` |
+| `--imbroke` | Activates OpenRouter free-model contingency routing |
+| `--calibrate` | Runs cognitive calibration at the end of setup |
+| `-h`, `--help` | Prints usage and exits |
+
+##### Environment Variable Preflight
+
+Before touching Hermes, the installer runs a preflight scan of all relevant env vars (API keys, tokens, endpoints). Sensitive values are **masked** in the output — only the first and last few characters are shown. The preflight also flags suspicious values (whitespace inside a key, keys shorter than 12 chars) with actionable warnings. This means you can verify your credentials are detected **before** the install proceeds, without exposing secrets in terminal scrollback or CI logs.
+
+If a command fails at any stage, the installer captures stderr, scrubs any secrets from it, and prints the last useful lines alongside a hint about what went wrong and how to recover — instead of a bare exit code.
 
 #### 2. The `setup.sh` Orchestrator
 

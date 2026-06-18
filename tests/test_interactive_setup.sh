@@ -724,6 +724,115 @@ if should_run "T27"; then
 fi
 
 # =============================================================================
+# T28: install.sh faz preflight mascarado antes do Hermes
+# =============================================================================
+
+if should_run "T28"; then
+  echo -e "${BOLD}T28: install.sh narra preflight e mascara segredos${NC}"
+  test_dir=$(mktemp -d)
+  home_dir="$test_dir/home"
+  installer_dir="$test_dir/.exocortex-installer"
+  bin_dir="$test_dir/bin"
+  secret="sk-or-v1-supersecret3456"
+  mkdir -p "$home_dir" "$bin_dir"
+
+  cat > "$bin_dir/hermes" <<'EOF'
+#!/usr/bin/env bash
+if [ "${1:-}" = "--version" ]; then
+  echo "2026.4.8"
+  exit 0
+fi
+exit 0
+EOF
+  chmod +x "$bin_dir/hermes"
+
+  output=$(env PATH="$bin_dir:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin" \
+    HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
+    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$REPO_ROOT" VERSION="main" \
+    OPENROUTER_API_KEY="$secret" FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
+    bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1 || true)
+
+  if echo "$output" | grep -q "Preflight do bootstrap Hermes" \
+    && echo "$output" | grep -q "Modo headless (--yes)" \
+    && echo "$output" | grep -q "sk-or-...3456" \
+    && ! echo "$output" | grep -q "$secret"; then
+    pass "T28: preflight narra o modo e mascara OPENROUTER_API_KEY"
+  else
+    fail_test "T28" "preflight não exibiu a narrativa/mascara esperadas"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T29: install.sh reporta contexto útil quando bootstrap Hermes falha
+# =============================================================================
+
+if should_run "T29"; then
+  echo -e "${BOLD}T29: install.sh traz contexto ao falhar no bootstrap Hermes${NC}"
+  test_dir=$(mktemp -d)
+  home_dir="$test_dir/home"
+  installer_dir="$test_dir/.exocortex-installer"
+  secret="sk-or-v1-bootstrap4321"
+  missing_installer="file:///tmp/exocortex-missing-hermes-installer.sh"
+  mkdir -p "$home_dir"
+
+  if output=$(env PATH="/usr/bin:/bin:/usr/local/bin:/usr/local/sbin" \
+    HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
+    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_HERMES_INSTALLER="$missing_installer" \
+    OPENROUTER_API_KEY="$secret" \
+    bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1); then
+    exit_code=0
+  else
+    exit_code=$?
+  fi
+
+  if [ "$exit_code" -ne 0 ] \
+    && echo "$output" | grep -q "Falha na etapa: Bootstrap Hermes" \
+    && echo "$output" | grep -q "URL do instalador: $missing_installer" \
+    && ! echo "$output" | grep -q "$secret"; then
+    pass "T29: falha no bootstrap Hermes vem com contexto sanitizado"
+  else
+    fail_test "T29" "exit=$exit_code; saída sem o contexto esperado"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T30: setup.sh narra melhor o comportamento default interativo
+# =============================================================================
+
+if should_run "T30"; then
+  echo -e "${BOLD}T30: setup.sh explica o comportamento default${NC}"
+
+  if ! command -v script >/dev/null 2>&1; then
+    skip "T30" "comando 'script' não disponível neste ambiente"
+  else
+    test_dir=$(setup_test_env)
+    output_file="$test_dir/setup-default-mode.log"
+    input_file="$test_dir/setup-default-mode.input"
+    printf '\n\n' > "$input_file"
+
+    if env HOME="$test_dir/home" HERMES_HOME="$test_dir/hermes" EXOCORTEX_HOME="$test_dir/exocortex" \
+      script -e -q -c "cd '$REPO_ROOT' && bash setup.sh --skip-env-check" /dev/null < "$input_file" > "$output_file" 2>&1; then
+      exit_code=0
+    else
+      exit_code=$?
+    fi
+
+    if [ "$exit_code" -eq 130 ] \
+      && grep -q "Modo padrão: \[continuar\] mantém o que já foi detectado" "$output_file"; then
+      pass "T30: setup default descreve continuar/editar/passo a passo"
+    else
+      fail_test "T30" "exit=$exit_code; ver $output_file"
+    fi
+
+    cleanup_test_env "$test_dir"
+  fi
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 
