@@ -212,6 +212,53 @@ To pin a specific tag or version:
 VERSION=v1.0.1 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 ```
 
+#### Full Installation (All Utilities)
+
+A single command that activates every optional component — WebUI cockpit, Hindsight local memory, Telegram gateway, reasoning keys, DocBrain, Firecrawl, and Context7 — with guided step-by-step review and post-install cognitive calibration:
+
+```bash
+OPENROUTER_API_KEY="sk-or-..." \
+DEEPSEEK_API_KEY="sk-..." \
+TELEGRAM_BOT_TOKEN="123456:ABC..." \
+EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
+EXOCORTEX_ENABLE_HINDSIGHT=1 \
+FIRECRAWL_API_KEY="fc-..." \
+FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
+DOCBRAIN_LLM_API_KEY="sk-or-..." \
+CONTEXT7_API_KEY="c7-..." \
+curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
+  | bash -s -- --step-by-step --calibrate
+```
+
+What each marker activates:
+
+| Variable | Component | Notes |
+|---|---|---|
+| `OPENROUTER_API_KEY` | Reasoning routing (OpenRouter) | Primary LLM gateway. Required for most skills. |
+| `DEEPSEEK_API_KEY` | DeepSeek direct | Alternative reasoning path. Independent credential. |
+| `TELEGRAM_BOT_TOKEN` | Telegram Gateway | Bot token from BotFather. Enables remote chat interface. |
+| `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | MIT-licensed `nesquena/hermes-webui`. Access at `127.0.0.1:8787` or via Tailscale. |
+| `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session memory. Requires `docker` + `docker compose`. |
+| `FIRECRAWL_API_KEY` | Firecrawl crawling/extract | Web scraping engine. Optional — only if running a Firecrawl instance. |
+| `FIRECRAWL_BASE_URL` | Firecrawl endpoint | Default: `http://127.0.0.1:3002`. Set if your instance runs elsewhere. |
+| `DOCBRAIN_LLM_API_KEY` | DocBrain parser override | Isolates the LLM key used by the document parser. Falls back to `OPENROUTER_API_KEY` if unset. |
+| `CONTEXT7_API_KEY` | Context7 docs MCP | Technical documentation lookup. Optional. |
+
+Flags used:
+
+- `--step-by-step` — Pauses at each configuration block (paths, env vars, API keys, features) for explicit review before proceeding. Every value is shown masked — no secrets in terminal scrollback.
+- `--calibrate` — Runs the interactive behavioral calibration suite at the end of setup, testing each core feature (vector classification, draft-first, accuracy verification) against the model and injecting corrective prompts if output drifts.
+
+If you prefer a non-interactive full install (CI/CD, headless server), replace `--step-by-step --calibrate` with `--yes`:
+
+```bash
+OPENROUTER_API_KEY="sk-or-..." \
+EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
+EXOCORTEX_ENABLE_HINDSIGHT=1 \
+curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
+  | bash -s -- --yes
+```
+
 ##### Installer Flags
 
 | Flag | Effect |
