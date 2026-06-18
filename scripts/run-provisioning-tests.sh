@@ -18,7 +18,8 @@
 #   HERMES_HOME              Default: ~/.hermes
 #   EXOCORTEX_HOME           Default: ~/exocortex
 #   ACERVO                   Default: $EXOCORTEX_HOME/acervo
-#   EXOCORTEX_HARNESS_MODEL  Default: openai/gpt-5.4
+#   EXOCORTEX_HARNESS_MODEL  Model for smoke tests (overrides EXOCORTEX_MODEL)
+#   EXOCORTEX_MODEL          Fallback model for smoke tests and calibration
 #   EXOCORTEX_REPO_PATH      Path do clone local do repo (para sync)
 #   EXOCORTEX_SYNC_ENABLED   Default: 1
 #
@@ -60,7 +61,30 @@ echo ""
 echo -e "  HERMES_HOME:    ${HERMES_HOME}"
 echo -e "  EXOCORTEX_HOME: ${EXOCORTEX_HOME}"
 echo -e "  ACERVO:         ${ACERVO}"
-echo -e "  Modelo:         ${HARNESS_MODEL}"
+
+# --- Resolve harness model ---
+if [ -z "$HARNESS_MODEL" ]; then
+  if [ -t 0 ]; then
+    echo ""
+    echo -e "  ${_YELLOW}Qual modelo usar para smoke tests?${_NC}"
+    echo -e "  Enter = default do Hermes (config.yaml)"
+    echo -e "  Ou digite o model ID (ex: openai/gpt-5.4, deepseek/deepseek-chat, minimax/minimax-m2.5)"
+    echo -en "  ${_BOLD}Model:${_NC} "
+    read -r user_model
+    if [ -n "$user_model" ]; then
+      HARNESS_MODEL="$user_model"
+    fi
+  else
+    # Non-interactive: skip smoke tests if no model resolved
+    export NO_SMOKE=1
+  fi
+fi
+
+if [ -n "$HARNESS_MODEL" ]; then
+  echo -e "  Modelo:         ${HARNESS_MODEL}"
+else
+  echo -e "  Modelo:         ${_YELLOW}(Hermes default)${_NC}"
+fi
 echo -e "  Repair:         $([ "$NO_REPAIR" = "1" ] && echo "desabilitado" || echo "habilitado")"
 echo -e "  Smoke tests:    $([ "${NO_SMOKE:-0}" = "1" ] && echo "desabilitado" || echo "habilitado")"
 echo -e "  Issues:         $([ "$NO_ISSUES" = "1" ] && echo "desabilitado" || echo "habilitado")"
