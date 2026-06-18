@@ -44,6 +44,7 @@ TOTAL_PASSED=0
 TOTAL_FAILED=0
 TOTAL_REPAIRED=0
 TOTAL_PENDING=0
+TOTAL_SMOKE_SKIPPED=0
 
 # Configuração
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
@@ -495,6 +496,7 @@ run_smoke_test() {
   local skill_name="${FEATURE_SKILL_MAP[$feature_id]:-unknown}"
 
   if [ "$NO_SMOKE" = "1" ]; then
+    TOTAL_SMOKE_SKIPPED=$((TOTAL_SMOKE_SKIPPED + 1))
     return 0
   fi
 
@@ -502,8 +504,15 @@ run_smoke_test() {
     return 0
   fi
 
+  if [ -z "$HARNESS_MODEL" ]; then
+    _log "  ${_YELLOW}⚠ Smoke test pulado — EXOCORTEX_MODEL não configurado${_NC}"
+    TOTAL_SMOKE_SKIPPED=$((TOTAL_SMOKE_SKIPPED + 1))
+    return 0
+  fi
+
   if ! can_invoke_hermes; then
     _log "  ${_YELLOW}⚠ Hermes não disponível — smoke test pulado${_NC}"
+    TOTAL_SMOKE_SKIPPED=$((TOTAL_SMOKE_SKIPPED + 1))
     return 0
   fi
 
@@ -810,6 +819,7 @@ generate_report() {
 | Reparadas | ${TOTAL_REPAIRED} |
 | Pendentes (API key) | ${TOTAL_PENDING} |
 | Falha definitiva | ${#DEFINITIVE_FAILS[@]} |
+| Smoke tests pulados | ${TOTAL_SMOKE_SKIPPED} |
 
 ## Features — Resultado
 
@@ -848,8 +858,12 @@ print_summary() {
   echo -e "  Reparadas:   ${_CYAN}${TOTAL_REPAIRED}${_NC}"
   echo -e "  Pendentes:   ${_YELLOW}${TOTAL_PENDING}${_NC}"
   echo -e "  Falharam:    ${_RED}${#DEFINITIVE_FAILS[@]}${_NC}"
+  echo -e "  Smoke skip:  ${_YELLOW}${TOTAL_SMOKE_SKIPPED}${_NC}"
   echo ""
-  if [ ${#DEFINITIVE_FAILS[@]} -eq 0 ]; then
+  if [ "$TOTAL_SMOKE_SKIPPED" -gt 0 ] && [ ${#DEFINITIVE_FAILS[@]} -eq 0 ]; then
+    echo -e "  ${_YELLOW}${_BOLD}⚠ ${TOTAL_PASSED}/${TOTAL_TESTED} features passaram (determinístico), mas ${TOTAL_SMOKE_SKIPPED} smoke tests foram pulados.${_NC}"
+    echo -e "  ${_YELLOW}  Defina EXOCORTEX_MODEL para validação completa: export EXOCORTEX_MODEL=\"seu-modelo\"${_NC}"
+  elif [ ${#DEFINITIVE_FAILS[@]} -eq 0 ]; then
     echo -e "  ${_GREEN}${_BOLD}✅ Todas as features operacionais.${_NC}"
   else
     echo -e "  ${_RED}${_BOLD}❌ Falhas definitivas: ${DEFINITIVE_FAILS[*]}${_NC}"

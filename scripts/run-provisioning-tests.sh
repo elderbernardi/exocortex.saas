@@ -153,7 +153,14 @@ if [ "${NO_SMOKE:-0}" != "1" ]; then
   echo -e "${_BOLD}═══ Fase 2 completa ($smoke_count smoke tests) ═══${_NC}"
 else
   echo ""
-  echo -e "${_GRAY}Fase 2 (smoke tests) pulada (--no-smoke)${_NC}"
+  echo -e "${_GRAY}Fase 2 (smoke tests) pulada${_NC}"
+  if [ -z "$HARNESS_MODEL" ] && [ "${NO_SMOKE:-0}" = "1" ]; then
+    TOTAL_SMOKE_SKIPPED=${#SMOKE_PROMPTS_MAP[@]}
+    echo -e "${_YELLOW}  ⚠ ${TOTAL_SMOKE_SKIPPED} smoke tests pulados — EXOCORTEX_MODEL não configurado${_NC}"
+    echo -e "${_YELLOW}  Para validação completa: export EXOCORTEX_MODEL=\"seu-modelo\"${_NC}"
+  else
+    echo -e "${_GRAY}  (--no-smoke)${_NC}"
+  fi
 fi
 
 # =============================================================================

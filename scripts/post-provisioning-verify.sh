@@ -14,6 +14,14 @@ echo "║   Verificação Pós-Provisionamento             ║"
 echo "╚═══════════════════════════════════════════════╝"
 echo ""
 
+# Warn if no model is configured — smoke tests will be skipped
+if [ -z "${EXOCORTEX_HARNESS_MODEL:-${EXOCORTEX_MODEL:-}}" ]; then
+  echo -e "  \033[1;33m⚠ EXOCORTEX_MODEL não configurado.\033[0m"
+  echo -e "  \033[1;33m  Smoke tests serão pulados — só validação determinística vai rodar.\033[0m"
+  echo -e "  \033[1;33m  Para validação completa: export EXOCORTEX_MODEL=\"seu-modelo\" antes de rodar.\033[0m"
+  echo ""
+fi
+
 exec bash "$SCRIPT_DIR/run-provisioning-tests.sh" \
   --skip-api \
   "$@"
