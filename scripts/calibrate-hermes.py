@@ -294,6 +294,27 @@ def run_calibration_flow():
     parser.add_argument("--max-attempts", type=int, default=3, help="Max autocorrection attempts per feature (default: 3)")
     args = parser.parse_args()
 
+    # Resolve model: CLI flag > env var > interactive prompt > None (Hermes default)
+    model_override = args.model
+    if not model_override:
+        model_override = os.environ.get("EXOCORTEX_MODEL")
+    if not model_override and not args.dry_run and sys.stdin.isatty():
+        print(f"{YELLOW}Qual modelo usar para a calibração?{NC}")
+        print(f"  Enter = default do Hermes (config.yaml)")
+        print(f"  Ou digite o model ID (ex: gpt-5.4, deepseek-v4-pro, minimax-m2.5)")
+        try:
+            user_model = input(f"  {BOLD}Model:{NC} ").strip()
+            if user_model:
+                model_override = user_model
+        except (EOFError, KeyboardInterrupt):
+            pass
+        print()
+
+    if model_override:
+        print(f"{GREEN}✓{NC} Model override:      {BOLD}{model_override}{NC}")
+    else:
+        print(f"{GREEN}✓{NC} Model:               {BOLD}(Hermes default){NC}")
+
     max_attempts = args.max_attempts
 
     # --- Banner ---
@@ -397,10 +418,10 @@ Use as seguintes definições personalizadas do executivo para governar suas res
 - Limites Pessoais: {profile['limites']}
 """
             print("1. Injecting personalization context...")
-            _, session_id = run_hermes_command(hermes_bin, context_prompt, model_override=args.model)
+            _, session_id = run_hermes_command(hermes_bin, context_prompt, model_override=model_override)
 
         print("2. Sending cognitive calibration prompt (PDD)...")
-        _, session_id = run_hermes_command(hermes_bin, calib_prompt, session_id=session_id, model_override=args.model)
+        _, session_id = run_hermes_command(hermes_bin, calib_prompt, session_id=session_id, model_override=model_override)
 
         if not session_id:
             print(f"{RED}✗ INFRA: Failed to establish Hermes session.{NC}\n")
@@ -430,7 +451,7 @@ Use as seguintes definições personalizadas do executivo para governar suas res
                 # Attempt 2: Send remediation tip, then re-test
                 print(f"\n{YELLOW}── [{attempt_label}] Sending remediation tip ──{NC}")
                 print(f"   {BLUE}{remediation[:200]}{'...' if len(remediation) > 200 else ''}{NC}")
-                _, _ = run_hermes_command(hermes_bin, remediation, session_id=session_id, model_override=args.model)
+                _, _ = run_hermes_command(hermes_bin, remediation, session_id=session_id, model_override=model_override)
                 print(f"   Re-executing Smoke Test...")
             else:
                 # Attempt 3: Re-inject full calibration prompt + remediation + warning
@@ -442,11 +463,11 @@ Use as seguintes definições personalizadas do executivo para governar suas res
                     f"INSTRUÇÃO OPERACIONAL:\n{calib_prompt}\n\n"
                     f"CORREÇÃO NECESSÁRIA:\n{remediation}"
                 )
-                _, _ = run_hermes_command(hermes_bin, escalation, session_id=session_id, model_override=args.model)
+                _, _ = run_hermes_command(hermes_bin, escalation, session_id=session_id, model_override=model_override)
                 print(f"   Re-executing Smoke Test...")
 
             print(f"   Query: {MAGENTA}\"{test_prompt}\"{NC}")
-            response, _ = run_hermes_command(hermes_bin, test_prompt, session_id=session_id, model_override=args.model)
+            response, _ = run_hermes_command(hermes_bin, test_prompt, session_id=session_id, model_override=model_override)
 
             # Check for infra errors
             if response.startswith("TIMEOUT:") or response.startswith("ERROR:"):
