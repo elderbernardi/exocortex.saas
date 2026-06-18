@@ -5,7 +5,8 @@
 > Equivale funcionalmente ao `setup.sh`, mas em formato legível e executável
 > passo-a-passo por agentes (Claude, Gemini, GPT, etc.).
 >
-> **Para humanos**: Use `bash setup.sh` ou `curl ... | bash install.sh`.
+> **Para humanos**: Use `bash setup.sh`, `bash setup.sh --step-by-step`
+> ou `curl ... | bash -s -- --step-by-step`.
 > Este `.md` é para agentes que precisam instalar/diagnosticar o sistema
 > via terminal.
 
@@ -38,13 +39,19 @@ ACERVO_SRC="$SCRIPT_DIR/acervo"
 
 | Variável | Default | Descrição |
 |----------|---------|-----------|
-| `OPENROUTER_API_KEY` | — | Chave OpenRouter para DocBrain e LLM routing |
+| `OPENROUTER_API_KEY` | — | Chave OpenRouter para integrações que falam com OpenRouter |
+| `DEEPSEEK_API_KEY` | — | Chave DeepSeek direta para reasoning e fluxos compatíveis |
 | `TELEGRAM_BOT_TOKEN` | — | Token do bot Telegram (@BotFather) |
 | `CONTEXT7_API_KEY` | — | Chave Context7 para docs de tech stacks |
 | `FIRECRAWL_API_KEY` | — | Chave Firecrawl para crawling/extract |
+| `FIRECRAWL_BASE_URL` | `http://127.0.0.1:3002` | Endpoint local padrão do Firecrawl |
 | `DOCBRAIN_LLM_API_KEY` | — | Override de LLM key para DocBrain |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | `0` | `1` para ativar Hindsight local (Docker) |
 | `EXOCORTEX_ENABLE_HERMES_WEBUI` | `0` | `1` para ativar WebUI cockpit |
+
+Observação: `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais distintas.
+Alguns fluxos aceitam qualquer uma das duas; outros ainda exigem o nome literal
+da env var esperado pelo componente.
 
 ---
 
@@ -550,6 +557,8 @@ bash "$SCRIPT_DIR/setup/step-12-verify-keys.sh"
 | Key | Status | Ação se pendente |
 |-----|--------|------------------|
 | `OPENROUTER_API_KEY` | `test -n "${OPENROUTER_API_KEY:-}"` | Obter em openrouter.ai/keys |
+| `DEEPSEEK_API_KEY` | `test -n "${DEEPSEEK_API_KEY:-}"` | Obter no console da DeepSeek |
+| `FIRECRAWL_BASE_URL` | `printf '%s\n' "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"` | Para Firecrawl local, usar porta 3002 |
 | `TELEGRAM_BOT_TOKEN` | `test -n "${TELEGRAM_BOT_TOKEN:-}"` | Criar bot em @BotFather |
 | Google Credentials | `test -f "$HOME/.config/gcloud/application_default_credentials.json"` | `gcloud auth application-default login` |
 

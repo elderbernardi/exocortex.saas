@@ -52,8 +52,8 @@ is already set, this reminder is stale and should be deleted.
 
 ## If no key exists
 
-Configure OPENROUTER_API_KEY in the Hermes environment (use the same DeepSeek key).
-DocBrain will reuse it automatically.
+Configure OPENROUTER_API_KEY in the Hermes environment, or set DOCBRAIN_LLM_API_KEY specifically for DocBrain.
+OPENROUTER_API_KEY and DEEPSEEK_API_KEY are distinct credentials; reuse only the one compatible with the provider you selected.
 REMINDER
     info "Sem key LLM; lembrete criado em $HERMES_HOME/reminders/docbrain-llm-key.md"
   fi

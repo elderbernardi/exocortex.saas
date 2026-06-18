@@ -23,6 +23,7 @@ _EXOCORTEX_INTERACTIVE_LOADED=1
 
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-1}"
 ENV_LOCAL_FILE="${ENV_LOCAL_FILE:-$SCRIPT_DIR/.env.local}"
+STEP_BY_STEP_MODE="${STEP_BY_STEP_MODE:-0}"
 
 # ─── .env.local persistence ────────────────────────────────────────────────
 
@@ -232,12 +233,34 @@ confirm_proceed() {
 
   echo ""
   echo -en "  ${BOLD}$message${NC} ${DIM}[s/N]${NC}: "
-  read -r user_input
+  if ! read -r user_input; then
+    return 130
+  fi
 
   case "${user_input,,}" in
     s|y|sim|yes) return 0 ;;
     *) return 1 ;;
   esac
+}
+
+pause_step_by_step() {
+  local message="${1:-Pressione Enter para continuar.}"
+
+  if [ "$INTERACTIVE_MODE" != "1" ] || [ "${STEP_BY_STEP_MODE:-0}" != "1" ]; then
+    return 0
+  fi
+
+  echo -en "  ${DIM}$message${NC}"
+  read -r _step_ack || return 130
+}
+
+show_api_key_guidance() {
+  echo -e "  ${DIM}Origem dos valores:${NC} shell atual → .env.local → defaults do setup"
+  echo -e "  ${DIM}OPENROUTER_API_KEY e DEEPSEEK_API_KEY:${NC} são credenciais distintas."
+  echo -e "  ${DIM}Fluxos multiagente / Mixture of Agents:${NC} podem usar OpenRouter ou DeepSeek direto,"
+  echo -e "  ${DIM}mas alguns componentes ainda checam nomes literais de env vars.${NC}"
+  echo -e "  ${DIM}Firecrawl local:${NC} default esperado = http://127.0.0.1:3002"
+  echo ""
 }
 
 # ─── Display Functions ─────────────────────────────────────────────────────
@@ -281,6 +304,7 @@ show_config_table() {
   _show_row "TELEGRAM_BOT_TOKEN"     "${TELEGRAM_BOT_TOKEN:-}"     "ok"
   _show_row "CONTEXT7_API_KEY"       "${CONTEXT7_API_KEY:-}"       "ok"
   _show_row "FIRECRAWL_API_KEY"      "${FIRECRAWL_API_KEY:-}"      "ok"
+  _show_row "FIRECRAWL_BASE_URL"     "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}" "ok"
   _show_row "DOCBRAIN_LLM_API_KEY"   "${DOCBRAIN_LLM_API_KEY:-}"   "ok"
   _show_row "HINDSIGHT_API_KEY"      "${HINDSIGHT_API_KEY:-}"      "ok"
 
@@ -306,13 +330,21 @@ show_config_table() {
 # Main interactive configuration flow. Prompts for each setting group.
 run_interactive_init() {
   echo ""
-  echo -e "${BOLD}╔═══════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${BOLD}║   Configuração Interativa (Enter = aceitar default)      ║${NC}"
-  echo -e "${BOLD}╚═══════════════════════════════════════════════════════════╝${NC}"
+  if [ "${STEP_BY_STEP_MODE:-0}" = "1" ]; then
+    echo -e "${BOLD}╔═══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}║   Configuração Guiada (passo a passo)                    ║${NC}"
+    echo -e "${BOLD}╚═══════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${DIM}Cada bloco para e explica o que está sendo conferido.${NC}"
+  else
+    echo -e "${BOLD}╔═══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BOLD}║   Configuração Interativa (Enter = aceitar default)      ║${NC}"
+    echo -e "${BOLD}╚═══════════════════════════════════════════════════════════╝${NC}"
+  fi
   echo ""
 
   # ─── Paths ──────────────────────────────────────────────────────────
   echo -e "${BOLD}─── Paths ───${NC}"
+  pause_step_by_step "Revise os paths base. Enter para continuar: " || return 130
   prompt_value "HERMES_HOME"    "${HERMES_HOME:-$HOME/.hermes}"     "Diretório do runtime Hermes"
   prompt_value "EXOCORTEX_HOME" "${EXOCORTEX_HOME:-$HOME/exocortex}" "Diretório do workspace Exocórtex"
   echo ""
@@ -323,17 +355,21 @@ run_interactive_init() {
 
   # ─── API Keys ──────────────────────────────────────────────────────
   echo -e "${BOLD}─── API Keys ───${NC}"
-  prompt_secret "OPENROUTER_API_KEY"   "${OPENROUTER_API_KEY:-}"   "Chave OpenRouter (LLM routing, DocBrain)"
+  pause_step_by_step "Agora vamos revisar env vars e API keys. Enter para continuar: " || return 130
+  show_api_key_guidance
+  prompt_secret "OPENROUTER_API_KEY"   "${OPENROUTER_API_KEY:-}"   "Chave OpenRouter (routing OpenRouter e integrações que esperam OPENROUTER_API_KEY)"
   prompt_secret "TELEGRAM_BOT_TOKEN"   "${TELEGRAM_BOT_TOKEN:-}"   "Token do Telegram Bot (@BotFather)"
-  prompt_secret "DEEPSEEK_API_KEY"     "${DEEPSEEK_API_KEY:-}"     "Chave DeepSeek (fallback Hindsight)"
+  prompt_secret "DEEPSEEK_API_KEY"     "${DEEPSEEK_API_KEY:-}"     "Chave DeepSeek direta (reasoning, fallback e fluxos compatíveis)"
   prompt_secret "CONTEXT7_API_KEY"     "${CONTEXT7_API_KEY:-}"     "Chave Context7 (docs tech stacks, opcional)"
   prompt_secret "FIRECRAWL_API_KEY"    "${FIRECRAWL_API_KEY:-}"    "Chave Firecrawl (crawling/extract, opcional)"
+  prompt_value  "FIRECRAWL_BASE_URL"   "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}" "Endpoint Firecrawl (default local: 127.0.0.1:3002)"
   prompt_secret "DOCBRAIN_LLM_API_KEY" "${DOCBRAIN_LLM_API_KEY:-}" "Override LLM key para DocBrain (opcional)"
   prompt_secret "HINDSIGHT_API_KEY"    "${HINDSIGHT_API_KEY:-}"    "Chave Hindsight cloud (opcional)"
   echo ""
 
   # ─── Features ──────────────────────────────────────────────────────
   echo -e "${BOLD}─── Features Opcionais ───${NC}"
+  pause_step_by_step "Por fim, revise as features opcionais. Enter para continuar: " || return 130
   prompt_flag "EXOCORTEX_ENABLE_HINDSIGHT"    "${EXOCORTEX_ENABLE_HINDSIGHT:-1}"    "Ativar Hindsight (memória Docker local)?"
   prompt_flag "EXOCORTEX_ENABLE_HERMES_WEBUI" "${EXOCORTEX_ENABLE_HERMES_WEBUI:-0}" "Ativar Hermes WebUI (cockpit web)?"
   echo ""
@@ -358,6 +394,6 @@ run_interactive_init() {
   ACERVO_SRC="$SCRIPT_DIR/acervo"
 
   export HERMES_HOME EXOCORTEX_HOME ACERVO SCRIPT_DIR
-  export IMBROKE_MODE CALIBRATE_MODE
+  export IMBROKE_MODE CALIBRATE_MODE STEP_BY_STEP_MODE FIRECRAWL_BASE_URL
   export SKILLS_SRC SKILLS_DST PROFILES_SRC PROFILES_DST BUNDLES_SRC BUNDLES_DST ACERVO_SRC
 }

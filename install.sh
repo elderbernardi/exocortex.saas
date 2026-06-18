@@ -31,12 +31,88 @@ info() { echo -e "${CYAN}ℹ${NC} $1"; }
 fail() { echo -e "${RED}✗${NC} $1"; exit 1; }
 
 # ─── Configuration ───────────────────────────────────────────────────────────
-REPO_URL="https://github.com/elderbernardi/exocortex.saas.git"
-REPO_API="https://api.github.com/repos/elderbernardi/exocortex.saas"
-HERMES_INSTALLER="https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh"
+REPO_URL="${EXOCORTEX_REPO_URL:-https://github.com/elderbernardi/exocortex.saas.git}"
+REPO_API="${EXOCORTEX_REPO_API:-https://api.github.com/repos/elderbernardi/exocortex.saas}"
+HERMES_INSTALLER="${EXOCORTEX_HERMES_INSTALLER:-https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh}"
 INSTALLER_DIR="${EXOCORTEX_INSTALLER_DIR:-$HOME/.exocortex-installer}"
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
+SETUP_FLAGS=()
+
+print_help() {
+  cat <<EOF
+Uso: bash install.sh [opções]
+
+Opções:
+  --yes, -y         Executa setup sem prompts
+  --step-by-step    Força revisão guiada de paths, env vars e API keys
+  --init-only       Salva configuração e não executa os steps
+  --skip-env-check  Pula validação de pré-requisitos do setup
+  --imbroke         Ativa contingência OpenRouter free
+  --calibrate       Executa calibração cognitiva ao final
+  -h, --help        Mostra esta ajuda
+
+Exemplos:
+  curl -fsSL <url>/install.sh | bash
+  curl -fsSL <url>/install.sh | bash -s -- --step-by-step
+  curl -fsSL <url>/install.sh | TELEGRAM_BOT_TOKEN="..." bash -s -- --yes
+EOF
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --yes|-y|--step-by-step|--guided|--init-only|--skip-env-check|--imbroke|--calibrate)
+      SETUP_FLAGS+=("$1")
+      ;;
+    -h|--help)
+      print_help
+      exit 0
+      ;;
+    *)
+      fail "Flag não suportada: $1"
+      ;;
+  esac
+  shift
+done
+
+run_setup_script() {
+  local requires_tty=1
+  local flag
+  for flag in "${SETUP_FLAGS[@]}"; do
+    case "$flag" in
+      --yes|-y)
+        requires_tty=0
+        ;;
+    esac
+  done
+
+  if [ "$requires_tty" -eq 0 ]; then
+    HERMES_HOME="$HERMES_HOME" \
+    EXOCORTEX_HOME="$EXOCORTEX_HOME" \
+    TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}" \
+    bash setup.sh "${SETUP_FLAGS[@]}"
+    return $?
+  fi
+
+  if [ -t 0 ]; then
+    HERMES_HOME="$HERMES_HOME" \
+    EXOCORTEX_HOME="$EXOCORTEX_HOME" \
+    TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}" \
+    bash setup.sh "${SETUP_FLAGS[@]}"
+    return $?
+  fi
+
+  if [ -r /dev/tty ]; then
+    info "stdin do bootstrap não é interativo; conectando prompts ao terminal atual (/dev/tty)..."
+    HERMES_HOME="$HERMES_HOME" \
+    EXOCORTEX_HOME="$EXOCORTEX_HOME" \
+    TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}" \
+    bash setup.sh "${SETUP_FLAGS[@]}" < /dev/tty
+    return $?
+  fi
+
+  fail "Setup interativo requer um terminal. Reexecute em um TTY ou rode manualmente: HERMES_HOME=\"$HERMES_HOME\" EXOCORTEX_HOME=\"$EXOCORTEX_HOME\" bash $INSTALLER_DIR/setup.sh --yes"
+}
 
 # ─── Banner ──────────────────────────────────────────────────────────────────
 echo ''
@@ -251,10 +327,21 @@ fi
 
 cd "$SETUP_PATH"
 
-HERMES_HOME="$HERMES_HOME" \
-EXOCORTEX_HOME="$EXOCORTEX_HOME" \
-TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}" \
-bash setup.sh
+if run_setup_script; then
+  :
+else
+  setup_exit=$?
+  case "$setup_exit" in
+    130)
+      warn "Instalação interrompida antes do provisionamento completo."
+      info "Nenhum banner de sucesso será exibido para setup cancelado/interrompido."
+      exit 130
+      ;;
+    *)
+      fail "Setup falhou (exit $setup_exit). Revise a saída acima."
+      ;;
+  esac
+fi
 
 # ─── Step 7: Success banner ─────────────────────────────────────────────────
 echo ''

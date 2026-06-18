@@ -426,7 +426,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Repo Fonte**             | `github.com/elderbernardi/docbrain.git` (desenvolvimento). Fork de integração com CLI API: `github.com/ProjetoBB/docBrainBB.git`.                                                                 |
 | **Instalação**             | `setup.sh` via `configure_docbrain_engine()`: clona `github.com/ProjetoBB/docBrainBB.git` em `${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}`, executa `npm install && npm run build`. |
 | **Dependências de Skills** | `excrtx-memory-intake`                                                                                                                                                                            |
-| **Dependências de Tools**  | `git`, `npm`, Node.js, `OPENROUTER_API_KEY` ou `DOCBRAIN_LLM_API_KEY` (mesma key DeepSeek)                                                                                                        |
+| **Dependências de Tools**  | `git`, `npm`, Node.js, `OPENROUTER_API_KEY` ou `DOCBRAIN_LLM_API_KEY` (credenciais compatíveis com o provider escolhido)                                                                           |
 
 #### EX-28. NotebookLM Router (`excrtx-integrate-nlmroute`)
 
@@ -723,7 +723,7 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 | `EXOCORTEX_HOME`             | Sim (default: `~/exocortex`)                    | Workspace cognitivo                         |
 | `ACERVO`                     | Sim (default: `$EXOCORTEX_HOME/acervo`)         | Acervo Cognitivo                            |
 | `TELEGRAM_BOT_TOKEN`         | Não                                             | Gateway Telegram                            |
-| `OPENROUTER_API_KEY`         | Não                                             | DocBrain + LLM routing (mesma key DeepSeek) |
+| `OPENROUTER_API_KEY`         | Não                                             | DocBrain + LLM routing via OpenRouter       |
 | `EXOCORTEX_DOCBRAIN_DIR`     | Não (default: `$EXOCORTEX_HOME/tools/docbrain`) | Path da instância DocBrain                  |
 | `DOCBRAIN_LLM_API_KEY`       | Não                                             | Override de key específico para DocBrain    |
 | `CONTEXT7_API_KEY`           | Não                                             | Context7 MCP (docs técnicos)                |

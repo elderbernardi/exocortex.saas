@@ -10,6 +10,7 @@
 #   bash setup.sh --yes            # aceita todos defaults (CI/CD)
 #   bash setup.sh --init-only      # apenas configuração, sem executar steps
 #   bash setup.sh --skip-env-check # pula validação de pré-requisitos
+#   bash setup.sh --step-by-step   # revisão guiada de paths/env vars/API keys
 #   bash setup.sh --imbroke        # ativa contingência OpenRouter free
 #   bash setup.sh --calibrate      # calibração cognitiva pós-instalação
 #
@@ -17,6 +18,7 @@
 #   --yes            Aceita todos os defaults sem prompts (modo CI/CD)
 #   --init-only      Para após confirmação, não executa steps
 #   --skip-env-check Pula validação de pré-requisitos do sistema
+#   --step-by-step   Força revisão guiada de paths, env vars e API keys
 #   --imbroke        Ativa explicitamente o modo de contingência OpenRouter free
 #   --calibrate      Executa calibração cognitiva interativa pós-instalação
 #
@@ -110,17 +112,56 @@ info "═══ Estágio 2/3: Configuração ═══"
 show_config_table
 
 if [ "$INTERACTIVE_MODE" = "1" ]; then
-  echo -en "  ${BOLD}Deseja editar as configurações acima?${NC} ${DIM}[s/N]${NC}: "
-  read -r edit_choice
+  info "Origem dos valores: shell atual → .env.local → defaults do setup"
+  echo -en "  ${BOLD}Escolha:${NC} [c]ontinuar | [e]ditar rápido | [p]asso a passo ${DIM}[c]${NC}: "
+  if ! read -r edit_choice; then
+    fail "Setup interativo requer um terminal. Reexecute com --yes para modo não interativo ou conecte um TTY."
+  fi
   case "${edit_choice,,}" in
-    s|y|sim|yes)
-      run_interactive_init
+    p|passo|passo-a-passo|step|step-by-step|guided)
+      STEP_BY_STEP_MODE=1
+      export STEP_BY_STEP_MODE
+      if run_interactive_init; then
+        init_exit=0
+      else
+        init_exit=$?
+      fi
+      if [ "$init_exit" -ne 0 ]; then
+        if [ "$init_exit" -eq 130 ]; then
+          warn "Setup interrompido durante a revisão guiada."
+          exit 130
+        fi
+        fail "Falha durante a revisão guiada das configurações."
+      fi
       ;;
-    *)
+    e|editar|edit)
+      STEP_BY_STEP_MODE=0
+      export STEP_BY_STEP_MODE
+      if run_interactive_init; then
+        init_exit=0
+      else
+        init_exit=$?
+      fi
+      if [ "$init_exit" -ne 0 ]; then
+        if [ "$init_exit" -eq 130 ]; then
+          warn "Setup interrompido durante a edição das configurações."
+          exit 130
+        fi
+        fail "Falha durante a edição das configurações."
+      fi
+      ;;
+    c|continuar|continue|"")
       info "Mantendo configurações atuais."
       # Still save current values to .env.local for next run
       save_to_env_local "HERMES_HOME" "$HERMES_HOME"
       save_to_env_local "EXOCORTEX_HOME" "$EXOCORTEX_HOME"
+      save_to_env_local "FIRECRAWL_BASE_URL" "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
+      ;;
+    *)
+      warn "Opção inválida. Mantendo configurações atuais."
+      save_to_env_local "HERMES_HOME" "$HERMES_HOME"
+      save_to_env_local "EXOCORTEX_HOME" "$EXOCORTEX_HOME"
+      save_to_env_local "FIRECRAWL_BASE_URL" "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
       ;;
   esac
 else
@@ -128,6 +169,7 @@ else
   # Save current values for next run
   save_to_env_local "HERMES_HOME" "$HERMES_HOME"
   save_to_env_local "EXOCORTEX_HOME" "$EXOCORTEX_HOME"
+  save_to_env_local "FIRECRAWL_BASE_URL" "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 fi
 
 echo ""
@@ -152,11 +194,23 @@ if [ "${INIT_ONLY:-0}" = "1" ]; then
   exit 0
 fi
 
-if ! confirm_proceed "Confirma instalação com as configurações acima?"; then
+if confirm_proceed "Confirma instalação com as configurações acima?"; then
+  confirm_exit=0
+else
+  confirm_exit=$?
+fi
+if [ "$confirm_exit" -eq 130 ]; then
+  echo ""
+  warn "Setup interrompido: entrada interativa indisponível."
+  info "Reexecute com um terminal interativo ou use --yes para seguir sem prompts."
+  exit 130
+fi
+
+if [ "$confirm_exit" -ne 0 ]; then
   echo ""
   warn "Setup cancelado pelo usuário."
   info "As configurações foram salvas em .env.local para a próxima execução."
-  exit 0
+  exit 130
 fi
 
 echo ""

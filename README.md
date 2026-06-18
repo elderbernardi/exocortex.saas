@@ -195,6 +195,9 @@ This command pulls the installer, checks for OS dependencies, installs the Herme
 ```bash
 # Standard interactive installation
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
+
+# Guided installation with explicit review of env vars and API keys
+curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash -s -- --step-by-step
 ```
 
 To automatically install and bind the **Telegram Gateway**, pass the token in the environment:
@@ -215,6 +218,7 @@ The installer will automatically invoke `setup.sh`. If you want to customize hom
 
 ```bash
 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
+HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --step-by-step
 ```
 
 To also provision the Hermes WebUI web cockpit (optional, MIT-licensed `nesquena/hermes-webui`):
@@ -356,9 +360,12 @@ DocBrain is used to parse complex documents and PDFs.
    ```
 3. Set your API Key in your environment variables:
    ```bash
-   export OPENROUTER_API_KEY="your-deepseek-or-openrouter-key"
+   export OPENROUTER_API_KEY="your-openrouter-key"
+   export DEEPSEEK_API_KEY="your-deepseek-key"   # opcional, para fluxos DeepSeek diretos
+   export FIRECRAWL_BASE_URL="http://127.0.0.1:3002"  # se usar Firecrawl local
    ```
    _(Alternatively, isolate the key: `export DOCBRAIN_LLM_API_KEY="your-key"`)_
+   `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais distintas.
 
 ---
 

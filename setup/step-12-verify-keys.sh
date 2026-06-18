@@ -56,7 +56,20 @@ info "Verificando keys de API..."
 if [ -n "${OPENROUTER_API_KEY:-}" ]; then
   log "OPENROUTER_API_KEY definida"
 else
-  warn "OPENROUTER_API_KEY não definida — DocBrain e LLM routing podem falhar"
+  warn "OPENROUTER_API_KEY não definida — integrações que exigem essa env var literal podem falhar"
+fi
+if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+  log "DEEPSEEK_API_KEY definida"
+else
+  info "DEEPSEEK_API_KEY não definida (opcional — DeepSeek direto ficará indisponível)"
+fi
+if [ -n "${OPENROUTER_API_KEY:-}" ] || [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+  log "Rota de reasoning remoto disponível para fluxos multiagente / Mixture of Agents"
+else
+  warn "Nem OPENROUTER_API_KEY nem DEEPSEEK_API_KEY foram definidas — reasoning remoto ficará limitado"
+fi
+if [ -z "${OPENROUTER_API_KEY:-}" ] && [ -n "${DEEPSEEK_API_KEY:-}" ]; then
+  info "DeepSeek direto está disponível, mas componentes que checam OPENROUTER_API_KEY por nome ainda exigirão essa variável."
 fi
 if [ -n "${CONTEXT7_API_KEY:-}" ]; then
   log "CONTEXT7_API_KEY definida"
@@ -65,8 +78,10 @@ else
 fi
 if [ -n "${FIRECRAWL_API_KEY:-}" ]; then
   log "FIRECRAWL_API_KEY definida"
+  info "FIRECRAWL_BASE_URL efetiva: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 else
   info "FIRECRAWL_API_KEY não definida (opcional — crawling/extract pode ser adicionado depois)"
+  info "Se você subir Firecrawl localmente, use por default: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 fi
 
 # ─── last30days skill keys ───────────────────────────────────────────────────

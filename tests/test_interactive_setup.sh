@@ -536,6 +536,194 @@ if should_run "T20"; then
 fi
 
 # =============================================================================
+# T21: setup.sh cancelado pelo usuário retorna 130 e não segue como sucesso
+# =============================================================================
+
+if should_run "T21"; then
+  echo -e "${BOLD}T21: setup.sh cancelado retorna 130${NC}"
+
+  if ! command -v script >/dev/null 2>&1; then
+    skip "T21" "comando 'script' não disponível neste ambiente"
+  else
+    test_dir=$(setup_test_env)
+    output_file="$test_dir/setup-cancel.log"
+    input_file="$test_dir/setup-cancel.input"
+    printf '\n\n' > "$input_file"
+
+    if script -e -q -c "cd '$REPO_ROOT' && bash setup.sh" /dev/null < "$input_file" > "$output_file" 2>&1; then
+      exit_code=0
+    else
+      exit_code=$?
+    fi
+
+    if [ "$exit_code" -eq 130 ] \
+      && grep -q "Setup cancelado pelo usuário" "$output_file" \
+      && ! grep -q "instalado com sucesso" "$output_file"; then
+      pass "T21: cancelamento interrompe o setup com exit 130"
+    else
+      fail_test "T21" "exit=$exit_code; ver $output_file"
+    fi
+
+    cleanup_test_env "$test_dir"
+  fi
+fi
+
+# =============================================================================
+# T22: install.sh não exibe sucesso quando setup é cancelado
+# =============================================================================
+
+if should_run "T22"; then
+  echo -e "${BOLD}T22: install.sh interrompe sem banner de sucesso ao cancelar setup${NC}"
+
+  if ! command -v script >/dev/null 2>&1; then
+    skip "T22" "comando 'script' não disponível neste ambiente"
+  else
+    test_dir=$(mktemp -d)
+    home_dir="$test_dir/home"
+    installer_dir="$test_dir/.exocortex-installer"
+    output_file="$test_dir/install-cancel.log"
+    input_file="$test_dir/install-cancel.input"
+    mkdir -p "$home_dir"
+    cp -a "$REPO_ROOT" "$installer_dir"
+    echo "main" > "$installer_dir/.exocortex-version"
+    printf '\n\n' > "$input_file"
+
+    if env HOME="$home_dir" EXOCORTEX_INSTALLER_DIR="$installer_dir" VERSION="main" \
+      script -e -q -c "bash '$REPO_ROOT/install.sh'" /dev/null < "$input_file" > "$output_file" 2>&1; then
+      exit_code=0
+    else
+      exit_code=$?
+    fi
+
+    if [ "$exit_code" -eq 130 ] \
+      && grep -q "Instalação interrompida antes do provisionamento completo" "$output_file" \
+      && ! grep -q "Exocórtex.IA instalado com sucesso" "$output_file" \
+      && [ ! -d "$home_dir/.hermes/skills/excrtx" ]; then
+      pass "T22: install.sh respeita cancelamento do setup"
+    else
+      fail_test "T22" "exit=$exit_code; ver $output_file"
+    fi
+
+    cleanup_test_env "$test_dir"
+  fi
+fi
+
+# =============================================================================
+# T23: common.sh parse --step-by-step flag
+# =============================================================================
+
+if should_run "T23"; then
+  echo -e "${BOLD}T23: common.sh parse --step-by-step flag${NC}"
+  test_dir=$(setup_test_env)
+
+  result=$(bash -c "
+    export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
+    source '$REPO_ROOT/setup/common.sh' --step-by-step 2>/dev/null
+    echo \$STEP_BY_STEP_MODE
+  " 2>/dev/null || true)
+
+  if [ "$result" = "1" ]; then
+    pass "T23: --step-by-step sets STEP_BY_STEP_MODE=1"
+  else
+    fail_test "T23" "STEP_BY_STEP_MODE='$result' (esperado '1')"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T24: install.sh --help documenta revisão guiada
+# =============================================================================
+
+if should_run "T24"; then
+  echo -e "${BOLD}T24: install.sh --help documenta step-by-step${NC}"
+
+  help_output=$(bash "$REPO_ROOT/install.sh" --help 2>/dev/null || true)
+
+  if echo "$help_output" | grep -q -- "--step-by-step"; then
+    pass "T24: --help expõe a flag --step-by-step"
+  else
+    fail_test "T24" "ajuda não menciona --step-by-step"
+  fi
+fi
+
+# =============================================================================
+# T25: verify-keys reconhece DeepSeek como rota remota válida
+# =============================================================================
+
+if should_run "T25"; then
+  echo -e "${BOLD}T25: step-12 reconhece DEEPSEEK_API_KEY${NC}"
+  test_dir=$(setup_test_env)
+
+  output=$(bash -c "
+    export HERMES_HOME='$test_dir/hermes'
+    export HOME='$test_dir/home'
+    export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
+    export DEEPSEEK_API_KEY='test-deepseek-key'
+    bash '$REPO_ROOT/setup/step-12-verify-keys.sh' 2>&1
+  " 2>/dev/null || true)
+
+  if echo "$output" | grep -q "Rota de reasoning remoto disponível para fluxos multiagente" \
+    && echo "$output" | grep -q "componentes que checam OPENROUTER_API_KEY por nome"; then
+    pass "T25: DeepSeek direto é tratado como rota remota válida"
+  else
+    fail_test "T25" "saída não trouxe o guidance esperado"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T26: verify-keys usa Firecrawl local na porta 3002 por default
+# =============================================================================
+
+if should_run "T26"; then
+  echo -e "${BOLD}T26: step-12 anuncia Firecrawl local em 3002${NC}"
+  test_dir=$(setup_test_env)
+
+  output=$(bash -c "
+    export HERMES_HOME='$test_dir/hermes'
+    export HOME='$test_dir/home'
+    export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
+    bash '$REPO_ROOT/setup/step-12-verify-keys.sh' 2>&1
+  " 2>/dev/null || true)
+
+  if echo "$output" | grep -q "http://127.0.0.1:3002"; then
+    pass "T26: guidance do Firecrawl aponta para porta 3002"
+  else
+    fail_test "T26" "saída não menciona o endpoint default do Firecrawl"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T27: install.sh --yes funciona sem TTY
+# =============================================================================
+
+if should_run "T27"; then
+  echo -e "${BOLD}T27: install.sh --yes funciona sem TTY${NC}"
+  test_dir=$(mktemp -d)
+  home_dir="$test_dir/home"
+  installer_dir="$test_dir/.exocortex-installer"
+  mkdir -p "$home_dir"
+
+  output=$(env HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
+    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$REPO_ROOT" VERSION="main" \
+    OPENROUTER_API_KEY='test-openrouter-key' \
+    bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1 || true)
+
+  if echo "$output" | grep -q "Modo --init-only: configuração salva em .env.local" \
+    && ! echo "$output" | grep -q "/dev/tty"; then
+    pass "T27: install.sh roda headless com --yes"
+  else
+    fail_test "T27" "instalação headless não produziu a saída esperada"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 
