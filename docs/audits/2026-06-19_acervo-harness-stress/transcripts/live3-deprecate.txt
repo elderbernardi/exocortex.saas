@@ -1,0 +1,56 @@
+Operação concluída. Resultado real, passo a passo:
+
+PROTOCOLO ADR-016 (excrtx-memory-deprecate) — 4 passos
+
+  Step 1 — Detectar overlap
+    Arquivo candidato: micro/exocortex-dev/knowledge/modelo-default.md
+    Sinais: mesma entidade ("modelo default do Exocórtex"), 2+ tags em comum
+    ([model, config] vs [model, config, MiniMax-m3]).
+    Classe: volátil, sem promoted_at → elegível.
+
+  Step 2 — Classificar relação
+    Contradição direta. Old: "DeepSeek-V3". New: "MiniMax-M3".
+    Claims mutuamente exclusivos sobre o mesmo fato.
+
+  Step 3 — Depreciar predecessor + criar sucessor
+    [OK] micro/exocortex-dev/knowledge/modelo-default.md
+        + deprecated: true
+        + deprecated_at: 2026-06-19T23:34:49Z
+        + deprecated_reason: "Superseded by knowledge/modelo-default-m3.md — MiniMax-M3 is now default"
+        Demais campos intactos (created_at, tags, title, body preservados).
+    [OK] micro/exocortex-dev/knowledge/modelo-default-m3.md (NOVO)
+        Frontmatter OKF, class: volátil, tags: [model, config, MiniMax-m3]
+        Body com "Supersedes: [Modelo default do Exocórtex é DeepSeek-V3](modelo-default.md)".
+    [OK] micro/exocortex-dev/_meta/log.md
+        ## 2026-06-19 | deprecate | Modelo default migrado para MiniMax-M3
+        - CREATED: knowledge/modelo-default-m3.md (volátil)
+        - DEPRECATED: knowledge/modelo-default.md — superseded by knowledge/modelo-default-m3.md
+        Linhas anteriores (2026-06-08, 2026-06-11) preservadas — append-only.
+    [OK] micro/exocortex-dev/_meta/index.md
+        Knowledge catalogado: modelo-default-m3.md (com nota de deprecação do predecessor).
+
+  Step 4 — Ambiguidade
+    Não houve. Decisão foi automática: contradição clara.
+
+VERIFICAÇÃO (texto bruto do disco, todos os critérios passaram)
+  [PASS]  deprecated: true setado
+  [PASS]  deprecated_at = 2026-06-19T23:34:49Z (ISO 8601 UTC)
+  [PASS]  deprecated_reason referencia o sucessor
+  [PASS]  created_at/tags/title/class originais INTACTOS
+  [PASS]  body original preservado para auditoria
+  [PASS]  body novo tem link 'Supersedes:'
+  [PASS]  log.md append-only (linhas anteriores íntegras)
+  [PASS]  Isolamento de domínio: nenhum outro microverso foi tocado
+
+EFEITO NO SEARCH (excrtx-memory-manager §Operation: SEARCH)
+  Query futura "modelo default Exocórtex":
+    ATIVO:    modelo-default-m3.md  [volátil]  MiniMax-M3
+    EXCLUÍDO: modelo-default.md     [volátil]  DeepSeek-V3  (deprecated: true)
+
+Referência de paths:
+  /tmp/acervo-stress-20260619_200744/hermes/acervo/micro/exocortex-dev/knowledge/modelo-default.md
+  /tmp/acervo-stress-20260619_200744/hermes/acervo/micro/exocortex-dev/knowledge/modelo-default-m3.md
+  /tmp/acervo-stress-20260619_200744/hermes/acervo/micro/exocortex-dev/_meta/log.md
+  /tmp/acervo-stress-20260619_200744/hermes/acervo/micro/exocortex-dev/_meta/index.md
+
+A atualização do agente runtime (modelo default = MiniMax-M3) também precisa ser propagada para a configuração do Hermes/Exocórtex em si (config.yaml, perfis), pois o Acervo registra a decisão conceitual mas a config de runtime é separada. Posso cuidar disso em seguida se você confirmar o provider/credencial MiniMax.

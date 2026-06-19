@@ -1,0 +1,22 @@
+✓ art_20260606_055603_dogfood-ex22-artifacts-manager
+✓ art_20260608_auditoria
+  WARN:  Status is 'published' but no exports declared
+✗ art_20260616_readme_release
+  ERROR: Missing required field: artifact_type
+  ERROR: Missing required field: provenance
+  WARN:  Published but no receipt_path declared
+  WARN:  No owner.id — artifact is orphaned
+  WARN:  No provenance.created_at
+  WARN:  Missing standard directory: source/
+  WARN:  Missing standard directory: assets/
+  WARN:  Missing standard directory: evaluations/
+✗ art_20260617_guimaraes_briefing
+  ERROR: manifest.json not found
+✗ exoesqueleto-clevel-deck
+  ERROR: manifest.json not found
+✗ patches
+  ERROR: manifest.json not found
+✗ repairs
+  ERROR: manifest.json not found
+
+Total: 7 artifacts, 2 valid, 5 with errors

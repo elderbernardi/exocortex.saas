@@ -45,6 +45,12 @@ class TestValidFixtures:
         result = _run("valid-promoted.md")
         assert result.returncode == 0, result.stdout + result.stderr
 
+    def test_valid_with_utf8_bom(self):
+        # A leading UTF-8 BOM must not trip V-001 (regression: BOM stripping).
+        result = _run("valid-bom.md")
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "V-001" not in (result.stdout + result.stderr)
+
 
 # ─── Invalid fixtures — must exit 1 and name a rule ID ──────────────────────
 

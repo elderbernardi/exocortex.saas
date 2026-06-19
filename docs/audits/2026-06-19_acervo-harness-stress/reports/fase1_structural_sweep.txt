@@ -1,0 +1,14 @@
+== nature-vs-directory mismatches: 4 ==
+   micro/_template/prompts/_seed.md  nature=contracts dir=prompts
+   micro/_template/skills/_seed.md  nature=tools dir=skills
+   micro/_template/decisions/_seed.md  nature=knowledge dir=decisions
+   micro/estudio-criativo/decisions/create-estudio-criativo.md  nature=knowledge dir=decisions
+
+== log.md files: 11, non-conformant: 5 ==
+   global/_meta/log.md: no "# Log" H1, sub-bullet
+   micro/hermes-setup/log.md: no "# Log" H1
+   micro/_template/_meta/log.md: no "# Log" H1
+   micro/projeto-alpha/_meta/log.md: no "# Log" H1
+   shared/_meta/log.md: no "# Log" H1
+
+== V-071 (deprecated AND quarantined): 0 ==

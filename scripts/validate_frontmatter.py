@@ -215,6 +215,11 @@ def extract_frontmatter(text):
         tuples for V-001 through V-004
     """
     issues = []
+    # Strip a leading UTF-8 BOM so a BOM-prefixed (but otherwise valid) file is
+    # not spuriously rejected by V-001. Editors that write UTF-8-with-BOM would
+    # otherwise make every Acervo file fail the opening-delimiter check.
+    if text.startswith("﻿"):
+        text = text[1:]
     lines = text.split("\n")
 
     # V-001: File must start with ---\n

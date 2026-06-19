@@ -1,0 +1,1 @@
+hermes -z: agent failed: Provider 'minimax' is set in config.yaml but no API key was found. Set the MINIMAX_API_KEY environment variable, or switch to a different provider with `hermes model`.

@@ -1,0 +1,34 @@
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/context/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/contracts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/decisions/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/knowledge/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/persona/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/prompts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/reflections/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/skills/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/templates/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/tools/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-beta/workflows/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
