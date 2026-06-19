@@ -328,11 +328,46 @@ Least privilege: use the simplest tool that solves the task.
 
   File operations: always verify path exists before writing.
 
+## Memory Deprecate
+- On every new file creation in knowledge/, context/, contracts/, tools/ natures, run a semantic revision check before the WRITE commits.
+- Search the target container (microverso, global/, or shared/) for overlapping files using tag overlap (2+ shared tags), title similarity, and entity matching.
+- If a direct contradiction is found: deprecate the old file by setting deprecated: true, deprecated_at (ISO 8601 UTC), deprecated_reason (references the superseding file). Add a "Supersedes:" markdown link in the new file body.
+- If overlap is partial and the new file replaces the old's claim: deprecate the old. If the new file adds to the old: both coexist, do not deprecate.
+- If overlap is complementary (different aspect of same entity): both coexist, do not deprecate.
+- If the relationship is ambiguous: do NOT deprecate. Write the new file with a "Potential overlap with:" note and flag for executive review.
+- Never deprecate files with class: perene or with promoted_at set — these are immune to auto-deprecation.
+- Never deprecate across microverso boundaries — domain isolation is a hard boundary.
+- Never deprecate files already marked deprecated: true — idempotent; skip.
+- Log every deprecation in the owning container's log.md as a DEPRECATED entry per the log-convention.
+- Conservative detection: only deprecate on clear, direct contradictions. When in doubt, flag — do not deprecate.
+
 ## Memory Intake
 - The inbox is checked only on explicit request ("verifique o inbox" or "inseri arquivo X no inbox"); never poll it automatically.
 - On "verifique o inbox": list _inbox/ files newest-first, classify each, and propose a destination microverso/directory — then stop and wait for confirmation.
 - On "inseri arquivo X": confirm the file exists in _inbox/, extract text if it is a document, then classify and propose a destination.
 - Never move or promote inbox files without explicit confirmation; never copy raw material directly into the semantic Acervo.
+
+## Memory Quarantine
+- Quarantine MOVES files to $ACERVO/.quarantine/ preserving directory structure — never copies; the file leaves its original location.
+- Quarantine is NOT active memory — search, context loading, and briefing skip .quarantine/ entirely.
+- Each quarantined file gets quarantined_at, quarantine_reason, quarantine_expires_at (= quarantined_at + exactly 30 days, UTC).
+- Files in quarantine >30 days without restore are permanently purged — irreversible, no backup, no recovery.
+- Perene files, promoted_at files, raw/ directories, and the macro/ layer are immune — never quarantine them.
+- A file cannot be simultaneously deprecated and quarantined — strip deprecation fields when quarantining a deprecated file.
+- Every quarantine, purge, and restore is dual-logged in .purge_log (global) AND the origin container's log.md.
+
+## Memory Syndic
+- Syndic operates autonomously under manut profile — no Draft-First for quarantine or purge operations (ADR-018).
+- The 30-day quarantine window is the safety net, not executive pre-approval — report after the cycle, not before.
+- Scan criteria: volátil files with last_accessed_at >90 days, deprecated files with deprecated_at >180 days, consolidation candidates (flagged, never auto-quarantined).
+- Perene files, promoted_at files, raw/ directories, and the macro/ layer are immune — never scanned for quarantine.
+- Purge files in .quarantine/ whose quarantine_expires_at has passed (30 days without restore).
+- Consolidation candidates are reported to the executive only — the syndic never quarantines them.
+- Delegates actual file moves, purges, and restores to excrtx-memory-quarantine — the syndic decides WHAT, the quarantine skill executes HOW.
+- Every cycle produces a summary report delivered to the executive's home channel.
+- All operations are dual-logged in .purge_log (global) and the origin container's log.md by the quarantine skill.
+- Idempotent: running the cycle twice in the same day produces no duplicate quarantines — a file already carrying quarantined_at is skipped.
+- Fail safe: if a file cannot be moved (permissions, missing path), log the error and continue the cycle — never abort on a single failure.
 
 ## Anti-Slop
 Cut filler phrases, throat-clearing openers, emphasis crutches, all

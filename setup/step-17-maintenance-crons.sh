@@ -35,7 +35,7 @@ create_cron_if_missing() {
 }
 
 create_cron_if_missing "maintenance-weekly" "0 3 * * 0" \
-  "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance. Execute todos os 6 passos do Procedure. Envie o relatório no formato padronizado."
+  "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance (manutenção geral) e a skill excrtx-memory-syndic (lifecycle do Acervo: scan → quarentena → purge). Para o syndic: (1) varre arquivos voláteis com last_accessed_at > 90 dias e deprecated_at > 180 dias, (2) move candidatos para .quarantine/ via excrtx-memory-quarantine, (3) purga arquivos com quarantine_expires_at vencido, (4) registra em log.md e .purge_log. Envie o relatório consolidado no formato padronizado."
 
 create_cron_if_missing "inbox-triage" "30 3 * * 1" \
   "Execute triagem de inbox com rotina rtn_inbox_triage. Persona: arquivista. Liste itens no inbox (raw/) com >7 dias sem promoção. Classifique e recomende ações ao executivo. NÃO mova itens. Envie relatório padronizado."

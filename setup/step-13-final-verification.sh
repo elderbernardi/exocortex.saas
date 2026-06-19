@@ -30,6 +30,7 @@ EXPECTED_SKILLS=(
   # Memory
   "excrtx-memory-manager" "excrtx-memory-wikiadapt" "excrtx-memory-newmicro"
   "excrtx-memory-mvsetup" "excrtx-memory-mvinstall" "excrtx-memory-opsmemory"
+  "excrtx-memory-deprecate" "excrtx-memory-quarantine" "excrtx-memory-syndic"
   # Behavior + Govern
   "excrtx-govern-draftfirst" "excrtx-behavior-vetor" "excrtx-behavior-canvas"
   "excrtx-behavior-briefing" "excrtx-govern-tools" "excrtx-harness-kanban"

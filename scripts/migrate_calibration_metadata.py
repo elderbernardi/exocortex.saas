@@ -38,10 +38,10 @@ CALIBRATION_MAPPING = {
     },
     "EX-11": {
         "skill": "excrtx-memory-manager",
-        "calibration_prompt": "Você gerencia o Acervo Cognitivo de 4 camadas: macro (identidade), global (regras universais), micro (domínios isolados por slug) e shared (pontes).\nRegras de Escrita:\n- Execute o Filtro de Domínio: se a informação pertence a um domínio específico, escreva em 'micro/{slug}/{nature}.md'. Se for comum, 'global/{nature}.md'. Se for cross-domain, escreva em 'shared/cross-refs/' e coloque um link de 1 linha no microverso. Nunca duplique.\n- Toda página wiki criada ou modificada deve possuir o cabeçalho YAML (frontmatter) contendo: title, created, updated, nature e type.\n- Atualize sempre o 'index.md' e o 'log.md' correspondente ao escopo de gravação.",
-        "test_prompt": "Verifique se o Acervo Manager opera no microverso 'estudio-criativo': 1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md. 2. Proponha a criação de um novo formato de publicação (ex: carrossel para redes sociais) para promover um curso do microverso 'ensino', respeitando a regra de separação contra contaminação entre microversos.",
-        "acceptance_criteria": "O agente deve propor a criação do formato no microverso estudio-criativo (como método criativo) e fazer referência ao curso do microverso ensino, sem misturar os contextos de forma contaminada, respeitando o mixed-task-model.",
-        "remediation_tip": "Violação do Mixed Task Model ou do Filtro de Domínio. As regras do formato/método devem residir no estudio-criativo e as do curso no ensino."
+        "calibration_prompt": "Você gerencia o Acervo Cognitivo de 4 camadas: macro (identidade), global (regras universais), micro (domínios isolados por slug) e shared (pontes).\nRegras de Escrita:\n- Execute o Filtro de Domínio: se a informação pertence a um domínio específico, escreva em 'micro/{slug}/{nature}.md'. Se for comum, 'global/{nature}.md'. Se for cross-domain, escreva em 'shared/cross-refs/' e coloque um link de 1 linha no microverso. Nunca duplique.\n- Toda página criada ou modificada deve possuir o cabeçalho YAML (frontmatter) OKF v0.1 com os campos obrigatórios: type (OKF concept type: decision/knowledge/context/reflection/artifact/memory), title, description, tags, timestamp (YYYY-MM-DD). Campos Acervo obrigatórios: class (perene|volátil), created_at (ISO 8601 datetime+TZ), last_accessed_at. Campo legado preservado: excrtx_type (antigo 'type' pre-migração, e.g. fact/rule/workflow/tool). NÃO use os campos antigos 'created' e 'updated' como campos primários de schema — eles são legados.\n- WRITE: antes de gravar, chame excrtx-memory-deprecate para detectar contradições com arquivos voláteis existentes e deprecar o predecessor se necessário.\n- Atualize sempre o '_meta/log.md' e '_meta/index.md' correspondentes ao escopo de gravação.\n- SEARCH: nunca inclua arquivos com deprecated: true ou dentro de .quarantine/ nos resultados.\n- READ: atualize last_accessed_at no frontmatter ao ler um arquivo.",
+        "test_prompt": "Verifique se o Acervo Manager opera no microverso 'estudio-criativo': 1. Leia o arquivo acervo/micro/estudio-criativo/context/mixed-task-model.md. 2. Proponha a criação de um novo formato de publicação (ex: carrossel para redes sociais) para promover um curso do microverso 'ensino', respeitando a regra de separação contra contaminação entre microversos. 3. Mostre o frontmatter OKF v0.1 completo que seria usado na criação do arquivo.",
+        "acceptance_criteria": "O agente deve: (1) propor a criação do formato no microverso estudio-criativo sem contaminar o ensino; (2) exibir frontmatter com type, title, description, tags, timestamp, class, created_at, last_accessed_at — sem usar 'created' ou 'updated' como campos primários; (3) mencionar a chamada a excrtx-memory-deprecate antes do WRITE.",
+        "remediation_tip": "Violação do Mixed Task Model, do Filtro de Domínio ou do schema OKF. Verifique: (a) as regras do formato/método devem residir em estudio-criativo; (b) frontmatter deve ter type/title/description/tags/timestamp/class/created_at/last_accessed_at; (c) WRITE deve chamar excrtx-memory-deprecate."
     },
     "EX-13": {
         "skill": "excrtx-memory-newmicro",
@@ -91,6 +91,27 @@ CALIBRATION_MAPPING = {
         "test_prompt": "Gere o manifesto final para um relatório de auditoria recém-criado sob o id 'art_20260608_auditoria'. Como você garante que ele passa pelo Quality Gate Enforced?",
         "acceptance_criteria": "O agente deve explicitar que o manifesto deve ser validado pelo script 'validate_artifact_manifest.py' e atestar que a pontuação anti-slop deve ser superior a 35.",
         "remediation_tip": "Quality Gate Bypassed. É obrigatório executar a validação técnica de manifesto pelo script 'validate_artifact_manifest.py' antes de publicar."
+    },
+    "EX-53": {
+        "skill": "excrtx-memory-deprecate",
+        "calibration_prompt": "Antes de QUALQUER operação WRITE no Acervo, você deve executar revisão semântica para detectar contradições com arquivos voláteis existentes (ADR-016).\nRegras:\n- Apenas arquivos com class: volátil podem ser auto-deprecados. Arquivos perene, raw/, macro/ e arquivos em .quarantine/ são imunes.\n- Se o novo conteúdo contradiz um arquivo volátil existente: marque o predecessor com deprecated: true, deprecated_at: <data>, deprecated_reason: <motivo>, superseded_by: <path do novo arquivo>. Adicione entrada DEPRECATED no log.md.\n- Se a sobreposição for ambígua (não há contradição clara), sinalize ao executivo e NÃO deprece automaticamente.\n- Aplique isolamento de domínio: comparação só ocorre dentro do mesmo microverso ou escopo global. Nunca cruze microversos.",
+        "test_prompt": "Você está prestes a criar 'micro/comercial/knowledge/taxa-juros-julho.md' com taxa de juros SELIC a 10,75%. Existe 'micro/comercial/knowledge/taxa-juros-junho.md' com taxa a 11,25%. O que você faz antes de gravar o novo arquivo?",
+        "acceptance_criteria": "O agente deve: (1) identificar o arquivo anterior como volátil; (2) marcar junho.md com deprecated: true + deprecated_at + deprecated_reason + superseded_by; (3) adicionar entrada DEPRECATED no log.md; (4) só então gravar o novo arquivo julho.md com frontmatter OKF completo.",
+        "remediation_tip": "Violação da revisão semântica (ADR-016). Antes do WRITE: detecte contradição, deprece o predecessor volátil, registre no log.md. Nunca deprece arquivos perene. Nunca cruze escopo de microverso."
+    },
+    "EX-54": {
+        "skill": "excrtx-memory-quarantine",
+        "calibration_prompt": "Você gerencia o ciclo físico de quarentena do Acervo (ADR-015).\nOperações:\n- QUARANTINE: mover arquivo para $ACERVO/.quarantine/ (espelhando path original), adicionar ao frontmatter quarantined_at, quarantine_reason, quarantine_expires_at (quarantined_at + 30 dias UTC). Registrar QUARANTINED no log.md do container de origem E no .quarantine/.purge_log.\n- RESTORE: mover de volta para path original, remover campos de quarentena do frontmatter. Registrar RESTORED no log.md.\n- PURGE: deletar arquivo após quarantine_expires_at vencido. Registrar PURGED no .purge_log. Irreversível.\nImunidades: arquivos perene, macro/, raw/, arquivos já em .quarantine/ não podem ser quarentinados.\nMutual exclusion: um arquivo não pode ser simultaneamente deprecated E quarantined.",
+        "test_prompt": "O syndic identificou 'micro/comercial/context/briefing-q1-2026.md' (class: volátil, deprecated_at: 2026-01-01) com mais de 180 dias de deprecated. Mostre o processo completo de quarentena deste arquivo.",
+        "acceptance_criteria": "O agente deve: (1) verificar que o arquivo é volátil e não está em .quarantine/; (2) mover para .quarantine/micro/comercial/context/; (3) adicionar quarantined_at + quarantine_reason + quarantine_expires_at no frontmatter; (4) registrar QUARANTINED no log.md de micro/comercial/ E no .quarantine/.purge_log.",
+        "remediation_tip": "Violação do protocolo de quarentena (ADR-015). Verifique: (a) imunidade do arquivo (perene/macro/raw são imunes); (b) path espelhado em .quarantine/; (c) frontmatter com os 3 campos de quarentena; (d) log duplo: log.md do container E .purge_log global."
+    },
+    "EX-55": {
+        "skill": "excrtx-memory-syndic",
+        "calibration_prompt": "Você é o syndic autônomo do Acervo Cognitivo, executado sob o perfil manut (ADR-018). Ciclo semanal de 7 passos:\n1. SCAN: varrer todos os arquivos em $ACERVO/ excluindo .quarantine/.\n2. FILTRO DE IMUNIDADE: excluir class: perene, macro/, raw/ e arquivos em .quarantine/.\n3. CANDIDATOS A QUARENTENA: last_accessed_at > 90 dias OU deprecated_at > 180 dias.\n4. QUARENTENA: para cada candidato, chamar excrtx-memory-quarantine.\n5. PURGE: para cada arquivo em .quarantine/ com quarantine_expires_at < hoje, chamar excrtx-memory-quarantine (operação PURGE).\n6. CANDIDATOS A CONSOLIDAÇÃO: arquivos com conteúdo semanticamente próximo — flagear apenas, NÃO agir.\n7. RELATÓRIO: gerar relatório consolidado e entregar ao channel home do executivo.\nFail-safe: erro em um arquivo não aborta o ciclo — registre o erro e continue.",
+        "test_prompt": "Simule o ciclo do syndic em modo de inspeção (sem executar ações físicas). No Acervo existem: (A) 'micro/comercial/context/reuniao-2025-11.md' com last_accessed_at: 2025-10-01 e class: volátil; (B) 'micro/gabinete/decisions/estrategia-core.md' com class: perene; (C) '.quarantine/micro/comercial/knowledge/old.md' com quarantine_expires_at: 2026-01-01. Qual é o plano de ação do syndic?",
+        "acceptance_criteria": "O agente deve: (1) listar A como candidato a quarentena (volátil, >90 dias sem acesso); (2) excluir B (perene, imune); (3) listar C como candidato a purge (expirado); (4) reportar sem executar ações físicas; (5) não mencionar C como candidato a quarentena (já está em quarentena).",
+        "remediation_tip": "Violação do ciclo syndic (ADR-018). Verifique: (a) imunidades: perene/macro/raw são sempre excluídos; (b) arquivos já em .quarantine/ são candidatos a purge, não a quarentena; (c) fail-safe por arquivo, nunca aborta o ciclo inteiro; (d) consolidação é apenas flag, nunca ação automática."
     }
 }
 
@@ -124,6 +145,10 @@ FEATURE_SKILL_MAP = {
     "EX-33": "excrtx-harness-core",
     "EX-34": "excrtx-harness-hermesops",
     "EX-35": "excrtx-harness-surfaces",
+    # Lifecycle skills (acervo-lifecycle-okf, 2026-06-19)
+    "EX-53": "excrtx-memory-deprecate",
+    "EX-54": "excrtx-memory-quarantine",
+    "EX-55": "excrtx-memory-syndic",
 }
 
 # Extracted smoke test prompts from scripts/test-registry.sh
@@ -156,6 +181,9 @@ SMOKE_PROMPTS = {
     "EX-33": "Verifique se os scripts runner e review existem.",
     "EX-34": "Verifique se a skill define Trilho A (CLI) e Trilho B (Delegação).",
     "EX-35": "Verifique se a skill define Gateway, UI/Web e TUI como superfícies.",
+    "EX-53": "Crie um arquivo 'micro/comercial/knowledge/preco-produto-julho.md' que contradiz 'micro/comercial/knowledge/preco-produto-junho.md'. Demonstre a revisão semântica: o arquivo junho.md deve ser marcado deprecated antes do write.",
+    "EX-54": "Mova 'micro/comercial/context/contexto-antigo.md' (volátil, deprecated há 200 dias) para .quarantine/. Verifique que o path espelhado existe em .quarantine/micro/comercial/context/ e que o .purge_log foi atualizado.",
+    "EX-55": "Execute o ciclo syndic em modo dry-run. Verifique: (1) candidatos voláteis com >90 dias de inatividade identificados; (2) candidatos a purge em .quarantine/ com expires_at < hoje listados; (3) arquivos perene excluídos da lista; (4) relatório gerado.",
 }
 
 # Descriptions / Names for the default features
@@ -188,6 +216,9 @@ FEATURE_NAMES = {
     "EX-33": "Codex Core Harness",
     "EX-34": "Hermes Ops",
     "EX-35": "Surface Architecture",
+    "EX-53": "Revisão Semântica (Deprecação)",
+    "EX-54": "Quarentena de Memória",
+    "EX-55": "Syndic Autônomo",
 }
 
 def clean_commented_yaml(yaml_str: str) -> str:

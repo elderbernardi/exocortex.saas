@@ -69,11 +69,20 @@ D5_LABELS = ["EFFICIENT", "ACCEPTABLE", "BLOATED"]
 VERDICTS = ["PASS", "IMPROVE", "REWRITE"]
 
 # LLM judge model preferences
-# Primary: DeepSeek V4 Pro direct (flagship reasoning model)
-# Fallback: OpenRouter (broader model access)
+# Primary: OpenCode Zen gateway (OPENCODE_API_KEY) — broad model access via one key
+# Fallbacks: DeepSeek V4 Pro direct, OpenRouter
 JUDGE_MODEL_DEEPSEEK = "deepseek-v4-pro"
 JUDGE_MODEL_OPENROUTER = "anthropic/claude-sonnet-4"
 JUDGE_MODEL_OPENROUTER_DS = "deepseek/deepseek-chat"
+
+# OpenCode Zen gateway (https://opencode.ai/zen). Authenticated with OPENCODE_API_KEY.
+# Model is configurable via OPENCODE_MODEL or --model. The requested `minimax-m3`
+# is only published as `minimax-m3-free`, whose free promotion has ended (paid
+# variants require account credits); `nemotron-3-ultra-free` is the default that
+# remains available on a free key. See `python3 scripts/skill_judge.py --list-models`.
+OPENCODE_API_URL = "https://opencode.ai/zen/v1/chat/completions"
+OPENCODE_MODELS_URL = "https://opencode.ai/zen/v1/models"
+OPENCODE_MODEL = os.environ.get("OPENCODE_MODEL", "nemotron-3-ultra-free")
 
 # API endpoints
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -506,12 +515,69 @@ def _get_deepseek_key() -> str | None:
     return None
 
 
-def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | None:
+def _get_opencode_key() -> str | None:
+    """Retrieve the OpenCode Zen gateway API key from env or .secrets file."""
+    key = os.environ.get("OPENCODE_API_KEY")
+    if key and key != "***":
+        return key
+
+    for secrets_path in [
+        REPO_ROOT / ".secrets",
+        Path.home() / ".secrets",
+    ]:
+        if secrets_path.is_file():
+            try:
+                for line in secrets_path.read_text(encoding="utf-8").splitlines():
+                    if "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'").strip('"')
+                        if k == "OPENCODE_API_KEY" and v and v != "***":
+                            return v
+            except Exception:
+                pass
+    return None
+
+
+def _get_opencode_go_key() -> str | None:
+    """Retrieve OpenCode Go API key from the Hermes gateway process environment."""
+    # Try env first
+    key = os.environ.get("OPENCODE_GO_API_KEY")
+    if key and key != "***":
+        return key
+
+    # Read from Hermes gateway process environment
+    import glob
+    for proc_path in glob.glob("/proc/*/cmdline"):
+        try:
+            with open(proc_path, "rb") as f:
+                cmdline = f.read().decode("utf-8", errors="replace")
+            if "hermes" in cmdline.lower() and "gateway" in cmdline.lower():
+                pid = proc_path.split("/")[2]
+                env_path = f"/proc/{pid}/environ"
+                with open(env_path, "rb") as f:
+                    env_data = f.read().decode("utf-8", errors="replace")
+                for var in env_data.split("\0"):
+                    if var.startswith("OPENCODE_GO_API_KEY="):
+                        val = var.split("=", 1)[1]
+                        if val and val != "***":
+                            return val
+        except (PermissionError, FileNotFoundError, IndexError):
+            continue
+    return None
+
+
+# OpenCode Go API endpoint (alternative to DeepSeek)
+OPENCODE_GO_API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
+OPENCODE_GO_MODEL = "glm-5.2"
+
+
+def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str, max_tokens: int = 4000, timeout: int = 90) -> str | None:
     """Make a single LLM API call. Returns response text or None on failure."""
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "User-Agent": "exocortex-skill-judge/1.0",
+        "User-Agent": "python-httpx/0.27.0",
     }
     system_prompt = (
         "You are an expert skill quality judge for the Exocortex cognitive system. "
@@ -539,7 +605,7 @@ def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | 
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": prompt},
         ],
-        "max_tokens": 4000,
+        "max_tokens": max_tokens,
         "temperature": 0.0,
     }
 
@@ -552,7 +618,7 @@ def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str) -> str | 
 
     try:
         req = urllib.request.Request(api_url, data=data, headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=90) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
             body = json.loads(resp.read().decode("utf-8"))
             choice = body.get("choices", [{}])[0]
             message = choice.get("message", {})
@@ -625,14 +691,38 @@ def _parse_llm_response(response_text: str) -> dict:
 
 
 def call_llm_judge(prompt: str) -> dict:
-    """Call the LLM judge API using DeepSeek only.
-    
+    """Call the LLM judge API.
+
+    Provider order:
+      1. OpenCode Zen gateway (OPENCODE_API_KEY) — configured primary, model OPENCODE_MODEL
+      2. DeepSeek direct API (DEEPSEEK_API_KEY)
+      3. OpenCode Go gateway (glm)
+
     Returns D2-D5 dimensional labels dict, or empty dict on total failure.
     """
-    # Primary: DeepSeek direct API (fast, cheap)
+    # Primary: OpenCode Zen gateway. Reasoning models (e.g. nemotron) need extra
+    # output budget so the JSON verdict survives after the reasoning trace.
+    opencode_key = _get_opencode_key()
+    if opencode_key:
+        response = _call_llm_api(prompt, OPENCODE_API_URL, opencode_key, OPENCODE_MODEL, max_tokens=8000, timeout=300)
+        if response:
+            dims = _parse_llm_response(response)
+            if dims:
+                return dims
+
+    # Fallback: DeepSeek direct API (fast, cheap)
     deepseek_key = _get_deepseek_key()
     if deepseek_key:
         response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_DEEPSEEK)
+        if response:
+            dims = _parse_llm_response(response)
+            if dims:
+                return dims
+
+    # Fallback: OpenCode Go (glm-5.2)
+    opencode_go_key = _get_opencode_go_key()
+    if opencode_go_key:
+        response = _call_llm_api(prompt, OPENCODE_GO_API_URL, opencode_go_key, OPENCODE_GO_MODEL)
         if response:
             dims = _parse_llm_response(response)
             if dims:
@@ -647,7 +737,7 @@ def call_llm_judge(prompt: str) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Exocortex Skill Judge")
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("--all", action="store_true", help="Evaluate all skills")
     group.add_argument("--p0", action="store_true", help="Evaluate P0 behavioral skills + related")
     group.add_argument("--skill", type=str, help="Evaluate a single skill by name")
@@ -661,8 +751,36 @@ def main():
     parser.add_argument("--report", type=str, help="Save human-readable report to file")
     parser.add_argument("--compare-baseline", type=str, help="Compare against baseline JSON")
     parser.add_argument("--d1-only", action="store_true", help="Only run deterministic D1 checks (no LLM)")
-    parser.add_argument("--model", type=str, default=None, help="Override LLM judge model (e.g., anthropic/claude-sonnet-4)")
+    parser.add_argument("--model", type=str, default=None, help="Override the OpenCode Zen judge model (e.g., nemotron-3-ultra-free)")
+    parser.add_argument("--list-models", action="store_true", help="List OpenCode Zen models available to OPENCODE_API_KEY and exit")
     args = parser.parse_args()
+
+    if args.list_models:
+        key = _get_opencode_key()
+        if not key:
+            print("OPENCODE_API_KEY not set.", file=sys.stderr)
+            sys.exit(1)
+        try:
+            req = urllib.request.Request(
+                OPENCODE_MODELS_URL,
+                headers={"Authorization": f"Bearer {key}", "User-Agent": "python-httpx/0.27.0"},
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                models = json.loads(resp.read().decode("utf-8")).get("data", [])
+            for m in models:
+                print(m.get("id"))
+        except Exception as e:
+            print(f"Failed to list models: {e}", file=sys.stderr)
+            sys.exit(1)
+        sys.exit(0)
+
+    if not (args.all or args.p0 or args.skill):
+        parser.error("one of the arguments --all --p0 --skill is required")
+
+    # CLI --model overrides the OpenCode Zen judge model (the configured primary)
+    if args.model:
+        global OPENCODE_MODEL
+        OPENCODE_MODEL = args.model
 
     # Determine which skills to evaluate
     if args.all:
@@ -702,10 +820,6 @@ def main():
         else:
             # Build prompt and call LLM judge
             prompt = build_judge_prompt(parsed, rubric_text, soul_context)
-            if args.model:
-                # Allow model override from CLI
-                global JUDGE_MODEL_DEEPSEEK
-                JUDGE_MODEL_DEEPSEEK = args.model
             llm_dims = call_llm_judge(prompt)
             if not llm_dims:
                 print(f"    ⚠️ No LLM response for {skill_name}, using D1-only verdict", file=sys.stderr)

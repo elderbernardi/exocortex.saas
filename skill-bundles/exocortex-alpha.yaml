@@ -31,6 +31,10 @@ skills:
   - excrtx-memory-mvsetup
   - excrtx-memory-mvinstall
   - excrtx-memory-opsmemory
+  # ── Memory lifecycle: deprecation, quarantine, syndic (ADR-014/015/018) ──
+  - excrtx-memory-deprecate
+  - excrtx-memory-quarantine
+  - excrtx-memory-syndic
 
   # ── Behavior: vetores, canvas e governança ───────────────────────────
   - excrtx-govern-draftfirst

@@ -1,9 +1,15 @@
 ---
 title: "{{DOMAIN_NAME}} — Contexto"
+type: context
+description: ""
+class: volátil
+timestamp: "{{CREATED_DATE}}"
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+last_accessed_at: "{{CREATED_DATE}}T00:00:00Z"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
 nature: context
-type: context
+excrtx_type: context
 tags: []
 confidence: medium
 ---

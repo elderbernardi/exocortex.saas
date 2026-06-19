@@ -1,9 +1,15 @@
 ---
 title: "{{DOMAIN_NAME}} — Reflexões"
+type: reflection
+description: ""
+class: volátil
+timestamp: "{{CREATED_DATE}}"
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+last_accessed_at: "{{CREATED_DATE}}T00:00:00Z"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
 nature: reflections
-type: lesson
+excrtx_type: lesson
 tags: []
 confidence: medium
 ---

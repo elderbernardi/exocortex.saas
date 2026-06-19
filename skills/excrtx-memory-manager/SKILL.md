@@ -147,11 +147,14 @@ Read content of any Nature in any layer.
 5. **If not found:** Declare honestly:
    "I don't have this information in the Acervo. Shall I search externally?"
 
+6. **Update `last_accessed_at`:** After a successful read of any Acervo file with frontmatter, update the `last_accessed_at` field in the file's YAML frontmatter to the current UTC datetime (`YYYY-MM-DDTHH:MM:SSZ`). This is a frontmatter-only update — do NOT log it in `log.md` (per log-convention §2.2, `last_accessed_at` updates are not logged). Skip this step for files without frontmatter (e.g. `macro/` identity files, `raw/` sources) or for `_index.md` catalog reads.
+
 ### Verification
 
 - [ ] Presented information exists in the Acervo (never fabricate)
 - [ ] Source cited in response
-- [ ] Data with old `updated` frontmatter flagged as potentially outdated
+- [ ] Data with old `last_accessed_at` (or old `updated`) flagged as potentially outdated
+- [ ] `last_accessed_at` updated on every read of a frontmatter-bearing file
 
 ---
 
@@ -194,26 +197,55 @@ Write content to the Acervo with Domain Filter.
 3. **Write format:**
    - If Nature is file → append to existing file
    - If Nature is directory → create new wiki page with frontmatter
-   - Mandatory YAML frontmatter on every new page:
+   - Mandatory YAML frontmatter on every new page (OKF v0.1 superset — see `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md`):
      ```yaml
      ---
+     # OKF Canonical (mandatory)
+     type: knowledge              # concept type: decision|memory|reflection|context|knowledge|artifact
      title: Descriptive Title
-     created: YYYY-MM-DD
-     updated: YYYY-MM-DD
-     nature: {nature}
-     type: {fact|rule|workflow|tool|profile|lesson|context}
+     description: One-line summary (≤ 120 chars)
      tags: [from SCHEMA taxonomy]
-     sources: [raw/source if applicable]
+     timestamp: YYYY-MM-DD        # creation date (must equal date portion of created_at)
+
+     # Acervo Extension (lifecycle — mandatory)
+     class: volátil               # perene (permanent) or volátil (transient)
+     created_at: YYYY-MM-DDTHH:MM:SSZ  # UTC creation timestamp
+
+     # Acervo Extension (optional)
+     # last_accessed_at: YYYY-MM-DDTHH:MM:SSZ  # set by agent on read; absent on new files
+     # promoted_at: YYYY-MM-DDTHH:MM:SSZ       # present only if promoted volátil → perene
+
+     # Legacy Retained (optional — carried forward from pre-migration schema)
+     nature: {nature}             # directory routing key (context|knowledge|contracts|workflows|tools|skills|persona|...)
+     excrtx_type: {fact|rule|workflow|tool|profile|lesson|context}  # old Acervo type; renamed from `type` to avoid OKF collision
      confidence: {high|medium|low}
+     sources: [raw/source if applicable]
      ---
      ```
 
-4. **Log operation** in `log.md` of the corresponding scope:
-   - Write to micro/ → `micro/{slug}/log.md`
-   - Write to global/ → `global/log.md`
-   - Write to shared/ → `shared/log.md`
+     **Field semantics:**
+     - `type` — OKF concept type (mandatory). NOT the old Acervo type. Derived from directory path.
+     - `excrtx_type` — legacy Acervo type (optional). The old `type` field, renamed during migration. Preserves whatever vocabulary the original file had.
+     - `nature` — directory routing key (optional but recommended). Used by this skill to route reads/writes. Coexists with `type`.
+     - `class` — lifecycle class. `perene` = never auto-deprecated; `volátil` = deprecation candidate. Derived from directory path if absent.
 
-5. **Update index.md** if new page created.
+4. **Semantic revision hook (MANDATORY before commit — ADR-016):**
+   Before writing the new file to disk, call `excrtx-memory-deprecate` to check for semantic overlap with existing files in the same container:
+   - The skill searches for files with 2+ shared tags, title similarity, or entity matching.
+   - **Direct contradiction found** → the old file is deprecated (`deprecated: true`, `deprecated_at`, `deprecated_reason`). The new file body gets a `Superseded:` link to the old.
+   - **Partial overlap (new replaces old's claim)** → old is deprecated.
+   - **Complementary overlap (different aspect)** → both coexist; no deprecation.
+   - **Ambiguous** → no deprecation; new file gets a `Potential overlap with:` note; flagged for executive review.
+   - **Never deprecate:** `class: perene` files, `promoted_at` files, `raw/` sources, files already `deprecated: true`, files in other microversos.
+   - Conservative detection: only deprecate on clear, direct contradictions. When in doubt, flag — do not deprecate.
+
+5. **Log operation** in `log.md` of the corresponding scope:
+   - Write to micro/ → `micro/{slug}/_meta/log.md` (or `micro/{slug}/log.md` if no `_meta/`)
+   - Write to global/ → `global/_meta/log.md` (or `global/log.md`)
+   - Write to shared/ → `shared/_meta/log.md` (or `shared/log.md`)
+   - Entry format (per `log-convention.md`): `- CREATED: {relative-path} ({class}) — {one-line description}`
+
+6. **Update index.md** if new page created.
 
 ### Rules
 
@@ -297,19 +329,26 @@ Search information across the 4 layers with priority.
    - If Nature is directory → grep in `_index.md` → read matching page
    - Use frontmatter `tags` for narrowing
 
-4. **Return results with metadata:**
+4. **Lifecycle filtering (MANDATORY):**
+   - **Skip `deprecated: true` files** — these are superseded and not part of active truth. Only include them if the executive explicitly asks for deprecated/historical content (e.g. "show me the old model config", "what did we believe before").
+   - **Skip `.quarantine/` entirely** — quarantined files are not part of active memory under any circumstance. If the executive needs a quarantined file, they must explicitly reference the quarantine path or request a restore (see `excrtx-memory-quarantine`).
+   - When returning results, note the `class` of each result (`perene` vs `volátil`) so the executive knows the lifecycle status.
+
+5. **Return results with metadata:**
    ```
    [Acervo: micro/cliente-acme/knowledge] Result here
    [Acervo: global/contracts] Universal rule here
    ```
 
-5. **If nothing found:** Declare and offer external search.
+6. **If nothing found:** Declare and offer external search.
 
 ### Verification
 
 - [ ] Scope verified before search
 - [ ] Results indicate layer of origin
 - [ ] Priority respected (micro > global > shared)
+- [ ] Deprecated files excluded (unless explicitly requested)
+- [ ] `.quarantine/` excluded entirely
 
 ---
 
@@ -394,13 +433,23 @@ Superseded content is not deleted. Procedure:
 - ADR-003: Hybrid Natures (file → directory)
 - ADR-004: LLM Wiki Integration
 - ADR-005: Skill Consolidation (7 → 1)
+- ADR-013: Frontmatter Schema with OKF v0.1 Alignment
+- ADR-014: Deprecation Policy for Transient Knowledge
+- ADR-015: Quarantine Lifecycle — Safe Cleanup with Purge Window
+- ADR-016: Semantic Revision on Insert
+- ADR-017: OKF v0.1 Compatibility
+- ADR-018: Autonomous Syndic
 
 
 ## Pitfalls
 
 - **Domain contamination:** Writing domain A info in domain B violates the Domain Filter. Always classify content scope before writing. Use `shared/cross-refs/` for cross-domain content.
 - **Scope conflicts:** When multiple microversos have similar content, verify `shared/groups.md` scope resolution. `allow` always overrides `deny`.
-- **Stale frontmatter:** Files with old `updated` dates may be outdated. Flag data with `updated` > 90 days as potentially stale.
+- **`type` vs `excrtx_type` confusion:** The OKF `type` field (concept type: `decision`, `memory`, `knowledge`, ...) is NOT the old Acervo `type` (now `excrtx_type`: `fact`, `rule`, `workflow`, ...). They are orthogonal — `type` is for OKF interoperability, `excrtx_type` preserves the legacy vocabulary. Never use `excrtx_type` values in the `type` field or vice versa. See `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` §2.
+- **Stale frontmatter:** Files with old `last_accessed_at` (or legacy `updated`) dates may be outdated. Flag data with `last_accessed_at` > 90 days as potentially stale — these are quarantine candidates for the syndic.
+- **Deprecated files in search results:** Always filter out `deprecated: true` files in SEARCH unless the executive explicitly asks for historical content. Returning deprecated data as current truth is a critical error.
+- **Quarantine directory leakage:** `.quarantine/` must never appear in search results or context loading. It is not active memory.
+- **Missing semantic revision on WRITE:** Every WRITE to `knowledge/`, `context/`, `contracts/`, or `tools/` must call `excrtx-memory-deprecate` before commit. Skipping this step leaves contradictory knowledge active — the agent may retrieve stale truth.
 - **Promotion threshold:** Don't promote a Nature file to directory prematurely. Only at ~150 lines. Check with `wc -l`.
 - **raw/ immutability:** Never modify files in `raw/` directories — sources are immutable by contract. Only Acervo pages may be edited.
 - **Missing index.md update:** Every new wiki page requires updating both `index.md` and `log.md`. Forgetting either breaks discoverability or audit trail.

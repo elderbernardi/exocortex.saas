@@ -72,8 +72,54 @@ scope:
 Começam como arquivo. Quando ultrapassam ~150 linhas → promovem para diretório com `_index.md`.
 
 ### Skill Unificada
-Toda operação sobre o acervo (read, write, promote, search, scope) é feita via **`acervo-manager`** (ADR-005).
+Toda operação sobre o acervo (read, write, promote, search, scope) é feita via **`excrtx-memory-manager`** (ADR-005).
 As 7 Natures são classificação de dados — a semântica é definida por SCHEMA + frontmatter.
+
+## Lifecycle de Memória (OKF v0.1)
+
+Cada arquivo do Acervo carrega frontmatter YAML alinhado ao [Open Knowledge Format v0.1](docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md). Os campos obrigatórios são:
+
+- **OKF canonical**: `type` (concept type), `title`, `description`, `tags`, `timestamp`
+- **Acervo extension**: `class` (`perene` | `volátil`), `created_at`, `last_accessed_at`
+
+### Classes de Permanência
+
+| Classe | Exemplos | Comportamento |
+|--------|----------|--------------|
+| `perene` | decisions, contracts, persona, identity | Nunca auto-deprecado ou quarentinado |
+| `volátil` | knowledge, context, workflows, prompts | Candidato a deprecação (contradição) e quarentena (inatividade) |
+
+### Diretório de Quarentena
+
+```
+acervo/.quarantine/   # Arquivos aguardando purge (janela de 30 dias — ADR-015)
+                      # Espelha a estrutura do acervo para facilitar restore
+                      # .purge_log: log append-only de operações de purge
+```
+
+Nenhum arquivo é deletado diretamente. Fluxo: **deprecação → quarentena (30 dias) → purge**.
+
+### Skills do Lifecycle
+
+| Skill | Quando usar |
+|-------|------------|
+| `excrtx-memory-deprecate` | WRITE: detecta contradição com arquivo volátil existente e depreca o predecessor (ADR-016) |
+| `excrtx-memory-quarantine` | Mover arquivo para `.quarantine/`, restaurar, ou purgar após expiração (ADR-015) |
+| `excrtx-memory-syndic` | Ciclo autônomo semanal: scan → quarentena → purge, executado pelo cron `maintenance-weekly` (ADR-018) |
+
+### Validação e Migração
+
+```bash
+# Validar frontmatter de arquivo ou diretório (exit 0 = OK, exit 1 = ERROR)
+python3 scripts/validate_frontmatter.py --file <path>
+python3 scripts/validate_frontmatter.py --dir $ACERVO --report
+
+# Migrar arquivos com schema legado para OKF v0.1
+python3 scripts/migrate_frontmatter.py --dry-run --dir $ACERVO
+python3 scripts/migrate_frontmatter.py --dir $ACERVO
+```
+
+Referência completa do schema: `docs/plans/2026-06-19_acervo-lifecycle-okf/schema-spec.md`
 
 ## ADRs
 

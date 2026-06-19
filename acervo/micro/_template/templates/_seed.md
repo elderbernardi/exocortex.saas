@@ -1,5 +1,11 @@
 ---
 title: "{{DOMAIN_NAME}} — Templates"
+type: knowledge
+description: ""
+class: volátil
+timestamp: "{{CREATED_DATE}}"
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+last_accessed_at: "{{CREATED_DATE}}T00:00:00Z"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
 nature: templates

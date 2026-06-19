@@ -89,6 +89,30 @@ else
   fi
 fi
 
+# Inicializar estrutura de quarentena do lifecycle (ADR-015)
+QUARANTINE_DIR="$ACERVO/.quarantine"
+if [ ! -d "$QUARANTINE_DIR" ]; then
+  mkdir -p "$QUARANTINE_DIR"
+  touch "$QUARANTINE_DIR/.purge_log"
+  cat > "$QUARANTINE_DIR/README.md" <<'EOF'
+# .quarantine/
+
+Diretório de quarentena do Acervo Cognitivo (ADR-015).
+
+Arquivos aqui estão aguardando purge definitivo após janela de 30 dias.
+Durante esse período, o executivo pode restaurá-los com `excrtx-memory-quarantine`.
+
+Não edite arquivos aqui diretamente. Use as skills do lifecycle:
+- `excrtx-memory-quarantine` — mover, restaurar
+- `excrtx-memory-syndic` — ciclo autônomo de scan/purge
+
+`.purge_log` registra todas as operações de purge (append-only).
+EOF
+  log "Quarentena inicializada: $QUARANTINE_DIR"
+else
+  log "Quarentena já existe: $QUARANTINE_DIR"
+fi
+
 # Instalar wrappers do Codex Core Harness (EX-33)
 CODEX_WRAPPERS_SRC="$SCRIPT_DIR/scripts/codex_learning"
 CODEX_WRAPPERS_DST="$HERMES_HOME/scripts/codex_learning"

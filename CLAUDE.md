@@ -71,14 +71,32 @@ hermes -p manut         # maintenance profile (background housekeeping)
 python3 scripts/compile_soul.py
 ```
 
+### Frontmatter Validation & Migration
+
+```bash
+# Validate a single Acervo file or an entire directory tree
+python3 scripts/validate_frontmatter.py <path>
+# Exit 0 = pass (WARN allowed); Exit 1 = one or more ERROR rules failed
+
+# One-time migration of legacy frontmatter to the OKF v0.1 superset schema
+# (adds type, timestamp, class, created_at; renames old type → excrtx_type)
+python3 scripts/migrate_frontmatter.py <path>
+```
+
+The schema is documented in `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` (canonical reference) and `docs/plans/2026-06-19_acervo-lifecycle-okf/schema-spec.md` (detailed spec with migration derivation rules). Decision: ADR-013.
+
 ### Skill Quality Audits
 
 ```bash
 # D1 structural check only (no LLM keys required)
 python3 scripts/skill_judge.py --skill excrtx-<name> --d1-only
 
-# Full 5-dimension quality sweep (requires OPENROUTER_API_KEY or DEEPSEEK_API_KEY)
+# Full 5-dimension quality sweep (needs an LLM key — provider order: OPENCODE_API_KEY,
+# then DEEPSEEK_API_KEY, then OpenCode Go). With OPENCODE_API_KEY the judge calls the
+# OpenCode Zen gateway; pick the model with OPENCODE_MODEL or --model (default
+# nemotron-3-ultra-free), list ids with --list-models.
 python3 scripts/skill_judge.py --skill excrtx-<name>
+python3 scripts/skill_judge.py --skill excrtx-<name> --model nemotron-3-ultra-free
 ```
 
 Verdict must be `PASS` before merging. `REWRITE` blocks the merge.
@@ -174,6 +192,18 @@ After editing `compiled_rules:`, always run `python3 scripts/compile_soul.py` to
 - **Custom skill** (`skills/excrtx-*`): for behavioral governance, prompt-driven workflows, local scripting, no background daemons
 - **MCP server** (`hermes mcp add`): for SaaS/third-party APIs, stateful services, structured data sources, OAuth-managed integrations
 
+### Memory Lifecycle Skills
+
+The Acervo's autonomous lifecycle is implemented by three skills that work with `excrtx-memory-manager`:
+
+| Skill | Role | Trigger |
+|-------|------|---------|
+| `excrtx-memory-deprecate` | Semantic revision on insert — detects contradictions between a new memory and existing ones, deprecates superseded `volátil` files automatically, flags ambiguous overlaps for review | Called by `excrtx-memory-manager` WRITE before commit (ADR-016) |
+| `excrtx-memory-quarantine` | Moves stale/deprecated files to `.quarantine/`, sets quarantine frontmatter fields, logs the movement | Called by the syndic or executive |
+| `excrtx-memory-syndic` | Autonomous scan → quarantine → purge cycle. Runs under the `manut` profile on a schedule (ADR-018) | Cron-triggered |
+
+`excrtx-memory-manager` orchestrates: WRITE calls `excrtx-memory-deprecate` before commit; SEARCH skips `deprecated: true` files and `.quarantine/` entirely; READ updates `last_accessed_at`.
+
 ### Acervo Memory Structure
 
 ```
@@ -188,12 +218,45 @@ acervo/
     contracts/
   global/        # System-wide shared knowledge (WELCOME.md, etc.)
   shared/        # Cross-microverso references allowed by sharing constraints
+  .quarantine/   # Stale/deprecated files awaiting purge (30-day window; ADR-015)
+                 #   NOT part of active memory — search skips this entirely
   _inbox/        # Multi-channel intake queue
   _artifacts/    # Durable produced documents
   _tasks/        # Active task boards
   _routines/     # Scheduled automation configs
   _automations/  # Background automation definitions
 ```
+
+### Frontmatter Schema (OKF v0.1 Aligned)
+
+Every Acervo markdown file carries YAML frontmatter conforming to a **superset of the Open Knowledge Format (OKF v0.1)**. Two mandatory tiers plus conditional lifecycle fields:
+
+- **OKF Canonical** (mandatory): `type`, `title`, `description`, `tags`, `timestamp`
+- **Acervo Extension** (lifecycle): `class` (`perene` | `volátil`), `created_at`, `last_accessed_at`, `promoted_at`
+- **Conditional**: deprecation (`deprecated`, `deprecated_at`, `deprecated_reason`) and quarantine (`quarantined_at`, `quarantine_reason`, `quarantine_expires_at`)
+
+**Canonical reference:** `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md`
+
+**`type` vs `excrtx_type` vs `nature`** — three orthogonal classification fields:
+- `type` — OKF concept type (`decision`, `memory`, `reflection`, `context`, `knowledge`, `artifact`). Mandatory, interoperable.
+- `excrtx_type` — legacy Acervo type (`fact`, `rule`, `workflow`, `tool`, ...), preserved from pre-migration. The old `type` was renamed to `excrtx_type` during migration to avoid collision with the OKF `type` field.
+- `nature` — directory routing key used by `excrtx-memory-manager` (e.g. `knowledge`, `contracts`, `workflows`). Coexists with `type`.
+
+### Memory Lifecycle: Deprecation, Quarantine, Syndic
+
+The Acervo has an autonomous lifecycle governed by the `class` frontmatter field:
+
+- **`perene`** — permanent truth (decisions, architecture, identity). Never auto-deprecated or quarantined.
+- **`volátil`** — transient state (configs, prices, defaults). Candidate for deprecation when superseded; candidate for quarantine when stale.
+
+Lifecycle flow: `SCAN → QUARANTINE → PURGE` (ADR-015). No file is deleted directly.
+
+- **Deprecation (ADR-014):** when a new memory contradicts an existing `volátil` one, the old is marked `deprecated: true` (not deleted). Triggered by the semantic revision hook (ADR-016) — `excrtx-memory-manager` calls `excrtx-memory-deprecate` before committing a WRITE.
+- **Quarantine (ADR-015):** the syndic (ADR-018, autonomous, runs under `manut`) moves stale files (`last_accessed_at` > 90 days) or long-deprecated files (`deprecated_at` > 180 days) to `.quarantine/`. Files gain `quarantined_at`, `quarantine_reason`, `quarantine_expires_at` (30-day purge window).
+- **Purge:** after 30 days without restore, the file is permanently deleted. Irreversible.
+- **Restore:** executive can restore a quarantined file within the 30-day window.
+
+Each container (`micro/{slug}/`, `global/`, `shared/`) has an append-only `_meta/log.md` recording lifecycle events (`CREATED`, `UPDATED`, `DEPRECATED`, `PROMOTED`, `QUARANTINED`, `PURGED`, `RESTORED`). See `log-convention.md`.
 
 ### Profiles and Bundles
 

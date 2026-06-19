@@ -1,9 +1,15 @@
 ---
 title: "{{DOMAIN_NAME}} — Persona"
+type: context
+description: ""
+class: perene
+timestamp: "{{CREATED_DATE}}"
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+last_accessed_at: "{{CREATED_DATE}}T00:00:00Z"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
 nature: persona
-type: profile
+excrtx_type: profile
 tags: []
 confidence: medium
 ---

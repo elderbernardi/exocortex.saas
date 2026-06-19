@@ -1,8 +1,20 @@
 # Project Plan: Calibrate Hermes (calibrate-hermes.md)
 
-This project plan details the deprecation of `scripts/calibrate-hermes.sh` and its replacement with a modern, modular, and smart Python-based Prompt-Driven Development (PDD) calibration system. It pairs with all 42 features (EX-01 to EX-35, EX-48 to EX-54), reads raw personalization profiles from `acervo/macro/`, and supports an interactive hybrid calibration flow.
+This project plan details the deprecation of `scripts/calibrate-hermes.sh` and its replacement with a modern, modular, and smart Python-based Prompt-Driven Development (PDD) calibration system. It pairs with all 45 features (EX-01 to EX-35, EX-48 to EX-55), reads raw personalization profiles from `acervo/macro/`, and supports an interactive hybrid calibration flow.
 
-> **STATUS: ✅ ALL PHASES COMPLETE** — Runner built, 42/42 cases valid, dry-run mode + report export operational. Ready for live calibration when Hermes is running.
+> **STATUS: ✅ ALL PHASES COMPLETE** — Runner built, 45/45 cases valid (EX-53/54/55 added 2026-06-19 — Memory Lifecycle Skills), dry-run mode + report export operational. Ready for live calibration when Hermes is running.
+
+### Memory Lifecycle Skills (EX-53–55, added 2026-06-19)
+
+Three new skills were added as part of the `acervo-lifecycle-okf` plan:
+
+| Feature | Skill | What it calibrates |
+|---------|-------|-------------------|
+| EX-53 | `excrtx-memory-deprecate` | Semantic revision on WRITE: agent must detect contradiction with existing `volátil` file and deprecate predecessor before committing |
+| EX-54 | `excrtx-memory-quarantine` | Quarantine lifecycle: agent must move stale/deprecated file to `.quarantine/`, update frontmatter with quarantine fields, log dual-entry |
+| EX-55 | `excrtx-memory-syndic` | Autonomous scan→quarantine→purge cycle: agent must identify candidates, apply immunity rules, distinguish quarantined-for-purge vs active files |
+
+Calibration prompts and acceptance criteria are stored in `scripts/migrate_calibration_metadata.py` under `CALIBRATION_MAPPING["EX-53"]`, `["EX-54"]`, `["EX-55"]`.
 
 ## Project Type
 - **BACKEND / CLI TOOL** (Python-based script and test runner integration)
