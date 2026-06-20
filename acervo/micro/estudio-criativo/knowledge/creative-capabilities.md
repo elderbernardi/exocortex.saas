@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Capacidades Criativas do Estúdio
-created: 2026-06-01
+description: O Estúdio organiza sua atuação em capacidades, não em cargos fixos.
+tags: [knowledge, capabilities]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: knowledge
 kind: concept
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, capabilities]
+created: 2026-06-01
 ---
 
 # Capacidades criativas

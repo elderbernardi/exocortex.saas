@@ -1,11 +1,12 @@
 ---
-title: ADR-006: Custom Skill vs. MCP Server Selection
-created: 2026-06-11
-updated: 2026-06-11
-nature: decisions
-type: fact
-tags: [dev, exocortex, decisions, architecture, mcp]
-confidence: high
+type: decision
+title: 'ADR-006: Custom Skill vs. MCP Server Selection'
+description: When extending Exocortex.IA, developers often face the choice of whether to write a new custom Hermes skill (under `s...
+tags: []
+timestamp: 2026-06-11
+class: perene
+created_at: 2026-06-11T03:03:32Z
+last_accessed_at: 2026-06-11T03:03:32Z
 ---
 
 # ADR-006: Custom Skill vs. MCP Server Selection

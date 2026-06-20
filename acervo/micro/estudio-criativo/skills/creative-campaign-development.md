@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Skill — Desenvolvimento de Campanha Criativa
-created: 2026-06-01
+description: Quando a demanda envolve campanha, série, ação institucional, lançamento, evento ou comunicação coordenada.
+tags: [skill, campaign]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: skills
 kind: skill
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [skill, campaign]
+created: 2026-06-01
 ---
 
 # Desenvolvimento de campanha criativa

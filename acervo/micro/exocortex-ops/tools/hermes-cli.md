@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Hermes CLI Operacional
-created: 2026-06-05
-updated: 2026-06-05
-nature: tools
-type: tool
+description: '`hermes tools list` — listar toolsets e MCPs.'
 tags: [hermes, cli, diagnostics]
-sources: [skill:hermes-agent]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: tool
+nature: tools
+sources: ['skill:hermes-agent']
 confidence: high
+created: 2026-06-05
 ---
 
 # Hermes CLI operacional

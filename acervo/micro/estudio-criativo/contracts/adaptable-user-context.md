@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Contrato de Adaptabilidade ao Usuário
-created: 2026-06-01
+description: O Estúdio Criativo deve se adaptar ao usuário do Exocórtex sem carregar contexto pessoal no seu núcleo.
+tags: [contract, adaptability]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: contracts
 kind: contract
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [contract, adaptability]
+created: 2026-06-01
 ---
 
 # Adaptabilidade ao usuário

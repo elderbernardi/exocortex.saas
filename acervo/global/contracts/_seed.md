@@ -1,10 +1,16 @@
 ---
+type: context
 title: Instruções Globais
-created: 2026-05-26
-updated: 2026-05-26
-nature: contracts
-type: rule
+description: Regras que se aplicam a TODO contexto, independente do Microverso ativo.
 tags: [regra-global]
+timestamp: 2026-05-26
+class: perene
+created_at: 2026-05-26T00:00:00Z
+last_accessed_at: 2026-05-26T00:00:00Z
+updated: 2026-05-26
+excrtx_type: rule
+nature: contracts
+created: 2026-05-26
 ---
 
 # Instruções Globais

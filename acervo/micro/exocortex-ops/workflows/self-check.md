@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Self-Check do Exocórtex
-created: 2026-06-05
-updated: 2026-06-05
-nature: workflows
-type: workflow
+description: 'Pedido explícito: “self-check”, “status”, “diagnóstico”.'
 tags: [self-check, diagnostics, maintenance]
-sources: [skill:excrtx-assess-selftest]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: workflow
+nature: workflows
+sources: ['skill:excrtx-assess-selftest']
 confidence: high
+created: 2026-06-05
 ---
 
 # Self-check

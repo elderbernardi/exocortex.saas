@@ -1,11 +1,17 @@
 ---
-title: "{Título descritivo da relação}"
-created: YYYY-MM-DD
+type: knowledge
+title: '{Título descritivo da relação}'
+description: Por que esta referência existe. Qual tarefa ou evento criou a relação.
+tags: [cross-ref]
+timestamp: 2026-05-27
+class: volátil
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
 updated: YYYY-MM-DD
 from: [microverso-a]
 to: [microverso-b]
-subject: "Resumo da relação em 1 linha"
-tags: [cross-ref]
+subject: Resumo da relação em 1 linha
+created: YYYY-MM-DD
 ---
 
 # {Título}

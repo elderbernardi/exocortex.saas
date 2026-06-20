@@ -1,10 +1,16 @@
 ---
+type: context
 title: Processos Globais
-created: 2026-05-26
-updated: 2026-05-26
-nature: workflows
-type: workflow
+description: Workflows que se aplicam a TODO contexto, independente do Microverso ativo.
 tags: [workflow-global]
+timestamp: 2026-05-26
+class: perene
+created_at: 2026-05-26T00:00:00Z
+last_accessed_at: 2026-05-26T00:00:00Z
+updated: 2026-05-26
+excrtx_type: workflow
+nature: workflows
+created: 2026-05-26
 ---
 
 # Processos Globais

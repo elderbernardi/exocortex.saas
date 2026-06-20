@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Fronteira Operacional entre Estúdio e Produto
-created: 2026-06-14
+description: Produto decide **o que vale existir**.
+tags: [contract, boundary, product]
+timestamp: 2026-06-14
+class: perene
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: contracts
 kind: contract
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [contract, boundary, product]
+created: 2026-06-14
 ---
 
 # Fronteira operacional Estúdio ↔ Produto

@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Tangibilização Rápida para Validação
-created: 2026-06-14
+description: Transformar uma hipótese ainda abstrata em algo que outra pessoa consiga ver, ler, sentir ou reagir.
+tags: [knowledge, validation, prototype, tangibilization]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: knowledge
 kind: method
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, validation, prototype, tangibilization]
+created: 2026-06-14
 ---
 
 # Tangibilização rápida para validação

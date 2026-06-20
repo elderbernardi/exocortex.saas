@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Heurísticas de Briefing
-created: 2026-06-14
+description: Ajudar o Estúdio a transformar pedidos soltos em problema criativo operável.
+tags: [knowledge, briefing, intake, heuristics]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: knowledge
 kind: method
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, briefing, intake, heuristics]
+created: 2026-06-14
 ---
 
 # Heurísticas de briefing

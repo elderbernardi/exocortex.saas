@@ -1,6 +1,12 @@
 ---
+type: context
 title: DRAFT — provisionar exocortex-ops no setup executável
-created: 2026-06-05
+description: Não aplicado. Aguardando aprovação explícita do executivo.
+tags: [draft, setup, provisionamento, patch]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: context
 kind: draft
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: draft
 stability: draft
 lifecycle_state: drafted
-tags: [draft, setup, provisionamento, patch]
+created: 2026-06-05
 ---
 
 # DRAFT — provisionar exocortex-ops no setup executável

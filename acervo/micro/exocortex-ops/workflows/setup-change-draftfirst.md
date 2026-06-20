@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Alteração de Setup com Draft-First
-created: 2026-06-05
-updated: 2026-06-05
-nature: workflows
-type: workflow
+description: Qualquer alteração que mude comportamento de instalações futuras ou runtime compartilhado.
 tags: [setup, draft-first, reproducibility]
-sources: [skill:excrtx-memory-mvsetup]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: workflow
+nature: workflows
+sources: ['skill:excrtx-memory-mvsetup']
 confidence: high
+created: 2026-06-05
 ---
 
 # Alteração de setup com Draft-First

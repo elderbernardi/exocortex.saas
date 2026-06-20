@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Prototipar um Artefato de Validação
-created: 2026-06-14
+description: Sair de hipótese abstrata para forma tangível sem que o custo de produção mate a velocidade de aprendizado.
+tags: [workflow, validation, prototype]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: workflows
 kind: workflow
@@ -11,16 +17,14 @@ authority: canonical
 operational_mode: executable
 stability: active
 sources: []
-derived_from:
-  - knowledge/rapid-tangibilization-for-validation.md
-  - knowledge/format-selection-by-product-stage.md
+derived_from: [knowledge/rapid-tangibilization-for-validation.md, knowledge/format-selection-by-product-stage.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, validation, prototype]
+created: 2026-06-14
 ---
 
 # Prototipar um artefato de validação

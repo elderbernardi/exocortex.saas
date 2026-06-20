@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Stack Criativa do Estúdio
-created: 2026-06-01
+description: Este arquivo registra categorias de ferramentas que o Estúdio pode usar ou instalar, conforme aprovação e disponibili...
+tags: [tools, stack]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: tools
 kind: tool
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [tools, stack]
+created: 2026-06-01
 ---
 
 # Stack criativa

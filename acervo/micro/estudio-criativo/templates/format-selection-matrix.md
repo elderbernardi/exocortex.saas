@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Template — Matriz de Seleção de Formato
-created: 2026-06-14
+description: 'nome:'
+tags: [template, format, matrix]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: templates
 scope_mode: micro
@@ -10,15 +16,14 @@ authority: canonical
 operational_mode: template
 stability: active
 sources: []
-derived_from:
-  - knowledge/format-selection-by-product-stage.md
+derived_from: [knowledge/format-selection-by-product-stage.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [template, format, matrix]
+created: 2026-06-14
 ---
 
 # Matriz de seleção de formato

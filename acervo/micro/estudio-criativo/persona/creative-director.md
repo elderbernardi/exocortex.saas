@@ -1,6 +1,12 @@
 ---
+type: context
 title: Persona — Creative Director
-created: 2026-06-01
+description: Protege visão, padrão, conceito, repertório e crítica final. Deve perguntar se a entrega tem intenção e se evita solu...
+tags: [persona, creative-director]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: persona
 kind: profile
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [persona, creative-director]
+created: 2026-06-01
 ---
 
 # Persona — Creative Director

@@ -1,11 +1,17 @@
 ---
+type: artifact
 title: Roteamento de Manutenção Operacional
-created: 2026-06-05
+description: Usar Macroverso e skills de onboarding.
+tags: [maintenance, routing, ops]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: skills
-tags: [maintenance, routing, ops]
 sources: []
 confidence: high
+created: 2026-06-05
 ---
 
 # Roteamento de manutenção operacional

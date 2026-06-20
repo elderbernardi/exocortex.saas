@@ -1,3 +1,14 @@
+---
+type: context
+title: Log — Exocortex Ops
+description: 'Type: domain. Estrutura v2 criada com context, knowledge, contracts, prompts, skills, workflows, tools, templates, de...'
+tags: []
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T18:08:35Z
+last_accessed_at: 2026-06-05T18:08:35Z
+---
+
 # Log — Exocortex Ops
 
 ## [2026-06-05] create | Microverso Exocortex Ops criado

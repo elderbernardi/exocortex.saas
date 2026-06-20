@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Creative QA Antes de Publicação
-created: 2026-06-14
+description: Evitar que o Estúdio publique peça correta no acabamento e errada na direção.
+tags: [workflow, qa, publication]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: workflows
 kind: workflow
@@ -11,15 +17,14 @@ authority: canonical
 operational_mode: executable
 stability: active
 sources: []
-derived_from:
-  - knowledge/structured-creative-critique.md
+derived_from: [knowledge/structured-creative-critique.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, qa, publication]
+created: 2026-06-14
 ---
 
 # Creative QA antes de publicação

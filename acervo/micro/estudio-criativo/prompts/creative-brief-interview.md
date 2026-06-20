@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Prompt — Entrevista de Briefing Criativo
-created: 2026-06-01
+description: Use quando a demanda criativa ainda não tem contexto suficiente.
+tags: [prompt, briefing]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: prompts
 kind: prompt
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [prompt, briefing]
+created: 2026-06-01
 ---
 
 # Entrevista de briefing criativo

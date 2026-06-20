@@ -1,26 +1,33 @@
 ---
+type: knowledge
+title: DESIGN
+description: Identidade visual canônica do Exocórtex.IA — derivada da logo principal, refinada manualmente.
+tags: []
+timestamp: 2026-06-15
+class: perene
+created_at: 2026-06-15T20:35:46Z
+last_accessed_at: 2026-06-15T20:35:46Z
 version: alpha
 name: EXCRTX.IA
-description: Identidade visual canônica do Exocórtex.IA — derivada da logo principal, refinada manualmente.
 extends: global
 colors:
-  primary: "#03123f"
-  secondary: "#1a3c86"
-  tertiary: "#1376ed"
-  accent: "#1376ed"
-  neutral: "#d2d6e3"
-  surface: "#f4f5f8"
-  dark: "#03123f"
-  muted: "#8f8a91"
-  text: "#e8ecf2"
-  text-inverse: "#03123f"
-  on-primary: "#FFFFFF"
-  on-secondary: "#FFFFFF"
-  on-tertiary: "#03123f"
-  on-accent: "#FFFFFF"
-  danger: "#E53E3E"
-  success: "#38A169"
-  warning: "#D69E2E"
+  primary: '#03123f'
+  secondary: '#1a3c86'
+  tertiary: '#1376ed'
+  accent: '#1376ed'
+  neutral: '#d2d6e3'
+  surface: '#f4f5f8'
+  dark: '#03123f'
+  muted: '#8f8a91'
+  text: '#e8ecf2'
+  text-inverse: '#03123f'
+  on-primary: '#FFFFFF'
+  on-secondary: '#FFFFFF'
+  on-tertiary: '#03123f'
+  on-accent: '#FFFFFF'
+  danger: '#E53E3E'
+  success: '#38A169'
+  warning: '#D69E2E'
 typography:
   h1:
     fontFamily: Inter

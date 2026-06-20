@@ -1,12 +1,18 @@
 ---
+type: decision
 title: Isolamento de Perfis Hermes
-created: 2026-06-05
-updated: 2026-06-05
-nature: contracts
-type: rule
+description: Perfis Hermes possuem skills, plugins, cron e memória próprios.
 tags: [profiles, isolation, hermes]
-sources: [system:profile-policy]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: rule
+nature: contracts
+sources: ['system:profile-policy']
 confidence: high
+created: 2026-06-05
 ---
 
 # Isolamento de perfis Hermes

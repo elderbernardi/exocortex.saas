@@ -1,11 +1,18 @@
 ---
-domain: Desenvolvimento do Exocórtex
-slug: exocortex-dev
-type: project
+type: context
+title: Exocórtex Dev
 description: Desenvolvimento do framework Exocórtex.IA — skills, harness, acervo, integrações e evolução do sistema sobre Hermes Agent.
-created: 2026-06-08
+tags: []
+timestamp: 2026-06-08
+class: perene
+created_at: 2026-06-08T00:00:00Z
+last_accessed_at: 2026-06-08T00:00:00Z
+domain: Desenvolvimento do Exocórtex
+excrtx_type: project
+slug: exocortex-dev
 updated: 2026-06-11
 priority: high
+created: 2026-06-08
 ---
 
 # Exocórtex Dev

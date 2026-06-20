@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Registro de profiles Hermes
-created: 2026-06-05
+description: '| Profile | Estado | Modelo reportado | Finalidade operacional | Risco | Observação |'
+tags: [hermes, profiles, runtime, isolamento]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: knowledge
 kind: registry
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: observed
 stability: active
 lifecycle_state: observed
-tags: [hermes, profiles, runtime, isolamento]
+created: 2026-06-05
 ---
 
 # Registro de profiles Hermes

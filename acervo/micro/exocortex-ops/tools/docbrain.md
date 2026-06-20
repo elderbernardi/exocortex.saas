@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: DocBrain Operacional
-created: 2026-06-05
-updated: 2026-06-05
-nature: tools
-type: tool
+description: 'Instância funcional atual:'
 tags: [docbrain, parser, intake]
-sources: [conversation:docbrain-check]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: tool
+nature: tools
+sources: ['conversation:docbrain-check']
 confidence: high
+created: 2026-06-05
 ---
 
 # DocBrain operacional

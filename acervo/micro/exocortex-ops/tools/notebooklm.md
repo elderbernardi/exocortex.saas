@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: NotebookLM MCP
-created: 2026-06-05
-updated: 2026-06-05
-nature: tools
-type: tool
+description: O MCP server `notebooklm` aparece configurado com tools habilitadas.
 tags: [notebooklm, mcp, research]
-sources: [command:hermes-tools-list]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: tool
+nature: tools
+sources: ['command:hermes-tools-list']
 confidence: high
+created: 2026-06-05
 ---
 
 # NotebookLM MCP

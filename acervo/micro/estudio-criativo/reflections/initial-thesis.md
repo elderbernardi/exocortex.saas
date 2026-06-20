@@ -1,6 +1,12 @@
 ---
+type: reflection
 title: Reflexão — Tese Inicial do Estúdio
-created: 2026-06-01
+description: O Estúdio Criativo deve aumentar a capacidade de criação do Exocórtex sem virar uma coleção de templates ou uma camad...
+tags: [reflection, thesis]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: reflections
 kind: lesson
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [reflection, thesis]
+created: 2026-06-01
 ---
 
 # Tese inicial

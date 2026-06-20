@@ -1,6 +1,12 @@
 ---
+type: reflection
 title: Caso Real — Saneamento do Índice do Estúdio
-created: 2026-06-14
+description: O microverso já existia como estrutura canônica, mas o índice prometia mais do que a árvore realmente sustentava.
+tags: [reflection, case, receipt, canonization]
+timestamp: 2026-06-14
+class: perene
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: reflections
 kind: case
@@ -10,11 +16,7 @@ applies_to: []
 authority: canonical
 operational_mode: read_only
 stability: active
-sources:
-  - issue #60
-  - commit c71be53
-  - acervo/micro/estudio-criativo/_meta/index.md
-  - acervo/micro/estudio-criativo/microverso.yaml
+sources: [issue, commit c71be53, acervo/micro/estudio-criativo/_meta/index.md, acervo/micro/estudio-criativo/microverso.yaml]
 derived_from: []
 confidence: high
 promotion_policy: none
@@ -22,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [reflection, case, receipt, canonization]
+created: 2026-06-14
 ---
 
 # Caso real — saneamento do índice do Estúdio

@@ -1,11 +1,17 @@
 ---
+type: decision
 title: Exocortex.IA Development & Quality Standards
-created: 2026-06-11
-updated: 2026-06-11
-nature: contracts
-type: rule
+description: This document establishes the official coding conventions, skill design specifications, and automated verification ru...
 tags: [dev, exocortex, standards, skill, qa]
+timestamp: 2026-06-11
+class: perene
+created_at: 2026-06-11T00:00:00Z
+last_accessed_at: 2026-06-11T00:00:00Z
+updated: 2026-06-11
+excrtx_type: rule
+nature: contracts
 confidence: high
+created: 2026-06-11
 ---
 
 # Exocortex.IA Development & Quality Standards

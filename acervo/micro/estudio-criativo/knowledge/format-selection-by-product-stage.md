@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Escolha de Formato por Estágio do Produto
-created: 2026-06-14
+description: Ajudar o Estúdio a escolher o artefato certo para o momento certo. Formato errado cria trabalho bonito e inútil.
+tags: [knowledge, format, product-stage, delivery]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: knowledge
 kind: method
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, format, product-stage, delivery]
+created: 2026-06-14
 ---
 
 # Escolha de formato por estágio do produto

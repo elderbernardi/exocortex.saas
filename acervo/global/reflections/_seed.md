@@ -1,10 +1,16 @@
 ---
+type: context
 title: Reflexões Globais
-created: 2026-05-26
-updated: 2026-05-26
-nature: reflections
-type: lesson
+description: Lições aprendidas que se aplicam transversalmente a todos os Microversos.
 tags: [reflexao]
+timestamp: 2026-05-26
+class: perene
+created_at: 2026-05-26T00:00:00Z
+last_accessed_at: 2026-05-26T00:00:00Z
+updated: 2026-05-26
+excrtx_type: lesson
+nature: reflections
+created: 2026-05-26
 ---
 
 # Reflexões Globais

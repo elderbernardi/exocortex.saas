@@ -1,12 +1,18 @@
 ---
+type: knowledge
 title: Registro de Integrações Operacionais
-created: 2026-06-05
-updated: 2026-06-05
-nature: knowledge
-type: fact
+description: 'Uso esperado: parser local de documentos para workflows de intake.'
 tags: [integration, docbrain, notebooklm, mcp]
-sources: [conversation:docbrain-check, command:hermes-tools-list]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: fact
+nature: knowledge
+sources: ['conversation:docbrain-check', 'command:hermes-tools-list']
 confidence: high
+created: 2026-06-05
 ---
 
 # Registro de integrações operacionais

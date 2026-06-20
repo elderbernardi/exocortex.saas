@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Política Draft-First para mudanças operacionais
-created: 2026-06-05
+description: 'Gerar DRAFT e aguardar aprovação explícita antes de:'
+tags: [draft-first, setup, seguranca, governanca]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: contracts
 kind: rule
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [draft-first, setup, seguranca, governanca]
+created: 2026-06-05
 ---
 
 # Política Draft-First para mudanças operacionais

@@ -1,6 +1,12 @@
 ---
+type: reflection
 title: Caso Real — Fronteira Operacional com Produto
-created: 2026-06-14
+description: O Estúdio já operava como capacidade transversal, mas ainda faltava uma fronteira explícita com Produto. Sem esse con...
+tags: [reflection, case, receipt, boundary, product]
+timestamp: 2026-06-14
+class: perene
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: reflections
 kind: case
@@ -10,10 +16,7 @@ applies_to: []
 authority: canonical
 operational_mode: read_only
 stability: active
-sources:
-  - issue #62
-  - commit e2b353d
-  - acervo/micro/estudio-criativo/contracts/boundary-with-product.md
+sources: [issue, commit e2b353d, acervo/micro/estudio-criativo/contracts/boundary-with-product.md]
 derived_from: []
 confidence: high
 promotion_policy: none
@@ -21,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [reflection, case, receipt, boundary, product]
+created: 2026-06-14
 ---
 
 # Caso real — fronteira operacional com Produto

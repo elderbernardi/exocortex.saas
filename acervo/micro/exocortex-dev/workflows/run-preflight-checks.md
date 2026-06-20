@@ -1,11 +1,12 @@
 ---
-title: SOP-002: Running Preflight Checks and Validation
-created: 2026-06-11
-updated: 2026-06-11
-nature: workflows
-type: workflow
-tags: [dev, exocortex, qa, workflow, checklist]
-confidence: high
+type: artifact
+title: 'SOP-002: Running Preflight Checks and Validation'
+description: This Standard Operating Procedure (SOP) describes how to execute the automated quality validation suites before commi...
+tags: []
+timestamp: 2026-06-11
+class: volátil
+created_at: 2026-06-11T03:03:32Z
+last_accessed_at: 2026-06-11T03:03:32Z
 ---
 
 # SOP-002: Running Preflight Checks and Validation

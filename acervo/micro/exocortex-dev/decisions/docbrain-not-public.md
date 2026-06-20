@@ -1,3 +1,14 @@
+---
+type: decision
+title: 'ADR: DocBrain não é público — referências em superfícies públicas são vazamento'
+description: '**Data:** 2026-06-17'
+tags: []
+timestamp: 2026-06-19
+class: perene
+created_at: 2026-06-19T22:34:48Z
+last_accessed_at: 2026-06-19T22:34:48Z
+---
+
 # ADR: DocBrain não é público — referências em superfícies públicas são vazamento
 
 **Data:** 2026-06-17

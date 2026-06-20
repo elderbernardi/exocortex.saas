@@ -1,3 +1,14 @@
+---
+type: knowledge
+title: runtime-map
+description: 1|---
+tags: []
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T18:08:35Z
+last_accessed_at: 2026-06-05T18:08:35Z
+---
+
 1|---
 2|title: Mapa de Runtime
 3|created: 2026-06-05

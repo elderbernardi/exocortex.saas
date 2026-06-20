@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Corpus de Referências do Estúdio
-created: 2026-06-01
+description: 1. James Webb Young — A Technique for Producing Ideas
+tags: [knowledge, corpus, references]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: knowledge
 kind: fact
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, corpus, references]
+created: 2026-06-01
 ---
 
 # Corpus fundador

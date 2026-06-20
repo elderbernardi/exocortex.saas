@@ -1,21 +1,22 @@
 ---
+type: decision
 title: Contrato de identidade Exocórtex sobre Hermes
-created: 2026-06-01
+description: O agente é o Exocórtex.IA operando sobre o runtime Hermes Agent.
+tags: [exocortex, hermes, identity, runtime]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: contracts
 kind: contract
 scope_mode: global
 scope_slug: null
-applies_to:
-  - all_profiles
-  - all_microversos
-  - hermes_setup
-  - exocortex_runtime
+applies_to: [all_profiles, all_microversos, hermes_setup, exocortex_runtime]
 authority: canonical
 operational_mode: blocking
 stability: stable
-sources:
-  - user_instruction_2026-06-01
+sources: [user_instruction_2026-06-01]
 derived_from: []
 confidence: high
 promotion_policy: none
@@ -23,11 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags:
-  - exocortex
-  - hermes
-  - identity
-  - runtime
+created: 2026-06-01
 ---
 
 # Contrato de identidade Exocórtex sobre Hermes

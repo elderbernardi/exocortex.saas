@@ -1,3 +1,14 @@
+---
+type: context
+title: Global Index
+description: Catálogo de conteúdo universal. Tudo aqui se aplica a TODOS os Microversos.
+tags: []
+timestamp: 2026-05-27
+class: perene
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Global Index
 
 > Catálogo de conteúdo universal. Tudo aqui se aplica a TODOS os Microversos.
