@@ -343,3 +343,22 @@ do executivo, **intencionalmente sem frontmatter** (FLAT, sempre carregada, vers
 por convenção). O validador os reprova por V-001.
 **Decisão necessária (executivo):** ou (a) **isentar `macro/`** do validador (adicionar aos excludes — coerente
 com "macro é especial"), ou (b) **adicionar frontmatter OKF** aos arquivos macro. Não decidido unilateralmente.
+
+### Fase 8 — macro/frontmatter (avaliação de impacto no Hermes) + boot path
+
+#### F-060 RESOLVIDO — macro NÃO deve ter frontmatter (carga verbatim) · decisão (a)
+**Pergunta do executivo:** "o frontmatter de macro entra como contexto literal? se sim, não deve ter."
+**Resposta confirmada:** SIM. A rotina de boot do `excrtx-memory-manager` carrega `macro/*` **verbatim**
+(`cat "$ACERVO/macro/soul.md"` etc.), sem stripping de frontmatter → qualquer frontmatter vira ruído literal
+na constituição/identidade do agente. **Evidência de design:** `migrate_frontmatter.py` já tem
+`EXCLUDED_DIRS = {macro, raw, _archive, _inbox, _artifacts, _template, .quarantine}` — o time **intencionalmente**
+isenta macro. **Ação:** adicionado `macro` aos excludes do `validate_frontmatter.py` (paridade com a migração).
+**Estado final do acervo vivo: 164/164 válido, 0 inválido.** Princípio geral registrado: *arquivos carregados
+verbatim no contexto não carregam frontmatter*.
+
+#### F-061 — Boot lê `global/index.md` (inexistente); arquivo real é `global/_meta/index.md` · P1
+**Observado:** a rotina de Resuming faz `cat "$ACERVO/global/index.md"`, mas o índice real está em
+`global/_meta/index.md` (e `shared/_meta/index.md`). O `global/index.md` não existe → o catálogo global
+**não é carregado no boot** (cat falha silenciosamente). **CORRIGIDO** no `excrtx-memory-manager` (paths →
+`global/_meta/index.md`). Obs.: há inconsistência de onde vive `index.md` entre microversos (`hermes-setup/index.md`
+no raiz vs `_meta/index.md` no template) — candidato a normalização futura.

@@ -107,14 +107,14 @@ Full details in `acervo/README.md`.
 At every session boot:
 
 ① **Read `macro/*`** — soul.md, valores.md, estilo.md (entire files, ~100 lines total)
-② **Read `global/index.md`** — catalog of universal rules/processes/tools
+② **Read `global/_meta/index.md`** — catalog of universal rules/processes/tools
 ③ **DO NOT load** micro/ or shared/ until a task defines the scope
 
 ```bash
 cat "$ACERVO/macro/soul.md"
 cat "$ACERVO/macro/valores.md"
 cat "$ACERVO/macro/estilo.md"
-cat "$ACERVO/global/index.md"
+cat "$ACERVO/global/_meta/index.md"
 ```
 
 ### Design System (On Demand)

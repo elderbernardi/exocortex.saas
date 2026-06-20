@@ -598,6 +598,11 @@ DEFAULT_EXCLUDE_DIRS = frozenset({
     "_inbox", "_tasks", "_routines", "_automations",
     # scaffolds / fixtures — not live semantic pages (carry placeholders)
     "_template", "_fixture",
+    # macro/ is the executive constitution, loaded VERBATIM into context at every
+    # boot (cat soul.md/valores.md/estilo.md). Frontmatter there would leak as
+    # literal identity context, so macro carries none — migrate_frontmatter.py
+    # excludes it for the same reason. Keep the two tools in sync.
+    "macro",
 })
 # Top-level non-semantic files (relative to the scanned root).
 DEFAULT_EXCLUDE_NAMES = frozenset({"README.md"})
