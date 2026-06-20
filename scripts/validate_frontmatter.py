@@ -596,6 +596,8 @@ def validate_file(path):
 DEFAULT_EXCLUDE_DIRS = frozenset({
     "_artifacts", "raw", "_archive", ".quarantine",
     "_inbox", "_tasks", "_routines", "_automations",
+    # scaffolds / fixtures — not live semantic pages (carry placeholders)
+    "_template", "_fixture",
 })
 # Top-level non-semantic files (relative to the scanned root).
 DEFAULT_EXCLUDE_NAMES = frozenset({"README.md"})

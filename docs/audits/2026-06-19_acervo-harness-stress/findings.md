@@ -327,3 +327,19 @@ adicionar no `step-12-verify-keys` uma checagem do id contra `/v1/models`. **Sem
 Dry-run no acervo real: 165 em escopo, 138 modificáveis, **0 erros**. Backup fresco em
 `/tmp/exocortex-acervo-premigration-<STAMP2>.tgz`. **Bloqueado pelo guard de segurança** (reescrever memória
 canônica viva exige autorização explícita do executivo). Aguardando confirmação.
+
+### Fase 7 — Migração do acervo vivo aplicada (autorizada pelo executivo)
+
+**F-010 RESOLVIDO.** `migrate_frontmatter.py --dir ~/exocortex/acervo` aplicado (138 modificados, 0 erros).
+Resultado: **conformes 73 → 164, inválidos 113 → 4** (a migração também corrigiu as 4 páginas com YAML
+malformado da F-050). Backup: `/tmp/exocortex-acervo-premigration-20260619_211018.tgz`.
+
+Refinamento adicional do validador (F-011): `_template` e `_fixture` adicionados aos excludes (scaffolds com
+placeholders, não são páginas vivas). Estado final: **168 escaneados, 164 válidos, 4 inválidos, 82 pulados.**
+
+#### F-060 — `macro/*` sem frontmatter (decisão de design pendente) · P2
+**Observado:** os 4 inválidos restantes são `macro/{SOUL.md,soul.md,estilo.md,valores.md}` — a constituição
+do executivo, **intencionalmente sem frontmatter** (FLAT, sempre carregada, versionada só no git, sem log
+por convenção). O validador os reprova por V-001.
+**Decisão necessária (executivo):** ou (a) **isentar `macro/`** do validador (adicionar aos excludes — coerente
+com "macro é especial"), ou (b) **adicionar frontmatter OKF** aos arquivos macro. Não decidido unilateralmente.
