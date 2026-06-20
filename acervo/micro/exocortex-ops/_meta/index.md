@@ -1,6 +1,12 @@
 ---
+type: context
 title: Índice — exocortex-ops
-created: 2026-06-05
+description: Microverso canônico para setup, operação, manutenção, diagnóstico, integrações, memória, profiles, tools, MCPs, self-...
+tags: [index, ops, setup]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: meta
 kind: index
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [index, ops, setup]
+created: 2026-06-05
 ---
 
 # exocortex-ops

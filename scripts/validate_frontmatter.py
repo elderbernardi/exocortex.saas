@@ -215,6 +215,11 @@ def extract_frontmatter(text):
         tuples for V-001 through V-004
     """
     issues = []
+    # Strip a leading UTF-8 BOM so a BOM-prefixed (but otherwise valid) file is
+    # not spuriously rejected by V-001. Editors that write UTF-8-with-BOM would
+    # otherwise make every Acervo file fail the opening-delimiter check.
+    if text.startswith("﻿"):
+        text = text[1:]
     lines = text.split("\n")
 
     # V-001: File must start with ---\n
@@ -583,16 +588,57 @@ def validate_file(path):
     return str(path), issues
 
 
-def validate_dir(dir_path):
+# Non-semantic areas of the Acervo. These hold raw inputs, produced artifacts,
+# operational queues, or superseded pages — none of which are semantic wiki
+# pages, so they do not carry OKF frontmatter and must not be validated by
+# default (otherwise --dir floods with false V-001/V-010 errors). Matched as
+# path *components* relative to the scanned root.
+DEFAULT_EXCLUDE_DIRS = frozenset({
+    "_artifacts", "raw", "_archive", ".quarantine",
+    "_inbox", "_tasks", "_routines", "_automations",
+    # scaffolds / fixtures — not live semantic pages (carry placeholders)
+    "_template", "_fixture",
+    # macro/ is the executive constitution, loaded VERBATIM into context at every
+    # boot (cat soul.md/valores.md/estilo.md). Frontmatter there would leak as
+    # literal identity context, so macro carries none — migrate_frontmatter.py
+    # excludes it for the same reason. Keep the two tools in sync.
+    "macro",
+})
+# Top-level non-semantic files (relative to the scanned root).
+DEFAULT_EXCLUDE_NAMES = frozenset({"README.md"})
+
+
+def _is_excluded(rel_parts):
+    """True if a path (given as relative parts) is in a non-semantic area."""
+    if any(part in DEFAULT_EXCLUDE_DIRS for part in rel_parts[:-1]):
+        return True
+    # Top-level README.md (and a README.md directly inside an excluded-style root)
+    if rel_parts[-1] in DEFAULT_EXCLUDE_NAMES:
+        return True
+    return False
+
+
+def validate_dir(dir_path, apply_excludes=True):
     """Validate all ``.md`` files in a directory recursively.
 
-    Returns a list of ``(path, issues)`` tuples sorted by path.
+    By default, files under non-semantic areas (``DEFAULT_EXCLUDE_DIRS``) and
+    top-level READMEs are skipped. Pass ``apply_excludes=False`` to validate
+    every ``.md`` file (legacy behavior).
+
+    Returns ``(results, skipped_count)`` where ``results`` is a list of
+    ``(path, issues)`` tuples sorted by path.
     """
     base = Path(dir_path)
     results = []
+    skipped = 0
     for md_file in sorted(base.rglob("*.md")):
+        if apply_excludes:
+            rel_parts = md_file.relative_to(base).parts
+            if _is_excluded(rel_parts):
+                skipped += 1
+                continue
         results.append(validate_file(md_file))
-    return results
+    return results, skipped
 
 
 # ─── Output formatting ──────────────────────────────────────────────────────
@@ -652,6 +698,11 @@ def main(argv=None):
         "--report", action="store_true",
         help="Output a summary report instead of per-file detail.",
     )
+    parser.add_argument(
+        "--no-exclude", action="store_true",
+        help="Validate every .md file, including non-semantic areas "
+             "(_artifacts/, raw/, _archive/, .quarantine/, _inbox/, READMEs).",
+    )
     args = parser.parse_args(argv)
 
     if not args.file and not args.dir:
@@ -667,18 +718,27 @@ def main(argv=None):
             return 2
         results.append(validate_file(file_path))
 
+    skipped = 0
     if args.dir:
         dir_path = Path(args.dir)
         if not dir_path.is_dir():
             print(f"Error: directory not found: {args.dir}", file=sys.stderr)
             return 2
-        results.extend(validate_dir(dir_path))
+        dir_results, skipped = validate_dir(dir_path, apply_excludes=not args.no_exclude)
+        results.extend(dir_results)
 
     # Output
     if args.report:
         print_report(results)
+        if skipped:
+            print(f"Skipped: {skipped} files in non-semantic areas "
+                  f"(use --no-exclude to include them)")
     else:
         print_default(results)
+        if skipped:
+            print(f"# Skipped {skipped} non-semantic files "
+                  f"(_artifacts/raw/_archive/.quarantine/_inbox/README; "
+                  f"--no-exclude to include)")
 
     # Exit code
     return 1 if any(_has_errors(iss) for _p, iss in results) else 0

@@ -1,6 +1,12 @@
 ---
+type: context
 title: Index — Estúdio Criativo
-created: 2026-06-01
+description: Microverso transversal do Exocórtex para criação, pesquisa, linguagem, design, produção e aprendizado criativo adaptá...
+tags: [index, creative-studio, microverso]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-14
 nature: context
 kind: context
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [index, creative-studio, microverso]
+created: 2026-06-01
 ---
 
 # Estúdio Criativo

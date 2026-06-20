@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — validação pós-mudança operacional
-created: 2026-06-05
+description: 1. Rodar health check específico da área alterada.
+tags: [validacao, setup, rollback]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: workflows
 kind: workflow
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [validacao, setup, rollback]
+created: 2026-06-05
 ---
 
 # Workflow — validação pós-mudança operacional

@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Auditoria de Drift Runtime vs Contrato
-created: 2026-06-05
-updated: 2026-06-05
-nature: workflows
-type: workflow
+description: Detectar divergência entre skill, documentação, configuração e runtime real.
 tags: [drift, audit, runtime, skills]
-sources: [conversation:docbrain-check]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: workflow
+nature: workflows
+sources: ['conversation:docbrain-check']
 confidence: high
+created: 2026-06-05
 ---
 
 # Auditoria de drift

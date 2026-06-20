@@ -1,0 +1,11 @@
+comercial
+ensino
+estudio-criativo
+excrtx
+exocortex-dev
+exocortex-ops
+gabinete
+hermes-setup
+projeto-alpha
+sales-ai
+_template

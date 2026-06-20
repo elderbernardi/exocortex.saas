@@ -1,0 +1,319 @@
+[
+  {
+    "rule": "V-001",
+    "desc": "no opening ---",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-001"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-002",
+    "desc": "no closing ---",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-002"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-010",
+    "desc": "missing type",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-010"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-011",
+    "desc": "missing title",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-011"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-012",
+    "desc": "missing description",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-012"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-013",
+    "desc": "missing tags",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-013"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-014",
+    "desc": "missing timestamp",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-014"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-020",
+    "desc": "bad type value",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-020"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-021",
+    "desc": "empty title",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-021"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-024",
+    "desc": "empty description",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-024"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-027",
+    "desc": "tags scalar not list",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-027"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-028",
+    "desc": "empty tag element",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-028"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-029",
+    "desc": "bad timestamp format",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-029",
+      "V-070"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-030",
+    "desc": "invalid calendar date",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-030",
+      "V-070"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-040",
+    "desc": "missing class",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-040"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-041",
+    "desc": "bad class value",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-041"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-042",
+    "desc": "missing created_at",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-042"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-043",
+    "desc": "bad created_at format",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-043"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-045",
+    "desc": "bad last_accessed_at",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-045"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-046",
+    "desc": "bad promoted_at",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-046",
+      "V-072"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-050",
+    "desc": "deprecated not bool",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-050"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-051",
+    "desc": "deprecated true no _at",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-051",
+      "V-052"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-055",
+    "desc": "deprecated_at without deprecated",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-055"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-060",
+    "desc": "bad quarantined_at fmt",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-060",
+      "V-061",
+      "V-062"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-061",
+    "desc": "quarantined no reason",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-061",
+      "V-062"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-065",
+    "desc": "expiry before quarantined",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-065"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-067",
+    "desc": "quarantine_reason without quarantined_at",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-067"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-070",
+    "desc": "created_at date != timestamp",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-070"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-071",
+    "desc": "deprecated AND quarantined",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-071"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-073",
+    "desc": "excrtx_type not string",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-073"
+    ],
+    "status": "OK"
+  },
+  {
+    "rule": "V-076",
+    "desc": "sources not list",
+    "caught": true,
+    "exit": 1,
+    "fired": [
+      "V-076"
+    ],
+    "status": "OK"
+  }
+]

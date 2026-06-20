@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Skill — Seleção de Ferramentas Criativas
-created: 2026-06-01
+description: Quando uma tarefa criativa pode exigir ferramenta específica, skill Hermes ou instalação de software.
+tags: [skill, tools]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: skills
 kind: skill
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [skill, tools]
+created: 2026-06-01
 ---
 
 # Seleção de ferramentas criativas

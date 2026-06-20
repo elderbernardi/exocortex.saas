@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Template — Decisão Operacional
-created: 2026-06-05
-updated: 2026-06-05
-nature: templates
-type: template
+description: Template — Decisão Operacional
 tags: [decision, template, ops]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: template
+nature: templates
 sources: []
 confidence: high
+created: 2026-06-05
 ---
 
 # {titulo}

@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Registro de cron jobs
-created: 2026-06-05
+description: Nenhum cron job específico deste microverso foi canonizado neste snapshot.
+tags: [cron, automacao, manutencao]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: knowledge
 kind: registry
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [cron, automacao, manutencao]
+created: 2026-06-05
 ---
 
 # Registro de cron jobs

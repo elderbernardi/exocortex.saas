@@ -1,0 +1,15 @@
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/_meta/SCHEMA.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/_meta/index.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/_meta/log.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/context/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/contracts/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/contracts/exocortex-hermes-identity.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/decisions/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/knowledge/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/persona/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/prompts/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/reflections/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/skills/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/templates/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/tools/_seed.md
+PASS  /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/workflows/_seed.md

@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — provisionar microverso base
-created: 2026-06-05
+description: Usar quando um microverso deve existir em instalações futuras do Exocórtex.
+tags: [setup, microverso-base, provisionamento]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: workflows
 kind: workflow
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [setup, microverso-base, provisionamento]
+created: 2026-06-05
 ---
 
 # Workflow — provisionar microverso base

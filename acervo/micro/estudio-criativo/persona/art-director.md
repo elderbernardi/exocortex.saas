@@ -1,6 +1,12 @@
 ---
+type: context
 title: Persona — Art Director
-created: 2026-06-01
+description: Cuida de direção visual, composição, identidade, hierarquia, ritmo, contraste e qualidade estética.
+tags: [persona, art-director]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: persona
 kind: profile
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [persona, art-director]
+created: 2026-06-01
 ---
 
 # Persona — Art Director

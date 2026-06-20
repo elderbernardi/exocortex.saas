@@ -1,11 +1,12 @@
 ---
-title: SOP-001: Creating and Registering a Custom Skill
-created: 2026-06-11
-updated: 2026-06-11
-nature: workflows
-type: workflow
-tags: [dev, exocortex, skill, workflow]
-confidence: high
+type: artifact
+title: 'SOP-001: Creating and Registering a Custom Skill'
+description: This Standard Operating Procedure (SOP) describes how to scaffold, implement, compile, validate, and calibrate a new ...
+tags: []
+timestamp: 2026-06-11
+class: volátil
+created_at: 2026-06-11T03:03:32Z
+last_accessed_at: 2026-06-11T03:03:32Z
 ---
 
 # SOP-001: Creating and Registering a Custom Skill

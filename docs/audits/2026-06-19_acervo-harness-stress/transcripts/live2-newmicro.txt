@@ -1,0 +1,43 @@
+Microverso 'Projeto Gamma' criado e validado. Resultado real, sem invenção:
+
+Resultado da validação (scripts/validate_frontmatter.py --dir .../projeto-gamma):
+
+  Frontmatter Validation Report
+  =============================
+  Scanned: 15 files
+  Valid:   15
+  Invalid: 0
+  ---EXIT: 0---
+
+Detalhe por arquivo (todos PASS):
+  _meta/SCHEMA.md
+  _meta/index.md
+  _meta/log.md
+  context/_seed.md
+  contracts/_seed.md
+  contracts/exocortex-hermes-identity.md
+  decisions/_seed.md
+  knowledge/_seed.md
+  persona/_seed.md
+  prompts/_seed.md
+  reflections/_seed.md
+  skills/_seed.md
+  templates/_seed.md
+  tools/_seed.md
+  workflows/_seed.md
+
+O que foi feito (passo a passo, via skill excrtx-memory-newmicro):
+
+1. Verificação de pré-requisito: _template/ presente em acervo/micro/_template/.
+2. Cópia recursiva: cp -r _template/ micro/projeto-gamma/ (15 .md + raw/ + _archive/).
+3. Substituição de placeholders em todos os 15 arquivos: {{DOMAIN_NAME}}→Projeto Gamma, {{DOMAIN_DESCRIPTION}}→Microverso de teste do harness, {{micro_type}}→project, {{CREATED_DATE}}→2026-06-19, {slug}→projeto-gamma. No contracts/exocortex-hermes-identity.md também foram ajustados scope_slug e applies_to. grep residual: zero placeholders restantes.
+4. Correções para satisfazer o schema ADR-013 (visto que o template original não passa o validador):
+   - description="" em todos os _seed.md → preenchida com uma linha significativa por Nature.
+   - contracts/exocortex-hermes-identity.md: adicionados type, description, tags, timestamp, class, created_at, last_accessed_at (o template original não tem esses campos obrigatórios — V-010/012/014/040/042).
+   - _meta/SCHEMA.md, _meta/index.md, _meta/log.md: criados frontmatter completos (não existiam no template).
+   - created_at date portion igual a timestamp (regra V-070).
+5. shared/groups.md atualizado: projeto-gamma adicionado em PROJECTS.
+
+Observação honesta sobre divergência entre skill e template real: a skill descreve 7 Natures e 1 único _seed por nature, mas o template real do acervo (e o validador) usa 11 Natures com diretórios _seed, raw e _archive. Criei o microverso seguindo o template real do disco (que é o que o validador conhece) em vez do resumo da skill. Se a skill precisar ser atualizada, vale patch.
+
+Caminho final: /tmp/acervo-stress-20260619_200744/acervo/micro/projeto-gamma/

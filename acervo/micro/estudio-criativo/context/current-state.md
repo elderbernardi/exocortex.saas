@@ -1,6 +1,12 @@
 ---
+type: context
 title: Estado Corrente — Estúdio Criativo
-created: 2026-06-14
+description: O Estúdio Criativo opera como capacidade transversal do Exocórtex para transformar demandas difusas em problemas cria...
+tags: [current-state, creative-studio, operations]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: context
 kind: context
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [current-state, creative-studio, operations]
+created: 2026-06-14
 ---
 
 # Estado corrente

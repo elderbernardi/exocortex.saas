@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Princípios Operacionais do Estúdio
-created: 2026-06-01
+description: 1. O Estúdio recebe problemas criativos, não apenas pedidos de peça.
+tags: [contract, principles]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: contracts
 kind: contract
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [contract, principles]
+created: 2026-06-01
 ---
 
 # Princípios operacionais

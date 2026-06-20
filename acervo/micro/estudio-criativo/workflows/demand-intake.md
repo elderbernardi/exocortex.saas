@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Entrada de Demandas Criativas
-created: 2026-06-01
+description: Transformar pedido difuso em problema criativo operável.
+tags: [workflow, intake]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: workflows
 kind: workflow
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, intake]
+created: 2026-06-01
 ---
 
 # Entrada de demandas criativas

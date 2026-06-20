@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Paisagem de Ferramentas Criativas
-created: 2026-06-01
+description: O Estúdio deve operar com ferramentas com IA e sem IA. A escolha depende da tarefa, do ambiente disponível e da quali...
+tags: [knowledge, tools]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: knowledge
 kind: concept
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, tools]
+created: 2026-06-01
 ---
 
 # Paisagem de ferramentas criativas

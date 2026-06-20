@@ -1,12 +1,18 @@
 ---
+type: reflection
 title: Lacunas Iniciais do Exocortex Ops
-created: 2026-06-05
-updated: 2026-06-05
-nature: reflections
-type: lesson
+description: A estrutura do Acervo existia, mas a camada operacional ainda não tinha casa própria.
 tags: [gap-analysis, ops, acervo]
-sources: [conversation:acervo-gap-analysis]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: lesson
+nature: reflections
+sources: ['conversation:acervo-gap-analysis']
 confidence: high
+created: 2026-06-05
 ---
 
 # Lacunas iniciais

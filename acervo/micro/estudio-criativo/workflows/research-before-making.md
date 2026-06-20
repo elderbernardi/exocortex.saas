@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Pesquisar Antes de Fazer
-created: 2026-06-01
+description: Evitar criação genérica e acelerar repertório antes da produção.
+tags: [workflow, research]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: workflows
 kind: workflow
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, research]
+created: 2026-06-01
 ---
 
 # Pesquisar antes de fazer

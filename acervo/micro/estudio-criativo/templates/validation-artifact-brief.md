@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Template — Brief de Artefato de Validação
-created: 2026-06-14
+description: 'se confirmar:'
+tags: [template, validation, prototype]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: templates
 scope_mode: micro
@@ -10,15 +16,14 @@ authority: canonical
 operational_mode: template
 stability: active
 sources: []
-derived_from:
-  - knowledge/rapid-tangibilization-for-validation.md
+derived_from: [knowledge/rapid-tangibilization-for-validation.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [template, validation, prototype]
+created: 2026-06-14
 ---
 
 # Brief de artefato de validação

@@ -1,18 +1,18 @@
 ---
+type: knowledge
 title: Ecossistema Visual — Design System do Exocórtex
-created: 2026-06-10
-updated: 2026-06-10
-nature: knowledge
-type: reference
+description: O Exocórtex adota o formato **Google DESIGN.md** (`google-labs-code/design.md`, Apache-2.0). Cada `DESIGN.md` é um ar...
 tags: [design-system, tokens, brandkit, visual, DESIGN.md, cascade]
+timestamp: 2026-06-10
+class: volátil
+created_at: 2026-06-10T00:00:00Z
+last_accessed_at: 2026-06-10T00:00:00Z
+updated: 2026-06-10
+excrtx_type: reference
+nature: knowledge
 confidence: high
-sources:
-  [
-    skills/excrtx-quality-designsys/SKILL.md,
-    skills/excrtx-quality-taste/brandkit.md,
-    acervo/global/_meta/DESIGN.md,
-    acervo/micro/_template/_meta/SCHEMA.md,
-  ]
+sources: [skills/excrtx-quality-designsys/SKILL.md, skills/excrtx-quality-taste/brandkit.md, acervo/global/_meta/DESIGN.md, acervo/micro/_template/_meta/SCHEMA.md]
+created: 2026-06-10
 ---
 
 # Ecossistema Visual do Exocórtex

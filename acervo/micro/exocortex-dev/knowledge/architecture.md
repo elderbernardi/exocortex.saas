@@ -1,11 +1,17 @@
 ---
+type: knowledge
 title: Exocortex.IA System Architecture
-created: 2026-06-11
-updated: 2026-06-11
-nature: knowledge
-type: fact
+description: This document describes the core architecture of the Exocortex.IA cognitive extension system, its components, integra...
 tags: [dev, exocortex, architecture, harness]
+timestamp: 2026-06-11
+class: volátil
+created_at: 2026-06-11T00:00:00Z
+last_accessed_at: 2026-06-11T00:00:00Z
+updated: 2026-06-11
+excrtx_type: fact
+nature: knowledge
 confidence: high
+created: 2026-06-11
 ---
 
 # Exocortex.IA System Architecture

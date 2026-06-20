@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Skill — Seleção de Formato de Entrega
-created: 2026-06-14
+description: Quando a demanda ainda não definiu qual peça deve existir ou quando o formato pedido parece caro demais para a pergun...
+tags: [skill, format, delivery]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: skills
 kind: skill
@@ -11,15 +17,14 @@ authority: canonical
 operational_mode: executable
 stability: active
 sources: []
-derived_from:
-  - knowledge/format-selection-by-product-stage.md
+derived_from: [knowledge/format-selection-by-product-stage.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [skill, format, delivery]
+created: 2026-06-14
 ---
 
 # Seleção de formato de entrega

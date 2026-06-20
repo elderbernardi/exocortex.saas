@@ -1,0 +1,26 @@
+Conhecimento registrado. Resumo do que foi feito:
+
+Arquivos tocados (3):
+- acervo/micro/exocortex-dev/knowledge/default-model.md — NOVO, 40 linhas
+- acervo/micro/exocortex-dev/_meta/index.md — adicionada referência em "Knowledge"
+- acervo/micro/exocortex-dev/_meta/log.md — entrada append-only
+
+Filtro de Domínio aplicado:
+- Informação sobre configuração interna do Exocórtex → `micro/exocortex-dev/knowledge/` (não em `global/` nem em outro microverso).
+
+Frontmatter (OKF v0.1 superset, conforme skill excrtx-memory-manager):
+- OKF canônico: `type: knowledge`, `title`, `description`, `tags: [dev, exocortex, model, gateway]`, `timestamp: 2026-06-19`
+- Acervo lifecycle: `class: volátil` (escolhi `volátil` em vez de `perene` porque o modelo default é configuração — pode mudar entre perfis/sessões; o semantic revision hook cuidará da deprecação se for supersedido)
+- Acervo lifecycle: `created_at: 2026-06-19T23:26:21Z` (UTC da sessão)
+- Legacy retido: `nature: knowledge`, `excrtx_type: fact`, `confidence: high`
+
+Semantic revision hook (ADR-016) executado antes do commit:
+- Busca por `minimax-m3`, `OpenCode Zen`, `default model` no Acervo inteiro → 0 matches
+- Sem contradição/overlap → nenhuma deprecação disparada
+
+Verificação empírica (EX-49):
+$ python3 scripts/validate_frontmatter.py --file acervo/micro/exocortex-dev/knowledge/default-model.md
+PASS  acervo/micro/exocortex-dev/knowledge/default-model.md
+EXIT=0
+
+Próxima ação sugerida: se você quiser, posso rodar a mesma validação em todo o microverso exocortex-dev (`--dir acervo/micro/exocortex-dev/`) para ver o estado dos arquivos mais antigos sob o novo schema OKF — alguns (ex.: `architecture.md`) ainda usam a variante antiga com `created`/`updated`/`type: fact`. A migração automática é feita por `scripts/migrate_frontmatter.py`.

@@ -37,7 +37,8 @@ regardless of who triggers the operation.
 ## Acervo Location
 
 ```
-ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
+ACERVO="${ACERVO:-${EXOCORTEX_HOME:-$HOME/exocortex}/acervo}"
+[ -d "$ACERVO" ] || ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
 ```
 
 All paths below are relative to `$ACERVO` unless stated otherwise.

@@ -1,12 +1,18 @@
 ---
+type: knowledge
 title: Providers de Memória
-created: 2026-06-05
-updated: 2026-06-05
-nature: knowledge
-type: fact
+description: 'Built-in memory: sempre ativo.'
 tags: [memory, providers, hindsight]
-sources: [command:hermes-memory-status]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: fact
+nature: knowledge
+sources: ['command:hermes-memory-status']
 confidence: high
+created: 2026-06-05
 ---
 
 # Providers de memória

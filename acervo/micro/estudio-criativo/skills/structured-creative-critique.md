@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Skill — Crítica Criativa Estruturada
-created: 2026-06-14
+description: Quando já existe uma peça, narrativa, draft ou protótipo e o Estúdio precisa decidir a próxima intervenção.
+tags: [skill, critique, quality]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: skills
 kind: skill
@@ -11,15 +17,14 @@ authority: canonical
 operational_mode: executable
 stability: active
 sources: []
-derived_from:
-  - knowledge/structured-creative-critique.md
+derived_from: [knowledge/structured-creative-critique.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [skill, critique, quality]
+created: 2026-06-14
 ---
 
 # Crítica criativa estruturada

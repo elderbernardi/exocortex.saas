@@ -1,12 +1,18 @@
 ---
+type: artifact
 title: Inventário de Microversos
-created: 2026-06-05
-updated: 2026-06-05
-nature: workflows
-type: workflow
+description: 1. Listar diretórios em `~/.hermes/acervo/micro`.
 tags: [microverso, inventory, acervo]
-sources: [conversation:microverso-inventory]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: workflow
+nature: workflows
+sources: ['conversation:microverso-inventory']
 confidence: high
+created: 2026-06-05
 ---
 
 # Inventário de microversos

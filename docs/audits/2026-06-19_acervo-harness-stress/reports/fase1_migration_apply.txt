@@ -1,0 +1,14 @@
+Acervo Frontmatter Migration (ADR-013)
+======================================================================
+Target:  /tmp/acervo-stress-20260619_200744/acervo
+Mode:    MIGRATE
+Files:   250 total (165 in scope, 85 excluded)
+
+
+======================================================================
+Summary:
+  Files in scope:     165
+  Modified:           138
+  Already compliant:  27
+  Errors:             0
+  Files w/ warnings:  71

@@ -1,31 +1,30 @@
 ---
+type: decision
 title: Contrato local de identidade Exocórtex sobre Hermes
-created: 2026-06-01
+description: Este microverso opera dentro do Exocórtex.IA rodando sobre o Hermes Agent.
+tags: [exocortex, hermes, identity, runtime]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: contracts
 kind: contract
 scope_mode: micro
 scope_slug: estudio-criativo
-applies_to:
-  - estudio-criativo
+applies_to: [estudio-criativo]
 authority: derived
 operational_mode: blocking
 stability: stable
-sources:
-  - global/contracts/exocortex-hermes-identity-contract.md
-derived_from:
-  - global/contracts/exocortex-hermes-identity-contract.md
+sources: [global/contracts/exocortex-hermes-identity-contract.md]
+derived_from: [global/contracts/exocortex-hermes-identity-contract.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags:
-  - exocortex
-  - hermes
-  - identity
-  - runtime
+created: 2026-06-01
 ---
 
 # Identidade operacional neste microverso

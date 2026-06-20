@@ -1,3 +1,14 @@
+---
+type: knowledge
+title: Bem-vindo ao Exocórtex.IA
+description: '*"O mundo nunca sofrerá com a falta de maravilhas, mas apenas com a falta de maravilhamento."*'
+tags: []
+timestamp: 2026-06-04
+class: volátil
+created_at: 2026-06-04T19:08:16Z
+last_accessed_at: 2026-06-04T19:08:16Z
+---
+
 # Bem-vindo ao Exocórtex.IA
 
 > *"O mundo nunca sofrerá com a falta de maravilhas, mas apenas com a falta de maravilhamento."*

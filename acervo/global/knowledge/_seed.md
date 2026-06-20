@@ -1,10 +1,16 @@
 ---
+type: context
 title: Conhecimento Global
-created: 2026-05-26
-updated: 2026-05-26
-nature: knowledge
-type: fact
+description: Fatos, compliance, e informações que se aplicam a TODO contexto.
 tags: [conhecimento]
+timestamp: 2026-05-26
+class: perene
+created_at: 2026-05-26T00:00:00Z
+last_accessed_at: 2026-05-26T00:00:00Z
+updated: 2026-05-26
+excrtx_type: fact
+nature: knowledge
+created: 2026-05-26
 ---
 
 # Conhecimento Global

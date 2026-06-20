@@ -1,3 +1,14 @@
+---
+type: knowledge
+title: Acervo Cognitivo — Exocórtex.IA
+description: Sistema de memória estruturada do Exocórtex, baseado em LLM Wiki (Karpathy).
+tags: []
+timestamp: 2026-05-27
+class: volátil
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Acervo Cognitivo — Exocórtex.IA
 
 > Sistema de memória estruturada do Exocórtex, baseado em LLM Wiki (Karpathy).

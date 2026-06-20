@@ -1,5 +1,10 @@
 ---
+type: decision
 title: Contrato local de identidade Exocórtex sobre Hermes
+description: "Contrato local de identidade Exocórtex sobre Hermes para {{DOMAIN_NAME}}"
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
 created: 2026-06-01
 updated: 2026-06-01
 nature: contracts

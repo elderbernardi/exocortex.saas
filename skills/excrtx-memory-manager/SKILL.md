@@ -75,9 +75,20 @@ Activate when:
 
 ## Acervo Location
 
+Resolve the acervo root **once** as an absolute path and use `$ACERVO` for **every**
+read and write. **Never** use a cwd-relative `acervo/...` path — that writes memory into
+whatever directory the agent happens to run from (e.g. a code repository), not the canonical
+acervo, breaking isolation.
+
+```bash
+# Resolution order (matches setup/common.sh): explicit $ACERVO, then the Exocórtex
+# workspace (the live acervo), then the Hermes-home scaffold only as a last resort.
+ACERVO="${ACERVO:-${EXOCORTEX_HOME:-$HOME/exocortex}/acervo}"
+[ -d "$ACERVO" ] || ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
 ```
-ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
-```
+
+> Note: `$HERMES_HOME/acervo` is typically an empty scaffold; the real canonical memory
+> lives at `$EXOCORTEX_HOME/acervo`. Always operate on the resolved absolute `$ACERVO`.
 
 ## Architecture: 4 Layers
 
@@ -96,14 +107,14 @@ Full details in `acervo/README.md`.
 At every session boot:
 
 ① **Read `macro/*`** — soul.md, valores.md, estilo.md (entire files, ~100 lines total)
-② **Read `global/index.md`** — catalog of universal rules/processes/tools
+② **Read `global/_meta/index.md`** — catalog of universal rules/processes/tools
 ③ **DO NOT load** micro/ or shared/ until a task defines the scope
 
 ```bash
 cat "$ACERVO/macro/soul.md"
 cat "$ACERVO/macro/valores.md"
 cat "$ACERVO/macro/estilo.md"
-cat "$ACERVO/global/index.md"
+cat "$ACERVO/global/_meta/index.md"
 ```
 
 ### Design System (On Demand)

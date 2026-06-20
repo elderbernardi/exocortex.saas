@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Decisão — promover exocortex-ops a microverso base provisionável
-created: 2026-06-05
+description: DRAFT. Ainda exige aprovação antes de alterar o setup executável.
+tags: [decision, setup, microverso-base]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: decisions
 scope_slug: exocortex-ops
@@ -8,7 +14,7 @@ authority: draft
 stability: draft
 lifecycle_state: drafted
 decision_id: OPS-DEC-2026-06-05-001
-tags: [decision, setup, microverso-base]
+created: 2026-06-05
 ---
 
 # Decisão — promover exocortex-ops a microverso base provisionável

@@ -1,3 +1,14 @@
+---
+type: context
+title: 'Microverso: Exocortex Ops'
+description: 'Type: `domain`'
+tags: []
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T18:08:35Z
+last_accessed_at: 2026-06-05T18:08:35Z
+---
+
 # Microverso: Exocortex Ops
 
 Type: `domain`

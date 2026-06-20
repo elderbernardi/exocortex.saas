@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Decisão — Criar Estúdio Criativo
-created: 2026-06-01
+description: Criar o microverso `estudio-criativo` como domínio transversal do Exocórtex.
+tags: [decision, creation]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: knowledge
 kind: decision
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [decision, creation]
+created: 2026-06-01
 ---
 
 # Decisão

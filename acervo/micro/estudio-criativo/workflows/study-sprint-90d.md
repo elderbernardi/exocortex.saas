@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Sprint de Estudo 90 Dias
-created: 2026-06-01
+description: 'Semanas 1-2: A Technique for Producing Ideas'
+tags: [workflow, study, 90d]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: workflows
 kind: workflow
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, study, 90d]
+created: 2026-06-01
 ---
 
 # Cadência

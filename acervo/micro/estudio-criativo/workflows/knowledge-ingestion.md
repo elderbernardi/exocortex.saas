@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Ingestão de Conhecimento de Referência
-created: 2026-06-01
+description: Transformar obras e referências em conhecimento acionável para criação.
+tags: [workflow, knowledge, ingestion]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: workflows
 kind: workflow
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, knowledge, ingestion]
+created: 2026-06-01
 ---
 
 # Objetivo

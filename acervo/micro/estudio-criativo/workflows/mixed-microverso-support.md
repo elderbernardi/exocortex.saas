@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Workflow — Apoio Criativo Misto
-created: 2026-06-01
+description: Atuar com outro microverso sem contaminar escopos.
+tags: [workflow, mixed-microverso]
+timestamp: 2026-06-01
+class: volátil
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: workflows
 kind: workflow
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [workflow, mixed-microverso]
+created: 2026-06-01
 ---
 
 # Apoio criativo misto

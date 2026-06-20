@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Política de autoridade de memória
-created: 2026-06-05
+description: 1. Instruções de sistema e SOUL ativo.
+tags: [memory, acervo, authority]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: contracts
 kind: rule
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [memory, acervo, authority]
+created: 2026-06-05
 ---
 
 # Política de autoridade de memória

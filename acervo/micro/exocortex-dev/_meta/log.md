@@ -1,3 +1,14 @@
+---
+type: context
+title: Log — Exocórtex Dev
+description: 'Type: project. Onboarding: parcial (criado via onboarding constitucional).'
+tags: []
+timestamp: 2026-06-09
+class: perene
+created_at: 2026-06-09T02:45:00Z
+last_accessed_at: 2026-06-09T02:45:00Z
+---
+
 # Log — Exocórtex Dev
 
 ## 2026-06-08 | create | Microverso Exocórtex Dev criado

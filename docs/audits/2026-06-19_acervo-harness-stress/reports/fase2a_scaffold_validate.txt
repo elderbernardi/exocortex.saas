@@ -1,0 +1,67 @@
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/context/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/contracts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/decisions/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/knowledge/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/persona/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/prompts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/reflections/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/skills/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/templates/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/tools/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /tmp/acervo-stress-20260619_200744/acervo/micro/stress-mv-alpha/workflows/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'

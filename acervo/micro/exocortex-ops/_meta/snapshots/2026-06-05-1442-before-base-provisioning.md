@@ -1,6 +1,12 @@
 ---
+type: context
 title: Snapshot funcional — antes de provisionar exocortex-ops como microverso base
-created: 2026-06-05
+description: 'Motivo: capturar o estado funcional antes de preparar o provisionamento replicável do microverso `exocortex-ops`.'
+tags: [snapshot, ops, runtime, setup, drift]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: context
 kind: snapshot
@@ -11,7 +17,7 @@ lifecycle_state: observed
 snapshot_phase: before
 snapshot_reason: base-microverse-provisioning
 confidence: high
-tags: [snapshot, ops, runtime, setup, drift]
+created: 2026-06-05
 ---
 
 # Snapshot funcional — antes de provisionar exocortex-ops como microverso base

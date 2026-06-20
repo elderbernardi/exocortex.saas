@@ -1,6 +1,12 @@
 ---
+type: context
 title: Log — Estúdio Criativo
-created: 2026-06-14
+description: Registro cumulativo de mudanças estruturais do microverso.
+tags: [log, creative-studio, audit]
+timestamp: 2026-06-14
+class: perene
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: context
 kind: log
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [log, creative-studio, audit]
+created: 2026-06-14
 ---
 
 # Log

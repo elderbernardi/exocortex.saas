@@ -1,6 +1,12 @@
 ---
-title: "[SUPERSEDED] Avaliação do hermes-web-ui (EKKOLearnAI) — descartado por licença BSL 1.1"
-created: 2026-06-12
+type: knowledge
+title: '[SUPERSEDED] Avaliação do hermes-web-ui (EKKOLearnAI) — descartado por licença BSL 1.1'
+description: '**Status**: SUPERSEDED em 2026-06-15.'
+tags: [hermes-web-ui, dashboard, provisioning, saas, operator-surface, bsl-license, superseded]
+timestamp: 2026-06-12
+class: volátil
+created_at: 2026-06-12T00:00:00Z
+last_accessed_at: 2026-06-12T00:00:00Z
 updated: 2026-06-15
 nature: knowledge
 kind: assessment
@@ -8,10 +14,9 @@ scope_slug: exocortex-ops
 authority: observed
 stability: superseded
 lifecycle_state: archived
-tags: [hermes-web-ui, dashboard, provisioning, saas, operator-surface, bsl-license, superseded]
-sources:
-  - repo:/home/elder/work/repo-assessments/hermes-web-ui
+sources: ['repo:/home/elder/work/repo-assessments/hermes-web-ui']
 confidence: high
+created: 2026-06-12
 ---
 
 # [SUPERSEDED] Avaliação do hermes-web-ui (EKKOLearnAI)

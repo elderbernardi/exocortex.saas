@@ -1,6 +1,12 @@
 ---
+type: reflection
 title: Caso Real — Bootstrap de Estado Corrente e Log
-created: 2026-06-14
+description: Depois do saneamento estrutural, o Estúdio já tinha fundação suficiente para existir, mas ainda não comunicava o que ...
+tags: [reflection, case, receipt, operations]
+timestamp: 2026-06-14
+class: perene
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: reflections
 kind: case
@@ -10,11 +16,7 @@ applies_to: []
 authority: canonical
 operational_mode: read_only
 stability: active
-sources:
-  - issue #61
-  - commit a61e899
-  - acervo/micro/estudio-criativo/context/current-state.md
-  - acervo/micro/estudio-criativo/log.md
+sources: [issue, commit a61e899, acervo/micro/estudio-criativo/context/current-state.md, acervo/micro/estudio-criativo/log.md]
 derived_from: []
 confidence: high
 promotion_policy: none
@@ -22,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [reflection, case, receipt, operations]
+created: 2026-06-14
 ---
 
 # Caso real — bootstrap de estado corrente e log

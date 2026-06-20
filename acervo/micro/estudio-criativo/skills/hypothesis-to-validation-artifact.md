@@ -1,6 +1,12 @@
 ---
+type: artifact
 title: Skill — Hipótese em Artefato de Validação
-created: 2026-06-14
+description: Quando Produto ou outro microverso já tem hipótese suficiente e precisa que o Estúdio a torne tangível para leitura e...
+tags: [skill, validation, prototype]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: skills
 kind: skill
@@ -11,16 +17,14 @@ authority: canonical
 operational_mode: executable
 stability: active
 sources: []
-derived_from:
-  - knowledge/rapid-tangibilization-for-validation.md
-  - knowledge/briefing-heuristics.md
+derived_from: [knowledge/rapid-tangibilization-for-validation.md, knowledge/briefing-heuristics.md]
 confidence: high
 promotion_policy: none
 upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [skill, validation, prototype]
+created: 2026-06-14
 ---
 
 # Hipótese em artefato de validação

@@ -1,7 +1,7 @@
 ---
 name: excrtx-memory-newmicro
 description: Criar novos Microversos no Acervo Cognitivo com estrutura wiki completa
-  (SCHEMA, index, log, raw, 7 Natures).
+  (_meta SCHEMA/index/log, raw, _archive, 11 Natures).
 version: 2.0.0
 category: excrtx
 platforms:
@@ -30,8 +30,9 @@ metadata:
 
         - Copie recursivamente o template ''micro/_template/'' para ''micro/{slug}/''.
 
-        - Preencha o ''SCHEMA.md'' e substitua todos os placeholders como ''{MICROVERSO_NAME}''
-        e ''{slug}'' em todos os arquivos gerados.
+        - Preencha o ''_meta/SCHEMA.md'' (frontmatter OKF) e substitua todos os placeholders
+        ''{{DOMAIN_NAME}}'', ''{{DOMAIN_DESCRIPTION}}'' e ''{{CREATED_DATE}}'' em todos os arquivos;
+        preencha as ''description'' vazias dos _seed.md e valide com validate_frontmatter.
 
         - Registre o novo microverso em ''shared/groups.md'' no alias correspondente
         e crie uma entrada de log em ''log.md'' e no ''MEMORY.md'' global.'
@@ -86,49 +87,77 @@ Ask the executive (if not already specified):
 ### 3. Copy Template
 
 ```bash
-cp -r $EXOCORTEX_HOME/acervo/micro/_template/ $EXOCORTEX_HOME/acervo/micro/{slug}/
+cp -r $EXOCORTEX_HOME/acervo/micro/_template/. $EXOCORTEX_HOME/acervo/micro/{slug}/
 ```
 
-### 4. Fill SCHEMA.md
+The template ships **11 Nature directories** (`context/`, `knowledge/`, `contracts/`,
+`prompts/`, `persona/`, `workflows/`, `skills/`, `tools/`, `templates/`, `decisions/`,
+`reflections/`) — each with a `_seed.md` — plus `_meta/` (`SCHEMA.md`, `index.md`, `log.md`),
+`raw/` and `_archive/`.
 
-Open `$EXOCORTEX_HOME/acervo/micro/{slug}/SCHEMA.md` and populate the frontmatter:
+### 4. Fill `_meta/SCHEMA.md` and `microverso.yaml`
+
+`SCHEMA.md` lives in `$EXOCORTEX_HOME/acervo/micro/{slug}/_meta/SCHEMA.md` and carries the
+**OKF v0.1 superset** frontmatter (see `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md`),
+not the legacy `domain/slug/type/created` block:
 
 ```yaml
 ---
-domain: {name}
-slug: {slug}
-type: {client|project|domain|role}
-description: {description}
-created: {YYYY-MM-DD}
+type: context
+title: {name} — Schema
+description: {one-line scope}
+tags: [{slug}, schema]
+timestamp: {YYYY-MM-DD}
+class: perene
+created_at: {YYYY-MM-DD}T00:00:00Z
+nature: context
 ---
 ```
 
-Fill domain-specific conventions, tag taxonomy, and writing rules.
+Set `slug`, `name`, `type`, `description`, `created` in `microverso.yaml`. Fill domain
+conventions and tag taxonomy in the body.
 
 ### 5. Replace Placeholders in All Files
 
-Replace `{MICROVERSO_NAME}` and `{slug}` across **all** files in the Microverso. Scope:
+The template uses **double-brace tokens**. Replace **every** occurrence across all files:
 
-- **7 Nature files:** `context.md`, `decisions.md`, `processes.md`, `tools.md`, `people.md`, `goals.md`, `constraints.md`
-- **index.md:** Catalog of 7 Natures (each starts as "Empty — awaiting context")
-- **log.md:** First creation entry
-- **SCHEMA.md:** Already filled in step 4
+| Token | Replace with |
+|---|---|
+| `{{DOMAIN_NAME}}` | the human name |
+| `{{DOMAIN_DESCRIPTION}}` | the one-line scope |
+| `{{CREATED_DATE}}` | `{YYYY-MM-DD}` (today, ISO date) |
+| `{{NOME_CLIENTE}}` / `{{PRAZO}}` / `{{VALOR}}` | contract-template values (in `contracts/`) |
 
-Verify no placeholders remain:
+Each `_seed.md` ships `description: ""` — **fill a non-empty, single-line description** per
+Nature (empty `description` fails validation rule V-024).
+
+Verify no placeholders remain (matches the **actual** token shape):
 ```bash
-grep -r '{MICROVERSO_NAME}\|{slug}' $EXOCORTEX_HOME/acervo/micro/{slug}/
+grep -rE '\{\{[A-Z_]+\}\}' $EXOCORTEX_HOME/acervo/micro/{slug}/
 # Expected: no results
 ```
 
 ### 6. Initialize Log
 
-Create first entry in `log.md`:
+Append the first entry to `_meta/log.md` per the log convention (single `# Log` H1,
+`## YYYY-MM-DD` heading, single-line bullet):
 ```
-## [{YYYY-MM-DD}] create | Microverso {name} created
-Type: {type}. Natures: 7. Onboarding: {complete|partial|minimal}.
+## {YYYY-MM-DD}
+- CREATED: micro/{slug}/ (perene) — Microverso {name} created ({type}, 11 natures)
 ```
 
-### 7. Onboarding Interview (Optional)
+### 7. Verify the Scaffold (gate — do NOT skip)
+
+The microverso must pass the frontmatter validator before it is considered created
+(EX-49 — print the raw output):
+```bash
+python3 $EXOCORTEX_HOME/../exocortex.saas/scripts/validate_frontmatter.py --dir $EXOCORTEX_HOME/acervo/micro/{slug}/
+# Expected: every file PASS, exit 0
+```
+If any file FAILs, fix it before proceeding. Common causes: leftover `{{...}}` tokens,
+empty `description`, or `_meta/`/`_seed.md` missing OKF fields.
+
+### 8. Onboarding Interview (Optional)
 
 If the executive is available, collect:
 
@@ -140,7 +169,7 @@ If the executive is available, collect:
 | Processes | Recurring workflows? | `processes.md` |
 | Visual style | Custom palette? | `DESIGN.md` via `excrtx-quality-designsys` |
 
-### 8. Register in System
+### 9. Register in System
 
 - Update `$EXOCORTEX_HOME/acervo/shared/groups.md`: add slug to the corresponding type alias (CLIENTS, PROJECTS, etc.)
 - Update `$EXOCORTEX_HOME/acervo/shared/glossario.md`: domain-specific terms
@@ -148,7 +177,7 @@ If the executive is available, collect:
 
 ## Pitfalls
 
-1. **Placeholder residue:** Forgetting `{MICROVERSO_NAME}` or `{slug}` in any file leaves broken references. Always run `grep -r '{MICROVERSO_NAME}' micro/{slug}/` after creation. If residue found, re-execute step 5.
+1. **Placeholder residue:** Leftover `{{DOMAIN_NAME}}`, `{{DOMAIN_DESCRIPTION}}` or `{{CREATED_DATE}}` in any file leaves broken references and fails validation. Always run `grep -rE '\{\{[A-Z_]+\}\}' micro/{slug}/` after creation (the tokens are **double-brace**, not `{slug}`). If residue found, re-execute step 5.
 2. **groups.md not updated:** Microverso exists on disk but `shared/groups.md` doesn't list it — alias resolution fails silently. Verify with `grep {slug} shared/groups.md`.
 3. **Template drift:** If `_template/` is updated after existing microversos were created, older ones won't have new Nature files. Check template version before creating.
 4. **Wrong type classification:** Using `domain` when it should be `client` breaks group alias routing. Confirm type with executive before creating.
@@ -159,13 +188,14 @@ If the executive is available, collect:
 ## Verification
 
 - [ ] Directory `$EXOCORTEX_HOME/acervo/micro/{slug}/` exists
-- [ ] SCHEMA.md has complete frontmatter (domain, slug, type, description, created)
-- [ ] index.md catalogs all 7 Natures
-- [ ] log.md has creation entry
+- [ ] `_meta/SCHEMA.md` has complete OKF frontmatter; `microverso.yaml` set (slug, name, type, description, created)
+- [ ] `_meta/index.md` catalogs all 11 Natures
+- [ ] `_meta/log.md` has the creation entry (log-convention format)
 - [ ] raw/ and _archive/ exist (empty)
-- [ ] 7 Nature files present: context, decisions, processes, tools, people, goals, constraints
-- [ ] No residual placeholders: `grep -r '{MICROVERSO_NAME}' micro/{slug}/` returns empty
-- [ ] `grep -r '{slug}' micro/{slug}/` returns empty (except legitimate SCHEMA references)
-- [ ] context.md has at least the current scenario filled
+- [ ] 11 Nature directories present, each with `_seed.md`: context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections
+- [ ] Every `_seed.md` has a non-empty `description`
+- [ ] No residual placeholders: `grep -rE '\{\{[A-Z_]+\}\}' micro/{slug}/` returns empty
+- [ ] **Validator gate passes:** `validate_frontmatter.py --dir micro/{slug}/` exits 0 (all PASS)
+- [ ] context/_seed.md has at least the current scenario filled
 - [ ] `shared/groups.md` updated with slug in correct type
 - [ ] MEMORY.md records the Microverso creation

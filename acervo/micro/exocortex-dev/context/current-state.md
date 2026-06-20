@@ -1,11 +1,17 @@
 ---
-title: Cenário Atual — Exocórtex Dev
-created: 2026-06-08
-updated: 2026-06-11
-nature: context
 type: context
+title: Cenário Atual — Exocórtex Dev
+description: O microverso de desenvolvimento está totalmente ativo. A base de conhecimento de desenvolvimento do Exocórtex foi cri...
 tags: [dev, exocortex, context]
+timestamp: 2026-06-08
+class: volátil
+created_at: 2026-06-08T00:00:00Z
+last_accessed_at: 2026-06-08T00:00:00Z
+updated: 2026-06-11
+excrtx_type: context
+nature: context
 confidence: high
+created: 2026-06-08
 ---
 
 # Cenário Atual — Exocórtex Dev

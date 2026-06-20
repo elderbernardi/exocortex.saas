@@ -1,3 +1,14 @@
+---
+type: knowledge
+title: Shared Access Groups
+description: Define aliases para controle de acesso (firewall) entre Microversos.
+tags: []
+timestamp: 2026-05-27
+class: volátil
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Shared Access Groups
 
 > Define aliases para controle de acesso (firewall) entre Microversos.

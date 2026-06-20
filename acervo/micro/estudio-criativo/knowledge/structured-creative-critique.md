@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Crítica Criativa Estruturada
-created: 2026-06-14
+description: Dar ao Estúdio um modo repetível de avaliar uma peça, conceito ou narrativa sem cair em gosto pessoal solto.
+tags: [knowledge, critique, review, quality]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: knowledge
 kind: method
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, critique, review, quality]
+created: 2026-06-14
 ---
 
 # Crítica criativa estruturada

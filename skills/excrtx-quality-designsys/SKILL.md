@@ -62,7 +62,8 @@ Activate when:
 ## Acervo Paths
 
 ```
-ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
+ACERVO="${ACERVO:-${EXOCORTEX_HOME:-$HOME/exocortex}/acervo}"
+[ -d "$ACERVO" ] || ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
 
 # Source of truth (base tokens)
 DESIGN_GLOBAL="$ACERVO/global/DESIGN.md"

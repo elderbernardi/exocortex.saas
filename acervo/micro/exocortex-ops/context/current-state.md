@@ -1,12 +1,18 @@
 ---
-title: Estado Inicial — Exocortex Ops
-created: 2026-06-05
-updated: 2026-06-05
-nature: context
 type: context
+title: Estado Inicial — Exocortex Ops
+description: 'Este microverso nasce para cobrir uma lacuna do Acervo: faltava um domínio próprio para setup, operação e manutenção ...'
 tags: [ops, current-state, setup]
-sources: [conversation:self-check, conversation:microverso-inventory]
+timestamp: 2026-06-05
+class: volátil
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: context
+nature: context
+sources: ['conversation:self-check', 'conversation:microverso-inventory']
 confidence: high
+created: 2026-06-05
 ---
 
 # Estado inicial

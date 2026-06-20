@@ -1,3 +1,14 @@
+---
+type: knowledge
+title: Glossário — Conhecimento Transversal
+description: Termos, siglas e conceitos compartilhados entre todos os Microversos.
+tags: []
+timestamp: 2026-05-27
+class: volátil
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Glossário — Conhecimento Transversal
 
 > Termos, siglas e conceitos compartilhados entre todos os Microversos.

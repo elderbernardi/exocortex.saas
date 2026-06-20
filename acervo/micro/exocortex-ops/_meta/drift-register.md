@@ -1,6 +1,12 @@
 ---
+type: context
 title: Registro de drift operacional — exocortex-ops
-created: 2026-06-05
+description: '| ID | Data | Área | Esperado | Observado | Severidade | Status | Próxima ação |'
+tags: [drift, runtime, setup, ops]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: context
 kind: drift-register
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [drift, runtime, setup, ops]
+created: 2026-06-05
 ---
 
 # Registro de drift operacional

@@ -1,6 +1,12 @@
 ---
+type: knowledge
 title: Mapa de Lacunas Abertas do Estúdio
-created: 2026-06-14
+description: Deixar explícito o que o Estúdio ainda não cobre bem, para evitar que o índice pareça mais maduro do que a prática.
+tags: [knowledge, gaps, backlog, coverage]
+timestamp: 2026-06-14
+class: volátil
+created_at: 2026-06-14T00:00:00Z
+last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14
 nature: knowledge
 kind: context
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [knowledge, gaps, backlog, coverage]
+created: 2026-06-14
 ---
 
 # Mapa de lacunas abertas

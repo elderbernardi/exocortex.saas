@@ -1,0 +1,1606 @@
+
+╔═══════════════════════════════════════════════╗
+║   Exocórtex.IA — Candidate-Release Setup     ║
+╚═══════════════════════════════════════════════╝
+
+[0;36mℹ[0m ═══ Estágio 1/3: Validação de pré-requisitos ═══
+
+
+╔═══════════════════════════════════════════════════════╗
+║   Exocórtex.IA — Validação de Environment           ║
+╚═══════════════════════════════════════════════════════╝
+
+  Package manager: pacman
+  Modo instalação: desabilitado
+
+─── Binários do Sistema ───
+  ✅ bash 5.3.9 (≥4.0)
+  ✅ python3 3.12.13 (≥3.10)
+  ✅ git /usr/bin/git
+  ✅ curl /usr/bin/curl
+  ✅ rsync /usr/bin/rsync
+  ✅ hermes 2026.6.5 (≥2026.4.8)
+  ✅ npm /home/elder/.local/share/mise/installs/node/25.8.0/bin/npm
+  ✅ node 25.8.0 (≥18.0.0)
+  ✅ pip3 /home/elder/.local/share/mise/installs/python/3.12.13/bin/pip3
+  ✅ jq /usr/bin/jq
+  ✅ docker /usr/bin/docker
+  ℹ  wget não encontrado (opcional)
+  ⏭  gcloud ausente (será instalado automaticamente pelo setup)
+  ✅ uv /home/elder/.local/share/../bin/uv
+  ✅ nlm /home/elder/.local/share/mise/installs/python/3.12.13/bin/nlm
+
+─── Módulos Python ───
+  ✅ py:PyYAML 6.0.3
+  ✅ py:google-auth-oauthlib ok
+  ✅ py:google-api-python-client ok
+  ✅ py:google-auth-httplib2 ok
+  ✅ py:python-pptx 1.0.2
+
+─── Conectividade de Rede ───
+  ✅ net:GitHub https://github.com
+  ✅ net:PyPI https://pypi.org/simple/
+  ✅ net:astral.sh https://astral.sh
+
+─── Variáveis de Ambiente ───
+  ✅ HERMES_HOME /home/elder/.hermes
+  ✅ EXOCORTEX_HOME /home/elder/exocortex
+  ⚠  OPENROUTER_API_KEY não definida (Chave OpenRouter (LLM routing))
+     → export OPENROUTER_API_KEY=<valor>
+  ⚠  TELEGRAM_BOT_TOKEN não definida (Token Telegram Bot)
+     → export TELEGRAM_BOT_TOKEN=<valor>
+  ℹ  CONTEXT7_API_KEY não definida (Chave Context7 (docs tech stacks))
+  ℹ  FIRECRAWL_API_KEY não definida (Chave Firecrawl (crawling/extract))
+  ℹ  DOCBRAIN_LLM_API_KEY não definida (Override LLM key para DocBrain)
+  ℹ  HINDSIGHT_API_KEY não definida (Chave Hindsight cloud)
+  ℹ  DEEPSEEK_API_KEY não definida (Chave DeepSeek (fallback Hindsight))
+  ℹ  GOOGLE_APPLICATION_CREDENTIALS não definida (Path para service account JSON)
+
+─── Paths do Projeto ───
+  ✅ HERMES_HOME /home/elder/.hermes
+  ✅ HERMES_HOME/skills diretório de skills presente
+  ✅ HERMES_HOME/memories diretório de memórias presente
+  ✅ EXOCORTEX_HOME /home/elder/exocortex
+
+═══ Resumo ═══
+  ✅ Pass: 27  |  ⚠ Warn: 2  |  ❌ Fail: 0
+
+⚠ Existem 2 dependência(s) recomendada(s) faltando.
+  O setup pode prosseguir, mas algumas features serão limitadas.
+
+[1;33m⚠[0m Algumas dependências recomendadas estão faltando (features limitadas).
+
+[0;36mℹ[0m ═══ Estágio 2/3: Configuração ═══
+
+[1m╔═══════════════════════════════════════════════════════════╗[0m
+[1m║   Configuração Atual                                     ║[0m
+[1m╠═══════════════════════════════════════════════════════════╣[0m
+[1m║ Paths[0m
+  [0;32m●[0m  HERMES_HOME                         /home/elder/.hermes
+  [0;32m●[0m  EXOCORTEX_HOME                      /home/elder/exocortex
+  [0;32m●[0m  ACERVO                              /home/elder/exocortex/acervo
+[1m║ API Keys[0m
+  [1;33m○[0m  OPENROUTER_API_KEY                  (não definido)
+  [1;33m○[0m  DEEPSEEK_API_KEY                    (não definido)
+  [1;33m○[0m  TELEGRAM_BOT_TOKEN                  (não definido)
+  [1;33m○[0m  CONTEXT7_API_KEY                    (não definido)
+  [1;33m○[0m  FIRECRAWL_API_KEY                   (não definido)
+  [0;32m●[0m  FIRECRAWL_BASE_URL                  http://127.0.0.1:3002
+  [1;33m○[0m  DOCBRAIN_LLM_API_KEY                (não definido)
+  [1;33m○[0m  HINDSIGHT_API_KEY                   (não definido)
+[1m║ Features (flags)[0m
+  [0;32m●[0m  EXOCORTEX_ENABLE_HINDSIGHT          0
+  [0;32m●[0m  EXOCORTEX_ENABLE_HERMES_WEBUI       0
+  [0;32m●[0m  IMBROKE_MODE                        0
+  [0;32m●[0m  CALIBRATE_MODE                      0
+[1m║ Paths Opcionais[0m
+  [1;33m○[0m  EXOCORTEX_DOCBRAIN_DIR              (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_HOME         (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_PORT         (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_HOST         (não definido)
+[1m╚═══════════════════════════════════════════════════════════╝[0m
+
+[0;36mℹ[0m Modo não-interativo (--yes): sem prompts; vou persistir os valores atuais e seguir direto para os steps.
+
+[0;36mℹ[0m ═══ Estágio 3/3: Confirmação ═══
+
+[1m╔═══════════════════════════════════════════════════════════╗[0m
+[1m║   Configuração Atual                                     ║[0m
+[1m╠═══════════════════════════════════════════════════════════╣[0m
+[1m║ Paths[0m
+  [0;32m●[0m  HERMES_HOME                         /home/elder/.hermes
+  [0;32m●[0m  EXOCORTEX_HOME                      /home/elder/exocortex
+  [0;32m●[0m  ACERVO                              /home/elder/exocortex/acervo
+[1m║ API Keys[0m
+  [1;33m○[0m  OPENROUTER_API_KEY                  (não definido)
+  [1;33m○[0m  DEEPSEEK_API_KEY                    (não definido)
+  [1;33m○[0m  TELEGRAM_BOT_TOKEN                  (não definido)
+  [1;33m○[0m  CONTEXT7_API_KEY                    (não definido)
+  [1;33m○[0m  FIRECRAWL_API_KEY                   (não definido)
+  [0;32m●[0m  FIRECRAWL_BASE_URL                  http://127.0.0.1:3002
+  [1;33m○[0m  DOCBRAIN_LLM_API_KEY                (não definido)
+  [1;33m○[0m  HINDSIGHT_API_KEY                   (não definido)
+[1m║ Features (flags)[0m
+  [0;32m●[0m  EXOCORTEX_ENABLE_HINDSIGHT          0
+  [0;32m●[0m  EXOCORTEX_ENABLE_HERMES_WEBUI       0
+  [0;32m●[0m  IMBROKE_MODE                        0
+  [0;32m●[0m  CALIBRATE_MODE                      0
+[1m║ Paths Opcionais[0m
+  [1;33m○[0m  EXOCORTEX_DOCBRAIN_DIR              (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_HOME         (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_PORT         (não definido)
+  [1;33m○[0m  EXOCORTEX_HERMES_WEBUI_HOST         (não definido)
+[1m╚═══════════════════════════════════════════════════════════╝[0m
+
+[0;36mℹ[0m HERMES_HOME:    /home/elder/.hermes
+[0;36mℹ[0m EXOCORTEX_HOME: /home/elder/exocortex
+[0;36mℹ[0m ACERVO:         /home/elder/exocortex/acervo
+[0;36mℹ[0m ARTIFACTS:      /home/elder/projetos/projetob/exocortex.saas
+
+[0;36mℹ[0m Iniciando instalação...
+
+[0;36mℹ[0m Checking Hermes compatibility...
+[0;32m✓[0m Hermes version: 2026.6.5 (bounds: 2026.4.8 – 2026.6.5)
+[0;32m✓[0m Directory structure OK
+[0;32m✓[0m Patch target OK: google_api.py (drive_search found)
+[0;32m✓[0m Hermes compatibility check passed
+[0;36mℹ[0m Hindsight (memória operacional via Docker/ghcr.io)...
+[0;36mℹ[0m Hindsight local não ativado por default
+[0;36mℹ[0m   Para configurar: EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh
+[0;36mℹ[0m [Camada 1] Criando estrutura base...
+[0;32m✓[0m Estrutura de diretórios criada (runtime + workspace + v0.4 operacional)
+[0;36mℹ[0m Instalando skills...
+[0;32m✓[0m Skill: assessment-question-authoring
+[0;32m✓[0m Skill: excrtx-assess-repofit
+[0;32m✓[0m Skill: excrtx-assess-selftest
+[0;32m✓[0m Skill: excrtx-behavior-accuracy
+[0;32m✓[0m Skill: excrtx-behavior-briefing
+[0;32m✓[0m Skill: excrtx-behavior-canvas
+[0;32m✓[0m Skill: excrtx-behavior-vetor
+[0;32m✓[0m Skill: excrtx-brandkit-generator
+[0;32m✓[0m Skill: excrtx-github-issue-planning
+[0;32m✓[0m Skill: excrtx-govern-draftfirst
+[0;32m✓[0m Skill: excrtx-govern-tools
+[0;32m✓[0m Skill: excrtx-harness-codexint
+[0;32m✓[0m Skill: excrtx-harness-core
+[0;32m✓[0m Skill: excrtx-harness-delivery
+[0;32m✓[0m Skill: excrtx-harness-hermesops
+[0;32m✓[0m Skill: excrtx-harness-imbroke
+[0;32m✓[0m Skill: excrtx-harness-kanban
+[0;32m✓[0m Skill: excrtx-harness-maintenance
+[0;32m✓[0m Skill: excrtx-harness-promptlog
+[0;32m✓[0m Skill: excrtx-harness-surfaces
+[0;32m✓[0m Skill: excrtx-harness-tooldev
+[0;32m✓[0m Skill: excrtx-hermes-extensions
+[0;32m✓[0m Skill: excrtx-integrate-browser
+[0;32m✓[0m Skill: excrtx-integrate-docbrain
+[0;32m✓[0m Skill: excrtx-integrate-gdrive
+[0;32m✓[0m Skill: excrtx-integrate-mcp
+[0;32m✓[0m Skill: excrtx-integrate-nlmops
+[0;32m✓[0m Skill: excrtx-integrate-nlmroute
+[0;32m✓[0m Skill: excrtx-integrate-oauth
+[0;32m✓[0m Skill: excrtx-memory-deprecate
+[0;32m✓[0m Skill: excrtx-memory-intake
+[0;32m✓[0m Skill: excrtx-memory-manager
+[0;32m✓[0m Skill: excrtx-memory-mvinstall
+[0;32m✓[0m Skill: excrtx-memory-mvsetup
+[0;32m✓[0m Skill: excrtx-memory-newmicro
+[0;32m✓[0m Skill: excrtx-memory-opsmemory
+[0;32m✓[0m Skill: excrtx-memory-quarantine
+[0;32m✓[0m Skill: excrtx-memory-syndic
+[0;32m✓[0m Skill: excrtx-memory-wikiadapt
+[0;32m✓[0m Skill: excrtx-onboard-interview
+[0;32m✓[0m Skill: excrtx-onboard-welcome
+[0;32m✓[0m Skill: excrtx-produce-artifacts
+[0;32m✓[0m Skill: excrtx-produce-oficios
+[0;32m✓[0m Skill: excrtx-produce-slides
+[0;32m✓[0m Skill: excrtx-quality-antislop
+[0;32m✓[0m Skill: excrtx-quality-designsys
+[0;32m✓[0m Skill: excrtx-quality-gate
+[0;32m✓[0m Skill: excrtx-quality-gepa
+[0;32m✓[0m Skill: excrtx-quality-skilljudge
+[0;32m✓[0m Skill: excrtx-quality-taste
+[0;32m✓[0m Skill: last30days
+[0;36mℹ[0m Instalando acervo...
+[0;32m✓[0m Microverso base exocortex-ops instalado/preservado
+[0;32m✓[0m Acervo: 383 arquivos
+[0;32m✓[0m WELCOME.md instalado em acervo/global/knowledge/
+[0;32m✓[0m Templates v0.4: 5 arquivos
+[0;32m✓[0m Global tools: 1 scripts
+[0;32m✓[0m Harness tools: 8 scripts
+[0;32m✓[0m Quarentena já existe: /home/elder/exocortex/acervo/.quarantine
+[0;32m✓[0m Codex wrappers: 2 scripts
+[0;32m✓[0m Codex learning dir pronto: /home/elder/.hermes/codex-learning
+[0;36mℹ[0m Instalando profiles...
+[0;32m✓[0m Profiles: 2 profiles
+[0;36mℹ[0m Instalando bundles...
+[0;32m✓[0m Bundle copiado
+[0;36mℹ[0m Compiling behavioral rules into SOUL...
+Compiled 13 behavioral rules from /home/elder/.hermes/skills/excrtx
+Written to /home/elder/.hermes/SOUL.md
+[0;36mℹ[0m Aplicando hardening de Google Drive search...
+[0;32m✓[0m Google Drive search hardening já presente
+[0;36mℹ[0m Aplicando baseline de email: Google Workspace como padrão...
+[0;32m✓[0m Email baseline: skill 'himalaya' removida; padrão é 'productivity/google-workspace'
+[0;36mℹ[0m Aplicando baseline MCP: removendo composio...
+[0;32m✓[0m MCP baseline OK: 'composio' já ausente
+[0;36mℹ[0m Google Auth (Drive/Workspace)...
+[0;32m✓[0m Google Workspace skill presente
+[0;32m✓[0m Dependências Python do Google Workspace já instaladas
+[0;32m✓[0m gcloud CLI disponível: /home/elder/.local/google-cloud-sdk/bin/gcloud
+[0;32m✓[0m OAuth token válido (google_token.json)
+[0;32m✓[0m Google Drive auth operacional (OAuth)
+[0;32m✓[0m SOUL.md instalado (de SOUL_SEED.md)
+[0;32m✓[0m Logo ASCII instalada em HERMES_HOME
+[0;32m✓[0m Logo script instalado em HERMES_HOME (executável)
+[0;36mℹ[0m DocBrain (parser engine via GitHub clone)...
+[0;32m✓[0m Repositório DocBrain encontrado: /home/elder/exocortex/tools/docbrain
+[0;32m✓[0m DocBrain dependências/build verificados
+[0;36mℹ[0m Sem key LLM; lembrete criado em /home/elder/.hermes/reminders/docbrain-llm-key.md
+[0;36mℹ[0m NotebookLM (CLI + MCP)...
+[0;32m✓[0m uv disponível: /home/elder/.local/share/../bin/uv
+[0;32m✓[0m nlm 0.7.2 >= 0.7.0 ✓
+[0;32m✓[0m nlm CLI disponível: /home/elder/.local/share/mise/installs/python/3.12.13/bin/nlm (nlm version 0.7.2)
+[0;32m✓[0m nlm autenticado
+[0;32m✓[0m MCP server 'notebooklm' já configurado
+[0;36mℹ[0m Browser Automation (runtime local da skill)...
+[0;36mℹ[0m Provisionando browser-use no runtime local da skill
+[1;33m⚠[0m Falha ao instalar browser-use no runtime local
+[0;36mℹ[0m Hermes WebUI (cockpit opcional)...
+[0;36mℹ[0m Hermes WebUI não ativado por default
+[0;36mℹ[0m   Para configurar: EXOCORTEX_ENABLE_HERMES_WEBUI=1 bash setup.sh
+[0;36mℹ[0m Space Acervo Cognitivo no Hermes WebUI...
+[0;36mℹ[0m Provisionando Space 'Acervo Cognitivo' no Hermes WebUI...
+[0;36mℹ[0m   ACERVO=/home/elder/exocortex/acervo
+  ✅ Space já provisionado: Acervo Cognitivo → /home/elder/exocortex/acervo
+  ✅ WebUI .env: ACERVO já definido
+[0;36mℹ[0m Context7 (documentação de tech stacks via MCP)...
+[0;36mℹ[0m CONTEXT7_API_KEY não definida; lembrete criado
+[0;36mℹ[0m   Context7 pode ser adicionado depois: hermes mcp add context7 --command 'npx -y @context7/mcp'
+[0;36mℹ[0m Verificando keys de API...
+[1;33m⚠[0m OPENROUTER_API_KEY não definida — integrações que exigem essa env var literal podem falhar
+[0;36mℹ[0m DEEPSEEK_API_KEY não definida (opcional — DeepSeek direto ficará indisponível)
+[1;33m⚠[0m Nem OPENROUTER_API_KEY nem DEEPSEEK_API_KEY foram definidas — reasoning remoto ficará limitado
+[0;36mℹ[0m CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)
+[0;36mℹ[0m FIRECRAWL_API_KEY não definida (opcional — crawling/extract pode ser adicionado depois)
+[0;36mℹ[0m Se você subir Firecrawl localmente, use por default: http://127.0.0.1:3002
+[0;36mℹ[0m Verificando keys para last30days (pesquisa multi-plataforma)...
+[0;36mℹ[0m DEEPSEEK_API_KEY não definida (opcional — last30days usará fallback determinístico para planejamento)
+[0;36mℹ[0m XAI_API_KEY não definida (opcional — X/Twitter desabilitado no last30days)
+[0;36mℹ[0m BRAVE_API_KEY não definida (opcional — auto-resolve desabilitado no last30days)
+[0;36mℹ[0m SCRAPECREATORS_API_KEY não definida (opcional — fontes sociais visuais desabilitadas)
+[0;36mℹ[0m BSKY_HANDLE/BSKY_APP_PASSWORD não definidos (opcional — Bluesky desabilitado no last30days)
+[0;36mℹ[0m Modo OpenRouter free desativado por default; use --imbroke para acionar a contingência
+[0;36mℹ[0m Verificando Telegram gateway...
+[0;36mℹ[0m TELEGRAM_BOT_TOKEN não definida; reminder criado
+[0;36mℹ[0m   Configure depois: TELEGRAM_BOT_TOKEN=<token> bash setup.sh
+[0;36mℹ[0m Verificando Google credentials...
+[1;33m⚠[0m Google credentials não encontradas; reminder criado
+[0;36mℹ[0m   Configure: gcloud auth application-default login
+
+[0;36mℹ[0m === VERIFICAÇÃO FINAL ===
+
+Skills instaladas:
+  ✓ assessment-question-authoring
+  ✓ excrtx-assess-repofit
+  ✓ excrtx-assess-selftest
+  ✓ excrtx-behavior-accuracy
+  ✓ excrtx-behavior-briefing
+  ✓ excrtx-behavior-canvas
+  ✓ excrtx-behavior-context
+  ✓ excrtx-behavior-vetor
+  ✓ excrtx-brandkit-generator
+  ✓ excrtx-github-issue-planning
+  ✓ excrtx-govern-draftfirst
+  ✓ excrtx-govern-tools
+  ✓ excrtx-harness-codexint
+  ✓ excrtx-harness-core
+  ✓ excrtx-harness-delivery
+  ✓ excrtx-harness-hermesops
+  ✓ excrtx-harness-imbroke
+  ✓ excrtx-harness-kanban
+  ✓ excrtx-harness-maintenance
+  ✓ excrtx-harness-promptlog
+  ✓ excrtx-harness-surfaces
+  ✓ excrtx-harness-tooldev
+  ✓ excrtx-hermes-extensions
+  ✓ excrtx-integrate-browser
+  ✓ excrtx-integrate-docbrain
+  ✓ excrtx-integrate-gdrive
+  ✓ excrtx-integrate-last30days
+  ✓ excrtx-integrate-mcp
+  ✓ excrtx-integrate-nlmops
+  ✓ excrtx-integrate-nlmroute
+  ✓ excrtx-integrate-oauth
+  ✓ excrtx-memory-deprecate
+  ✓ excrtx-memory-intake
+  ✓ excrtx-memory-manager
+  ✓ excrtx-memory-mvinstall
+  ✓ excrtx-memory-mvsetup
+  ✓ excrtx-memory-newmicro
+  ✓ excrtx-memory-opsmemory
+  ✓ excrtx-memory-quarantine
+  ✓ excrtx-memory-syndic
+  ✓ excrtx-memory-wikiadapt
+  ✓ excrtx-onboard-interview
+  ✓ excrtx-onboard-welcome
+  ✓ excrtx-produce-artifacts
+  ✓ excrtx-produce-oficios
+  ✓ excrtx-produce-slides
+  ✓ excrtx-quality-antislop
+  ✓ excrtx-quality-designsys
+  ✓ excrtx-quality-gate
+  ✓ excrtx-quality-gepa
+  ✓ excrtx-quality-skilljudge
+  ✓ excrtx-quality-taste
+  ✓ excrtx-setup-bootstrap
+  ✓ last30days
+  ✓ tailscale-only-admin-ui-exposure
+  Total: 55
+[0;32m✓[0m Todas as 50 skills esperadas presentes
+
+Acervo (4 camadas + v0.4 funcionais):
+  ✓ macro/: 9 arquivos
+  ✓ global/: 38 arquivos
+  ✓ micro/: 200 arquivos
+  ✓ shared/: 7 arquivos
+
+Microverso base exocortex-ops:
+  ✓ micro/exocortex-ops/
+
+Diretórios operacionais v0.4:
+  ✓ _tasks/
+  ✓ _routines/
+  ✓ _automations/
+  ✓ _inbox/
+  ✓ _artifacts/
+
+Templates v0.4:
+  ✓ automation.yaml
+  ✓ canvas.yaml
+  ✓ manifest.json
+  ✓ routine.yaml
+  ✓ task.yaml
+
+Harness tools:
+  ✓ auditor_antislop.py
+  ✓ auditor_canvas_validator.py
+  ✓ auditor_pipeline.py
+  ✓ auditor_structural.py
+  ✓ canvas_schema.py
+  ✓ init_artifact_package.py
+  ✓ register_task_from_canvas.py
+  ✓ validate_artifact_manifest.py
+
+Profiles:
+  ✓ default (exec+evol unificado — SOUL.md com vetor-ativo)
+  ✓ manut (background/zelador)
+
+[0;32m✓[0m SOUL.md presente
+[0;32m✓[0m Bundle exocortex-alpha.yaml presente
+[0;32m✓[0m hermes CLI: Hermes Agent v0.16.0 (2026.6.5) · upstream 01f581d8
+
+╔═══════════════════════════════════════════════╗
+║   ✅ Setup Candidate-Release completo.        ║
+║   Zero erros.                                 ║
+╚═══════════════════════════════════════════════╝
+
+[0;36mℹ[0m Runtime Hermes:      /home/elder/.hermes
+[0;36mℹ[0m Workspace Exocórtex: /home/elder/exocortex
+[0;36mℹ[0m Acervo canônico:     /home/elder/exocortex/acervo
+[0;36mℹ[0m Profiles:            default (interativo) + manut (background)
+[0;36mℹ[0m Uso:                 hermes (default) | hermes -p manut
+
+[0;36mℹ[0m Iniciando verificação pós-provisionamento...
+
+╔═══════════════════════════════════════════════╗
+║   Verificação Pós-Provisionamento             ║
+╚═══════════════════════════════════════════════╝
+
+  [1;33m⚠ EXOCORTEX_MODEL não configurado.[0m
+  [1;33m  Smoke tests serão pulados — só validação determinística vai rodar.[0m
+  [1;33m  Para validação completa: export EXOCORTEX_MODEL="seu-modelo" antes de rodar.[0m
+
+
+╔═══════════════════════════════════════════════╗
+║   Exocórtex — Verificação Pós-Provisionamento║
+╚═══════════════════════════════════════════════╝
+
+  HERMES_HOME:    /home/elder/.hermes
+  EXOCORTEX_HOME: /home/elder/exocortex
+  ACERVO:         /home/elder/exocortex/acervo
+  Modelo:         [1;33m(Hermes default)[0m
+  Repair:         habilitado
+  Smoke tests:    desabilitado
+  Issues:         habilitado
+  Sync:           habilitado
+  Skip API:       sim
+  Verbose:        não
+
+  Hermes CLI:     [0;32mhermes[0m
+
+[1m═══ FASE 1 — Verificação Determinística ═══[0m
+
+[1m━━━ EX-01 — excrtx-onboard-welcome ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-onboard-welcome' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-onboard-welcome)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m✓[0m Arquivo 'WELCOME.md para onboarding' presente
+  [0;32m[1m→ PASS[0m (5/5)[2m [14ms][0m
+
+[1m━━━ EX-02 — excrtx-onboard-interview ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-onboard-interview' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-onboard-interview)
+  [0;32m✓[0m Dep skill 'excrtx-onboard-welcome' presente
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [17ms][0m
+
+[1m━━━ EX-03 — excrtx-assess-selftest ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-assess-selftest' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-assess-selftest)
+  [0;32m✓[0m Dep skill 'excrtx-harness-promptlog' presente
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [12ms][0m
+
+[1m━━━ EX-04 — excrtx-assess-repofit ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-assess-repofit' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-assess-repofit)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Tool 'git' disponível (/usr/bin/git)
+  [0;32m[1m→ PASS[0m (4/4)[2m [12ms][0m
+
+[1m━━━ EX-05 — excrtx-behavior-vetor ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-behavior-vetor' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-behavior-vetor)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [11ms][0m
+
+[1m━━━ EX-06 — excrtx-behavior-canvas ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-behavior-canvas' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-behavior-canvas)
+  [0;32m✓[0m Dep skill 'excrtx-behavior-vetor' presente
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m✓[0m Canvas preserva distinção: Microverso ≠ sala; tarefa = sala
+  [0;32m✓[0m Canvas exige status explícito do Macroverso
+  [0;32m✓[0m Canvas modela sharing constraints com precedência allow > deny
+  [0;32m[1m→ PASS[0m (7/7)[2m [17ms][0m
+
+[1m━━━ EX-07 — excrtx-behavior-briefing ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-behavior-briefing' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-behavior-briefing)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Dep skill 'excrtx-behavior-vetor' presente
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (5/5)[2m [11ms][0m
+
+[1m━━━ EX-08 — excrtx-govern-draftfirst ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-govern-draftfirst' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-govern-draftfirst)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [16ms][0m
+
+[1m━━━ EX-09 — excrtx-govern-tools ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-govern-tools' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-govern-tools)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [12ms][0m
+
+[1m━━━ EX-10 — excrtx-harness-kanban ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-kanban' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-kanban)
+  [0;32m✓[0m Dep skill 'excrtx-produce-artifacts' presente
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m[1m→ PASS[0m (4/4)[2m [11ms][0m
+
+[1m━━━ EX-11 — excrtx-memory-manager ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-manager)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Diretório 'Diretório raiz do Acervo' presente
+  [0;32m✓[0m Diretório 'Acervo camada macro' presente
+  [0;32m✓[0m Diretório 'Acervo camada global' presente
+  [0;32m✓[0m Diretório 'Acervo camada micro' presente
+  [0;32m✓[0m Diretório 'Acervo camada shared' presente
+  [0;32m✓[0m Diretório 'Dir operacional _inbox' presente
+  [0;32m✓[0m Diretório 'Dir operacional _artifacts' presente
+  [0;32m✓[0m Diretório 'Dir operacional _tasks' presente
+  [0;32m✓[0m Diretório 'Dir operacional _routines' presente
+  [0;32m✓[0m Diretório 'Dir operacional _automations' presente
+  [0;32m[1m→ PASS[0m (13/13)[2m [12ms][0m
+
+[1m━━━ EX-12 — excrtx-memory-wikiadapt ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-wikiadapt' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-wikiadapt)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m[1m→ PASS[0m (3/3)[2m [11ms][0m
+
+[1m━━━ EX-13 — excrtx-memory-newmicro ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-newmicro' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-newmicro)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Diretório 'Template de microverso' presente
+  [0;32m[1m→ PASS[0m (4/4)[2m [13ms][0m
+
+[1m━━━ EX-14 — excrtx-memory-mvsetup ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-mvsetup' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-mvsetup)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Dep skill 'excrtx-memory-newmicro' presente
+  [0;32m✓[0m Diretório 'Microverso base exocortex-ops' presente
+  [0;32m[1m→ PASS[0m (5/5)[2m [17ms][0m
+
+[1m━━━ EX-15 — excrtx-memory-mvinstall ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-mvinstall' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-mvinstall)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Dep skill 'excrtx-memory-newmicro' presente
+  [0;32m✓[0m Tool 'rsync' disponível (/usr/bin/rsync)
+  [0;32m[1m→ PASS[0m (5/5)[2m [14ms][0m
+
+[1m━━━ EX-16 — excrtx-memory-opsmemory ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-opsmemory' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-opsmemory)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m[1m→ PASS[0m (3/3)[2m [10ms][0m
+
+[1m━━━ EX-17 — excrtx-memory-intake ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-memory-intake' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-memory-intake)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Dep skill 'excrtx-govern-draftfirst' presente
+  [0;32m✓[0m Dep skill 'excrtx-produce-artifacts' presente
+  [0;32m✓[0m Dep skill 'excrtx-harness-surfaces' presente
+  [0;32m✓[0m Diretório 'Inbox incoming' presente
+  [0;32m✓[0m Diretório 'Inbox processing' presente
+  [0;32m✓[0m Diretório 'Inbox promoted' presente
+  [0;32m[1m→ PASS[0m (9/9)[2m [12ms][0m
+
+[1m━━━ EX-18 — excrtx-quality-antislop ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-quality-antislop' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-quality-antislop)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [15ms][0m
+
+[1m━━━ EX-19 — excrtx-quality-taste ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-quality-taste' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-quality-taste)
+  [0;32m✓[0m Dep skill 'excrtx-quality-designsys' presente
+  [0;32m✓[0m Sub-skill 'gpt-taste' referenciada
+  [0;32m✓[0m Sub-skill 'brandkit' referenciada
+  [0;32m✓[0m Sub-skill 'brutalist' referenciada
+  [0;32m[1m→ PASS[0m (6/6)[2m [14ms][0m
+
+[1m━━━ EX-20 — excrtx-quality-designsys ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-quality-designsys' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-quality-designsys)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m[1m→ PASS[0m (3/3)[2m [13ms][0m
+
+[1m━━━ EX-21 — excrtx-quality-gate ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-quality-gate' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-quality-gate)
+  [0;32m✓[0m Dep skill 'excrtx-quality-antislop' presente
+  [0;32m✓[0m Dep skill 'excrtx-quality-taste' presente
+  [0;32m[1m→ PASS[0m (4/4)[2m [12ms][0m
+
+[1m━━━ EX-22 — excrtx-produce-artifacts ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-produce-artifacts' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-produce-artifacts)
+  [0;32m✓[0m Dep skill 'excrtx-memory-manager' presente
+  [0;32m✓[0m Diretório 'Artifacts items' presente
+  [0;32m✓[0m Diretório 'View by_microverso' presente
+  [0;32m✓[0m Diretório 'View by_task' presente
+  [0;32m✓[0m Diretório 'View by_status' presente
+  [0;32m✓[0m Diretório 'View by_type' presente
+  [0;32m[1m→ PASS[0m (8/8)[2m [12ms][0m
+
+[1m━━━ EX-23 — excrtx-produce-slides ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-produce-slides' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-produce-slides)
+  [0;32m✓[0m Dep skill 'excrtx-quality-designsys' presente
+  [0;32m✓[0m Dep skill 'excrtx-quality-taste' presente
+  [0;32m✓[0m Dep skill 'excrtx-integrate-gdrive' presente
+  [0;32m✓[0m Arquivo 'Script slides/export-pdf.sh' presente
+  [0;32m✓[0m Arquivo 'Script slides/extract-pptx.py' presente
+  [0;32m✓[0m Arquivo 'Script slides/package-deck.sh' presente
+  [0;32m✓[0m Arquivo 'Script slides/setup-frontend-slides.sh' presente
+  [0;32m[1m→ PASS[0m (9/9)[2m [11ms][0m
+
+[1m━━━ EX-24 — excrtx-produce-oficios ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-produce-oficios' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-produce-oficios)
+  [0;32m✓[0m Dep skill 'excrtx-quality-antislop' presente
+  [0;32m✓[0m Script gerar_oficio.py presente
+  [0;32m✓[0m Tool 'python3' disponível (/home/elder/.local/share/mise/installs/python/3.12.13/bin/python3)
+  [0;32m[1m→ PASS[0m (5/5)[2m [11ms][0m
+
+[1m━━━ EX-25 — excrtx-integrate-gdrive ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:51-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-gdrive' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-gdrive)
+  [0;32m✓[0m gcloud CLI disponível
+  [0;32m✓[0m OAuth token válido (google_token.json)
+  [0;32m✓[0m google_api.py compila OK
+  [0;32m✓[0m Drive search hardening aplicado (trashed=false)
+  [0;32m[1m→ PASS[0m (6/6)[2m [185ms][0m
+
+[1m━━━ EX-26 — excrtx-integrate-oauth ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:52-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-oauth' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-oauth)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m[1m→ PASS[0m (3/3)[2m [7ms][0m
+
+[1m━━━ EX-27 — excrtx-integrate-docbrain ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:52-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-docbrain' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-docbrain)
+  [0;32m✓[0m Dep skill 'excrtx-memory-intake' presente
+  [0;32m✓[0m Tool 'git' disponível (/usr/bin/git)
+  [0;32m✓[0m Tool 'npm' disponível (/home/elder/.local/share/mise/installs/node/25.8.0/bin/npm)
+  [0;32m✓[0m Diretório 'DocBrain repo' presente
+  [1;33m⏳[0m 'DocBrain LLM routing' não definida — pendente de key
+  [0;32m[1m→ PASS[0m (6/7)[2m [13ms][0m
+
+[1m━━━ EX-28 — excrtx-integrate-nlmroute ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:52-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-nlmroute' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-nlmroute)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m uv disponível
+  [0;32m✓[0m Tool 'notebooklm-mcp' disponível (/home/elder/.local/share/mise/installs/python/3.12.13/bin/notebooklm-mcp)
+  [0;32m✓[0m nlm CLI disponível (v0.7.2)
+  [0;32m✓[0m nlm versão >= 0.7.0
+  [0;32m✓[0m nlm auth operacional
+  [0;32m✓[0m MCP server notebooklm registrado
+  [0;32m[1m→ PASS[0m (9/9)[2m [3216ms][0m
+
+[1m━━━ EX-29 — excrtx-integrate-nlmops ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-nlmops' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-nlmops)
+  [0;32m✓[0m Dep skill 'excrtx-integrate-nlmroute' presente
+  [0;32m[1m→ PASS[0m (3/3)[2m [6ms][0m
+
+[1m━━━ EX-30 — excrtx-integrate-browser ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-integrate-browser' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-integrate-browser)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Script 'browser-use.sh' executável
+  [0;32m✓[0m uv disponível no PATH (/home/elder/.local/share/../bin/uv)
+  [0;32m[1m→ PASS[0m (5/5)[2m [6ms][0m
+
+[1m━━━ EX-31 — excrtx-harness-promptlog ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-promptlog' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-promptlog)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [10ms][0m
+
+[1m━━━ EX-32 — excrtx-harness-codexint ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-codexint' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-codexint)
+  [0;32m✓[0m Dep skill 'excrtx-harness-core' presente
+  [0;32m[1m→ PASS[0m (3/3)[2m [15ms][0m
+
+[1m━━━ EX-33 — excrtx-harness-core ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-core' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-core)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Tool 'python3' disponível (/home/elder/.local/share/mise/installs/python/3.12.13/bin/python3)
+  [0;32m[1m→ PASS[0m (4/4)[2m [9ms][0m
+
+[1m━━━ EX-34 — excrtx-harness-hermesops ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-hermesops' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-hermesops)
+  [0;32m✓[0m Dep skill 'excrtx-harness-core' presente
+  [0;32m✓[0m Dep skill 'excrtx-harness-codexint' presente
+  [0;32m[1m→ PASS[0m (4/4)[2m [10ms][0m
+
+[1m━━━ EX-35 — excrtx-harness-surfaces ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-surfaces' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-surfaces)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m[1m→ PASS[0m (3/3)[2m [12ms][0m
+
+[1m━━━ EX-48 — excrtx-harness-imbroke ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-imbroke' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-imbroke)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Arquivo 'Roteador OpenRouter free' presente
+  [0;32m✓[0m Script do roteador funcional (--status exit 0)
+  [0;32m[1m→ PASS[0m (5/5)[2m [122ms][0m
+
+[1m━━━ EX-49 — excrtx-behavior-accuracy ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-behavior-accuracy' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-behavior-accuracy)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m✓[0m Tabela de ações verificáveis presente
+  [0;32m✓[0m Anti-padrões documentados
+  [0;32m[1m→ PASS[0m (6/6)[2m [8ms][0m
+
+[1m━━━ EX-50 — excrtx-harness-tooldev ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-harness-tooldev' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-harness-tooldev)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m[1m→ PASS[0m (4/4)[2m [10ms][0m
+
+[1m━━━ EX-51 — excrtx-hermes-extensions ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-hermes-extensions' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-hermes-extensions)
+  [0;32m✓[0m Sem dependências de skills
+  [0;32m✓[0m Sem dependências de tools
+  [0;32m✓[0m Arquivo 'Debug guide para slash commands' presente
+  [0;32m[1m→ PASS[0m (5/5)[2m [11ms][0m
+
+[1m━━━ EX-52 — excrtx-quality-gate ━━━[0m
+[0;90m  Início: 2026-06-19T20:11:55-03:00[0m
+  [0;32m✓[0m Skill 'excrtx-quality-gate' presente
+  [0;32m✓[0m Frontmatter válido (excrtx-quality-gate)
+  [0;32m✓[0m Skill 'excrtx-produce-artifacts' cita o quality gate
+  [0;32m✓[0m Skill 'excrtx-produce-slides' cita o quality gate
+  [0;32m✓[0m Skill 'excrtx-produce-oficios' cita o quality gate
+  [0;32m✓[0m Validator contém heurísticas de antislop e taste
+  [0;32m[1m→ PASS[0m (6/6)[2m [20ms][0m
+
+[1m═══ Fase 1 completa ═══[0m
+  Testadas: 40  |  Pass: 40  |  Fail: 0  |  Pending: 0
+
+[0;90mFase 2 (smoke tests) pulada[0m
+[1;33m  ⚠ 40 smoke tests pulados — EXOCORTEX_MODEL não configurado[0m
+[1;33m  Para validação completa: export EXOCORTEX_MODEL="seu-modelo"[0m
+
+[1m═══ FASE 4 — Relatório ═══[0m
+
+[0;32m📄 Relatório: /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-19-201151.md[0m
+
+╔═══════════════════════════════════════════════╗
+║   Verificação Pós-Provisionamento — Resumo   ║
+╚═══════════════════════════════════════════════╝
+
+  Testadas:    [1m40[0m
+  Passaram:    [0;32m40[0m
+  Reparadas:   [0;36m0[0m
+  Pendentes:   [1;33m0[0m
+  Falharam:    [0;31m0[0m
+  Smoke skip:  [1;33m40[0m
+
+  [1;33m[1m⚠ 40/40 features passaram (determinístico), mas 40 smoke tests foram pulados.[0m
+  [1;33m  Defina EXOCORTEX_MODEL para validação completa: export EXOCORTEX_MODEL="seu-modelo"[0m
+
+  📄 Relatório: /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-19-201151.md
+
+[0;36mℹ[0m Validando frontmatter OKF v0.1 no Acervo...
+FAIL  /home/elder/exocortex/acervo/.quarantine/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260606_055603_dogfood-ex22-artifacts-manager/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260608_auditoria/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260617_guimaraes_briefing/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/ceo-study-exocortex-2026-06-16.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/dogfood-docbrain-ex27.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/dogfood-ex18-ex21-quality-gates-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-commit-ex06-context-anchor-semantic-update-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-issue-35-self-delivery-harness-2026-06-07.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-issue-dogfood-ex-30-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/exemplo-evolucao-limpeza.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/mind-map.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/nlm-briefing-doc.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/source/slides.marp.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-012] ERROR: Missing required field 'description'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-lote-b-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-plan-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-summary-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/issue-publication-receipt-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-194311.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-221827.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-231513.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232225.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232459.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232515.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233021.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233050.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233128.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233139.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233249.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233259.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233811.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233938.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-234115.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-234520.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-001437.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-001800.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-002134.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-002420.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-025552.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-115924.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224146.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224247.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224309.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224525.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224820.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-231634.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-231652.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005045.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005824.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005827.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-11-014520.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-203906.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-210518.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-210859.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235416.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235437.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235503.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-19-201151.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/retomada-kanban-dogfood-ex10-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_inbox/incoming/int_20260616_open-notebook/derived/extracted.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/DESIGN.md
+      [V-003] ERROR: Invalid YAML: while scanning a simple key
+  in "<unicode string>", line 85, column 1:
+    Esquema cromático derivado de ma ... 
+    ^
+could not find expected ':'
+  in "<unicode string>", line 86, column 1:
+    Ativado por microversos que usam ... 
+    ^
+FAIL  /home/elder/exocortex/acervo/global/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/contracts/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'rule'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/contracts/exocortex-hermes-identity-contract.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/knowledge/WELCOME.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/knowledge/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'fact'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/knowledge/ecossistema-visual-design-system.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'reference'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/reflections/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'lesson'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/tools/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'tool'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/workflows/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'workflow'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/macro/SOUL.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/estilo.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/soul.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/valores.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/estilo.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/soul.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/valores.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/context/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/contracts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/_template/decisions/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/knowledge/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/persona/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/prompts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/reflections/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/skills/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/templates/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/tools/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/workflows/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/comercial/_meta/index.md
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'project'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/comercial/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/comercial/context/current-state.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+PASS  /home/elder/exocortex/acervo/micro/ensino/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/ensino/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/ensino/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/estudio-criativo/DESIGN.md
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/_meta/index.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/context/current-state.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/context/mixed-task-model.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/adaptable-user-context.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/boundary-with-product.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/canonical-preservation-and-versioning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/operating-principles.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/tool-and-skill-governance.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/decisions/create-estudio-criativo.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/briefing-heuristics.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/creative-capabilities.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/format-selection-by-product-stage.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/narrative-and-positioning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/open-gaps-map.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/rapid-tangibilization-for-validation.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/reference-corpus.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/structured-creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/tooling-landscape.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/log.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/art-director.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/copywriter.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/creative-director.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/producer.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/researcher.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/strategist.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/prompts/creative-brief-interview.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/prompts/creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-current-state-log-bootstrap.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-index-sanitization.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-product-boundary.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/initial-thesis.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/creative-campaign-development.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/creative-tool-selection.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/delivery-format-selection.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/hypothesis-to-validation-artifact.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/structured-creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/briefing-template.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/campaign-one-pager.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/creative-critique-scorecard.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/format-selection-matrix.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/learning-card.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/post-project-learning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/validation-artifact-brief.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/tools/creative-tool-stack.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/creative-qa-before-publication.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/demand-intake.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/knowledge-ingestion.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/mixed-microverso-support.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/post-project-learning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/prototype-a-validation-asset.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/research-before-making.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/study-sprint-90d.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/excrtx/DESIGN.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/index.md
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'project'
+      [V-026] WARN : 'description' exceeds 120 characters (122 chars)
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/context/current-state.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/contracts/development-standards.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'rule'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/decisions/docbrain-not-public.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: ADR-006: Custom Skill vs. MCP Server Se ... 
+                  ^
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/architecture-gap-analysis.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/architecture.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'fact'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+PASS  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/last30days-skill.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/repo-activity-2026-05-16-06-16.md
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/workflows/create-custom-skill.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: SOP-001: Creating and Registering a Cus ... 
+                  ^
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/workflows/run-preflight-checks.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: SOP-002: Running Preflight Checks and V ... 
+                  ^
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/SCHEMA.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/drafts/setup-provision-exocortex-ops-2026-06-05.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/drift-register.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/provision-manifest.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1500-after-setup-provisioning-approval.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/canonical-path-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/draftfirst-change-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/memory-authority-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/operating-boundaries.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/profile-isolation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/rollback-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/runtime-verification-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/secret-handling-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/decisions/create-exocortex-ops.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/decisions/provision-as-base-microverse.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/cron-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/hermes-web-ui-evaluation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/integration-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/mcp-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/memory-providers.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/profile-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/runtime-map.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/version-matrix.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/persona/ops-steward.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/prompts/ops-healthcheck.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/reflections/initial-gap-analysis.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/skills/ops-maintenance-routing.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/change-draft.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/drift-report.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/healthcheck-report.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/ops-decision.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/runtime-snapshot.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/hermes-cli.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/notebooklm.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/base-microverse-provisioning.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/incident-response.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/microverso-inventory.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/post-change-validation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/runtime-drift-audit.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/self-check.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/setup-change-draftfirst.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/templates/oficio-generico.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/index.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/log.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/skills/excrtx-integrate-docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/tools/excrtx-integrate-docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/workflows/install-docbrain-parser-engine.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/SCHEMA.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/context/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/contracts/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/contracts/exocortex-hermes-identity.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/knowledge/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/knowledge/politica-reembolso-viagens.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/persona/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/reflections/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/tools/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/workflows/_seed.md
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/DESIGN.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-026] WARN : 'description' exceeds 120 characters (135 chars)
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/_meta/DESIGN.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/decisions/paleta-sales-ai.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/cross-refs/_template.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/shared/groups.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/knowledge/glossario.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/knowledge/groups.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+[1;33m⚠[0m Frontmatter do Acervo tem arquivos não-conformes com o schema OKF v0.1.
+[1;33m⚠[0m Execute manualmente para ver detalhes: python3 scripts/validate_frontmatter.py --dir $ACERVO --report
+[1;33m⚠[0m Para migrar arquivos legados: python3 scripts/migrate_frontmatter.py --dir $ACERVO
+[0;36mℹ[0m Skin EXCRTX (identidade visual)...
+[0;36mℹ[0m Provisionando skin EXCRTX no Hermes WebUI...
+🎨 EXCRTX Skin + Branding Provisioner
+   WebUI: /home/elder/.hermes/hermes-webui
+
+  ✅ Skin EXCRTX já registrada nos arquivos
+
+  ✅ Branding: identidade EXCRTX já aplicada
+
+  ✅ defaults: já configurados
+  ✅ WebUI reiniciada
+
+✅ Skin + Branding EXCRTX provisionados.
+   Tema padrão: light. Skin padrão: excrtx.
+   Acesse a WebUI para confirmar.
+[0;36mℹ[0m Configurando cron jobs de manutenção (síndico)...
+[1;33m⚠[0m Falha ao criar cron 'maintenance-weekly' — configure manualmente.
+[1;33m⚠[0m Falha ao criar cron 'inbox-triage' — configure manualmente.
+[1;33m⚠[0m Falha ao criar cron 'artifact-audit' — configure manualmente.
+[1;33m⚠[0m Falha ao criar cron 'publication-check' — configure manualmente.
+[0;32m✓[0m Cron jobs de manutenção configurados (03h–05h).

@@ -1,14 +1,14 @@
 ---
 title: "{{DOMAIN_NAME}} — Decisões"
 type: decision
-description: ""
+description: "Decisões arquiteturais do domínio {{DOMAIN_NAME}} (formato ADR)"
 class: perene
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"
 last_accessed_at: "{{CREATED_DATE}}T00:00:00Z"
 created: "{{CREATED_DATE}}"
 updated: "{{CREATED_DATE}}"
-nature: knowledge
+nature: decisions
 excrtx_type: fact
 tags: []
 confidence: high

@@ -1,6 +1,12 @@
 ---
+type: decision
 title: Governança de Ferramentas e Skills Criativas
-created: 2026-06-01
+description: O Estúdio pode usar ferramentas e skills consolidadas para criação com IA e sem IA, desde que respeite aprovação, esc...
+tags: [contract, tools, skills]
+timestamp: 2026-06-01
+class: perene
+created_at: 2026-06-01T00:00:00Z
+last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01
 nature: contracts
 kind: contract
@@ -18,7 +24,7 @@ upstream:
   source_skill: null
   assumed_version: null
   coupling: none
-tags: [contract, tools, skills]
+created: 2026-06-01
 ---
 
 # Governança de ferramentas e skills

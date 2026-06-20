@@ -1,12 +1,18 @@
 ---
+type: decision
 title: Limites Operacionais
-created: 2026-06-05
-updated: 2026-06-05
-nature: contracts
-type: rule
+description: Pode criar e editar arquivos do Acervo quando o executivo pedir explicitamente e o escopo estiver claro.
 tags: [governance, draft-first, safety]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
+updated: 2026-06-05
+excrtx_type: rule
+nature: contracts
 sources: [SOUL, excrtx-govern-tools]
 confidence: high
+created: 2026-06-05
 ---
 
 # Limites operacionais

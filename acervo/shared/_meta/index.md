@@ -1,3 +1,14 @@
+---
+type: context
+title: Shared Index
+description: Catálogo de cross-refs e recursos compartilhados entre Microversos.
+tags: []
+timestamp: 2026-05-27
+class: perene
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Shared Index
 
 > Catálogo de cross-refs e recursos compartilhados entre Microversos.

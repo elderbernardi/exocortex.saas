@@ -1,3 +1,14 @@
+---
+type: context
+title: Shared Log
+description: Registro cronológico de operações cross-domain. Append-only.
+tags: []
+timestamp: 2026-05-27
+class: perene
+created_at: 2026-05-27T04:03:03Z
+last_accessed_at: 2026-05-27T04:03:03Z
+---
+
 # Shared Log
 
 > Registro cronológico de operações cross-domain. Append-only.

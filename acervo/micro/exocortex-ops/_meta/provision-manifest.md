@@ -1,6 +1,12 @@
 ---
+type: context
 title: Manifesto de provisionamento — exocortex-ops
-created: 2026-06-05
+description: Declarar o conjunto mínimo que um setup replicável deve criar para que `exocortex-ops` exista como microverso base do...
+tags: [setup, provisionamento, microverso-base, idempotencia]
+timestamp: 2026-06-05
+class: perene
+created_at: 2026-06-05T00:00:00Z
+last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
 nature: context
 kind: provision-manifest
@@ -8,7 +14,7 @@ scope_slug: exocortex-ops
 authority: canonical
 stability: active
 lifecycle_state: active
-tags: [setup, provisionamento, microverso-base, idempotencia]
+created: 2026-06-05
 ---
 
 # Manifesto de provisionamento — exocortex-ops

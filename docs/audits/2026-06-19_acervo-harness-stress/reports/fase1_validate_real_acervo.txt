@@ -1,0 +1,768 @@
+FAIL  /home/elder/exocortex/acervo/.quarantine/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260606_055603_dogfood-ex22-artifacts-manager/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260608_auditoria/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/art_20260617_guimaraes_briefing/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/ceo-study-exocortex-2026-06-16.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/dogfood-docbrain-ex27.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/dogfood-ex18-ex21-quality-gates-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-commit-ex06-context-anchor-semantic-update-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-issue-35-self-delivery-harness-2026-06-07.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/draft-issue-dogfood-ex-30-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/exemplo-evolucao-limpeza.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/mind-map.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/assets/nlm-briefing-doc.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/source/slides.marp.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-012] ERROR: Missing required field 'description'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/exoesqueleto-clevel-deck/source/source.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-lote-b-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-plan-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/feature-dogfood-summary-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/issue-publication-receipt-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-194311.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-221827.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-231513.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232225.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232459.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-232515.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233021.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233050.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233128.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233139.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233249.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233259.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233811.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-233938.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-234115.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-05-234520.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-001437.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-001800.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-002134.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-002420.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-025552.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-06-115924.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224146.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224247.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224309.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224525.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-224820.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-231634.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-08-231652.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005045.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005824.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-09-005827.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-11-014520.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-203906.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-210518.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-12-210859.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235416.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235437.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-17-235503.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/provisioning-test-2026-06-19-201151.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_artifacts/items/retomada-kanban-dogfood-ex10-2026-06-06.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/_inbox/incoming/int_20260616_open-notebook/derived/extracted.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/DESIGN.md
+      [V-003] ERROR: Invalid YAML: while scanning a simple key
+  in "<unicode string>", line 85, column 1:
+    Esquema cromático derivado de ma ... 
+    ^
+could not find expected ':'
+  in "<unicode string>", line 86, column 1:
+    Ativado por microversos que usam ... 
+    ^
+FAIL  /home/elder/exocortex/acervo/global/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/contracts/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'rule'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/contracts/exocortex-hermes-identity-contract.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/knowledge/WELCOME.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/global/knowledge/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'fact'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/knowledge/ecossistema-visual-design-system.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'reference'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/reflections/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'lesson'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/tools/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'tool'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/global/workflows/_seed.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'workflow'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/macro/SOUL.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/README.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/estilo.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/soul.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/_fixture/valores.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/estilo.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/soul.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/macro/valores.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/_template/context/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/contracts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/_template/decisions/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/knowledge/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/persona/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/prompts/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/reflections/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/skills/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/templates/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/tools/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/_template/workflows/_seed.md
+      [V-024] ERROR: 'description' must be a non-empty string
+      [V-029] ERROR: 'timestamp' must match YYYY-MM-DD, got '{{CREATED_DATE}}'
+      [V-043] ERROR: 'created_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+      [V-045] ERROR: 'last_accessed_at' must match YYYY-MM-DDTHH:MM:SSZ, got '{{CREATED_DATE}}T00:00:00Z'
+FAIL  /home/elder/exocortex/acervo/micro/comercial/_meta/index.md
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'project'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/comercial/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/comercial/context/current-state.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+PASS  /home/elder/exocortex/acervo/micro/ensino/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/ensino/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/ensino/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/estudio-criativo/DESIGN.md
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/_meta/index.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/context/current-state.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/context/mixed-task-model.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/adaptable-user-context.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/boundary-with-product.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/canonical-preservation-and-versioning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/exocortex-hermes-identity.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/operating-principles.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/contracts/tool-and-skill-governance.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/decisions/create-estudio-criativo.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/briefing-heuristics.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/creative-capabilities.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/format-selection-by-product-stage.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/narrative-and-positioning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/open-gaps-map.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/rapid-tangibilization-for-validation.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/reference-corpus.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/structured-creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/knowledge/tooling-landscape.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/log.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/art-director.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/copywriter.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/creative-director.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/producer.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/researcher.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/persona/strategist.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/prompts/creative-brief-interview.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/prompts/creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-current-state-log-bootstrap.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-index-sanitization.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/2026-06-estudio-product-boundary.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/reflections/initial-thesis.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/creative-campaign-development.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/creative-tool-selection.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/delivery-format-selection.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/hypothesis-to-validation-artifact.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/skills/structured-creative-critique.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/briefing-template.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/campaign-one-pager.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/creative-critique-scorecard.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/format-selection-matrix.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/learning-card.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/post-project-learning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/templates/validation-artifact-brief.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/tools/creative-tool-stack.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/creative-qa-before-publication.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/demand-intake.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/knowledge-ingestion.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/mixed-microverso-support.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/post-project-learning.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/prototype-a-validation-asset.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/research-before-making.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/estudio-criativo/workflows/study-sprint-90d.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/excrtx/DESIGN.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/index.md
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'project'
+      [V-026] WARN : 'description' exceeds 120 characters (122 chars)
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/context/current-state.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/contracts/development-standards.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'rule'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/decisions/docbrain-not-public.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: ADR-006: Custom Skill vs. MCP Server Se ... 
+                  ^
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/architecture-gap-analysis.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/architecture.md
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-020] ERROR: 'type' must be one of ['artifact', 'context', 'decision', 'knowledge', 'memory', 'reflection'], got 'fact'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+PASS  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/last30days-skill.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-dev/knowledge/repo-activity-2026-05-16-06-16.md
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/workflows/create-custom-skill.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: SOP-001: Creating and Registering a Cus ... 
+                  ^
+FAIL  /home/elder/exocortex/acervo/micro/exocortex-dev/workflows/run-preflight-checks.md
+      [V-003] ERROR: Invalid YAML: mapping values are not allowed here
+  in "<unicode string>", line 1, column 15:
+    title: SOP-002: Running Preflight Checks and V ... 
+                  ^
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/SCHEMA.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/drafts/setup-provision-exocortex-ops-2026-06-05.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/drift-register.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/provision-manifest.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1500-after-setup-provisioning-approval.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/canonical-path-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/draftfirst-change-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/memory-authority-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/operating-boundaries.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/profile-isolation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/rollback-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/runtime-verification-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/contracts/secret-handling-policy.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/decisions/create-exocortex-ops.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/decisions/provision-as-base-microverse.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/cron-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/hermes-web-ui-evaluation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/integration-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/mcp-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/memory-providers.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/profile-registry.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/runtime-map.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/knowledge/version-matrix.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/persona/ops-steward.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/prompts/ops-healthcheck.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/reflections/initial-gap-analysis.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/skills/ops-maintenance-routing.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/change-draft.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/drift-report.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/healthcheck-report.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/ops-decision.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/templates/runtime-snapshot.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/hermes-cli.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/tools/notebooklm.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/base-microverse-provisioning.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/incident-response.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/microverso-inventory.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/post-change-validation.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/runtime-drift-audit.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/self-check.md
+PASS  /home/elder/exocortex/acervo/micro/exocortex-ops/workflows/setup-change-draftfirst.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/context/current-state.md
+PASS  /home/elder/exocortex/acervo/micro/gabinete/templates/oficio-generico.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/index.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/log.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/skills/excrtx-integrate-docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/tools/excrtx-integrate-docbrain.md
+PASS  /home/elder/exocortex/acervo/micro/hermes-setup/workflows/install-docbrain-parser-engine.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/SCHEMA.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/index.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/_meta/log.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/context/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/contracts/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/contracts/exocortex-hermes-identity.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/knowledge/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/knowledge/politica-reembolso-viagens.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/persona/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/reflections/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/tools/_seed.md
+PASS  /home/elder/exocortex/acervo/micro/projeto-alpha/workflows/_seed.md
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/DESIGN.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-011] ERROR: Missing required field 'title'
+      [V-013] ERROR: Missing required field 'tags'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-026] WARN : 'description' exceeds 120 characters (135 chars)
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/_meta/DESIGN.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/micro/sales-ai/decisions/paleta-sales-ai.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/SCHEMA.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/index.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/_meta/log.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/cross-refs/_template.md
+      [V-010] ERROR: Missing required field 'type'
+      [V-012] ERROR: Missing required field 'description'
+      [V-014] ERROR: Missing required field 'timestamp'
+      [V-040] ERROR: Missing required field 'class'
+      [V-042] ERROR: Missing required field 'created_at'
+FAIL  /home/elder/exocortex/acervo/shared/groups.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/knowledge/glossario.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
+FAIL  /home/elder/exocortex/acervo/shared/knowledge/groups.md
+      [V-001] ERROR: File must start with '---' (YAML frontmatter opening delimiter)
