@@ -47,9 +47,16 @@ source "$SETUP_DIR/setup/interactive.sh"
 load_env_local
 
 echo ""
-echo "╔═══════════════════════════════════════════════╗"
-echo "║   Exocórtex.IA — Candidate-Release Setup     ║"
-echo "╚═══════════════════════════════════════════════╝"
+echo -e "                ${CYAN}E X O C Ó R T E X . I A${NC}"
+echo -e "             ${CYAN}c o g n i ç ã o   e s t e n d i d a${NC}"
+echo -e "                  ${CYAN}◆  Hermes Agent  ◆${NC}"
+echo -e "                         ${BOLD}Setup${NC}"
+echo ""
+info "Este setup roda em 3 estágios antes de qualquer mudança definitiva:"
+echo -e "    ${BOLD}1.${NC} Validação de pré-requisitos do sistema"
+echo -e "    ${BOLD}2.${NC} Configuração — paths, env vars/API keys e features (com revisão)"
+echo -e "    ${BOLD}3.${NC} Confirmação final antes do provisionamento"
+info "Modos: ${BOLD}rápido${NC} (--yes) · ${BOLD}guiado${NC} (--step-by-step) · ${BOLD}só revisão${NC} (--init-only)."
 echo ""
 
 # =============================================================================

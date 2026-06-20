@@ -103,6 +103,20 @@ is_secret_var() {
   echo "$name" | grep -qiE "key|token|secret|password|credential"
 }
 
+# Warn (never block) when a secret value looks malformed — whitespace usually
+# means a partial paste; a very short value usually means a truncated key.
+validate_secret_format() {
+  local var_name="$1" value="$2"
+  [ -z "$value" ] && return 0
+  if printf '%s' "$value" | grep -q '[[:space:]]'; then
+    warn "$var_name contém espaço ou quebra de linha — possível cópia parcial. Revise a chave antes de prosseguir."
+    return 0
+  fi
+  if [ "${#value}" -lt 12 ]; then
+    warn "$var_name parece curta demais para uma credencial completa. Confirme se colou a chave inteira."
+  fi
+}
+
 # ─── Prompt Functions ──────────────────────────────────────────────────────
 
 # prompt_value VAR_NAME DEFAULT DESCRIPTION
@@ -175,6 +189,8 @@ prompt_secret() {
       save_to_env_local "$var_name" "$current_value"
     fi
   fi
+
+  validate_secret_format "$var_name" "${!var_name:-}"
 }
 
 # prompt_flag VAR_NAME DEFAULT DESCRIPTION
@@ -256,10 +272,18 @@ pause_step_by_step() {
 
 show_api_key_guidance() {
   echo -e "  ${DIM}Origem dos valores:${NC} shell atual → .env.local → defaults do setup"
-  echo -e "  ${DIM}OPENROUTER_API_KEY e DEEPSEEK_API_KEY:${NC} são credenciais distintas."
-  echo -e "  ${DIM}Fluxos multiagente / Mixture of Agents:${NC} podem usar OpenRouter ou DeepSeek direto,"
-  echo -e "  ${DIM}mas alguns componentes ainda checam nomes literais de env vars.${NC}"
-  echo -e "  ${DIM}Firecrawl local:${NC} default esperado = http://127.0.0.1:3002"
+  echo -e "  ${DIM}Cada chave: [tier] integração afetada — fallback / impacto se ausente.${NC}"
+  echo ""
+  echo -e "  ${BOLD}OPENROUTER_API_KEY${NC} ${DIM}[recomendada]${NC} — gateway de reasoning (maioria das skills)."
+  echo -e "    ${DIM}Sem ela: skills que checam esse nome literal falham. Obter em openrouter.ai/keys.${NC}"
+  echo -e "  ${BOLD}DEEPSEEK_API_KEY${NC} ${DIM}[opcional]${NC} — reasoning DeepSeek direto / Mixture of Agents."
+  echo -e "    ${DIM}Rota alternativa, NÃO intercambiável: não substitui OPENROUTER_API_KEY por nome. Use a que seu provider exige, não as duas.${NC}"
+  echo -e "  ${BOLD}DOCBRAIN_LLM_API_KEY${NC} ${DIM}[opcional]${NC} — isola a key LLM do parser DocBrain."
+  echo -e "    ${DIM}Fallback: usa OPENROUTER_API_KEY se ausente. Sem nenhuma das duas: DocBrain sobe sem LLM.${NC}"
+  echo -e "  ${BOLD}FIRECRAWL_API_KEY${NC} ${DIM}[opcional]${NC} — crawling/extract."
+  echo -e "    ${DIM}Endpoint local default: http://127.0.0.1:3002 (FIRECRAWL_BASE_URL). Sem ela: crawling desabilitado.${NC}"
+  echo -e "  ${BOLD}TELEGRAM_BOT_TOKEN${NC} ${DIM}[opcional]${NC} — gateway Telegram (@BotFather)."
+  echo -e "    ${DIM}Sem ele: cria reminder e segue; configure depois com hermes gateway setup telegram.${NC}"
   echo ""
 }
 

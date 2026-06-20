@@ -40,18 +40,24 @@ ACERVO_SRC="$SCRIPT_DIR/acervo"
 | Variável | Default | Descrição |
 |----------|---------|-----------|
 | `OPENROUTER_API_KEY` | — | Chave OpenRouter para integrações que falam com OpenRouter |
-| `DEEPSEEK_API_KEY` | — | Chave DeepSeek direta para reasoning e fluxos compatíveis |
+| `DEEPSEEK_API_KEY` | — | Chave DeepSeek direta para reasoning / Mixture of Agents. **Não intercambiável** com `OPENROUTER_API_KEY` |
 | `TELEGRAM_BOT_TOKEN` | — | Token do bot Telegram (@BotFather) |
 | `CONTEXT7_API_KEY` | — | Chave Context7 para docs de tech stacks |
-| `FIRECRAWL_API_KEY` | — | Chave Firecrawl para crawling/extract |
+| `FIRECRAWL_API_KEY` | — | Chave Firecrawl para crawling/extract (endpoint via `FIRECRAWL_BASE_URL`) |
 | `FIRECRAWL_BASE_URL` | `http://127.0.0.1:3002` | Endpoint local padrão do Firecrawl |
-| `DOCBRAIN_LLM_API_KEY` | — | Override de LLM key para DocBrain |
+| `DOCBRAIN_LLM_API_KEY` | — | Override de LLM key para DocBrain. Se ausente, DocBrain usa `OPENROUTER_API_KEY` |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | `0` | `1` para ativar Hindsight local (Docker) |
 | `EXOCORTEX_ENABLE_HERMES_WEBUI` | `0` | `1` para ativar WebUI cockpit |
 
-Observação: `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais distintas.
-Alguns fluxos aceitam qualquer uma das duas; outros ainda exigem o nome literal
-da env var esperado pelo componente.
+### Mapeamento de providers/keys
+
+- `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais **distintas e não intercambiáveis**.
+  Componentes que checam `OPENROUTER_API_KEY` pelo nome literal **não** são satisfeitos por
+  `DEEPSEEK_API_KEY`. Defina a chave que seu provider exige — não as duas.
+- **DocBrain:** usa `DOCBRAIN_LLM_API_KEY` se definida; caso contrário faz fallback para
+  `OPENROUTER_API_KEY`. `DEEPSEEK_API_KEY` não é usada pelo DocBrain.
+- **Firecrawl:** a chave (`FIRECRAWL_API_KEY`) e o endpoint (`FIRECRAWL_BASE_URL`,
+  default `http://127.0.0.1:3002`) andam juntos — documente/ajuste ambos ao subir uma instância local.
 
 ---
 

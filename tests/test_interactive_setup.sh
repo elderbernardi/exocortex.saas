@@ -833,6 +833,99 @@ if should_run "T30"; then
 fi
 
 # =============================================================================
+# T31: validate_secret_format avisa sobre chaves malformadas
+# =============================================================================
+
+if should_run "T31"; then
+  echo -e "${BOLD}T31: validate_secret_format detecta chave malformada${NC}"
+
+  result=$(bash -c "
+    export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
+    source '$REPO_ROOT/setup/common.sh' --yes 2>/dev/null
+    source '$REPO_ROOT/setup/interactive.sh' 2>/dev/null
+    validate_secret_format 'OPENROUTER_API_KEY' 'sk-with space'
+    validate_secret_format 'DEEPSEEK_API_KEY' 'short'
+    validate_secret_format 'OPENROUTER_API_KEY' 'sk-or-v1-long-and-valid-looking-key'
+  " 2>&1 || true)
+
+  if echo "$result" | grep -q "contém espaço" \
+    && echo "$result" | grep -q "curta demais" \
+    && [ "$(echo "$result" | grep -c "API_KEY")" -eq 2 ]; then
+    pass "T31: avisa em whitespace e chave curta, silencioso em chave válida"
+  else
+    fail_test "T31" "saída inesperada: $result"
+  fi
+fi
+
+# =============================================================================
+# T32: show_api_key_guidance traz tier, fallback e desambiguação DeepSeek
+# =============================================================================
+
+if should_run "T32"; then
+  echo -e "${BOLD}T32: guidance por-key com tier/fallback/desambiguação${NC}"
+
+  result=$(bash -c "
+    export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
+    source '$REPO_ROOT/setup/common.sh' --yes 2>/dev/null
+    source '$REPO_ROOT/setup/interactive.sh' 2>/dev/null
+    show_api_key_guidance
+  " 2>&1 || true)
+
+  if echo "$result" | grep -q "\[recomendada\]" \
+    && echo "$result" | grep -q "NÃO intercambiável" \
+    && echo "$result" | grep -q "não substitui OPENROUTER_API_KEY por nome" \
+    && echo "$result" | grep -q "Fallback: usa OPENROUTER_API_KEY"; then
+    pass "T32: guidance expõe tier, fallback DocBrain e desambiguação DeepSeek"
+  else
+    fail_test "T32" "guidance não trouxe os elementos esperados"
+  fi
+fi
+
+# =============================================================================
+# T33: setup.sh anuncia os 3 estágios antes dos prompts
+# =============================================================================
+
+if should_run "T33"; then
+  echo -e "${BOLD}T33: setup.sh explica os 3 estágios no preâmbulo${NC}"
+  test_dir=$(setup_test_env)
+
+  output=$(bash -c "
+    export HERMES_HOME='$test_dir/hermes'
+    export EXOCORTEX_HOME='$test_dir/exocortex'
+    export HOME='$test_dir/home'
+    cd '$REPO_ROOT'
+    bash setup.sh --skip-env-check < /dev/null 2>&1
+  " 2>/dev/null || true)
+
+  if echo "$output" | grep -q "roda em 3 estágios" \
+    && echo "$output" | grep -q "Validação de pré-requisitos" \
+    && echo "$output" | grep -q "Confirmação final antes do provisionamento"; then
+    pass "T33: preâmbulo descreve os 3 estágios"
+  else
+    fail_test "T33" "setup.sh não anunciou os 3 estágios"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
+# T34: install.sh e setup.sh compartilham a mesma identidade visual
+# =============================================================================
+
+if should_run "T34"; then
+  echo -e "${BOLD}T34: install.sh e setup.sh com banner coerente${NC}"
+
+  if grep -q "◆  Hermes Agent  ◆" "$REPO_ROOT/install.sh" \
+    && grep -q "◆  Hermes Agent  ◆" "$REPO_ROOT/setup.sh" \
+    && grep -q "c o g n i ç ã o   e s t e n d i d a" "$REPO_ROOT/install.sh" \
+    && grep -q "c o g n i ç ã o   e s t e n d i d a" "$REPO_ROOT/setup.sh"; then
+    pass "T34: ambos usam o mesmo motivo visual (Hermes Agent + cognição estendida)"
+  else
+    fail_test "T34" "identidade visual não compartilhada entre install.sh e setup.sh"
+  fi
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 

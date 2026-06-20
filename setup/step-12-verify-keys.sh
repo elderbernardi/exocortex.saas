@@ -54,14 +54,14 @@ configure_openrouter_free_router() {
 
 info "Verificando keys de API..."
 if [ -n "${OPENROUTER_API_KEY:-}" ]; then
-  log "OPENROUTER_API_KEY definida"
+  log "OPENROUTER_API_KEY definida [recomendada]"
 else
-  warn "OPENROUTER_API_KEY não definida — integrações que exigem essa env var literal podem falhar"
+  warn "OPENROUTER_API_KEY não definida [recomendada] — integrações que exigem essa env var literal podem falhar. Obtenha em openrouter.ai/keys"
 fi
 if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-  log "DEEPSEEK_API_KEY definida"
+  log "DEEPSEEK_API_KEY definida [opcional]"
 else
-  info "DEEPSEEK_API_KEY não definida (opcional — DeepSeek direto ficará indisponível)"
+  info "DEEPSEEK_API_KEY não definida [opcional] — DeepSeek direto ficará indisponível; não substitui OPENROUTER_API_KEY por nome"
 fi
 if [ -n "${OPENROUTER_API_KEY:-}" ] || [ -n "${DEEPSEEK_API_KEY:-}" ]; then
   log "Rota de reasoning remoto disponível para fluxos multiagente / Mixture of Agents"

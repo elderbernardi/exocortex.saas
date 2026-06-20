@@ -235,7 +235,7 @@ What each marker activates:
 | Variable | Component | Notes |
 |---|---|---|
 | `OPENROUTER_API_KEY` | Reasoning routing (OpenRouter) | Primary LLM gateway. Required for most skills. |
-| `DEEPSEEK_API_KEY` | DeepSeek direct | Alternative reasoning path. Independent credential. |
+| `DEEPSEEK_API_KEY` | DeepSeek direct | Alternative reasoning path / Mixture of Agents. Independent credential — **not interchangeable** with `OPENROUTER_API_KEY` and does not satisfy components that look that name up literally. Set whichever your provider needs, not both. |
 | `TELEGRAM_BOT_TOKEN` | Telegram Gateway | Bot token from BotFather. Enables remote chat interface. |
 | `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | MIT-licensed `nesquena/hermes-webui`. Access at `127.0.0.1:8787` or via Tailscale. |
 | `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session memory. Requires `docker` + `docker compose`. |
