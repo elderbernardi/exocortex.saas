@@ -1,7 +1,7 @@
 ---
 title: "{{DOMAIN_NAME}} — Contexto"
 type: context
-description: ""
+description: "Situação, estado e prioridades atuais de {{DOMAIN_NAME}}"
 class: volátil
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"

@@ -343,9 +343,21 @@ def main():
         if not items_dir.is_dir():
             print(f"ERROR: No artifacts directory at {items_dir}", file=sys.stderr)
             sys.exit(1)
+        skipped_non_artifacts = []
         for d in sorted(items_dir.iterdir()):
-            if d.is_dir():
+            if not d.is_dir():
+                continue
+            # Only validate genuine artifact packages: a dir is an artifact iff it
+            # carries a manifest.json or follows the art_* id convention. Other
+            # dirs under items/ (e.g. patches/, repairs/) are not artifacts and
+            # would otherwise fail spuriously with "manifest.json not found".
+            if (d / "manifest.json").is_file() or d.name.startswith("art_"):
                 results.append(validate_manifest(d))
+            else:
+                skipped_non_artifacts.append(d.name)
+        if skipped_non_artifacts and not args.json:
+            print(f"# Skipped {len(skipped_non_artifacts)} non-artifact dir(s) under items/: "
+                  f"{', '.join(skipped_non_artifacts)}")
     elif args.artifact_dir:
         artifact_dir = Path(args.artifact_dir)
         if not artifact_dir.is_dir():

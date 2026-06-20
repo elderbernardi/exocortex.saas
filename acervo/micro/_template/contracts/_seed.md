@@ -1,7 +1,7 @@
 ---
 title: "{{DOMAIN_NAME}} — Instruções"
 type: knowledge
-description: ""
+description: "Regras, limites e contratos do domínio {{DOMAIN_NAME}}"
 class: perene
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"

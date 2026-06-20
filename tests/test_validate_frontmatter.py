@@ -114,3 +114,43 @@ class TestEdgeCases:
             "Expected exit 1 (mixed valid/invalid fixtures), got: "
             + result.stdout + result.stderr
         )
+
+
+class TestScopeExcludes:
+    """--dir skips non-semantic areas (_artifacts/, raw/, README, ...) by default."""
+
+    def _build_tree(self, tmp_path):
+        # one valid semantic page
+        (tmp_path / "micro" / "x" / "knowledge").mkdir(parents=True)
+        (tmp_path / "micro" / "x" / "knowledge" / "ok.md").write_text(
+            (FIXTURES_DIR / "valid-volatile.md").read_text()
+        )
+        # non-semantic files that lack frontmatter (would fail V-001 if validated)
+        (tmp_path / "_artifacts" / "items" / "a").mkdir(parents=True)
+        (tmp_path / "_artifacts" / "items" / "a" / "source.md").write_text("# no frontmatter\n")
+        (tmp_path / "raw").mkdir()
+        (tmp_path / "raw" / "dump.md").write_text("raw dump, no frontmatter\n")
+        (tmp_path / "README.md").write_text("# Readme, no frontmatter\n")
+
+    def test_excluded_by_default(self, tmp_path):
+        self._build_tree(tmp_path)
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), "--dir", str(tmp_path)],
+            capture_output=True, text=True,
+        )
+        out = result.stdout + result.stderr
+        assert result.returncode == 0, out          # only the valid page is checked
+        # the excluded files are never validated (their paths don't appear as results)
+        assert "source.md" not in out
+        assert "dump.md" not in out
+        assert "ok.md" in out                        # the semantic page was validated
+        assert "Skipped" in out
+
+    def test_no_exclude_validates_everything(self, tmp_path):
+        self._build_tree(tmp_path)
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), "--dir", str(tmp_path), "--no-exclude"],
+            capture_output=True, text=True,
+        )
+        # the non-semantic files now fail V-001 → exit 1
+        assert result.returncode == 1, result.stdout + result.stderr

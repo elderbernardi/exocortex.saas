@@ -1,3 +1,14 @@
+---
+type: context
+title: "{{DOMAIN_NAME}} — Index"
+description: "Catálogo de conteúdo do microverso {{DOMAIN_NAME}}"
+tags: [index, meta]
+timestamp: "{{CREATED_DATE}}"
+class: perene
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+nature: context
+---
+
 # {{DOMAIN_NAME}} — Index
 
 > Catálogo de conteúdo deste Microverso.

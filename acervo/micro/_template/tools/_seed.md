@@ -1,7 +1,7 @@
 ---
 title: "{{DOMAIN_NAME}} — Ferramentas"
 type: knowledge
-description: ""
+description: "Ferramentas e integrações do domínio {{DOMAIN_NAME}}"
 class: volátil
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"

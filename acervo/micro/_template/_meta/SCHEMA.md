@@ -1,3 +1,14 @@
+---
+type: context
+title: "{{DOMAIN_NAME}} — Wiki Schema"
+description: "Convenções de schema e escrita do microverso {{DOMAIN_NAME}}"
+tags: [schema, meta]
+timestamp: "{{CREATED_DATE}}"
+class: perene
+created_at: "{{CREATED_DATE}}T00:00:00Z"
+nature: context
+---
+
 # Wiki Schema — Microverso Template
 
 ## Domain

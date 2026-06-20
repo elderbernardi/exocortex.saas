@@ -1,7 +1,7 @@
 ---
 title: "{{DOMAIN_NAME}} — Decisões"
 type: decision
-description: ""
+description: "Decisões arquiteturais do domínio {{DOMAIN_NAME}} (formato ADR)"
 class: perene
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"

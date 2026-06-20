@@ -1,7 +1,7 @@
 ---
 title: "{{DOMAIN_NAME}} — Prompts"
 type: knowledge
-description: ""
+description: "Prompts reutilizáveis do domínio {{DOMAIN_NAME}}"
 class: volátil
 timestamp: "{{CREATED_DATE}}"
 created_at: "{{CREATED_DATE}}T00:00:00Z"

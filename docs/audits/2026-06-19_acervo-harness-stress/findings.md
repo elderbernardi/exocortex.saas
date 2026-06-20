@@ -296,3 +296,34 @@ absoluto — auditoria ampla de skills), F-041 (aceitar `volatil` sem acento —
 tar xzf /tmp/hermes-config-backup-<STAMP>.tgz   -C ~/.hermes
 tar xzf /tmp/exocortex-acervo-backup-<STAMP>.tgz -C ~/exocortex
 ```
+
+### Fase 6 — Recomendações implementadas (segunda rodada)
+
+| Fix | Achado | Arquivo(s) | Verificação |
+|-----|--------|-----------|-------------|
+| Escopo do validador (pula `_artifacts/`/`raw/`/`_archive/`/`.quarantine/`/`_inbox/`/README) + `--no-exclude` | F-011 | `scripts/validate_frontmatter.py` | real acervo 250→186 escaneados, invalid 177→113; 2 testes novos; suíte 15/15 ✅ |
+| Template born-valid | F-012/F-021 | `_template/_meta/{SCHEMA,index,log}.md` (+frontmatter), 11× `_seed.md` (description preenchida), `contracts/exocortex-hermes-identity.md` (+campos OKF) | scaffold+substituição → **15/15 PASS, 0 FAIL** ✅ |
+| Escopo do validador de artefatos | F-015 | `acervo/global/tools/harness/validate_artifact_manifest.py` | só valida dirs com `manifest.json`/`art_*`; 7→4 artefatos, 3 não-artefatos pulados (patches/repairs/...) ✅ |
+| Resolução do ACERVO em 4 skills | F-032 | `excrtx-memory-{manager,syndic,quarantine}`, `excrtx-quality-designsys` | resolve `$ACERVO`→`$EXOCORTEX_HOME/acervo` (não o scaffold vazio `~/.hermes/acervo`); proíbe path relativo ao cwd; D1 PASS ✅ |
+
+#### F-032b — 4 skills ancoravam o ACERVO no scaffold vazio `~/.hermes/acervo` · P1 · raiz de F-032
+**Observado:** `excrtx-memory-{manager,syndic,quarantine}` e `excrtx-quality-designsys` definiam
+`ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"` — `~/.hermes/acervo` (scaffold vazio), **conflitando** com
+`setup/common.sh` que usa `$EXOCORTEX_HOME/acervo` (memória real). Os skills de lifecycle (syndic/quarantine)
+varreriam o local errado/vazio. **CORRIGIDO** (resolução consistente + fallback). 
+
+#### F-050 — 4 páginas semânticas reais com YAML inválido (V-003) · P1 · não auto-corrigível
+**Observado (revelado pela F-011):** `global/_meta/DESIGN.md`, `micro/exocortex-dev/decisions/skill-vs-mcp-selection.md`,
+`.../workflows/create-custom-skill.md`, `.../workflows/run-preflight-checks.md` têm frontmatter YAML malformado
+(`mapping values are not allowed here` / `while scanning a simple key`). A migração **não** conserta isso.
+**Recomendação:** correção manual do YAML nessas 4 páginas.
+
+#### F-030/F-031 — não corrigível no repo
+O id `MiniMax-M3` está em `~/.hermes/config.yaml` (escrito pelo runtime Hermes, **não** pelo exocortex.saas);
+`skill_judge.py` já documenta a nuance `minimax-m3`. Recomendação: rodar `hermes model` para reconfigurar, ou
+adicionar no `step-12-verify-keys` uma checagem do id contra `/v1/models`. **Sem patch no repo.**
+
+#### F-010 — migração do acervo vivo: PENDENTE de autorização explícita
+Dry-run no acervo real: 165 em escopo, 138 modificáveis, **0 erros**. Backup fresco em
+`/tmp/exocortex-acervo-premigration-<STAMP2>.tgz`. **Bloqueado pelo guard de segurança** (reescrever memória
+canônica viva exige autorização explícita do executivo). Aguardando confirmação.
