@@ -196,6 +196,16 @@ main() {
   info "Fazendo checkout da ref controlada..."
   git -C "$WEBUI_HOME" checkout "$upstream_ref" --quiet 2>/dev/null \
     || git -C "$WEBUI_HOME" checkout -b "controlled-$(echo "$upstream_ref" | head -c 8)" "$upstream_ref" --quiet
+
+  # When the ref is a branch (not a pinned SHA), advance an existing clone to the
+  # freshly fetched tip — plain `checkout <branch>` does not fast-forward. Refuse
+  # to clobber local divergence (warn instead), so a re-provision picks up the
+  # latest controlled commits without silently discarding local work.
+  if git -C "$WEBUI_HOME" show-ref --verify --quiet "refs/remotes/origin/$upstream_ref"; then
+    if ! git -C "$WEBUI_HOME" merge --ff-only "origin/$upstream_ref" --quiet 2>/dev/null; then
+      warn "Sem fast-forward para origin/$upstream_ref (divergência local) — HEAD mantido em $(git -C "$WEBUI_HOME" rev-parse --short HEAD)"
+    fi
+  fi
   log "Checkout na ref controlada: $(git -C "$WEBUI_HOME" rev-parse HEAD | head -c 12)"
 
   # Verify bootstrap.py exists
