@@ -1,0 +1,11 @@
+# microversos.yaml — registro global de microversos instalados via mvinstall.
+# Mantido (append-only) por acervo/global/tools/microverso_install.py.
+# Schema de cada entrada:
+#   - name: <slug>
+#     version: <semver>
+#     installed_at: <ISO8601>
+#     path: micro/<slug>
+#     status: active
+#     requires_met: true|false
+#     content_digest: <sha256>
+installed: []

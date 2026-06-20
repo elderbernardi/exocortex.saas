@@ -15,9 +15,24 @@ copy_acervo_seed() {
     rsync -a \
       --exclude '__pycache__' \
       --exclude 'micro/exocortex-ops/***' \
+      --exclude 'global/_meta/microversos.yaml' \
       "$ACERVO_SRC/" "$ACERVO/"
   else
     warn "rsync não encontrado; cópia genérica do Acervo pulada para evitar overwrite acidental"
+  fi
+}
+
+provision_microversos_registry() {
+  # Registro append-only de microversos instalados (mantido por microverso_install.py).
+  # Semeado apenas se ausente — nunca sobrescreve o histórico de runtime.
+  local reg_src="$ACERVO_SRC/global/_meta/microversos.yaml"
+  local reg_dst="$ACERVO/global/_meta/microversos.yaml"
+  if [ ! -f "$reg_dst" ] && [ -f "$reg_src" ]; then
+    mkdir -p "$(dirname "$reg_dst")"
+    cp "$reg_src" "$reg_dst"
+    log "Registro de microversos semeado: $reg_dst"
+  else
+    log "Registro de microversos preservado: $reg_dst"
   fi
 }
 
@@ -46,6 +61,7 @@ else
   if [ -d "$ACERVO_SRC" ]; then
     copy_acervo_seed
     provision_exocortex_ops_seed
+    provision_microversos_registry
     log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
   else
     fail "Acervo source não encontrado: $ACERVO_SRC"

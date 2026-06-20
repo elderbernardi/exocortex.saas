@@ -1,8 +1,8 @@
 ---
 name: excrtx-memory-mvinstall
-description: Install microverso structure from _fixture templates into the acervo. Scaffold microverso directories and base
-  files.
-version: 1.0.0
+description: Install a portable .mvpkg microverso package (manifest excrtx/v1) into the acervo — integrity
+  check, OKF gate, compat preflight, dependency + skill-collision resolution, safe merge.
+version: 1.1.0
 category: excrtx
 platforms:
 - linux
@@ -49,6 +49,14 @@ Ativar quando:
 
 ## Procedure
 
+Executar a ferramenta determinística (contraparte de `excrtx-memory-mvexport`):
+
+```bash
+python3 $ACERVO/global/tools/microverso_install.py <pkg.tar.gz | pkg-dir | git-url> [--install-deps] [--update-skills]
+```
+
+A ferramenta aplica, em ordem: **integridade** (`MANIFEST.sum`) → **manifesto** (`excrtx/v1`, via `microverso_schema.py`) → **gate OKF** (`validate_frontmatter.py` no conteúdo; bloqueia em erro) → **preflight de compat** (`compat` + `requires.system`) → **dependências/skills** → **merge seguro** → **hooks** → **registro global**. Os passos abaixo descrevem o contrato que a ferramenta implementa.
+
 ### 1. Ler Manifesto
 
 Carregar `microverso.yaml` do diretório fonte. Validar schema `excrtx/v1`:
@@ -64,14 +72,17 @@ metadata:
 
 Se `microverso.yaml` ausente ou inválido → WARN + perguntar se instalar como microverso legado (sem verificação de dependências).
 
+Antes do manifesto: verificar **integridade** via `MANIFEST.sum` (bloquear se houver mismatch) e o **gate OKF** sobre `acervo/` do pacote (`validate_frontmatter.py` — bloquear em erro). Depois, **preflight de compat**: comparar `compat.platforms` com a plataforma atual e checar `requires.system` (binários) — WARN com instruções se faltar.
+
 ### 2. Verificar Dependências de Skills
 
-Para cada skill em `requires.skills`:
-- Verificar se existe em `$HERMES_HOME/skills/exocortex/<skill>/SKILL.md`
-- Se presente → ✅
-- Se ausente → WARN com lista de skills faltantes
-- Oferecer: "Instalar skills faltantes?" (se disponíveis no bundle)
-- Se não disponíveis → bloquear instalação com explicação
+Para cada skill embutida em `skills/<name>/`, contra `$HERMES_HOME/skills/excrtx/<name>/`, aplicar **resolução de colisão**:
+- Não existe → instalar
+- Idêntica (hash) → skip
+- Incoming com **semver maior** (mesma linhagem) → UPDATE (só com `--update-skills`; senão report)
+- Divergente / não-upgrade → **renomear** incoming para `<name>-<slug>`, reescrever referências no microverso, manter a existente
+
+Skills apenas declaradas (não embutidas) em `requires.skills` ausentes no alvo → WARN.
 
 ### 3. Verificar Pacotes Python
 
@@ -141,10 +152,12 @@ Apresentar resumo:
 
 ## Verification
 
+- [ ] Integridade verificada (`MANIFEST.sum` confere)
 - [ ] Manifesto lido e validado (schema excrtx/v1)
-- [ ] Dependências de skills verificadas
-- [ ] Pacotes Python/Node instalados (se necessário)
-- [ ] Árvore copiada para $ACERVO/micro/<name>/
+- [ ] Gate OKF passou no conteúdo do pacote
+- [ ] Preflight de compat (plataforma + `requires.system`) reportado
+- [ ] Colisão de skills resolvida (skip/update/rename) e reportada
+- [ ] Pacotes Python/Node instalados (se `--install-deps`)
+- [ ] Árvore copiada para $ACERVO/micro/<name>/ (merge seguro)
 - [ ] Hooks executados com sucesso (se definidos)
-- [ ] Registro no manifest global atualizado
-- [ ] Relatório apresentado ao executivo
+- [ ] Registro no manifest global atualizado + verificação OKF pós-install
