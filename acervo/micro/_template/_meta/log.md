@@ -18,6 +18,6 @@ nature: context
 
 ## [{{CREATED_DATE}}] create | Microverso initialized
 - Created from _template/ by exocortex-new-microverso
-- 11 Natures initialized as directories
+- 14 diretórios inicializados (11 natures + 3 de infraestrutura)
 - Onboarding: pending
 - [2026-06-01T21:06:19-03:00] Contrato local de identidade Exocórtex sobre Hermes aplicado em `contracts/exocortex-hermes-identity.md`.

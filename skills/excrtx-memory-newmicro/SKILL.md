@@ -128,6 +128,8 @@ The template uses **double-brace tokens**. Replace **every** occurrence across a
 | `{{DOMAIN_NAME}}` | the human name |
 | `{{DOMAIN_DESCRIPTION}}` | the one-line scope |
 | `{{CREATED_DATE}}` | `{YYYY-MM-DD}` (today, ISO date) |
+| `{{MICROVERSO_SLUG}}` | the kebab-case slug |
+| `{{micro_type}}` | `client\|project\|domain\|role` |
 | `{{NOME_CLIENTE}}` / `{{PRAZO}}` / `{{VALOR}}` | contract-template values (in `contracts/`) |
 
 Each `_seed.md` ships `description: ""` — **fill a non-empty, single-line description** per

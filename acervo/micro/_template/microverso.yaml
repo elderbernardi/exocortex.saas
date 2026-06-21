@@ -1,0 +1,41 @@
+# microverso.yaml — manifesto do microverso (excrtx/v1)
+# Preenchido por excrtx-memory-newmicro durante a criação.
+# Placeholders {{...}} são substituídos automaticamente.
+# Ref: global/contracts/microverso-package-spec.md
+
+apiVersion: excrtx/v1
+kind: Microverso
+metadata:
+  name: "{{MICROVERSO_SLUG}}"
+  version: 0.1.0
+  description: "{{DOMAIN_DESCRIPTION}}"
+  author: ""
+  tags: ["{{MICROVERSO_SLUG}}"]
+
+requires:
+  skills: []
+  python_packages: []
+  node_packages: []
+  mcps: []
+  env: []
+  system: [git, python3]
+
+compat:
+  exocortex_version: ">=0.4"
+  hermes_version: ">=0.4"
+  platforms: [linux]
+
+tree:
+  context/: "Situação atual, prioridades e stakeholders de {{DOMAIN_NAME}}"
+  knowledge/: "Fatos, métricas e referências de {{DOMAIN_NAME}}"
+  contracts/: "Regras condicionais e contratos de {{DOMAIN_NAME}}"
+  prompts/: "Prompts reutilizáveis de {{DOMAIN_NAME}}"
+  persona/: "Voz, tom e estilo de {{DOMAIN_NAME}}"
+  workflows/: "SOPs e processos de {{DOMAIN_NAME}}"
+  skills/: "Capacidades encapsuladas de {{DOMAIN_NAME}}"
+  tools/: "Ferramentas e integrações de {{DOMAIN_NAME}}"
+  templates/: "Modelos reutilizáveis de {{DOMAIN_NAME}}"
+  decisions/: "Decisões arquiteturais (ADR) de {{DOMAIN_NAME}}"
+  reflections/: "Lições aprendidas de {{DOMAIN_NAME}}"
+  raw/: "Fontes brutas (imutáveis)"
+  _archive/: "Conteúdo supersedido"
