@@ -90,10 +90,12 @@ Ask the executive (if not already specified):
 cp -r $EXOCORTEX_HOME/acervo/micro/_template/. $EXOCORTEX_HOME/acervo/micro/{slug}/
 ```
 
-The template ships **11 Nature directories** (`context/`, `knowledge/`, `contracts/`,
-`prompts/`, `persona/`, `workflows/`, `skills/`, `tools/`, `templates/`, `decisions/`,
-`reflections/`) — each with a `_seed.md` — plus `_meta/` (`SCHEMA.md`, `index.md`, `log.md`),
-`raw/` and `_archive/`.
+The template ships **14 diretórios** conforme o contrato canônico
+(`global/contracts/microverso-directory-structure.md`):
+11 natures (`context/`, `knowledge/`, `contracts/`, `prompts/`, `persona/`,
+`workflows/`, `skills/`, `tools/`, `templates/`, `decisions/`, `reflections/`)
+— cada uma com `_seed.md` — mais 3 diretórios de infraestrutura:
+`_meta/` (`SCHEMA.md`, `index.md`, `log.md`), `raw/` e `_archive/`.
 
 ### 4. Fill `_meta/SCHEMA.md` and `microverso.yaml`
 

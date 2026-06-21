@@ -1,0 +1,3 @@
+# Este diretório existe para armazenar fontes brutas (PDFs, CSVs, capturas).
+# Fontes em raw/ são IMUTÁVEIS — nunca editadas.
+# Consulte global/contracts/microverso-directory-structure.md.

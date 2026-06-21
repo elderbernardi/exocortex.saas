@@ -49,7 +49,10 @@ nature: context
 
 ## Directory Structure
 
-Cada Microverso instanciado segue esta estrutura de diretórios:
+> **Fonte canônica:** `global/contracts/microverso-directory-structure.md`.
+> A estrutura abaixo é um resumo. O contrato global é a autoridade.
+
+Cada Microverso instanciado segue esta estrutura de diretórios (14 diretórios: 11 natures + 3 de infraestrutura):
 
 ```
 {slug}/

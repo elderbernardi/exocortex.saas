@@ -407,7 +407,7 @@ scope: {}
 
 ## Natures Reference
 
-The 7 Natures are data classification. Semantics of each:
+The 11 Natures are data classification. Semantics of each:
 
 | Nature | Content | When to Read | When to Write |
 |---|---|---|---|

@@ -26,7 +26,7 @@ metadata:
         automaticamente em novas instalações via setup.sh. Garante idempotência e validação isolada.
       test_prompt: Quero que o microverso 'exocortex-ops' faça parte do setup padrão. Novas instalações devem tê-lo automaticamente.
       acceptance_criteria: '1. O agente verifica que exocortex-ops existe e tem os artefatos mínimos (microverso.yaml, SCHEMA.md,
-        index.md, log.md)
+        index.md, log.md) e a estrutura canônica de 14 diretórios (11 natures + _meta + raw + _archive)
 
         2. Explica o mecanismo de promoção (inclusão no setup.sh para provisioning automático)
 
@@ -66,27 +66,25 @@ Ativar quando:
 
 ### 1. Criar ou validar o microverso
 
-Criar a estrutura Ontologia Multifocal v2:
+Criar a estrutura canônica (14 diretórios: 11 natures + 3 de infraestrutura).
+Fonte da verdade: `global/contracts/microverso-directory-structure.md`.
 
 ```text
 micro/{slug}/
-├── SCHEMA.md
-├── index.md
-├── log.md
-├── context/
-├── knowledge/
-├── contracts/
-├── prompts/
-├── skills/
-├── workflows/
-├── tools/
-├── templates/
-├── decisions/
-├── reflections/
-├── persona/
-├── _meta/
-├── raw/
-└── _archive/
+├── _meta/                 # SCHEMA.md + index.md + log.md
+├── context/               # Nature 1
+├── knowledge/             # Nature 2
+├── contracts/             # Nature 3
+├── prompts/               # Nature 4
+├── persona/               # Nature 5
+├── workflows/             # Nature 6
+├── skills/                # Nature 7
+├── tools/                 # Nature 8
+├── templates/             # Nature 9
+├── decisions/             # Nature 10
+├── reflections/           # Nature 11
+├── raw/                   # Fontes brutas (imutáveis)
+└── _archive/              # Conteúdo supersedido
 ```
 
 Todo conteúdo novo usa frontmatter v2. Não criar arquivos flat de Nature.
