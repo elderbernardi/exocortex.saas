@@ -49,7 +49,9 @@ Ativar quando:
 
 ## Procedure
 
-Executar a ferramenta determinística (contraparte de `excrtx-memory-mvexport`):
+Executar a ferramenta determinística (contraparte de `excrtx-memory-mvexport`).
+A estrutura de diretórios esperada segue o contrato canônico:
+`global/contracts/microverso-directory-structure.md` (14 dirs: 11 natures + 3 infra).
 
 ```bash
 python3 $ACERVO/global/tools/microverso_install.py <pkg.tar.gz | pkg-dir | git-url> [--install-deps] [--update-skills]

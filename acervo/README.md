@@ -41,7 +41,7 @@ acervo/
 ├── micro/                      # 🔬 Domínios Isolados (WIKI — por scope)
 │   ├── _template/              #    Template wiki completo
 │   │   ├── _meta/ (SCHEMA, index, log)
-│   │   └── {7 Nature directories com _seed.md + contracts/, raw/, _archive/}
+│   └── {14 diretórios: 11 natures + _meta/ + raw/ + _archive/}
 │   └── {slug}/                 #    Microverso instanciado
 │
 └── shared/                     # 🔗 Ponte Cross-domain
@@ -84,7 +84,9 @@ Começam como arquivo. Quando ultrapassam ~150 linhas → promovem para diretór
 
 ### Skill Unificada
 Toda operação sobre o acervo (read, write, promote, search, scope) é feita via **`excrtx-memory-manager`** (ADR-005).
-As 7 Natures são classificação de dados — a semântica é definida por SCHEMA + frontmatter.
+As 11 Natures são classificação de dados — a semântica é definida por SCHEMA + frontmatter.
+
+A estrutura canônica de diretórios de microverso está definida em `global/contracts/microverso-directory-structure.md`: 11 natures + 3 diretórios de infraestrutura = 14 diretórios.
 
 ## Lifecycle de Memória (OKF v0.1)
 

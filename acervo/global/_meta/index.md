@@ -36,6 +36,8 @@ last_accessed_at: 2026-05-27T04:03:03Z
 - [contracts/exocortex-hermes-identity-contract.md](contracts/exocortex-hermes-identity-contract.md) — contrato bloqueante de identidade Exocórtex sobre Hermes.
 - [contracts/memory-routing-contract.md](contracts/memory-routing-contract.md) — roteamento canônico entre memória rápida, Hindsight, Acervo e session_search.
 - [contracts/microverso-directory-structure.md](contracts/microverso-directory-structure.md) — estrutura canônica de diretórios de microverso (14 dirs: 11 natures + 3 infra).
+- [contracts/microverso-package-spec.md](contracts/microverso-package-spec.md) — especificação do formato .mvpkg (excrtx/v1) para export/import de microversos.
+- [_meta/microversos.yaml](_meta/microversos.yaml) — registro de microversos instalados (append-only, mantido pelo mvinstall).
 
 ## Decisões canônicas
 - [decisions/adr-019-memory-operating-model.md](decisions/adr-019-memory-operating-model.md) — Hindsight como memória operacional semântica; Acervo como fonte canônica.
