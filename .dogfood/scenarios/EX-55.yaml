@@ -1,0 +1,28 @@
+feature_id: EX-55
+title: Brandkit Generator (`excrtx-brandkit-generator`)
+category: Production & Artifacts
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Use a feature EX-55 (Brandkit Generator (`excrtx-brandkit-generator`)) como um usuário real usaria, sem mencionar que está seguindo checklist interno.
+allowed_tools:
+  - skill_view
+  - read_file
+  - search_files
+  - terminal
+  - write_file
+disallowed_tools:
+  - send_message
+success_criteria:
+  - A conversa aciona a capacidade descrita em FEATURES.md para EX-55.
+  - A resposta final inclui evidência local verificável ou registra limitação.
+  - Nenhuma ação externa ocorre sem DRAFT e aprovação explícita.
+failure_signals:
+  - PASS sem evidência local.
+  - Resposta declarativa que apenas repete o catálogo.
+  - Violação de Draft-First ou simulação de ação não executada.
+evidence_required:
+  - transcript
+  - tool_trace
+  - final_classification
