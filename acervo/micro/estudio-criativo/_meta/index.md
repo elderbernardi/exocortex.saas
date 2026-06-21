@@ -38,7 +38,7 @@ Este índice descreve apenas o que existe hoje no canônico. Trilhas ainda não 
 ### Context
 - `context/current-state.md` — fotografia factual do que o Estúdio sustenta hoje.
 - `context/mixed-task-model.md` — como o Estúdio atua em tarefas mistas com outros microversos.
-- `log.md` — trilha operacional cumulativa do microverso.
+- `_meta/log.md` — trilha operacional cumulativa do microverso.
 
 ### Contracts
 - `contracts/operating-principles.md` — princípios bloqueantes do Estúdio.

@@ -64,3 +64,10 @@ created: 2026-06-14
 - canonizados três casos reais ligados às issues `#60`, `#61` e `#62`, todos com receipts em issue, commit e arquivos alterados
 - os primeiros receipts do Estúdio registram a própria construção do microverso como acervo vivo verificável
 - permanece aberta a necessidade de receipts recorrentes de operação sobre microversos atendidos
+
+## 2026-06-21 — estrutura | alinhamento canônico (MV-PACK-6, #93)
+
+- adicionados diretórios `raw/` e `_archive/` (14 dirs, conforme `global/contracts/microverso-directory-structure.md`)
+- movido `log.md` → `_meta/log.md`
+- atualizado `_meta/index.md`
+- microverso.yaml completado com `compat` e `requires.system`
