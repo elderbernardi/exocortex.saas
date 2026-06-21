@@ -132,6 +132,28 @@ python3 scripts/migrate_frontmatter.py --dir $ACERVO
 
 Referência completa do schema: `docs/plans/2026-06-19_acervo-lifecycle-okf/schema-spec.md`
 
+## Export / Import de Microversos (formato `.mvpkg`)
+
+Um microverso pode ser empacotado num pacote portátil e autossuficiente (Docker-like):
+*"se roda no meu Exocortex, roda no seu"*. O pacote carrega dados cognitivos,
+skills embutidas, pins de dependências e configs de integração, com manifesto
+`microverso.yaml` (`excrtx/v1`) e `MANIFEST.sum` de integridade.
+
+```bash
+# Export → pacote .mvpkg.tar.gz (clean-portable: remove last_accessed_at, exclui
+# quarantine/_archive/raw, descarta deprecated, valida o gate OKF)
+python3 $ACERVO/global/tools/microverso_package.py --microverso <slug> --out <dir> --tar
+
+# Import (dir, .tar.gz ou git URL): integridade → manifesto → gate OKF →
+# preflight de compat → skills (resolução de colisão) → merge seguro → registro
+python3 $ACERVO/global/tools/microverso_install.py <pkg> [--install-deps] [--update-skills]
+```
+
+Skills (`excrtx-memory-mvexport`, `excrtx-memory-mvinstall`) embrulham essas
+ferramentas. Especificação completa do formato:
+`global/contracts/microverso-package-spec.md`. Registro de microversos instalados:
+`global/_meta/microversos.yaml` (append-only).
+
 ## ADRs
 
 - [ADR-001: 4 Camadas](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-001-four-layer-acervo.md)

@@ -347,6 +347,12 @@ Least privilege: use the simplest tool that solves the task.
 - On "inseri arquivo X": confirm the file exists in _inbox/, extract text if it is a document, then classify and propose a destination.
 - Never move or promote inbox files without explicit confirmation; never copy raw material directly into the semantic Acervo.
 
+## Memory Mvexport
+- Export de microverso é via acervo/global/tools/microverso_package.py — nunca cópia manual de diretório.
+- Sempre valide o gate OKF antes de empacotar; aborte o export se algum .md falhar.
+- Pacote é clean-portable: remova last_accessed_at, exclua .quarantine/_archive/raw, descarte deprecated.
+- Segredos nunca entram no pacote — apenas nomes de env vars em env.example.
+
 ## Memory Quarantine
 - Quarantine MOVES files to $ACERVO/.quarantine/ preserving directory structure — never copies; the file leaves its original location.
 - Quarantine is NOT active memory — search, context loading, and briefing skip .quarantine/ entirely.

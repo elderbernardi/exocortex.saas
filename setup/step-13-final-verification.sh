@@ -29,7 +29,7 @@ EXPECTED_SKILLS=(
   "excrtx-quality-skilljudge" "excrtx-quality-gepa"
   # Memory
   "excrtx-memory-manager" "excrtx-memory-wikiadapt" "excrtx-memory-newmicro"
-  "excrtx-memory-mvsetup" "excrtx-memory-mvinstall" "excrtx-memory-opsmemory"
+  "excrtx-memory-mvsetup" "excrtx-memory-mvinstall" "excrtx-memory-mvexport" "excrtx-memory-opsmemory"
   "excrtx-memory-deprecate" "excrtx-memory-quarantine" "excrtx-memory-syndic"
   # Behavior + Govern
   "excrtx-govern-draftfirst" "excrtx-behavior-vetor" "excrtx-behavior-canvas"
@@ -135,6 +135,30 @@ echo ""
 
 echo "Harness tools:"
 ls "$ACERVO/global/tools/harness/"*.py 2>/dev/null | while read -r t; do echo "  ✓ $(basename "$t")"; done
+echo ""
+
+echo "Microverso package tools (export/import excrtx/v1):"
+MV_TOOLS=(microverso_schema.py microverso_common.py microverso_package.py microverso_install.py)
+for t in "${MV_TOOLS[@]}"; do
+  if [ -f "$ACERVO/global/tools/$t" ]; then
+    echo "  ✓ $t"
+  else
+    echo "  ✗ $t (MISSING)"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+if [ -f "$ACERVO/global/contracts/microverso-package-spec.md" ]; then
+  echo "  ✓ contracts/microverso-package-spec.md"
+else
+  echo "  ✗ contracts/microverso-package-spec.md (MISSING)"
+  ERRORS=$((ERRORS + 1))
+fi
+if [ -f "$ACERVO/global/_meta/microversos.yaml" ]; then
+  echo "  ✓ _meta/microversos.yaml (registro de instalados)"
+else
+  echo "  ✗ _meta/microversos.yaml (MISSING)"
+  ERRORS=$((ERRORS + 1))
+fi
 echo ""
 
 echo "Profiles:"
