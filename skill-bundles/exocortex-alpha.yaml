@@ -30,6 +30,7 @@ skills:
   - excrtx-memory-newmicro
   - excrtx-memory-mvsetup
   - excrtx-memory-mvinstall
+  - excrtx-memory-mvexport
   - excrtx-memory-opsmemory
   # ── Memory lifecycle: deprecation, quarantine, syndic (ADR-014/015/018) ──
   - excrtx-memory-deprecate
