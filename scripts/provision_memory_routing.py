@@ -200,6 +200,31 @@ def ensure_acervo_index(acervo: Path, repo_root: Path) -> dict[str, Any]:
     return result
 
 
+def hindsight_available(config: dict[str, Any]) -> tuple[bool, str]:
+    """Probe whether the index scan can actually reach Hindsight.
+
+    The scan is a push into Hindsight; it is pointless (and crashes) when the
+    client library is missing or the server is down — both expected on a fresh
+    box where Hindsight is opt-in (EXOCORTEX_ENABLE_HINDSIGHT). Returns
+    (available, reason) so the caller can skip without failing the install.
+    """
+    import importlib.util
+    import socket
+    from urllib.parse import urlparse
+
+    if importlib.util.find_spec("hindsight_client") is None:
+        return False, "hindsight_client module not installed (Hindsight opt-in / not provisioned)"
+    api_url = os.environ.get("HINDSIGHT_API_URL") or config.get("api_url") or "http://localhost:8888"
+    parsed = urlparse(api_url)
+    host = parsed.hostname or "localhost"
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    try:
+        with socket.create_connection((host, port), timeout=1.5):
+            return True, "available"
+    except OSError as exc:
+        return False, f"Hindsight API unreachable at {api_url}: {exc}"
+
+
 def run_index_scan(acervo: Path, microverso: str | None, *, global_scope: bool = False) -> dict[str, Any]:
     script = acervo / "global" / "tools" / "acervo_hindsight_index.py"
     if not script.exists():
@@ -250,6 +275,12 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:
             report["ok"] = False
             report[key] = {"error": str(exc)}
+    if not args.skip_index_scan:
+        hs_config = report.get("hindsight", {}).get("config", {}) if isinstance(report.get("hindsight"), dict) else {}
+        available, reason = hindsight_available(hs_config)
+        if not available:
+            report["index_scan"] = {"skipped": True, "reason": reason}
+            args.skip_index_scan = True
     if not args.skip_index_scan:
         scans = []
         if args.scan_all:

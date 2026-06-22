@@ -147,6 +147,54 @@ except Exception as e:
 PY
     log "config.yaml gravado a partir do papel 'default' (provider=$ROLE_PROVIDER model=$ROLE_MODEL)"
   fi
+
+  # ─── Persistir a chave onde o Hermes a lê ──────────────────────────────────
+  # O runtime resolve a credencial LLM por variável de ambiente, carregada de
+  # $HERMES_HOME/.env (PROVIDER_REGISTRY[provider].api_key_env_vars). Sem isto,
+  # `hermes chat` chama o endpoint sem Authorization → HTTP 401. O nome da var
+  # vem de setup/providers.json (legacy_key_env), idêntico ao que o Hermes espera.
+  if [ -n "$ROLE_API_KEY" ] && command -v python3 >/dev/null 2>&1; then
+    HERMES_ENV="$HERMES_HOME/.env" \
+    PROVIDERS_JSON="$SCRIPT_DIR/setup/providers.json" \
+    ROLE_PROVIDER="$ROLE_PROVIDER" \
+    ROLE_API_KEY="$ROLE_API_KEY" \
+    python3 - <<'PY' && log "Chave do papel 'default' gravada em $HERMES_HOME/.env (Hermes auth)" || warn "Não foi possível gravar a chave em $HERMES_HOME/.env"
+import json, os
+from pathlib import Path
+
+provider = os.environ["ROLE_PROVIDER"].strip()
+key = os.environ["ROLE_API_KEY"].strip()
+env_path = Path(os.environ["HERMES_ENV"])
+
+# Nome da env var que o Hermes lê para este provider.
+env_var = ""
+try:
+    catalog = json.loads(Path(os.environ["PROVIDERS_JSON"]).read_text(encoding="utf-8"))
+    env_var = (catalog.get("providers", {}).get(provider, {}) or {}).get("legacy_key_env", "")
+except Exception:
+    pass
+if not env_var:
+    env_var = provider.upper().replace("-", "_") + "_API_KEY"
+
+env_path.parent.mkdir(parents=True, exist_ok=True)
+lines = env_path.read_text(encoding="utf-8").splitlines() if env_path.exists() else []
+new_line = f"{env_var}={key}"
+replaced = False
+for i, line in enumerate(lines):
+    # Substitui só a linha ativa (não toca templates comentados).
+    if line.lstrip().startswith(env_var + "="):
+        lines[i] = new_line
+        replaced = True
+        break
+if not replaced:
+    lines.append(new_line)
+env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+try:
+    env_path.chmod(0o600)
+except OSError:
+    pass
+PY
+  fi
 fi
 
 # Serviços não-LLM verificados abaixo.

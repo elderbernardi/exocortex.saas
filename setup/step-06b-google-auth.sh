@@ -72,14 +72,26 @@ _install_gws_deps() {
     return 0
   fi
 
+  # PEP 668 (externally-managed): a bare `pip install` — and even `--user` —
+  # is rejected. Retry into the user site with the explicit override so the
+  # system Python that runs google_api.py still picks the packages up.
+  if grep -q 'externally-managed-environment' "$pip_log" 2>/dev/null; then
+    info "Sistema usa PEP 668 (externally-managed); reinstalando em --user com --break-system-packages..."
+    if python3 -m pip install --quiet --user --break-system-packages "${missing[@]}" >"$pip_log" 2>&1; then
+      log "Dependências Python instaladas (user site)"
+      rm -f "$pip_log"
+      return 0
+    fi
+  fi
+
   warn "Falha ao instalar dependências Python do Google Workspace"
   info "Saída do pip (últimas linhas):"
   tail -10 "$pip_log" | while IFS= read -r line; do
     echo "    $line"
   done
-  # PEP 668 hint
+  # PEP 668 hint (manual fallback)
   if grep -q 'externally-managed-environment' "$pip_log" 2>/dev/null; then
-    info "Sistema usa PEP 668 (externally-managed). Tente: python3 -m pip install --user ${missing[*]}"
+    info "PEP 668: instale manualmente com 'python3 -m pip install --user --break-system-packages ${missing[*]}' ou via pipx/venv"
   fi
   rm -f "$pip_log"
   return 1
