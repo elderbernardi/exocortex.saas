@@ -184,7 +184,9 @@ graph TD
 
 ---
 
-> **🤖 AI Agents**: If you are an AI agent (Claude, Gemini, GPT, etc.) installing or diagnosing this system via terminal, use [INSTALL.md](INSTALL.md) instead. It is a structured runbook with pre-conditions, executable commands, and verification steps designed for machine consumption.
+> **🤖 AI Agents**: If you are an AI agent (Claude, Gemini, GPT, etc.) installing or diagnosing this system via terminal, use [INSTALL.md](INSTALL.md) instead — a structured runbook with pre-conditions, executable commands, and verification steps designed for machine consumption.
+>
+> **`INSTALL.md` lives only in this source repository** (`elderbernardi/exocortex.saas`); it is **not** copied into the runtime (`~/.hermes`, `~/exocortex`). If you can't find it, you are not in the source checkout — `git clone https://github.com/elderbernardi/exocortex.saas.git && cd exocortex.saas`, then open `INSTALL.md`. A runtime-side pointer also lives in the Acervo at `micro/exocortex-ops/knowledge/install-runbook-location.md`.
 
 ### Step-by-Step Installation
 
