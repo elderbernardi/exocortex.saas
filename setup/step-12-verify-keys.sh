@@ -122,8 +122,11 @@ PY
     fi
     # F-031: provider rotulado mas sem a var de key correspondente.
     if [ -n "$CFG_PROVIDER" ]; then
-      PROVIDER_KEY_VAR="$(printf '%s' "$CFG_PROVIDER" | tr '[:lower:]' '[:upper:]')_API_KEY"
-      if [ -z "${!PROVIDER_KEY_VAR:-}" ]; then
+      # Sanitiza para um identificador de shell válido: maiúsculas + qualquer
+      # caractere não-alfanumérico vira '_' (ex.: 'opencode-go' -> 'OPENCODE_GO').
+      # Sem isso, a expansão indireta ${!var} quebra com nomes contendo hífen.
+      PROVIDER_KEY_VAR="$(printf '%s' "$CFG_PROVIDER" | tr '[:lower:]' '[:upper:]' | tr -c 'A-Z0-9' '_')_API_KEY"
+      if [[ "$PROVIDER_KEY_VAR" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] && [ -z "${!PROVIDER_KEY_VAR:-}" ]; then
         info "provider '$CFG_PROVIDER' normalmente exige $PROVIDER_KEY_VAR (não definida)."
         info "  Se o gateway usa outra credencial (ex.: OPENCODE_API_KEY), mapeie: export $PROVIDER_KEY_VAR=\$OPENCODE_API_KEY"
       fi
