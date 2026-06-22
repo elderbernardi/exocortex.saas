@@ -164,7 +164,7 @@ SMOKE_PROMPTS = {
     "EX-14": "Verifique se exocortex-ops tem microverso.yaml, SCHEMA.md, index.md, log.md.",
     "EX-15": "Verifique se a skill define schema excrtx/v1 para microverso.yaml.",
     "EX-16": "Verifique se a skill define precedência de providers de memória.",
-    "EX-17": "Verifique se o pipeline _inbox tem os 4 estágios e o IntakeEnvelope está documentado.",
+    "EX-17": "Verifique se o pipeline _inbox tem as 5 fases do Standard Flow (Reception, Initial Manifest, Extraction by Type, Cognitive Triage, Promotion) e o IntakeEnvelope está documentado.",
     "EX-20": "Verifique se a skill define operações RESOLVE, CREATE, UPDATE, LINT, EXPORT.",
     "EX-21": "Verifique se o orquestrador classifica output como prosa/visual/técnico.",
     "EX-22": "Verifique se o artifacts manager consegue listar artefatos existentes.",

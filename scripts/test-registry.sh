@@ -344,7 +344,7 @@ test_EX17() {
   check_dir_exists "$ACERVO/_inbox/processing" "Inbox processing"
   check_dir_exists "$ACERVO/_inbox/promoted" "Inbox promoted"
 
-  SMOKE_PROMPT="Verifique se o pipeline _inbox tem os 4 estágios e o IntakeEnvelope está documentado."
+  SMOKE_PROMPT="Verifique se o pipeline _inbox tem as 5 fases do Standard Flow (Reception, Initial Manifest, Extraction by Type, Cognitive Triage, Promotion) e o IntakeEnvelope está documentado."
 }
 
 # --- 4. Quality Gates ---

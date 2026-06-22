@@ -15,7 +15,9 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
   and *conflict authority* (provider stays below the Acervo) are distinct axes.
 - `excrtx-memory-intake` (EX-17): `remediation_tip` now references the canonical 5-phase
   Standard Flow (Reception · Manifest · Extraction · Triage · Promotion) instead of a
-  compressed 4-step list, removing the 4-vs-5 stage-count ambiguity.
+  compressed 4-step list, removing the 4-vs-5 stage-count ambiguity. The EX-17 smoke prompt
+  (`test-registry.sh`, `migrate_calibration_metadata.py`) was also asking for "4 estágios" —
+  now aligned to the 5 phases so the check no longer reports a spurious count divergence.
 
 ### Fixed
 - `exocortex_runtime_guard.py` resolved the Acervo write-scope root from its own
