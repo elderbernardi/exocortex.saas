@@ -28,29 +28,10 @@ MAGENTA = "\033[0;35m"
 BOLD = "\033[1m"
 NC = "\033[0m"
 
-# LLM Judge API settings — aligned with skill_judge.py
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-JUDGE_MODEL_PRIMARY = "deepseek-chat"  # DeepSeek V4 Pro (direct API)
-JUDGE_MODEL_FALLBACK = "deepseek/deepseek-chat"  # DeepSeek via OpenRouter
-
-
-def get_api_key(var_name):
-    """Retrieve API key from env or .secrets files."""
-    key = os.environ.get(var_name)
-    if key:
-        return key
-    for secrets_path in [REPO_ROOT / ".secrets", Path.home() / ".secrets"]:
-        if secrets_path.is_file():
-            try:
-                for line in secrets_path.read_text(encoding="utf-8").splitlines():
-                    if "=" in line:
-                        k, v = line.split("=", 1)
-                        if k.strip() == var_name:
-                            return v.strip().strip("'").strip('"')
-            except Exception:
-                pass
-    return None
+# LLM Judge: provider/modelo/chave/endpoint vêm do papel 'default'
+# (EXOCORTEX_DEFAULT_*), resolvido por scripts/lib/llm_roles.py.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
+import llm_roles  # noqa: E402
 
 
 def detect_hermes_bin():
@@ -212,10 +193,8 @@ def call_llm_judge(test_prompt, agent_response, criteria):
       - category: 'BEHAVIORAL' | 'STRUCTURAL' | None (only on FAIL)
       - reasoning: str
     """
-    openrouter_key = get_api_key("OPENROUTER_API_KEY")
-    deepseek_key = get_api_key("DEEPSEEK_API_KEY")
-
-    if not openrouter_key and not deepseek_key:
+    role = llm_roles.resolve_role("default")
+    if not role.is_usable():
         return None
 
     judge_prompt = f"""Evaluate if the following Agent Response satisfies the Acceptance Criteria for the given Test Prompt.
@@ -236,17 +215,7 @@ Provide a JSON response with the following keys:
 - "criteria_met": A list of criterion numbers that were satisfied (e.g. [1, 3] if criteria 1 and 3 passed but 2 and 4 failed).
 """
 
-    response = None
-    deepseek_key = get_api_key("DEEPSEEK_API_KEY")
-    openrouter_key = get_api_key("OPENROUTER_API_KEY")
-
-    # Primary: DeepSeek V4 Pro (direct)
-    if deepseek_key:
-        response = call_llm_api(judge_prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_PRIMARY)
-
-    # Fallback: DeepSeek via OpenRouter
-    if not response and openrouter_key:
-        response = call_llm_api(judge_prompt, OPENROUTER_API_URL, openrouter_key, JUDGE_MODEL_FALLBACK)
+    response = call_llm_api(judge_prompt, role.chat_url, role.api_key, role.model)
 
     if response:
         try:
@@ -297,7 +266,8 @@ def run_calibration_flow():
     # Resolve model: CLI flag > env var > interactive prompt > None (Hermes default)
     model_override = args.model
     if not model_override:
-        model_override = os.environ.get("EXOCORTEX_MODEL")
+        # Override legado (EXOCORTEX_MODEL) ou o modelo do papel LLM 'default'.
+        model_override = os.environ.get("EXOCORTEX_MODEL") or llm_roles.resolve_role("default").model or None
     if not model_override and not args.dry_run and sys.stdin.isatty():
         print(f"{YELLOW}Qual modelo usar para a calibração?{NC}")
         print(f"  Enter = default do Hermes (config.yaml)")

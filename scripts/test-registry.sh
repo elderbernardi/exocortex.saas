@@ -567,7 +567,9 @@ test_EX27() {
   local docbrain_dir="${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}"
   check_dir_exists "$docbrain_dir" "DocBrain repo"
 
-  check_api_key "OPENROUTER_API_KEY" "DocBrain LLM routing"
+  # DocBrain usa o papel 'auxiliar', que herda 'default' quando vazio — então a
+  # fonte garantida é a chave do papel 'default'.
+  check_api_key "EXOCORTEX_DEFAULT_API_KEY" "DocBrain LLM (papel auxiliar herda o default)"
 
   SMOKE_PROMPT="Verifique se o DocBrain repo está clonado e buildado em $docbrain_dir."
 }

@@ -219,14 +219,14 @@ VERSION=v1.0.1 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocor
 A single command that activates every optional component — WebUI cockpit, Hindsight local memory, Telegram gateway, reasoning keys, DocBrain, Firecrawl, and Context7 — with guided step-by-step review and post-install cognitive calibration:
 
 ```bash
-OPENROUTER_API_KEY="sk-or-..." \
-DEEPSEEK_API_KEY="sk-..." \
+EXOCORTEX_DEFAULT_PROVIDER="deepseek" \
+EXOCORTEX_DEFAULT_API_KEY="sk-..." \
+EXOCORTEX_AUX_API_KEY="sk-or-..." \
 TELEGRAM_BOT_TOKEN="123456:ABC..." \
 EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
 EXOCORTEX_ENABLE_HINDSIGHT=1 \
 FIRECRAWL_API_KEY="fc-..." \
 FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
-DOCBRAIN_LLM_API_KEY="sk-or-..." \
 CONTEXT7_API_KEY="c7-..." \
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
   | bash -s -- --step-by-step --calibrate
@@ -236,15 +236,23 @@ What each marker activates:
 
 | Variable | Component | Notes |
 |---|---|---|
-| `OPENROUTER_API_KEY` | Reasoning routing (OpenRouter) | Primary LLM gateway. Required for most skills. |
-| `DEEPSEEK_API_KEY` | DeepSeek direct | Alternative reasoning path / Mixture of Agents. Independent credential — **not interchangeable** with `OPENROUTER_API_KEY` and does not satisfy components that look that name up literally. Set whichever your provider needs, not both. |
+| `EXOCORTEX_DEFAULT_*` | Default LLM role (`{PROVIDER,MODEL,API_KEY,BASE_URL}`) | Primary LLM — reasoning, routing, all skills. **Always used; required.** Empty `BASE_URL` is derived from `setup/providers.json`. |
+| `EXOCORTEX_VISION_*` | Vision LLM role | Multimodal (image/OCR) model. Each empty field **inherits the default** role field-by-field. |
+| `EXOCORTEX_AUX_*` | Auxiliary LLM role | External software: DocBrain parser and the Hindsight LLM backend. Each empty field **inherits the default**. |
 | `TELEGRAM_BOT_TOKEN` | Telegram Gateway | Bot token from BotFather. Enables remote chat interface. |
 | `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | MIT-licensed `nesquena/hermes-webui`. Access at `127.0.0.1:8787` or via Tailscale. |
 | `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session memory. Requires `docker` + `docker compose`. |
 | `FIRECRAWL_API_KEY` | Firecrawl crawling/extract | Web scraping engine. Optional — only if running a Firecrawl instance. |
 | `FIRECRAWL_BASE_URL` | Firecrawl endpoint | Default: `http://127.0.0.1:3002`. Set if your instance runs elsewhere. |
-| `DOCBRAIN_LLM_API_KEY` | DocBrain parser override | Isolates the LLM key used by the document parser. Falls back to `OPENROUTER_API_KEY` if unset. |
 | `CONTEXT7_API_KEY` | Context7 docs MCP | Technical documentation lookup. Optional. |
+
+> **The 3 LLM roles** are the single source of truth for every LLM call in this repo. Configure
+> just the **default** role for most setups — **vision** and **auxiliar** inherit it field-by-field
+> when unset. Providers (`openrouter`, `deepseek`, `openai`, `gemini`, `xai`, `opencode`, `opencode-go`)
+> and their base URLs come from `setup/providers.json`; resolve the effective config with
+> `python3 scripts/lib/llm_roles.py all`. Legacy installs are migrated once by
+> `scripts/migrate-env-roles.py` (run automatically by `setup.sh`): old `OPENROUTER`/`DEEPSEEK`/`OPENCODE`
+> keys map to **default**, `DOCBRAIN_LLM` to **auxiliar**, `OPENAI`/`GEMINI`/`GOOGLE` to **vision**.
 
 Flags used:
 
@@ -254,7 +262,8 @@ Flags used:
 If you prefer a non-interactive full install (CI/CD, headless server), replace `--step-by-step --calibrate` with `--yes`:
 
 ```bash
-OPENROUTER_API_KEY="sk-or-..." \
+EXOCORTEX_DEFAULT_PROVIDER="deepseek" \
+EXOCORTEX_DEFAULT_API_KEY="sk-..." \
 EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
 EXOCORTEX_ENABLE_HINDSIGHT=1 \
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
@@ -425,14 +434,15 @@ DocBrain is used to parse complex documents and PDFs.
    npm install
    npm run build
    ```
-3. Set your API Key in your environment variables:
+3. DocBrain is configured by the **auxiliary** LLM role. The setup `step-08` generates DocBrain's
+   `.env` from `EXOCORTEX_AUX_*`; if the aux role is empty, it inherits the **default** role:
    ```bash
-   export OPENROUTER_API_KEY="your-openrouter-key"
-   export DEEPSEEK_API_KEY="your-deepseek-key"   # opcional, para fluxos DeepSeek diretos
+   export EXOCORTEX_DEFAULT_PROVIDER="deepseek"
+   export EXOCORTEX_DEFAULT_API_KEY="your-default-key"
+   export EXOCORTEX_AUX_API_KEY="your-aux-key"        # optional — isolates DocBrain's LLM key
    export FIRECRAWL_BASE_URL="http://127.0.0.1:3002"  # se usar Firecrawl local
    ```
-   _(Alternatively, isolate the key: `export DOCBRAIN_LLM_API_KEY="your-key"`)_
-   `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais distintas.
+   _(Inspect the resolved roles with `python3 scripts/lib/llm_roles.py all`.)_
 
 ---
 

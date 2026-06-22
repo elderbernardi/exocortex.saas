@@ -53,7 +53,7 @@ This skill requires external tools. The wrapper script **auto-installs** everyth
 | `browser-use` CLI | Auto-installed via `uv tool install --python 3.13 browser-use` | Same command |
 | Chromium browser | Auto-downloaded via `browser-use install` | `~/.local/bin/browser-use install` |
 | System libs (fonts, etc.) | Needs `sudo` — may fail silently | `sudo ~/.local/bin/browser-use install` |
-| `OPENROUTER_API_KEY` | Required only for Python Agent mode | Set in `.env` or shell |
+| `OPENROUTER_API_KEY` | Required only for Python Agent mode; supplied by the **default** LLM role (`EXOCORTEX_DEFAULT_API_KEY`, when its provider is `openrouter`) | Set in `.env` or shell |
 
 > **⚠️ PATH caveat:** The `mise` shim may resolve `browser-use` to Python 3.14 (asyncio incompatible). **Always invoke via the wrapper script or `~/.local/bin/browser-use`**, never an unverified shim.
 
@@ -206,7 +206,7 @@ $BU close
 
 ## LLM Agent Usage (Python)
 
-For autonomous agent-driven browser tasks using OpenRouter:
+For autonomous agent-driven browser tasks using OpenRouter. The `browser_use` client reads `OPENROUTER_API_KEY` from the environment; in Exocórtex this comes from the **default** LLM role (`EXOCORTEX_DEFAULT_*`) when its provider is `openrouter`:
 
 ```python
 import asyncio
@@ -222,7 +222,7 @@ async def run():
 asyncio.run(run())
 ```
 
-**Required env**: `OPENROUTER_API_KEY`
+**Required env**: `OPENROUTER_API_KEY` (provided by the default LLM role)
 
 ## When to Use
 

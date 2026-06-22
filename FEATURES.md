@@ -436,7 +436,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Repo Fonte**             | `github.com/elderbernardi/docbrain.git` (desenvolvimento). Fork de integração com CLI API: `github.com/ProjetoBB/docBrainBB.git`.                                                                 |
 | **Instalação**             | `setup.sh` via `configure_docbrain_engine()`: clona `github.com/ProjetoBB/docBrainBB.git` em `${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}`, executa `npm install && npm run build`. |
 | **Dependências de Skills** | `excrtx-memory-intake`                                                                                                                                                                            |
-| **Dependências de Tools**  | `git`, `npm`, Node.js, `OPENROUTER_API_KEY` ou `DOCBRAIN_LLM_API_KEY` (credenciais compatíveis com o provider escolhido)                                                                           |
+| **Dependências de Tools**  | `git`, `npm`, Node.js, papel LLM **auxiliar** (`EXOCORTEX_AUX_*`, herda o `default` se vazio)                                                                                                       |
 
 #### EX-28. NotebookLM Router (`excrtx-integrate-nlmroute`)
 
@@ -466,7 +466,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Como usar**              | Usar wrapper: `skills/excrtx-integrate-browser/scripts/browser-use.sh open <url>`. Sempre rodar `state` antes de interagir (para obter índices de elementos).                                                                                                      |
 | **Instalação**             | O wrapper `scripts/browser-use.sh` faz auto-install na primeira execução: verifica `uv`, instala `browser-use` via `uv tool install --python 3.13 browser-use`, e baixa Chromium. `uv` deve estar pré-instalado no sistema.                                        |
 | **Dependências de Skills** | Nenhuma                                                                                                                                                                                                                                                            |
-| **Dependências de Tools**  | `uv`, Python 3.13, Chromium, `OPENROUTER_API_KEY` (para Agent mode)                                                                                                                                                                                                |
+| **Dependências de Tools**  | `uv`, Python 3.13, Chromium, papel LLM **default** (`EXOCORTEX_DEFAULT_*`, para Agent mode)                                                                                                                                                                         |
 
 ---
 
@@ -528,7 +528,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Funcionalidade**         | Contingência para operar em cenários sem saldo no OpenRouter. Seleciona o melhor modelo gratuito baseado em benchmarks reais e catálogo, convertendo o índice para a escala 1-10 de capacidade com warnings transparentes. Configura o Hermes com fallback automático em duas camadas (failover nativo intra-sessão e circuit breaker persistente cross-sessão com crons de watchdog/recovery). |
 | **Como usar**              | `python3 scripts/openrouter_free_model_router.py --imbroke --activate` ou via trigger `/xc imbroke`.                                                                                                                                                                                                                                                                                            |
-| **Instalação**             | Ativado pelo `setup.sh` se `OPENROUTER_API_KEY` estiver definida com a flag `--imbroke`, ou executando o script principal.                                                                                                                                                                                                                                                                      |
+| **Instalação**             | Ativado pelo `setup.sh` quando o papel LLM **default** (`EXOCORTEX_DEFAULT_*`) aponta para OpenRouter e a flag `--imbroke` é usada, ou executando o script principal.                                                                                                                                                                                                                            |
 | **Dependências de Skills** | Nenhuma                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Dependências de Tools**  | `python3`, `hermes`                                                                                                                                                                                                                                                                                                                                                                             |
 
@@ -570,7 +570,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Funcionalidade**         | Framework LLM-as-Judge para avaliar e melhorar skills do Exocórtex. Executa rubric de 5 dimensões (D1 Structural, D2 Clarity, D3 Alignment, D4 Fitness, D5 Economy) com gate D1 determinístico (sem LLM) e D2-D5 via DeepSeek/Claude. Gera baselines JSON, priority fixes, e vereditos (PASS/IMPROVE/REWRITE). Suporta batch `--all` e individual `--skill`. |
 | **Como usar**              | `python -m scripts.skill_judge --all --save-baseline baselines/output.json` ou `python -m scripts.skill_judge --skill excrtx-memory-manager`.                                                                                                                                                                                                                |
-| **Instalação**             | `scripts/skill_judge.py`. Requer `DEEPSEEK_API_KEY` ou `OPENROUTER_API_KEY`.                                                                                                                                                                                                                                                                                 |
+| **Instalação**             | `scripts/skill_judge.py`. Usa o papel LLM **default** (`EXOCORTEX_DEFAULT_*`).                                                                                                                                                                                                                                                                               |
 | **Dependências de Skills** | `excrtx-quality-gate` (EX-21)                                                                                                                                                                                                                                                                                                                                |
 | **Dependências de Tools**  | Python 3.11+, DeepSeek V4 Pro API (ou OpenRouter fallback)                                                                                                                                                                                                                                                                                                   |
 
@@ -590,7 +590,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Funcionalidade**         | Loop fechado de melhoria automática de skills: judge → rewrite → re-judge → accept/rollback. Promove skills de IMPROVE/REWRITE para PASS usando LLM-as-Judge como avaliador e LLM como rewriter, com safety gates (D1 nunca regredir, compiled_rules preservado, PT-BR preservado). |
 | **Como usar**              | `python -m scripts.gepa_loop --all` para batch, `--skill <name>` para individual, `--dry-run` para simulação.                                                                                                                                                                       |
-| **Instalação**             | `scripts/gepa_rewriter.py` + `scripts/gepa_loop.py`. Requer `DEEPSEEK_API_KEY` ou `OPENROUTER_API_KEY`.                                                                                                                                                                             |
+| **Instalação**             | `scripts/gepa_rewriter.py` + `scripts/gepa_loop.py`. Usa o papel LLM **default** (`EXOCORTEX_DEFAULT_*`).                                                                                                                                                                            |
 | **Dependências de Skills** | `excrtx-quality-skilljudge` (EX-54), `excrtx-quality-gate` (EX-21)                                                                                                                                                                                                                  |
 | **Dependências de Tools**  | Python 3.11+, DeepSeek V4 Pro API                                                                                                                                                                                                                                                   |
 
@@ -612,8 +612,8 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Como usar**              | No Hermes: `/skill last30days` e depois `last30days "AI coding tools" --days=7 --search=reddit,x`. Ou diretamente pelo engine: `python3.13 skills/last30days/scripts/last30days.py "topic"`. O engine requer Python 3.12+.                                                          |
 | **Instalação**             | `setup.sh` verifica keys (step 12). Skill versionada em `skills/last30days/` com patch de provider customizável (DeepSeek V4 Flash). Symlink: `~/.hermes/skills/research/last30days` → repo canônico. Instalável também via `hermes skills install mvanhorn/last30days-skill`.     |
 | **Fontes gratuitas**       | Reddit (RSS público), Hacker News (Algolia), YouTube (yt-dlp), Polymarket (API pública), GitHub (gh CLI).                                                                                                                                                                           |
-| **Fontes com key**         | X/Twitter (`XAI_API_KEY`), TikTok/Instagram/Threads/Pinterest (`SCRAPECREATORS_API_KEY`), Bluesky (`BSKY_HANDLE`+`BSKY_APP_PASSWORD`), Web Search (`BRAVE_API_KEY`), Deep Research (`OPENROUTER_API_KEY`).                                                                          |
-| **Dependências de Tools**  | Python 3.12+, yt-dlp, Node.js, gh CLI. Opcionais: `DEEPSEEK_API_KEY` para reasoning (planner/reranker).                                                                                                                                                                            |
+| **Fontes com key**         | X/Twitter (`XAI_API_KEY`), TikTok/Instagram/Threads/Pinterest (`SCRAPECREATORS_API_KEY`), Bluesky (`BSKY_HANDLE`+`BSKY_APP_PASSWORD`), Web Search (`BRAVE_API_KEY`), Deep Research (papel LLM **default**).                                                                         |
+| **Dependências de Tools**  | Python 3.12+, yt-dlp, Node.js, gh CLI. Reasoning (planner/reranker) usa o papel LLM **default** (`EXOCORTEX_DEFAULT_*`).                                                                                                                                                            |
 
 ---
 
@@ -732,18 +732,31 @@ VERSION=v1.0.0-rc2 curl -fsSL ... | bash
 | `HERMES_HOME`                | Sim (default: `~/.hermes`)                      | Diretório do runtime Hermes                 |
 | `EXOCORTEX_HOME`             | Sim (default: `~/exocortex`)                    | Workspace cognitivo                         |
 | `ACERVO`                     | Sim (default: `$EXOCORTEX_HOME/acervo`)         | Acervo Cognitivo                            |
+| `EXOCORTEX_DEFAULT_PROVIDER`  | Sim                                            | Papel LLM **default** (sempre usado): LLM routing/reasoning, skill_judge, GEPA, last30days, browser Agent |
+| `EXOCORTEX_DEFAULT_MODEL`     | Sim                                            | Modelo do papel default                     |
+| `EXOCORTEX_DEFAULT_API_KEY`   | Sim                                            | Chave do papel default                      |
+| `EXOCORTEX_DEFAULT_BASE_URL`  | Não (vazio → `setup/providers.json`)           | Base URL do papel default                   |
+| `EXOCORTEX_VISION_*`          | Não (herda `default`)                          | Papel LLM **visão** (`{PROVIDER,MODEL,API_KEY,BASE_URL}`) |
+| `EXOCORTEX_AUX_*`             | Não (herda `default`)                          | Papel LLM **auxiliar** — DocBrain e backend LLM do Hindsight (`{PROVIDER,MODEL,API_KEY,BASE_URL}`) |
 | `TELEGRAM_BOT_TOKEN`         | Não                                             | Gateway Telegram                            |
-| `OPENROUTER_API_KEY`         | Não                                             | DocBrain + LLM routing via OpenRouter       |
 | `EXOCORTEX_DOCBRAIN_DIR`     | Não (default: `$EXOCORTEX_HOME/tools/docbrain`) | Path da instância DocBrain                  |
-| `DOCBRAIN_LLM_API_KEY`       | Não                                             | Override de key específico para DocBrain    |
 | `CONTEXT7_API_KEY`           | Não                                             | Context7 MCP (docs técnicos)                |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | Não                                             | Ativar Hindsight Docker                     |
-| `DEEPSEEK_API_KEY`           | Não                                             | last30days reasoning (LLM planner/reranker)  |
 | `XAI_API_KEY`                | Não                                             | last30days X/Twitter                         |
 | `BRAVE_API_KEY`              | Não                                             | last30days web search (auto-resolve)         |
 | `SCRAPECREATORS_API_KEY`     | Não                                             | last30days TikTok/Instagram/Threads/Pinterest |
 | `BSKY_HANDLE`                | Não                                             | last30days Bluesky handle                    |
 | `BSKY_APP_PASSWORD`          | Não                                             | last30days Bluesky app password              |
+
+> **Modelo de 3 papéis LLM.** Toda chamada LLM deste repo é configurada por um
+> de três papéis — **default** (sempre usado; obrigatório), **vision** e **aux**
+> (auxiliar) — cada um um quádruplo `EXOCORTEX_<ROLE>_{PROVIDER,MODEL,API_KEY,BASE_URL}`.
+> `vision` e `aux` herdam o `default` campo a campo quando vazios; `BASE_URL`
+> vazia é resolvida pelo catálogo `setup/providers.json`. Resolvedores:
+> `scripts/lib/llm_roles.py` (Python) e `setup/lib/llm-roles.sh` (shell).
+> Instalações antigas (`OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`,
+> `DOCBRAIN_LLM_API_KEY`, …) são migradas automaticamente para os papéis por
+> `scripts/migrate-env-roles.py`, executado pelo `setup.sh`.
 
 ---
 

@@ -91,13 +91,22 @@ The schema is documented in `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.m
 # D1 structural check only (no LLM keys required)
 python3 scripts/skill_judge.py --skill excrtx-<name> --d1-only
 
-# Full 5-dimension quality sweep (needs an LLM key — provider order: OPENCODE_API_KEY,
-# then DEEPSEEK_API_KEY, then OpenCode Go). With OPENCODE_API_KEY the judge calls the
-# OpenCode Zen gateway; pick the model with OPENCODE_MODEL or --model (default
-# nemotron-3-ultra-free), list ids with --list-models.
+# Full 5-dimension quality sweep — uses the central 'default' LLM role
+# (EXOCORTEX_DEFAULT_PROVIDER/MODEL/API_KEY/BASE_URL, resolved by
+# scripts/lib/llm_roles.py). Configure it via `bash setup.sh` or the .env.local.
+# `--model` overrides just the model; `--list-models` lists the default role
+# provider's models.
 python3 scripts/skill_judge.py --skill excrtx-<name>
-python3 scripts/skill_judge.py --skill excrtx-<name> --model nemotron-3-ultra-free
+python3 scripts/skill_judge.py --skill excrtx-<name> --model <model-id>
 ```
+
+The 3 LLM roles (**default** / **vision** / **auxiliar**) are the single source of
+truth for every LLM call in this repo. `default` is always used; `vision` and
+`auxiliar` inherit `default` field-by-field when unset. The provider catalog lives
+in `setup/providers.json`; the resolvers are `scripts/lib/llm_roles.py` (Python) and
+`setup/lib/llm-roles.sh` (shell). Legacy keys (`OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`,
+`DOCBRAIN_LLM_API_KEY`, …) are migrated once into the roles by
+`scripts/migrate-env-roles.py` (run automatically by `setup.sh`).
 
 Verdict must be `PASS` before merging. `REWRITE` blocks the merge.
 

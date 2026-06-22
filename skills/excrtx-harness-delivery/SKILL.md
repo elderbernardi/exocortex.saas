@@ -176,7 +176,7 @@ Security baseline: private bucket, short TTL, checksums, MIME sniffing, credenti
 
 - **Token leakage:** Never pass `access_token` or `refresh_token` into Hermes config, env, prompts, memory, or logs. Use `connection_id` references.
 - **Runtime/workspace confusion:** Do not move auth, config, logs, sessions, skills, or Hindsight config into `~/exocortex`; those stay in `~/.hermes`.
-- **Contingency auto-enable:** Do not auto-enable a fallback provider just because `OPENROUTER_API_KEY` exists. Require explicit `--imbroke` flag.
+- **Contingency auto-enable:** Do not auto-enable a fallback provider just because an LLM role key (e.g. `EXOCORTEX_DEFAULT_API_KEY`) is present. Require explicit `--imbroke` flag.
 - **CLI API stdout pollution:** Human-readable output in stdout breaks agent JSON parsing. Route logs to stderr.
 - **GitHub as doc delivery:** Do not use GitHub as default delivery UX for ordinary documents — only for software releases.
 - **Acervo path inference:** Do not resolve Acervo from `$HERMES_HOME/acervo` in new scripts; use `$ACERVO` or `$EXOCORTEX_HOME/acervo`.

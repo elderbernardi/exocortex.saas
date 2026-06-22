@@ -3,22 +3,51 @@
 ### Pré-requisitos
 
 - Docker
-- Chave Hindsight (`HINDSIGHTS_API_KEY`) — obter em https://ui.hindsight.vectorize.io
-- Chave de LLM backend para o Hindsight processar embeddings/raciocínio
+- Chave Hindsight (`HINDSIGHT_API_KEY`, serviço cloud) — obter em https://ui.hindsight.vectorize.io
+- Um papel LLM configurado para o backend que processa embeddings/raciocínio (papel **default** ou um **auxiliar** específico)
 
 ### Configuração
 
 1. **Variáveis de ambiente** (`~/.hermes/.env`):
 
+   O backend LLM do Hindsight é configurado pelo **papel auxiliar** (`aux`) do
+   modelo de 3 papéis. Você **não** define mais `HINDSIGHT_LLM_API_KEY`,
+   `DEEPSEEK_API_KEY` nem `OPENROUTER_API_KEY` para o Hindsight: basta ter o
+   papel `default` configurado (o `aux` herda o `default` campo a campo quando
+   vazio) ou definir um `aux` específico.
+
    ```
+   # Serviço Hindsight (cloud) — permanece como está:
    HINDSIGHT_API_KEY=hsk_.....
-   HINDSIGHT_LLM_API_KEY=<mesma ou chave de LLM OpenAI-compatível>
-   # Se usar provedor OpenAI-compatível como DeepSeek:
-   HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash
-   HINDSIGHT_API_LLM_BASE_URL=https://api.deepseek.com/v1
+
+   # Backend LLM — papel default (sempre usado; obrigatório):
+   EXOCORTEX_DEFAULT_PROVIDER=deepseek
+   EXOCORTEX_DEFAULT_MODEL=deepseek-v4-flash
+   EXOCORTEX_DEFAULT_API_KEY=<chave LLM OpenAI-compatível>
+   EXOCORTEX_DEFAULT_BASE_URL=          # vazio → resolvido por setup/providers.json
+
+   # Opcional: backend LLM dedicado ao Hindsight (papel auxiliar).
+   # Qualquer campo vazio herda o default.
+   # EXOCORTEX_AUX_PROVIDER=...
+   # EXOCORTEX_AUX_MODEL=...
+   # EXOCORTEX_AUX_API_KEY=...
+   # EXOCORTEX_AUX_BASE_URL=...
    ```
 
-2. **Container Docker**:
+   O `setup/step-01-hindsight.sh` resolve o papel `aux` (com herança do
+   `default`) e gera o `.env` interno do Hindsight com as variáveis de contrato
+   do container — `HINDSIGHT_API_LLM_API_KEY`, `HINDSIGHT_API_LLM_MODEL` e
+   `HINDSIGHT_API_LLM_BASE_URL` (esta derivada do provider do papel). Essas
+   variáveis continuam existindo, mas agora são **geradas a partir do papel
+   `aux`** — você não as edita à mão.
+
+   > Instalações antigas (com `HINDSIGHT_LLM_API_KEY`/`DEEPSEEK_API_KEY` etc.)
+   > são migradas automaticamente para os papéis por `scripts/migrate-env-roles.py`,
+   > executado pelo `setup.sh`.
+
+2. **Container Docker** (as variáveis `HINDSIGHT_API_LLM_*` abaixo são geradas
+   pelo `step-01-hindsight.sh` a partir do papel `aux` — mostradas aqui apenas
+   para referência do contrato do container):
 
    ```bash
    docker run -d \
@@ -28,9 +57,9 @@
      -p 9999:9999 \
      -v ~/.hermes/hindsight-local/data:/home/hindsight/.pg0 \
      --env HINDSIGHT_API_LLM_PROVIDER=openai \
-     --env HINDSIGHT_API_LLM_API_KEY=<chave> \
-     --env HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash \
-     --env HINDSIGHT_API_LLM_BASE_URL=https://api.deepseek.com/v1 \
+     --env HINDSIGHT_API_LLM_API_KEY=<chave do papel aux> \
+     --env HINDSIGHT_API_LLM_MODEL=<modelo do papel aux> \
+     --env HINDSIGHT_API_LLM_BASE_URL=<base URL derivada do provider do papel aux> \
      ghcr.io/vectorize-io/hindsight:latest
    ```
 
@@ -85,7 +114,7 @@ hermes memory status
 
 | Caminho | Função |
 |---------|--------|
-| `~/.hermes/.env` | `HINDSIGHT_API_KEY`, `HINDSIGHT_LLM_API_KEY` |
+| `~/.hermes/.env` | `HINDSIGHT_API_KEY` (serviço cloud) + papéis LLM `EXOCORTEX_DEFAULT_*` / `EXOCORTEX_AUX_*` (backend LLM) |
 | `~/.hermes/config.yaml` | `memory.provider=hindsight` |
 | `~/.hermes/hindsight/config.json` | Configuração do plugin |
 | `~/.hermes/hindsight-local/` | Container Docker + dados persistentes |

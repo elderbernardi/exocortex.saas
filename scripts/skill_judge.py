@@ -20,6 +20,9 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
+import llm_roles  # noqa: E402  (resolvedor central de papéis LLM)
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 RUBRIC_PATH = REPO_ROOT / ".dogfood" / "schemas" / "skill-judge-rubric.md"
@@ -68,25 +71,10 @@ D5_LABELS = ["EFFICIENT", "ACCEPTABLE", "BLOATED"]
 
 VERDICTS = ["PASS", "IMPROVE", "REWRITE"]
 
-# LLM judge model preferences
-# Primary: OpenCode Zen gateway (OPENCODE_API_KEY) — broad model access via one key
-# Fallbacks: DeepSeek V4 Pro direct, OpenRouter
-JUDGE_MODEL_DEEPSEEK = "deepseek-v4-pro"
-JUDGE_MODEL_OPENROUTER = "anthropic/claude-sonnet-4"
-JUDGE_MODEL_OPENROUTER_DS = "deepseek/deepseek-chat"
-
-# OpenCode Zen gateway (https://opencode.ai/zen). Authenticated with OPENCODE_API_KEY.
-# Model is configurable via OPENCODE_MODEL or --model. The requested `minimax-m3`
-# is only published as `minimax-m3-free`, whose free promotion has ended (paid
-# variants require account credits); `nemotron-3-ultra-free` is the default that
-# remains available on a free key. See `python3 scripts/skill_judge.py --list-models`.
-OPENCODE_API_URL = "https://opencode.ai/zen/v1/chat/completions"
-OPENCODE_MODELS_URL = "https://opencode.ai/zen/v1/models"
-OPENCODE_MODEL = os.environ.get("OPENCODE_MODEL", "nemotron-3-ultra-free")
-
-# API endpoints
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
+# Provider/modelo/chave/endpoint do judge vêm do papel LLM 'default'
+# (EXOCORTEX_DEFAULT_*), resolvido por scripts/lib/llm_roles.py. O modelo pode
+# ser sobrescrito pontualmente via --model. Não há mais nomes de chave legados
+# aqui (corte limpo); a migração one-shot popula os papéis no .env.local.
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -466,112 +454,6 @@ def generate_report(results: list[dict]) -> str:
 # LLM API Integration
 # ─────────────────────────────────────────────────────────────────────
 
-def _get_api_key() -> str | None:
-    """Retrieve OpenRouter API key from env or .secrets file."""
-    key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY")
-    if key:
-        return key
-
-    # Try .secrets files
-    for secrets_path in [
-        REPO_ROOT / ".secrets",
-        Path.home() / ".secrets",
-    ]:
-        if secrets_path.is_file():
-            try:
-                for line in secrets_path.read_text(encoding="utf-8").splitlines():
-                    if "=" in line:
-                        k, v = line.split("=", 1)
-                        k = k.strip()
-                        v = v.strip().strip("'").strip('"')
-                        if k in ("OPENROUTER_API_KEY", "OPENAI_API_KEY") and v:
-                            return v
-            except Exception:
-                pass
-    return None
-
-
-def _get_deepseek_key() -> str | None:
-    """Retrieve DeepSeek API key from env or .secrets file."""
-    key = os.environ.get("DEEPSEEK_API_KEY")
-    if key:
-        return key
-
-    for secrets_path in [
-        REPO_ROOT / ".secrets",
-        Path.home() / ".secrets",
-    ]:
-        if secrets_path.is_file():
-            try:
-                for line in secrets_path.read_text(encoding="utf-8").splitlines():
-                    if "=" in line:
-                        k, v = line.split("=", 1)
-                        k = k.strip()
-                        v = v.strip().strip("'").strip('"')
-                        if k == "DEEPSEEK_API_KEY" and v:
-                            return v
-            except Exception:
-                pass
-    return None
-
-
-def _get_opencode_key() -> str | None:
-    """Retrieve the OpenCode Zen gateway API key from env or .secrets file."""
-    key = os.environ.get("OPENCODE_API_KEY")
-    if key and key != "***":
-        return key
-
-    for secrets_path in [
-        REPO_ROOT / ".secrets",
-        Path.home() / ".secrets",
-    ]:
-        if secrets_path.is_file():
-            try:
-                for line in secrets_path.read_text(encoding="utf-8").splitlines():
-                    if "=" in line:
-                        k, v = line.split("=", 1)
-                        k = k.strip()
-                        v = v.strip().strip("'").strip('"')
-                        if k == "OPENCODE_API_KEY" and v and v != "***":
-                            return v
-            except Exception:
-                pass
-    return None
-
-
-def _get_opencode_go_key() -> str | None:
-    """Retrieve OpenCode Go API key from the Hermes gateway process environment."""
-    # Try env first
-    key = os.environ.get("OPENCODE_GO_API_KEY")
-    if key and key != "***":
-        return key
-
-    # Read from Hermes gateway process environment
-    import glob
-    for proc_path in glob.glob("/proc/*/cmdline"):
-        try:
-            with open(proc_path, "rb") as f:
-                cmdline = f.read().decode("utf-8", errors="replace")
-            if "hermes" in cmdline.lower() and "gateway" in cmdline.lower():
-                pid = proc_path.split("/")[2]
-                env_path = f"/proc/{pid}/environ"
-                with open(env_path, "rb") as f:
-                    env_data = f.read().decode("utf-8", errors="replace")
-                for var in env_data.split("\0"):
-                    if var.startswith("OPENCODE_GO_API_KEY="):
-                        val = var.split("=", 1)[1]
-                        if val and val != "***":
-                            return val
-        except (PermissionError, FileNotFoundError, IndexError):
-            continue
-    return None
-
-
-# OpenCode Go API endpoint (alternative to DeepSeek)
-OPENCODE_GO_API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
-OPENCODE_GO_MODEL = "glm-5.2"
-
-
 def _call_llm_api(prompt: str, api_url: str, api_key: str, model: str, max_tokens: int = 4000, timeout: int = 90) -> str | None:
     """Make a single LLM API call. Returns response text or None on failure."""
     headers = {
@@ -690,44 +572,35 @@ def _parse_llm_response(response_text: str) -> dict:
     return dims
 
 
-def call_llm_judge(prompt: str) -> dict:
-    """Call the LLM judge API.
+# Override de modelo via --model (definido em main()); None usa o modelo do papel.
+MODEL_OVERRIDE: str | None = None
 
-    Provider order:
-      1. OpenCode Zen gateway (OPENCODE_API_KEY) — configured primary, model OPENCODE_MODEL
-      2. DeepSeek direct API (DEEPSEEK_API_KEY)
-      3. OpenCode Go gateway (glm)
+
+def call_llm_judge(prompt: str) -> dict:
+    """Call the LLM judge API using the central 'default' LLM role.
+
+    O provider/modelo/chave/endpoint vêm de EXOCORTEX_DEFAULT_* (resolvido por
+    scripts/lib/llm_roles.py). `--model` sobrescreve o modelo pontualmente.
+    Reasoning models precisam de orçamento extra de saída para o veredito JSON
+    sobreviver ao traço de raciocínio.
 
     Returns D2-D5 dimensional labels dict, or empty dict on total failure.
     """
-    # Primary: OpenCode Zen gateway. Reasoning models (e.g. nemotron) need extra
-    # output budget so the JSON verdict survives after the reasoning trace.
-    opencode_key = _get_opencode_key()
-    if opencode_key:
-        response = _call_llm_api(prompt, OPENCODE_API_URL, opencode_key, OPENCODE_MODEL, max_tokens=8000, timeout=300)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
+    role = llm_roles.resolve_role("default")
+    if not role.is_usable():
+        print(
+            "    ⚠️ papel LLM 'default' não configurado (EXOCORTEX_DEFAULT_*). "
+            "Rode: bash setup.sh ou python3 scripts/migrate-env-roles.py",
+            file=sys.stderr,
+        )
+        return {}
 
-    # Fallback: DeepSeek direct API (fast, cheap)
-    deepseek_key = _get_deepseek_key()
-    if deepseek_key:
-        response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_DEEPSEEK)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
-
-    # Fallback: OpenCode Go (glm-5.2)
-    opencode_go_key = _get_opencode_go_key()
-    if opencode_go_key:
-        response = _call_llm_api(prompt, OPENCODE_GO_API_URL, opencode_go_key, OPENCODE_GO_MODEL)
-        if response:
-            dims = _parse_llm_response(response)
-            if dims:
-                return dims
-
+    model = MODEL_OVERRIDE or role.model
+    response = _call_llm_api(prompt, role.chat_url, role.api_key, model, max_tokens=8000, timeout=300)
+    if response:
+        dims = _parse_llm_response(response)
+        if dims:
+            return dims
     return {}
 
 
@@ -751,19 +624,22 @@ def main():
     parser.add_argument("--report", type=str, help="Save human-readable report to file")
     parser.add_argument("--compare-baseline", type=str, help="Compare against baseline JSON")
     parser.add_argument("--d1-only", action="store_true", help="Only run deterministic D1 checks (no LLM)")
-    parser.add_argument("--model", type=str, default=None, help="Override the OpenCode Zen judge model (e.g., nemotron-3-ultra-free)")
-    parser.add_argument("--list-models", action="store_true", help="List OpenCode Zen models available to OPENCODE_API_KEY and exit")
+    parser.add_argument("--model", type=str, default=None, help="Override the judge model for the 'default' LLM role")
+    parser.add_argument("--list-models", action="store_true", help="List models published by the 'default' role's provider and exit")
     args = parser.parse_args()
 
     if args.list_models:
-        key = _get_opencode_key()
-        if not key:
-            print("OPENCODE_API_KEY not set.", file=sys.stderr)
+        role = llm_roles.resolve_role("default")
+        if not role.api_key:
+            print("Papel LLM 'default' não configurado (EXOCORTEX_DEFAULT_API_KEY).", file=sys.stderr)
             sys.exit(1)
+        catalog = llm_roles.load_providers().get(role.provider, {})
+        models_path = catalog.get("models_path", "/models")
+        models_url = role.base_url.rstrip("/") + models_path
         try:
             req = urllib.request.Request(
-                OPENCODE_MODELS_URL,
-                headers={"Authorization": f"Bearer {key}", "User-Agent": "python-httpx/0.27.0"},
+                models_url,
+                headers={"Authorization": f"Bearer {role.api_key}", "User-Agent": "python-httpx/0.27.0"},
             )
             with urllib.request.urlopen(req, timeout=30) as resp:
                 models = json.loads(resp.read().decode("utf-8")).get("data", [])
@@ -777,10 +653,10 @@ def main():
     if not (args.all or args.p0 or args.skill):
         parser.error("one of the arguments --all --p0 --skill is required")
 
-    # CLI --model overrides the OpenCode Zen judge model (the configured primary)
+    # CLI --model overrides the model used for the 'default' LLM role
     if args.model:
-        global OPENCODE_MODEL
-        OPENCODE_MODEL = args.model
+        global MODEL_OVERRIDE
+        MODEL_OVERRIDE = args.model
 
     # Determine which skills to evaluate
     if args.all:

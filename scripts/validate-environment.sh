@@ -384,13 +384,14 @@ run_all_checks() {
 
   check_env_var "HERMES_HOME"          "optional"    "Diretório Hermes (default: ~/.hermes)"
   check_env_var "EXOCORTEX_HOME"       "optional"    "Diretório Exocórtex (default: ~/exocortex)"
-  check_env_var "OPENROUTER_API_KEY"   "recommended" "Chave OpenRouter (LLM routing)"
+  # Provedores LLM (3 papéis) — só o 'default' é recomendado; vision/aux herdam.
+  check_env_var "EXOCORTEX_DEFAULT_API_KEY" "recommended" "Papel LLM 'default' (sempre usado)"
+  check_env_var "EXOCORTEX_VISION_API_KEY"  "optional"    "Papel LLM 'vision' (vazio herda default)"
+  check_env_var "EXOCORTEX_AUX_API_KEY"     "optional"    "Papel LLM 'auxiliar' — DocBrain/Hindsight (vazio herda default)"
   check_env_var "TELEGRAM_BOT_TOKEN"   "recommended" "Token Telegram Bot"
   check_env_var "CONTEXT7_API_KEY"     "optional"    "Chave Context7 (docs tech stacks)"
   check_env_var "FIRECRAWL_API_KEY"    "optional"    "Chave Firecrawl (crawling/extract)"
-  check_env_var "DOCBRAIN_LLM_API_KEY" "optional"    "Override LLM key para DocBrain"
   check_env_var "HINDSIGHT_API_KEY"    "optional"    "Chave Hindsight cloud"
-  check_env_var "DEEPSEEK_API_KEY"     "optional"    "Chave DeepSeek (fallback Hindsight)"
   check_env_var "GOOGLE_APPLICATION_CREDENTIALS" "optional" "Path para service account JSON"
 
   _log ""
