@@ -6,6 +6,25 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+## [1.0.4] — 2026-06-22
+
+### Fixed
+- `step-12-verify-keys.sh` now **persists the resolved `default` role API key** into
+  `$HERMES_HOME/.env` under the provider's env var (from `providers.json`
+  `legacy_key_env`). Hermes resolves the LLM credential from the environment
+  (`PROVIDER_REGISTRY[provider].api_key_env_vars`), not `config.yaml`, so setting only
+  `model.provider/default/base_url` left `hermes chat` with no `Authorization` header
+  → **HTTP 401: Missing Authentication header** in the post-provisioning smoke tests.
+  Idempotent upsert; preserves commented templates; `chmod 600`.
+- `provision_memory_routing.py` now **probes Hindsight** (client module + API TCP reach)
+  and skips the AcervoIndex scan with a clear `skipped` reason instead of crashing with
+  `ModuleNotFoundError: hindsight_client` when Hindsight is not provisioned (it is opt-in
+  via `EXOCORTEX_ENABLE_HINDSIGHT`). The provisioner no longer reports `ok:false` for
+  absent optional infra.
+- `step-06b-google-auth.sh` retries the Google Workspace pip install with
+  `--user --break-system-packages` on **PEP 668** externally-managed environments
+  (Debian/Ubuntu), where a bare `pip install` — and even `--user` — is rejected.
+
 ### Changed
 - **LLM key management consolidated into 3 roles** (`default` / `vision` / `auxiliar`).
   All LLM configuration is now a single source of truth: each role is a quad
