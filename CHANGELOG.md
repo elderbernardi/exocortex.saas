@@ -4,6 +4,16 @@ All notable changes to Exocórtex.IA are documented here. Versions are git tags 
 this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.0.3] — 2026-06-22
+
+### Fixed
+- `step-12-verify-keys.sh`: provider ids containing a hyphen (e.g. `opencode-go`)
+  produced an invalid shell variable name (`OPENCODE-GO_API_KEY`), breaking the
+  `${!var}` indirect expansion and **aborting `setup.sh` under `set -e`** before
+  steps 13 (final verification), 14 (validators) and 17 (crons) could run. The
+  provider name is now sanitized to a valid identifier (hyphen → underscore) and
+  the indirect lookup is guarded by an identifier regex. Regression in v1.0.2.
+
 ## [1.0.2] — 2026-06-21
 
 Production-grade hardening release: a reliable installer and agent docs on par with
