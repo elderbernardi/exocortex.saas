@@ -258,6 +258,16 @@ Write content to the Acervo with Domain Filter.
 
 6. **Update index.md** if new page created.
 
+7. **AcervoIndex hook (pós-escrita — ADR-020):** After a successful canonical write (and index.md/log.md update), index the new/updated file's pointer into Hindsight so semantic recall stays current without manual discipline. This is a **best-effort** step — a Hindsight failure MUST NOT cancel or roll back the canonical write that already succeeded.
+
+   ```bash
+   python "$ACERVO/global/tools/acervo_hindsight_index.py" index-file "$TARGET_PATH" || \
+     echo "AcervoIndex hook falhou para $TARGET_PATH (escrita canônica preservada)"
+   ```
+
+   - Skip when `$TARGET_PATH` is under `raw/`, `_archive/`, `.quarantine/`, or is `deprecated: true` — the indexer already filters these, so the call is a no-op, but skipping avoids noise.
+   - The indexer dedups by content hash: re-running on an unchanged file is a no-op.
+
 ### Rules
 
 - **NEVER** copy content between microversos — use cross-ref in `shared/`
@@ -271,6 +281,7 @@ Write content to the Acervo with Domain Filter.
 - [ ] YAML frontmatter present on every new page
 - [ ] log.md updated
 - [ ] index.md updated (if new page)
+- [ ] AcervoIndex hook ran (best-effort; canonical write preserved on Hindsight failure)
 - [ ] No cross-domain duplication
 
 ---

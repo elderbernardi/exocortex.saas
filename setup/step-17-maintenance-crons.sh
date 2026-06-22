@@ -51,6 +51,9 @@ create_cron_if_missing "artifact-audit" "0 4 1,15 * *" \
 create_cron_if_missing "publication-check" "30 4 * * *" \
   "Execute verificação de publicações pendentes com rotina rtn_ready_artifact_publication. Persona: operador. Identifique artefatos com status ready/approved ainda não publicados. Envie relatório padronizado."
 
+create_cron_if_missing "acervo-index-reconcile" "0 5 * * *" \
+  "Execute a reconciliação diária do AcervoIndex (ADR-020). Persona: síndico. Rode 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" scan --all' e depois 'report'. Entregue ao home channel um relatório compacto com: novos indexados, alterados, órfãos (orphaned_manifest_entries), ignorados por lifecycle e erros. NÃO apague entradas Hindsight nesta versão — apenas reporte órfãos."
+
 if [ "$CRON_FAILURES" -eq 0 ]; then
   log "Cron jobs de manutenção configurados (03h–05h)."
 else

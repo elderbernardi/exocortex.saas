@@ -72,6 +72,16 @@ hermes cron create \
 ok "publication-check → diário 04:30"
 
 # -----------------------------------------------------------------------------
+# 5. Reconciliação AcervoIndex — Diário 05:00 (ADR-020)
+# -----------------------------------------------------------------------------
+info "Criando: acervo-index-reconcile (diário 05:00)"
+hermes cron create \
+  --schedule "0 5 * * *" \
+  --name "acervo-index-reconcile" \
+  --prompt "Execute a reconciliação diária do AcervoIndex (ADR-020). Persona: síndico. Rode 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" scan --all' e depois 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" report'. Entregue ao home channel um relatório compacto com: novos indexados, alterados, órfãos (orphaned_manifest_entries), ignorados por lifecycle e erros. NÃO apague entradas Hindsight nesta versão — apenas reporte órfãos. Se o scan retornar erros, liste os arquivos afetados."
+ok "acervo-index-reconcile → diário 05:00"
+
+# -----------------------------------------------------------------------------
 # Resumo
 # -----------------------------------------------------------------------------
 echo ""
@@ -79,14 +89,15 @@ info "════════════════════════�
 info "  Cron jobs do síndico ativados"
 info "═══════════════════════════════════════════════════"
 echo ""
-echo "  ┌──────────────────────┬───────────────┬────────────┐"
-echo "  │ Job                  │ Horário       │ Frequência │"
-echo "  ├──────────────────────┼───────────────┼────────────┤"
-echo "  │ maintenance-weekly   │ dom 03:00     │ semanal    │"
-echo "  │ inbox-triage         │ seg 03:30     │ semanal    │"
-echo "  │ artifact-audit       │ 1º/15º 04:00  │ quinzenal  │"
-echo "  │ publication-check    │ 04:30         │ diário     │"
-echo "  └──────────────────────┴───────────────┴────────────┘"
+echo "  ┌────────────────────────┬───────────────┬────────────┐"
+echo "  │ Job                    │ Horário       │ Frequência │"
+echo "  ├────────────────────────┼───────────────┼────────────┤"
+echo "  │ maintenance-weekly     │ dom 03:00     │ semanal    │"
+echo "  │ inbox-triage           │ seg 03:30     │ semanal    │"
+echo "  │ artifact-audit         │ 1º/15º 04:00  │ quinzenal  │"
+echo "  │ publication-check      │ 04:30         │ diário     │"
+echo "  │ acervo-index-reconcile │ 05:00         │ diário     │"
+echo "  └────────────────────────┴───────────────┴────────────┘"
 echo ""
 info "Timezone: GMT-3 (horário local do sistema)"
 info "Verifique com: hermes cron list"

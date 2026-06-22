@@ -104,15 +104,15 @@ Capturado em `2026-06-21T16:48:37Z`.
 
 ### Fase 6 — Write hook
 
-- [ ] Hook integrado.
-- [ ] Teste com novo arquivo canônico aprovado.
-- [ ] Falhas do Hindsight registradas sem cancelar escrita canônica.
+- [x] Hook integrado — etapa 7 da operação WRITE do `excrtx-memory-manager` chama `acervo_hindsight_index.py index-file` pós-escrita.
+- [x] Falhas do Hindsight registradas sem cancelar escrita canônica (chamada best-effort com `|| echo`).
+- [ ] Teste com novo arquivo canônico em runtime vivo (depende do servidor Hindsight em `localhost:8888`).
 
 ### Fase 7 — Rotina diária
 
-- [ ] Cron criado.
-- [ ] `scan --all` executado.
-- [ ] Relatório entregue ao home channel.
+- [x] Cron `acervo-index-reconcile` provisionado no instalador (`setup/step-17-maintenance-crons.sh`, idempotente) e no fallback `scripts/activate-maintenance-crons.sh`; registrado em `knowledge/cron-registry.md`.
+- [ ] `scan --all` executado em runtime vivo (depende do `hermes` + Hindsight ativos).
+- [ ] Relatório entregue ao home channel (primeira execução do cron).
 
 ### Fase 8 — Avaliação
 
@@ -145,13 +145,12 @@ Capturado em `2026-06-21T16:48:37Z`.
 
 ## Pendências abertas
 
-- Integrar write hook para retenção/indexação sem depender de disciplina manual.
-- Criar rotina diária de reconciliação `scan --all`.
-- Medir ganho de token e qualidade em bateria de prompts antes de considerar a reforma inteira concluída.
+- **Fase 8 (avaliação)** — rodar bateria de 10 prompts de memória e medir ganho de token/qualidade. Requer runtime vivo: servidor Hindsight em `localhost:8888`, credencial LLM válida (minimax retornou `401`; usar provider funcional) e sessão `hermes` real. Bloqueio é ambiental, não de design.
+- Validar em runtime o write hook (retain de novo arquivo canônico) e a primeira execução do cron `acervo-index-reconcile` (`scan --all` + relatório no home channel).
 
 ## Última atualização
 
-`2026-06-21T21:34:25Z` — Instalador/provisionador consolidado em `/home/elder/projetos/projetob/exocortex.saas`: Hindsight tools-first, SOUL protocol, AcervoIndex, smoke test e testes unitários validados.
+`2026-06-21` — Fases 6 (write hook) e 7 (cron diário `acervo-index-reconcile`) implementadas em código: hook pós-escrita na operação WRITE do `excrtx-memory-manager`, cron provisionado idempotente no `setup/step-17-maintenance-crons.sh` + fallback `activate-maintenance-crons.sh`, registrado em `cron-registry.md`. Validações de runtime vivo e Fase 8 permanecem pendentes por dependência ambiental. Refs de caminho dos ADRs/contrato corrigidas para `global/` e reforma (Fases 0–5) commitada em `feat/memory-routing-reform`.
 
 > Canonicalizado em `micro/exocortex-ops/context/memory-excellence-progress.md` a partir de `micro/exocortex-dev/context/memory-excellence-progress.md` em 2026-06-21T21:50:00Z.
 

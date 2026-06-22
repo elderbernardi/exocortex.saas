@@ -161,5 +161,33 @@ Cada agente que executar uma fase deve adicionar uma entrada no formato:
 - Próximo agente recomendado:
   - Agente Hook — indexação/retain em escrita canônica.
 
+## 2026-06-21 — Claude (Opus 4.8) — Fases 6 e 7 + fechamento da reforma
+
+- Estado: partial (código completo; validação de runtime vivo e Fase 8 pendentes)
+- Arquivos alterados:
+  - `skills/excrtx-memory-manager/SKILL.md` (etapa 7 da operação WRITE: AcervoIndex hook pós-escrita + item de verificação)
+  - `setup/step-17-maintenance-crons.sh` (cron idempotente `acervo-index-reconcile` diário 05:00)
+  - `scripts/activate-maintenance-crons.sh` (mesmo cron no fallback manual + tabela-resumo)
+  - `acervo/micro/exocortex-ops/knowledge/cron-registry.md` (registro do cron conforme regra do registro)
+  - `acervo/micro/exocortex-ops/context/memory-excellence-progress.md` (checklist Fases 6–7, pendências, última atualização)
+  - `acervo/micro/exocortex-ops/workflows/installer-memory-improvements-task.md` e `context/memory-excellence-progress.md` (refs de caminho `micro/exocortex-dev/` → `global/`)
+  - `.gitignore` (ignora manifesto de estado runtime do AcervoIndex)
+- Comandos/validações executadas:
+  - `python3 -m unittest tests.test_memory_routing_provision tests.test_memory_canonicalization` → 5 testes `OK`
+  - `python3 -m py_compile` dos 3 scripts de memória → OK
+  - `bash -n setup/step-17-maintenance-crons.sh scripts/activate-maintenance-crons.sh` → OK
+  - Reforma das Fases 0–5 commitada no branch `feat/memory-routing-reform` (commit `58617b1`)
+- Decisões tomadas:
+  - O write hook vive como etapa do procedimento WRITE (arquitetura comportamental: skills são o mecanismo de hook), não como daemon. Best-effort: falha do Hindsight nunca cancela a escrita canônica.
+  - O cron foi adicionado ao `step-17` (caminho real do instalador, idempotente via `create_cron_if_missing`), não só ao `activate-maintenance-crons.sh` (que é fallback manual).
+  - O manifesto de estado do AcervoIndex é runtime mutável → gitignorado, não versionado no seed.
+- Pendências:
+  - Fase 8 — bateria de 10 prompts + métricas de token/qualidade (requer Hindsight + LLM + sessão hermes vivos).
+  - Validar em runtime o retain do hook e a 1ª execução do cron `acervo-index-reconcile`.
+  - Fechar o card Kanban `t_424139ce`.
+  - Push do branch `feat/memory-routing-reform` + PR (requer DRAFT/aprovação — EX-08).
+- Próximo agente recomendado:
+  - Agente E — Avaliação (Fase 8), em ambiente com provider LLM funcional.
+
 > Canonicalizado em `micro/exocortex-ops/context/memory-excellence-handoff-log.md` a partir de `micro/exocortex-dev/context/memory-excellence-handoff-log.md` em 2026-06-21T21:50:00Z.
 
