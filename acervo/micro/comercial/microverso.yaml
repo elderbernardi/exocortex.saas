@@ -1,0 +1,48 @@
+# microverso.yaml — manifesto do microverso Comercial (excrtx/v1)
+# Preenchido durante a criação/correção.
+# Placeholders {{...}} substituídos automaticamente.
+# Ref: global/contracts/microverso-package-spec.md
+
+apiVersion: excrtx/v1
+kind: Microverso
+metadata:
+  name: comercial
+  version: 0.1.0
+  description: "Atividades comerciais, vendas, negociação e relacionamento com clientes"
+  author: exocortex-team
+  tags: [comercial]
+
+requires:
+  skills:
+    - last30days
+    - excrtx-integrate-browser
+    - excrtx-crawler-brasil
+    - excrtx-integrate-agent-reach
+  python_packages: []
+  node_packages: []
+  mcps: []
+  env: []
+  system: [git, python3, uv]
+
+compat:
+  exocortex_version: ">=0.4"
+  hermes_version: ">=0.4"
+  platforms: [linux]
+
+tree:
+  context/: "Situação atual, prioridades e stakeholders do Comercial"
+  knowledge/: "Fatos, métricas e referências do Comercial"
+  contracts/: "Regras condicionais e contratos do Comercial"
+  prompts/: "Prompts reutilizáveis do Comercial"
+  persona/: "Voz, tom e estilo do Comercial"
+  workflows/: "SOPs e processos do Comercial"
+  skills/: "Capacidades encapsuladas do Comercial"
+  tools/: "Ferramentas e integrações do Comercial"
+  templates/: "Modelos reutilizáveis do Comercial"
+  decisions/: "Decisões arquiteturais (ADR) do Comercial"
+  reflections/: "Lições aprendidas do Comercial"
+  raw/: "Fontes brutas (imutáveis)"
+  _archive/: "Conteúdo supersedido"
+
+hooks: {}
+
