@@ -56,7 +56,7 @@ The Exocortex is strictly forbidden from claiming that a system action (e.g., cl
 
 ---
 
-## 🧩 The 47 Custom Skills Catalog
+## 🧩 The 50 Custom Skills Catalog
 
 This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. They are organized into 8 functional categories:
 
@@ -299,13 +299,13 @@ The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SH
 - **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
 - **`step-01`**: Provision Hindsight database container if `EXOCORTEX_ENABLE_HINDSIGHT=1` is provided.
 - **`step-02`**: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.
-- **`step-03` to `step-05`**: Copies and installs all 47 `excrtx` skills, bundles, and execution profiles (`default` and `manut`).
+- **`step-03` to `step-05`**: Copies and installs all 50 `excrtx` skills, bundles, and execution profiles (`default` and `manut`).
 - **`step-06` (Hardening)**:
   - Applies a search paging patch to `google_api.py`.
   - Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
   - Removes `composio` from the MCP registry in favor of direct API clients.
 - **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit (`nesquena/hermes-webui`, MIT), and links Context7 documentation MCP.
-- **`step-12` to `step-14`**: Performs final key verifications and validates that all 47 skills are correctly mapped in the runtime.
+- **`step-12` to `step-14`**: Performs final key verifications and validates that all 50 skills are correctly mapped in the runtime.
 - **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
 
 ---

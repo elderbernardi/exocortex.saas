@@ -224,9 +224,9 @@ test -d "$ACERVO/_tasks" && echo "✓ _tasks" || echo "✗ _tasks"
 
 ---
 
-## Step 03 — Instalar Skills (47 skills)
+## Step 03 — Instalar Skills (50 skills excrtx-*)
 
-**Objetivo**: Copiar todas as 47 skills `excrtx-*` do repositório para o runtime do Hermes.
+**Objetivo**: Copiar todas as 50 skills `excrtx-*` (mais as skills empacotadas `last30days` e `assessment-question-authoring`, 52 pacotes no total) do repositório para o runtime do Hermes.
 
 ### Execução
 
@@ -242,8 +242,8 @@ done
 ### Verificação
 ```bash
 INSTALLED=$(find "$SKILLS_DST" -mindepth 1 -maxdepth 1 -type d | wc -l)
-echo "Skills instaladas: $INSTALLED (esperado: 47)"
-test "$INSTALLED" -ge 47 && echo "✓ OK" || echo "✗ FALHA"
+echo "Skills instaladas: $INSTALLED (esperado: ≥ 50 excrtx-*)"
+test "$INSTALLED" -ge 50 && echo "✓ OK" || echo "✗ FALHA"
 ```
 
 ---
@@ -523,6 +523,18 @@ fi
 
 ---
 
+## Step 10c — Provisionar Workspace do Acervo na WebUI (Opcional)
+
+**Objetivo**: Registrar o Acervo como o espaço **"Acervo Cognitivo"** dentro da WebUI do Hermes. Só faz sentido se o Step 10b instalou a WebUI. Idempotente — não duplica o registro se já existir.
+
+### Execução (pular se WebUI não ativado)
+
+```bash
+bash "$SCRIPT_DIR/setup/step-10c-provision-acervo-workspace.sh"
+```
+
+---
+
 ## Step 11 — Context7 MCP
 
 **Objetivo**: Registrar o MCP server Context7 (documentação de tech stacks).
@@ -558,6 +570,10 @@ fi
 bash "$SCRIPT_DIR/setup/step-12-verify-keys.sh"
 ```
 
+> **Modelo LLM canônico.** O modelo testado em produção é **`deepseek-v4-pro`** (via `DEEPSEEK_API_KEY`). Este step inspeciona `$HERMES_HOME/config.yaml` de forma **não-destrutiva** e avisa se o `model.default` tiver case incorreto (ex.: `MiniMax-M3` em vez de `minimax-m3`, que muitos gateways rejeitam) ou se o `provider` exigir uma key ausente. Ele nunca reescreve o config — para reconfigurar o modelo use `hermes model`.
+>
+> **Contingência `--imbroke`.** Rodar `bash setup.sh --imbroke` (ou exportar `IMBROKE_MODE=1`) ativa o roteador OpenRouter free (`configure_openrouter_free_router`): gera um ranking de modelos gratuitos e, com `OPENROUTER_API_KEY` presente, aplica um circuit breaker (sentinela + watchdog cron). Por padrão essa contingência fica **desativada**.
+
 ### Verificação Manual
 
 | Key | Status | Ação se pendente |
@@ -582,7 +598,7 @@ bash "$SCRIPT_DIR/setup/step-13-final-verification.sh"
 
 ### Critérios de Sucesso (o script verifica tudo automaticamente)
 
-1. **47 skills** instaladas em `$SKILLS_DST`
+1. **≥ 50 skills excrtx-*** instaladas em `$SKILLS_DST`
 2. **4 camadas** do Acervo presentes (macro, global, micro, shared)
 3. **5 diretórios operacionais** v0.4 (_tasks, _routines, _automations, _inbox, _artifacts)
 4. **Microverso exocortex-ops** com todos os arquivos esperados
@@ -672,7 +688,7 @@ echo "=== Exocórtex Release Verification ==="
 
 # 1. Skills
 SKILL_COUNT=$(find "$SKILLS_DST" -mindepth 1 -maxdepth 1 -type d | wc -l)
-echo "Skills: $SKILL_COUNT (esperado: 47)"
+echo "Skills: $SKILL_COUNT (esperado: ≥ 50 excrtx-*)"
 
 # 2. Acervo
 for layer in macro global micro shared; do
