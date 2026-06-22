@@ -28,8 +28,11 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 REPO_PATH="${EXOCORTEX_REPO_PATH:-}"
 AUTO_PR="${EXOCORTEX_SYNC_AUTO_PR:-0}"
 HARNESS_MODEL="${EXOCORTEX_HARNESS_MODEL:-openai/gpt-5.4}"
-REPAIRS_DIR="$ACERVO/_artifacts/items/repairs"
-PATCHES_DIR="$ACERVO/_artifacts/items/patches"
+# F-003: repair manifests/patches live outside the canonical Acervo (shared
+# default + env var with test-helpers.sh).
+EXOCORTEX_REPORT_DIR="${EXOCORTEX_REPORT_DIR:-$HERMES_HOME/reports/provisioning}"
+REPAIRS_DIR="$EXOCORTEX_REPORT_DIR/repairs"
+PATCHES_DIR="$EXOCORTEX_REPORT_DIR/patches"
 
 _RED='\033[0;31m'
 _GREEN='\033[0;32m'

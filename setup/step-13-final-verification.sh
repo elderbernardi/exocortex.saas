@@ -203,7 +203,7 @@ fi
 echo ""
 if [ $ERRORS -eq 0 ]; then
   echo "╔═══════════════════════════════════════════════╗"
-  echo "║   ✅ Setup Candidate-Release completo.        ║"
+  echo "║   ✅ Setup completo — produção v1.0.2.        ║"
   echo "║   Zero erros.                                 ║"
   echo "╚═══════════════════════════════════════════════╝"
 else

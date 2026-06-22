@@ -51,6 +51,10 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
 ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
 SKILLS_DST="$HERMES_HOME/skills/excrtx"
+# F-003: provisioning-test outputs (report + repair manifests) live OUTSIDE the
+# canonical Acervo so test runs never pollute semantic memory. Shared with
+# sync-repairs-to-repo.sh (same default + env var).
+EXOCORTEX_REPORT_DIR="${EXOCORTEX_REPORT_DIR:-$HERMES_HOME/reports/provisioning}"
 HARNESS_MODEL="${EXOCORTEX_HARNESS_MODEL:-${EXOCORTEX_MODEL:-}}"
 REPO_PATH="${EXOCORTEX_REPO_PATH:-}"
 SYNC_ENABLED="${EXOCORTEX_SYNC_ENABLED:-1}"
@@ -688,7 +692,7 @@ Não altere SOUL.md. Não instale nada sem verificar antes."
 
 save_repair_manifest() {
   local feature_id="$1" skill_name="$2" error="$3" attempts="$4" output="$5"
-  local manifest_dir="$ACERVO/_artifacts/items/repairs"
+  local manifest_dir="$EXOCORTEX_REPORT_DIR/repairs"
   mkdir -p "$manifest_dir"
 
   local manifest_file="$manifest_dir/RPR-${RUN_TIMESTAMP}-${feature_id}.json"
@@ -799,7 +803,7 @@ Use o comando gh ou a tool de GitHub disponível."
 # =============================================================================
 
 generate_report() {
-  local report_dir="$ACERVO/_artifacts/items"
+  local report_dir="$EXOCORTEX_REPORT_DIR"
   mkdir -p "$report_dir"
   REPORT_FILE="$report_dir/provisioning-test-${RUN_TIMESTAMP}.md"
 

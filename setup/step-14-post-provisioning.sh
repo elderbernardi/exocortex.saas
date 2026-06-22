@@ -29,3 +29,16 @@ if [ -f "$SCRIPT_DIR/scripts/validate_frontmatter.py" ] && [ -d "$ACERVO" ]; the
 else
   warn "validate_frontmatter.py ou \$ACERVO não encontrado — validação de frontmatter pulada."
 fi
+
+# Validação da log-convention nos log.md do Acervo (gate não-fatal: logs legados
+# em formato livre só geram WARN; só um log.md em macro/ é ERROR — ver §3.3).
+if [ -f "$SCRIPT_DIR/scripts/validate_log.py" ] && [ -d "$ACERVO" ]; then
+  info "Validando log.md (log-convention §1–§3) no Acervo..."
+  if python3 "$SCRIPT_DIR/scripts/validate_log.py" --dir "$ACERVO" 2>&1; then
+    log "Logs do Acervo: sem violações de localização (legados em formato livre apenas avisam)."
+  else
+    warn "Há violação estrutural de log (ex.: log.md em macro/) — veja a saída acima."
+  fi
+else
+  warn "validate_log.py ou \$ACERVO não encontrado — validação de logs pulada."
+fi

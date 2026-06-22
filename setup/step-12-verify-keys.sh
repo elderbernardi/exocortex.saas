@@ -84,6 +84,62 @@ else
   info "Se você subir Firecrawl localmente, use por default: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 fi
 
+# ─── Modelo LLM canônico (deepseek-v4-pro) ───────────────────────────────────
+# Validação não-destrutiva do modelo configurado. O id do modelo vive em
+# $HERMES_HOME/config.yaml (escrito pelo runtime Hermes, não pelo Exocórtex), por
+# isso aqui apenas inspecionamos e orientamos — nunca reescrevemos o config.
+# Resolve F-030 (case errado, ex.: 'MiniMax-M3' rejeitado por gateway que serve
+# 'minimax-m3') e F-031 (provider/var de key incompatível).
+
+CANONICAL_MODEL="deepseek-v4-pro"
+info "Verificando modelo LLM (canônico/testado: $CANONICAL_MODEL via DEEPSEEK_API_KEY)..."
+
+HERMES_CONFIG="$HERMES_HOME/config.yaml"
+if [ -f "$HERMES_CONFIG" ] && command -v python3 >/dev/null 2>&1; then
+  eval "$(python3 - "$HERMES_CONFIG" <<'PY' || true
+import sys
+try:
+    import yaml
+    cfg = yaml.safe_load(open(sys.argv[1])) or {}
+    model = cfg.get("model", {}) or {}
+    default_model = str(model.get("default", "") or "")
+    provider = str(model.get("provider", "") or "")
+    print(f"CFG_MODEL={default_model!r}".replace('"', ''))
+    print(f"CFG_PROVIDER={provider!r}".replace('"', ''))
+except Exception:
+    pass
+PY
+)"
+  CFG_MODEL="${CFG_MODEL:-}"
+  CFG_PROVIDER="${CFG_PROVIDER:-}"
+  if [ -n "$CFG_MODEL" ]; then
+    info "config.yaml: model.default='$CFG_MODEL'${CFG_PROVIDER:+ provider='$CFG_PROVIDER'}"
+    # F-030: gateways de model id servem ids minúsculos; um id com maiúsculas é
+    # frequentemente rejeitado (ex.: 'MiniMax-M3' vs 'minimax-m3').
+    if [ "$CFG_MODEL" != "$(printf '%s' "$CFG_MODEL" | tr '[:upper:]' '[:lower:]')" ]; then
+      warn "model.default '$CFG_MODEL' tem letras maiúsculas — muitos gateways rejeitam (ex.: minimax-m3)."
+      warn "  Se o agente falhar com 'Model ... is not supported', reconfigure: hermes model"
+    fi
+    # F-031: provider rotulado mas sem a var de key correspondente.
+    if [ -n "$CFG_PROVIDER" ]; then
+      PROVIDER_KEY_VAR="$(printf '%s' "$CFG_PROVIDER" | tr '[:lower:]' '[:upper:]')_API_KEY"
+      if [ -z "${!PROVIDER_KEY_VAR:-}" ]; then
+        info "provider '$CFG_PROVIDER' normalmente exige $PROVIDER_KEY_VAR (não definida)."
+        info "  Se o gateway usa outra credencial (ex.: OPENCODE_API_KEY), mapeie: export $PROVIDER_KEY_VAR=\$OPENCODE_API_KEY"
+      fi
+    fi
+  else
+    info "config.yaml sem model.default — Hermes usará seu default. Recomendado: $CANONICAL_MODEL."
+  fi
+else
+  info "config.yaml ainda não existe (será criado pelo runtime Hermes)."
+  info "  Modelo recomendado/testado: $CANONICAL_MODEL (requer DEEPSEEK_API_KEY). Configure com: hermes model"
+fi
+
+if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
+  info "Para usar o modelo canônico $CANONICAL_MODEL, defina DEEPSEEK_API_KEY (deepseek.com)."
+fi
+
 # ─── last30days skill keys ───────────────────────────────────────────────────
 
 info "Verificando keys para last30days (pesquisa multi-plataforma)..."
