@@ -270,20 +270,49 @@ pause_step_by_step() {
   read -r _step_ack || return 130
 }
 
+# Lista os providers do catálogo (setup/providers.json) com seus modelos default.
+list_llm_providers() {
+  local providers_file="$SCRIPT_DIR/setup/providers.json"
+  [ -f "$providers_file" ] || providers_file="$SCRIPT_DIR/providers.json"
+  if command -v python3 >/dev/null 2>&1 && [ -f "$providers_file" ]; then
+    python3 - "$providers_file" <<'PY' 2>/dev/null || true
+import json, sys
+try:
+    data = json.load(open(sys.argv[1])).get("providers", {})
+    for pid, p in data.items():
+        vis = " (visão)" if p.get("vision") else ""
+        print(f"    - {pid}{vis} → modelo default: {p.get('default_model','')}")
+except Exception:
+    pass
+PY
+  fi
+}
+
 show_api_key_guidance() {
   echo -e "  ${DIM}Origem dos valores:${NC} shell atual → .env.local → defaults do setup"
-  echo -e "  ${DIM}Cada chave: [tier] integração afetada — fallback / impacto se ausente.${NC}"
   echo ""
-  echo -e "  ${BOLD}OPENROUTER_API_KEY${NC} ${DIM}[recomendada]${NC} — gateway de reasoning (maioria das skills)."
-  echo -e "    ${DIM}Sem ela: skills que checam esse nome literal falham. Obter em openrouter.ai/keys.${NC}"
-  echo -e "  ${BOLD}DEEPSEEK_API_KEY${NC} ${DIM}[opcional]${NC} — reasoning DeepSeek direto / Mixture of Agents."
-  echo -e "    ${DIM}Rota alternativa, NÃO intercambiável: não substitui OPENROUTER_API_KEY por nome. Use a que seu provider exige, não as duas.${NC}"
-  echo -e "  ${BOLD}DOCBRAIN_LLM_API_KEY${NC} ${DIM}[opcional]${NC} — isola a key LLM do parser DocBrain."
-  echo -e "    ${DIM}Fallback: usa OPENROUTER_API_KEY se ausente. Sem nenhuma das duas: DocBrain sobe sem LLM.${NC}"
-  echo -e "  ${BOLD}FIRECRAWL_API_KEY${NC} ${DIM}[opcional]${NC} — crawling/extract."
-  echo -e "    ${DIM}Endpoint local default: http://127.0.0.1:3002 (FIRECRAWL_BASE_URL). Sem ela: crawling desabilitado.${NC}"
-  echo -e "  ${BOLD}TELEGRAM_BOT_TOKEN${NC} ${DIM}[opcional]${NC} — gateway Telegram (@BotFather)."
-  echo -e "    ${DIM}Sem ele: cria reminder e segue; configure depois com hermes gateway setup telegram.${NC}"
+  echo -e "  ${BOLD}Provedores LLM em 3 papéis${NC} — cada papel é provider + modelo + chave (+ base URL opcional):"
+  echo -e "    ${BOLD}default${NC}  — sempre usado quando nenhum outro papel foi informado. ${DIM}(obrigatório)${NC}"
+  echo -e "    ${BOLD}vision${NC}   — modelo com visão. ${DIM}Vazio = herda o default campo a campo.${NC}"
+  echo -e "    ${BOLD}auxiliar${NC} — modelo para softwares externos (DocBrain, Hindsight). ${DIM}Vazio = herda o default.${NC}"
+  echo ""
+  echo -e "  ${DIM}base URL vazia = derivada do provider. Providers conhecidos:${NC}"
+  list_llm_providers
+  echo ""
+}
+
+# prompt_llm_role ROLE_PREFIX ROLE_DESC [REQUIRED]
+# Prompts provider/model/api_key/base_url para um papel. ROLE_PREFIX ∈ DEFAULT|VISION|AUX.
+prompt_llm_role() {
+  local prefix="$1" desc="$2" required="${3:-0}"
+  local inherit_hint=""
+  [ "$required" != "1" ] && inherit_hint=" ${DIM}(Enter em branco = herda o default)${NC}"
+
+  echo -e "  ${BOLD}» Papel ${desc}${NC}${inherit_hint}"
+  prompt_value  "EXOCORTEX_${prefix}_PROVIDER" "$(eval echo "\${EXOCORTEX_${prefix}_PROVIDER:-}")" "Provider (ex.: openrouter, deepseek, openai, gemini, xai)"
+  prompt_value  "EXOCORTEX_${prefix}_MODEL"    "$(eval echo "\${EXOCORTEX_${prefix}_MODEL:-}")"    "Modelo (ex.: deepseek-v4-pro). Vazio usa o default do provider"
+  prompt_secret "EXOCORTEX_${prefix}_API_KEY"  "$(eval echo "\${EXOCORTEX_${prefix}_API_KEY:-}")"  "Chave de API do provider"
+  prompt_value  "EXOCORTEX_${prefix}_BASE_URL" "$(eval echo "\${EXOCORTEX_${prefix}_BASE_URL:-}")" "Base URL (vazio = derivada do catálogo do provider)"
   echo ""
 }
 
@@ -322,14 +351,22 @@ show_config_table() {
   _show_row "EXOCORTEX_HOME"  "${EXOCORTEX_HOME:-}"  "ok"
   _show_row "ACERVO"          "${ACERVO:-}"           "ok"
 
-  echo -e "${BOLD}║ API Keys${NC}"
-  _show_row "OPENROUTER_API_KEY"     "${OPENROUTER_API_KEY:-}"     "ok"
-  _show_row "DEEPSEEK_API_KEY"       "${DEEPSEEK_API_KEY:-}"       "ok"
+  echo -e "${BOLD}║ Provedores LLM (3 papéis)${NC}"
+  _show_row "EXOCORTEX_DEFAULT_PROVIDER" "${EXOCORTEX_DEFAULT_PROVIDER:-}" "ok"
+  _show_row "EXOCORTEX_DEFAULT_MODEL"    "${EXOCORTEX_DEFAULT_MODEL:-}"    "ok"
+  _show_row "EXOCORTEX_DEFAULT_API_KEY"  "${EXOCORTEX_DEFAULT_API_KEY:-}"  "ok"
+  _show_row "EXOCORTEX_VISION_PROVIDER"  "${EXOCORTEX_VISION_PROVIDER:-}"  "ok"
+  _show_row "EXOCORTEX_VISION_MODEL"     "${EXOCORTEX_VISION_MODEL:-}"     "ok"
+  _show_row "EXOCORTEX_VISION_API_KEY"   "${EXOCORTEX_VISION_API_KEY:-}"   "ok"
+  _show_row "EXOCORTEX_AUX_PROVIDER"     "${EXOCORTEX_AUX_PROVIDER:-}"     "ok"
+  _show_row "EXOCORTEX_AUX_MODEL"        "${EXOCORTEX_AUX_MODEL:-}"        "ok"
+  _show_row "EXOCORTEX_AUX_API_KEY"      "${EXOCORTEX_AUX_API_KEY:-}"      "ok"
+
+  echo -e "${BOLD}║ Serviços (não-LLM)${NC}"
   _show_row "TELEGRAM_BOT_TOKEN"     "${TELEGRAM_BOT_TOKEN:-}"     "ok"
   _show_row "CONTEXT7_API_KEY"       "${CONTEXT7_API_KEY:-}"       "ok"
   _show_row "FIRECRAWL_API_KEY"      "${FIRECRAWL_API_KEY:-}"      "ok"
   _show_row "FIRECRAWL_BASE_URL"     "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}" "ok"
-  _show_row "DOCBRAIN_LLM_API_KEY"   "${DOCBRAIN_LLM_API_KEY:-}"   "ok"
   _show_row "HINDSIGHT_API_KEY"      "${HINDSIGHT_API_KEY:-}"      "ok"
 
   echo -e "${BOLD}║ Features (flags)${NC}"
@@ -377,17 +414,21 @@ run_interactive_init() {
   ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
   export ACERVO
 
-  # ─── API Keys ──────────────────────────────────────────────────────
-  echo -e "${BOLD}─── API Keys ───${NC}"
-  pause_step_by_step "Agora vamos revisar env vars e API keys. Enter para continuar: " || return 130
+  # ─── Provedores LLM (3 papéis) ─────────────────────────────────────
+  echo -e "${BOLD}─── Provedores LLM (3 papéis) ───${NC}"
+  pause_step_by_step "Agora vamos configurar os provedores LLM (default/vision/auxiliar). Enter para continuar: " || return 130
   show_api_key_guidance
-  prompt_secret "OPENROUTER_API_KEY"   "${OPENROUTER_API_KEY:-}"   "Chave OpenRouter (routing OpenRouter e integrações que esperam OPENROUTER_API_KEY)"
+  prompt_llm_role "DEFAULT" "default (sempre usado)"            1
+  prompt_llm_role "VISION"  "vision (modelo com visão)"         0
+  prompt_llm_role "AUX"     "auxiliar (DocBrain / Hindsight)"   0
+
+  # ─── Serviços (não-LLM) ────────────────────────────────────────────
+  echo -e "${BOLD}─── Serviços (não-LLM) ───${NC}"
+  pause_step_by_step "Por fim, as chaves de serviços (Telegram, Firecrawl, Context7). Enter para continuar: " || return 130
   prompt_secret "TELEGRAM_BOT_TOKEN"   "${TELEGRAM_BOT_TOKEN:-}"   "Token do Telegram Bot (@BotFather)"
-  prompt_secret "DEEPSEEK_API_KEY"     "${DEEPSEEK_API_KEY:-}"     "Chave DeepSeek direta (reasoning, fallback e fluxos compatíveis)"
   prompt_secret "CONTEXT7_API_KEY"     "${CONTEXT7_API_KEY:-}"     "Chave Context7 (docs tech stacks, opcional)"
   prompt_secret "FIRECRAWL_API_KEY"    "${FIRECRAWL_API_KEY:-}"    "Chave Firecrawl (crawling/extract, opcional)"
   prompt_value  "FIRECRAWL_BASE_URL"   "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}" "Endpoint Firecrawl (default local: 127.0.0.1:3002)"
-  prompt_secret "DOCBRAIN_LLM_API_KEY" "${DOCBRAIN_LLM_API_KEY:-}" "Override LLM key para DocBrain (opcional)"
   prompt_secret "HINDSIGHT_API_KEY"    "${HINDSIGHT_API_KEY:-}"    "Chave Hindsight cloud (opcional)"
   echo ""
 

@@ -43,6 +43,13 @@ source "$SETUP_DIR/setup/common.sh" "$@"
 # Load interactive library
 source "$SETUP_DIR/setup/interactive.sh"
 
+# Migração one-shot: chaves LLM legadas → 3 papéis (idempotente, corte limpo).
+# Roda antes de carregar o .env.local para que os papéis EXOCORTEX_*_* já
+# estejam disponíveis quando load_env_local exportar as variáveis.
+if command -v python3 >/dev/null 2>&1 && [ -f "$SETUP_DIR/scripts/migrate-env-roles.py" ]; then
+  python3 "$SETUP_DIR/scripts/migrate-env-roles.py" --env-file "$ENV_LOCAL_FILE" 2>/dev/null || true
+fi
+
 # Load .env.local values (if exists, won't override env vars already set)
 load_env_local
 

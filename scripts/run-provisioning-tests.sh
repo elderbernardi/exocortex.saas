@@ -18,8 +18,8 @@
 #   HERMES_HOME              Default: ~/.hermes
 #   EXOCORTEX_HOME           Default: ~/exocortex
 #   ACERVO                   Default: $EXOCORTEX_HOME/acervo
-#   EXOCORTEX_HARNESS_MODEL  Model for smoke tests (overrides EXOCORTEX_MODEL)
-#   EXOCORTEX_MODEL          Fallback model for smoke tests and calibration
+#   EXOCORTEX_HARNESS_MODEL  Model for smoke tests (overrides the default role)
+#   EXOCORTEX_DEFAULT_MODEL  Fallback model (papel LLM 'default') for smoke tests
 #   EXOCORTEX_REPO_PATH      Path do clone local do repo (para sync)
 #   EXOCORTEX_SYNC_ENABLED   Default: 1
 #
@@ -156,8 +156,8 @@ else
   echo -e "${_GRAY}Fase 2 (smoke tests) pulada${_NC}"
   if [ -z "$HARNESS_MODEL" ] && [ "${NO_SMOKE:-0}" = "1" ]; then
     TOTAL_SMOKE_SKIPPED=${#SMOKE_PROMPTS_MAP[@]}
-    echo -e "${_YELLOW}  ⚠ ${TOTAL_SMOKE_SKIPPED} smoke tests pulados — EXOCORTEX_MODEL não configurado${_NC}"
-    echo -e "${_YELLOW}  Para validação completa: export EXOCORTEX_MODEL=\"seu-modelo\"${_NC}"
+    echo -e "${_YELLOW}  ⚠ ${TOTAL_SMOKE_SKIPPED} smoke tests pulados — papel 'default' não configurado (EXOCORTEX_DEFAULT_MODEL)${_NC}"
+    echo -e "${_YELLOW}  Para validação completa: configure o papel 'default' (bash setup.sh) ou export EXOCORTEX_HARNESS_MODEL${_NC}"
   else
     echo -e "${_GRAY}  (--no-smoke)${_NC}"
   fi

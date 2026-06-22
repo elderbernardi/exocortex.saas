@@ -22,15 +22,11 @@ from scripts.skill_judge import (
     parse_skill,
     check_d1_structural,
     REQUIRED_SECTIONS,
-    _get_api_key,
-    _get_deepseek_key,
     _call_llm_api,
-    DEEPSEEK_API_URL,
-    OPENROUTER_API_URL,
-    JUDGE_MODEL_DEEPSEEK,
-    JUDGE_MODEL_OPENROUTER,
-    JUDGE_MODEL_OPENROUTER_DS,
 )
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
+import llm_roles  # noqa: E402  (resolvedor central de papéis LLM)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RUBRIC_PATH = REPO_ROOT / ".dogfood" / "schemas" / "skill-judge-rubric.md"
@@ -331,14 +327,16 @@ def validate_rewrite(original_content: str, rewritten_content: str) -> list[str]
 
 
 def _call_rewrite_llm(prompt: str) -> tuple[str | None, str]:
-    """Call the LLM for rewriting. Returns (response, model_used)."""
-    # Primary: DeepSeek direct only
-    deepseek_key = _get_deepseek_key()
-    if deepseek_key:
-        response = _call_llm_api(prompt, DEEPSEEK_API_URL, deepseek_key, JUDGE_MODEL_DEEPSEEK)
-        if response:
-            return response, JUDGE_MODEL_DEEPSEEK
+    """Call the LLM for rewriting using the central 'default' LLM role.
 
+    Returns (response, model_used).
+    """
+    role = llm_roles.resolve_role("default")
+    if not role.is_usable():
+        return None, "none"
+    response = _call_llm_api(prompt, role.chat_url, role.api_key, role.model, max_tokens=REWRITE_MAX_TOKENS)
+    if response:
+        return response, role.model
     return None, "none"
 
 

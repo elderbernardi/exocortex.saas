@@ -63,7 +63,7 @@ BOOTSTRAP_MEMORY = """Terminal Hermes sanitiza segredos `sk-*`; para gravar chav
 §
 DocBrain (`ProjetoBB/docBrainBB.git`) é privado; nunca citar em README, preflight ou help text. Decisão canônica: `acervo/micro/exocortex-dev/decisions/docbrain-not-public.md`.
 §
-`last30days`: skill em `skills/last30days/`, symlink em `~/.hermes/skills/research/last30days`, Python `/usr/sbin/python3.14`, sempre executar com `env -u OPENROUTER_API_KEY`.
+`last30days`: skill em `skills/last30days/`, symlink em `~/.hermes/skills/research/last30days`, Python `/usr/sbin/python3.14`. Reasoning/visão vêm dos papéis LLM (`EXOCORTEX_DEFAULT_*` / `EXOCORTEX_VISION_*`); chaves de scraping são próprias da skill.
 §
 Google Workspace OAuth usa project `734420556052` e token `~/.hermes/google_token.json`.
 """

@@ -15,14 +15,6 @@ class SetupHindsightTest(unittest.TestCase):
             hermes_home.mkdir()
             exocortex_home.mkdir()
             
-            # Create isolated parent .env
-            parent_env = hermes_home / ".env"
-            parent_env.write_text(
-                "HINDSIGHT_LLM_API_KEY=test-hindsight-llm-key\n"
-                "DEEPSEEK_API_KEY=test-deepseek-key\n"
-                "OPENROUTER_API_KEY=test-openrouter-key\n"
-            )
-            
             # Create isolated config.yaml
             parent_config = hermes_home / "config.yaml"
             parent_config.write_text(
@@ -51,6 +43,15 @@ class SetupHindsightTest(unittest.TestCase):
             new_env["EXOCORTEX_HOME"] = str(exocortex_home)
             new_env["EXOCORTEX_ENABLE_HINDSIGHT"] = "1"
             new_env["PATH"] = f"{bin_dir}:{new_env['PATH']}"
+            # Hindsight's LLM backend uses the 'auxiliar' role, which inherits the
+            # 'default' role here (only DEFAULT is set). Base URL is derived from
+            # the provider catalog (deepseek -> https://api.deepseek.com/v1).
+            new_env["EXOCORTEX_DEFAULT_PROVIDER"] = "deepseek"
+            new_env["EXOCORTEX_DEFAULT_MODEL"] = "deepseek-v4-pro"
+            new_env["EXOCORTEX_DEFAULT_API_KEY"] = "test-aux-key"
+            for stale in ("EXOCORTEX_AUX_PROVIDER", "EXOCORTEX_AUX_MODEL",
+                          "EXOCORTEX_AUX_API_KEY", "EXOCORTEX_AUX_BASE_URL"):
+                new_env.pop(stale, None)
             
             result = subprocess.run(
                 ["bash", str(step_script)],
@@ -68,8 +69,8 @@ class SetupHindsightTest(unittest.TestCase):
             self.assertTrue(hs_env.exists())
             
             env_content = hs_env.read_text()
-            self.assertIn("HINDSIGHT_API_LLM_API_KEY=test-hindsight-llm-key", env_content)
-            self.assertIn("HINDSIGHT_API_LLM_MODEL=deepseek-v4-flash", env_content)
+            self.assertIn("HINDSIGHT_API_LLM_API_KEY=test-aux-key", env_content)
+            self.assertIn("HINDSIGHT_API_LLM_MODEL=deepseek-v4-pro", env_content)
             self.assertIn("HINDSIGHT_API_LLM_BASE_URL=https://api.deepseek.com/v1", env_content)
 
             # Check that setup aligned Hermes memory config for Hindsight without disabling built-in memory

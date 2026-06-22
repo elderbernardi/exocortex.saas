@@ -35,27 +35,47 @@ BUNDLES_DST="$HERMES_HOME/skill-bundles"
 ACERVO_SRC="$SCRIPT_DIR/acervo"
 ```
 
+### Configuração de LLM — os 3 Papéis
+
+Toda configuração de LLM neste repo é consolidada em **3 papéis**, cada um um
+quádruplo de env vars (`{PROVIDER,MODEL,API_KEY,BASE_URL}`):
+
+| Papel | Env vars | Uso | Herança |
+|-------|----------|-----|---------|
+| **default** | `EXOCORTEX_DEFAULT_{PROVIDER,MODEL,API_KEY,BASE_URL}` | LLM principal — reasoning / routing / todas as skills. **SEMPRE usado; obrigatório.** | — |
+| **vision** | `EXOCORTEX_VISION_{PROVIDER,MODEL,API_KEY,BASE_URL}` | Modelo com visão (imagens, OCR multimodal) | Campo vazio **herda o default** campo a campo |
+| **auxiliar** | `EXOCORTEX_AUX_{PROVIDER,MODEL,API_KEY,BASE_URL}` | Softwares externos: DocBrain, backend LLM do Hindsight | Campo vazio **herda o default** campo a campo |
+
+- `BASE_URL` vazia → derivada automaticamente do catálogo `setup/providers.json`
+  (providers: `openrouter`, `deepseek`, `openai`, `gemini`, `xai`, `opencode`, `opencode-go`).
+- Resolvedores: `scripts/lib/llm_roles.py` (Python) e `setup/lib/llm-roles.sh` (shell).
+  Inspecione o estado resolvido com `python3 scripts/lib/llm_roles.py all`.
+- Instalações antigas são migradas **uma vez** por `scripts/migrate-env-roles.py`
+  (roda automaticamente no `setup.sh`): `OPENROUTER`/`DEEPSEEK`/`OPENCODE` → **default**,
+  `DOCBRAIN_LLM` → **auxiliar**, `OPENAI`/`GEMINI`/`GOOGLE` → **vision**. As chaves legadas
+  são comentadas; as chaves de serviço não-LLM são preservadas.
+
 ### Variáveis Opcionais
 
 | Variável | Default | Descrição |
 |----------|---------|-----------|
-| `OPENROUTER_API_KEY` | — | Chave OpenRouter para integrações que falam com OpenRouter |
-| `DEEPSEEK_API_KEY` | — | Chave DeepSeek direta para reasoning / Mixture of Agents. **Não intercambiável** com `OPENROUTER_API_KEY` |
+| `EXOCORTEX_DEFAULT_*` | — | Papel **default** (PROVIDER/MODEL/API_KEY/BASE_URL). Obrigatório — LLM principal |
+| `EXOCORTEX_VISION_*` | herda default | Papel **vision** (modelo multimodal); campos vazios herdam o default |
+| `EXOCORTEX_AUX_*` | herda default | Papel **auxiliar** (DocBrain, backend LLM do Hindsight); campos vazios herdam o default |
 | `TELEGRAM_BOT_TOKEN` | — | Token do bot Telegram (@BotFather) |
 | `CONTEXT7_API_KEY` | — | Chave Context7 para docs de tech stacks |
 | `FIRECRAWL_API_KEY` | — | Chave Firecrawl para crawling/extract (endpoint via `FIRECRAWL_BASE_URL`) |
 | `FIRECRAWL_BASE_URL` | `http://127.0.0.1:3002` | Endpoint local padrão do Firecrawl |
-| `DOCBRAIN_LLM_API_KEY` | — | Override de LLM key para DocBrain. Se ausente, DocBrain usa `OPENROUTER_API_KEY` |
 | `EXOCORTEX_ENABLE_HINDSIGHT` | `0` | `1` para ativar Hindsight local (Docker) |
 | `EXOCORTEX_ENABLE_HERMES_WEBUI` | `0` | `1` para ativar WebUI cockpit |
 
 ### Mapeamento de providers/keys
 
-- `OPENROUTER_API_KEY` e `DEEPSEEK_API_KEY` são credenciais **distintas e não intercambiáveis**.
-  Componentes que checam `OPENROUTER_API_KEY` pelo nome literal **não** são satisfeitos por
-  `DEEPSEEK_API_KEY`. Defina a chave que seu provider exige — não as duas.
-- **DocBrain:** usa `DOCBRAIN_LLM_API_KEY` se definida; caso contrário faz fallback para
-  `OPENROUTER_API_KEY`. `DEEPSEEK_API_KEY` não é usada pelo DocBrain.
+- **LLM:** defina apenas o papel **default** (`EXOCORTEX_DEFAULT_*`) para a maioria dos
+  casos. Os papéis **vision** e **auxiliar** herdam o default campo a campo quando vazios —
+  só os preencha se quiser um provider/modelo distinto para visão ou para softwares externos.
+- **DocBrain:** configurado pelo papel **auxiliar** (`EXOCORTEX_AUX_*`); o step-08 gera o
+  `.env` do DocBrain a partir dele. Se o papel aux estiver vazio, herda o default.
 - **Firecrawl:** a chave (`FIRECRAWL_API_KEY`) e o endpoint (`FIRECRAWL_BASE_URL`,
   default `http://127.0.0.1:3002`) andam juntos — documente/ajuste ambos ao subir uma instância local.
 
@@ -153,11 +173,12 @@ services:
       - ./data:/home/hindsight/.pg0
 EOF
 
-# Criar .env se não existir
+# Criar .env se não existir — backend LLM do Hindsight usa o papel auxiliar
+# (EXOCORTEX_AUX_*; herda o default se vazio). Resolva via scripts/lib/llm_roles.py.
 cat > "$HS_DIR/.env" <<EOF
-HINDSIGHT_API_LLM_PROVIDER=openai
-HINDSIGHT_API_LLM_API_KEY=${OPENROUTER_API_KEY:-CHANGE_ME}
-HINDSIGHT_API_LLM_MODEL=gpt-4o-mini
+HINDSIGHT_API_LLM_PROVIDER=${EXOCORTEX_AUX_PROVIDER:-${EXOCORTEX_DEFAULT_PROVIDER:-openai}}
+HINDSIGHT_API_LLM_API_KEY=${EXOCORTEX_AUX_API_KEY:-${EXOCORTEX_DEFAULT_API_KEY:-CHANGE_ME}}
+HINDSIGHT_API_LLM_MODEL=${EXOCORTEX_AUX_MODEL:-${EXOCORTEX_DEFAULT_MODEL:-gpt-4o-mini}}
 EOF
 
 # Subir container
@@ -570,16 +591,19 @@ fi
 bash "$SCRIPT_DIR/setup/step-12-verify-keys.sh"
 ```
 
-> **Modelo LLM canônico.** O modelo testado em produção é **`deepseek-v4-pro`** (via `DEEPSEEK_API_KEY`). Este step inspeciona `$HERMES_HOME/config.yaml` de forma **não-destrutiva** e avisa se o `model.default` tiver case incorreto (ex.: `MiniMax-M3` em vez de `minimax-m3`, que muitos gateways rejeitam) ou se o `provider` exigir uma key ausente. Ele nunca reescreve o config — para reconfigurar o modelo use `hermes model`.
+> **Papéis LLM e config.** Este step faz um **ping real (1 chamada) por papel**
+> (default, vision, auxiliar) e grava o `$HERMES_HOME/config.yaml` a partir do papel
+> **default** (`EXOCORTEX_DEFAULT_{PROVIDER,MODEL,API_KEY,BASE_URL}`). Inspecione o estado
+> resolvido com `python3 scripts/lib/llm_roles.py all`. Para reconfigurar o modelo use `hermes model`.
 >
-> **Contingência `--imbroke`.** Rodar `bash setup.sh --imbroke` (ou exportar `IMBROKE_MODE=1`) ativa o roteador OpenRouter free (`configure_openrouter_free_router`): gera um ranking de modelos gratuitos e, com `OPENROUTER_API_KEY` presente, aplica um circuit breaker (sentinela + watchdog cron). Por padrão essa contingência fica **desativada**.
+> **Contingência `--imbroke`.** Rodar `bash setup.sh --imbroke` (ou exportar `IMBROKE_MODE=1`) ativa o roteador OpenRouter free (`configure_openrouter_free_router`): gera um ranking de modelos gratuitos e, com a key OpenRouter presente, aplica um circuit breaker (sentinela + watchdog cron). Por padrão essa contingência fica **desativada**.
 
 ### Verificação Manual
 
 | Key | Status | Ação se pendente |
 |-----|--------|------------------|
-| `OPENROUTER_API_KEY` | `test -n "${OPENROUTER_API_KEY:-}"` | Obter em openrouter.ai/keys |
-| `DEEPSEEK_API_KEY` | `test -n "${DEEPSEEK_API_KEY:-}"` | Obter no console da DeepSeek |
+| Papel **default** | `test -n "${EXOCORTEX_DEFAULT_API_KEY:-}"` | Obrigatório — configurar via `bash setup.sh` ou `.env.local` |
+| Papéis vision/aux | `python3 scripts/lib/llm_roles.py all` | Vazio = herda o default (OK). Preencher só se quiser provider distinto |
 | `FIRECRAWL_BASE_URL` | `printf '%s\n' "${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"` | Para Firecrawl local, usar porta 3002 |
 | `TELEGRAM_BOT_TOKEN` | `test -n "${TELEGRAM_BOT_TOKEN:-}"` | Criar bot em @BotFather |
 | Google Credentials | `test -f "$HOME/.config/gcloud/application_default_credentials.json"` | `gcloud auth application-default login` |

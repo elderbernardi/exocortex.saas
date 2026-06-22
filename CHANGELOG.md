@@ -4,6 +4,36 @@ All notable changes to Exocórtex.IA are documented here. Versions are git tags 
 this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Changed
+- **LLM key management consolidated into 3 roles** (`default` / `vision` / `auxiliar`).
+  All LLM configuration is now a single source of truth: each role is a quad
+  `EXOCORTEX_<ROLE>_{PROVIDER,MODEL,API_KEY,BASE_URL}`. `default` is always used;
+  `vision` and `auxiliar` inherit `default` field-by-field when unset. This replaces
+  the ~20 scattered keys (`OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `OPENCODE_API_KEY`,
+  `DOCBRAIN_LLM_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, …) and the 3 independent
+  provider-resolution implementations.
+
+### Added
+- `setup/providers.json` — single provider catalog (base URLs + capabilities), removing
+  hardcoded endpoints from `skill_judge.py`, `calibrate-hermes.py` and `last30days`.
+- `scripts/lib/llm_roles.py` (Python) and `setup/lib/llm-roles.sh` (shell) — the single
+  role resolver, with field-by-field inheritance and catalog-derived base URLs. The
+  shell wrapper delegates to the Python module for identical behavior.
+- `scripts/migrate-env-roles.py` — idempotent one-shot migration of legacy LLM keys into
+  the 3 roles (run automatically by `setup.sh`); preserves non-LLM service keys, comments
+  the migrated legacy keys, and writes a `.env.local.pre-roles.bak` backup.
+- `step-12-verify-keys.sh` now does a **real ping (1 call) per role** during install —
+  catching invalid keys / wrong model ids / unreachable endpoints early with a specific
+  message — and **writes `config.yaml`** from the `default` role (skippable via
+  `--yes`/`EXOCORTEX_NO_PING=1`).
+
+### Migration
+- Existing installs: `setup.sh` migrates the old `.env.local` automatically. Manually:
+  `python3 scripts/migrate-env-roles.py --dry-run`. DocBrain and the Hindsight LLM backend
+  now derive their credentials from the `auxiliar` role (which inherits `default`).
+
 ## [1.0.3] — 2026-06-22
 
 ### Fixed

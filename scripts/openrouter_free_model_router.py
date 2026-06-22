@@ -346,6 +346,50 @@ def default_state_path() -> Path:
     return _hermes_home() / "model-routing" / "imbroke-state.json"
 
 
+def _update_default_role_env(provider: str, model: str) -> None:
+    """Persiste a seleção do roteador no papel LLM 'default' do .env.local.
+
+    Mantém EXOCORTEX_DEFAULT_PROVIDER/MODEL como fonte única de verdade,
+    em sincronia com o que foi gravado no config.yaml do Hermes.
+    """
+    candidates = []
+    inst = os.environ.get("EXOCORTEX_INSTALLER_DIR")
+    if inst:
+        candidates.append(Path(inst) / ".env.local")
+    candidates += [
+        Path.home() / ".exocortex-installer" / ".env.local",
+        Path(__file__).resolve().parent.parent / ".env.local",
+    ]
+    path = next((c for c in candidates if c.is_file()), None)
+    if path is None:
+        return
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return
+    updates = {
+        "EXOCORTEX_DEFAULT_PROVIDER": provider,
+        "EXOCORTEX_DEFAULT_MODEL": model,
+    }
+    seen: set[str] = set()
+    out: list[str] = []
+    for line in lines:
+        s = line.strip()
+        key = s.split("=", 1)[0].strip() if ("=" in s and not s.startswith("#")) else None
+        if key in updates:
+            out.append(f'{key}="{updates[key]}"')
+            seen.add(key)
+        else:
+            out.append(line)
+    for k, v in updates.items():
+        if k not in seen:
+            out.append(f'{k}="{v}"')
+    try:
+        path.write_text("\n".join(out).rstrip("\n") + "\n", encoding="utf-8")
+    except OSError:
+        pass
+
+
 def apply_selected_model(model_id: str) -> None:
     commands = [
         ["hermes", "config", "set", "model.provider", IMBROKE_PROVIDER],
@@ -363,6 +407,8 @@ def apply_selected_model(model_id: str) -> None:
             raise RuntimeError(
                 f"Falha ao aplicar configuração Hermes: {' '.join(cmd)}\nSTDOUT: {completed.stdout}\nSTDERR: {completed.stderr}"
             )
+    # Mantém o papel 'default' sincronizado com a seleção do roteador.
+    _update_default_role_env(IMBROKE_PROVIDER, model_id)
 
 
 def _hermes_config_get(key: str) -> str | None:
@@ -1194,11 +1240,24 @@ def do_guard(_args: argparse.Namespace) -> int:
 
 
 def _get_api_key() -> str | None:
-    """Retrieve OpenRouter/OpenAI API key from env or .secrets file."""
-    # 1. Environment variable
-    key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY")
-    if key and key.startswith("sk-or-"):
-        return key
+    """Retrieve an OpenRouter API key (sk-or-…) from env or .secrets file.
+
+    A contingência --imbroke é específica de OpenRouter. A chave pode vir dos
+    papéis LLM (qualquer papel cujo provider seja openrouter expõe uma chave
+    sk-or-…) ou, por compatibilidade, das vars legadas OPENROUTER/OPENAI.
+    """
+    # 1. Environment: papéis LLM primeiro, depois vars legadas. O filtro sk-or-
+    #    garante que só uma credencial OpenRouter seja aceita.
+    for env_name in (
+        "EXOCORTEX_DEFAULT_API_KEY",
+        "EXOCORTEX_AUX_API_KEY",
+        "EXOCORTEX_VISION_API_KEY",
+        "OPENROUTER_API_KEY",
+        "OPENAI_API_KEY",
+    ):
+        key = os.environ.get(env_name)
+        if key and key.startswith("sk-or-"):
+            return key
 
     # 2. Try loading .secrets from workspace
     workspace_secrets = Path("/home/elder/projetos/projetob/exocortex.saas/.secrets")

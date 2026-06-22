@@ -61,7 +61,7 @@ mask_secret() {
 sanitize_text() {
   local text="$1"
   local secret_name secret_value masked_value
-  for secret_name in OPENROUTER_API_KEY TELEGRAM_BOT_TOKEN CONTEXT7_API_KEY FIRECRAWL_API_KEY DOCBRAIN_LLM_API_KEY HINDSIGHT_API_KEY DEEPSEEK_API_KEY; do
+  for secret_name in EXOCORTEX_DEFAULT_API_KEY EXOCORTEX_VISION_API_KEY EXOCORTEX_AUX_API_KEY TELEGRAM_BOT_TOKEN CONTEXT7_API_KEY FIRECRAWL_API_KEY HINDSIGHT_API_KEY OPENROUTER_API_KEY DEEPSEEK_API_KEY DOCBRAIN_LLM_API_KEY; do
     secret_value="${!secret_name:-}"
     if [ -n "$secret_value" ]; then
       masked_value=$(mask_secret "$secret_value")
@@ -210,23 +210,24 @@ show_env_preflight() {
   printf '  - INSTALLER_DIR        %s\n' "$INSTALLER_DIR"
   echo ''
   info "Env vars detectadas antes do Hermes (mascaradas quando sensíveis):"
-  print_env_preflight_row "OPENROUTER_API_KEY" "routing OpenRouter e integrações que exigem esse nome literal"
-  print_env_preflight_row "DEEPSEEK_API_KEY" "reasoning DeepSeek direto e fluxos compatíveis"
+  info "  Provedores LLM (3 papéis — default obrigatório; vision/aux herdam default):"
+  print_env_preflight_row "EXOCORTEX_DEFAULT_PROVIDER" "provider do papel default"
+  print_env_preflight_row "EXOCORTEX_DEFAULT_MODEL" "modelo do papel default"
+  print_env_preflight_row "EXOCORTEX_DEFAULT_API_KEY" "chave do papel default (obrigatória)"
+  print_env_preflight_row "EXOCORTEX_VISION_API_KEY" "chave do papel vision (opcional)"
+  print_env_preflight_row "EXOCORTEX_AUX_API_KEY" "chave do papel auxiliar — DocBrain/Hindsight (opcional)"
+  info "  Serviços (não-LLM):"
   print_env_preflight_row "TELEGRAM_BOT_TOKEN" "gateway Telegram opcional"
   print_env_preflight_row "FIRECRAWL_API_KEY" "crawling/extract opcional"
-  print_env_preflight_row "DOCBRAIN_LLM_API_KEY" "override de key só para DocBrain"
   print_env_preflight_row "CONTEXT7_API_KEY" "docs técnicos opcionais"
-  printf '  - %-22s %s — endpoint esperado para Firecrawl local\n' "FIRECRAWL_BASE_URL" "$firecrawl_url"
+  printf '  - %-26s %s — endpoint esperado para Firecrawl local\n' "FIRECRAWL_BASE_URL" "$firecrawl_url"
   echo ''
 
-  warn_if_secret_suspicious "OPENROUTER_API_KEY" "Se a chave veio por copy/paste, revise antes do setup."
-  warn_if_secret_suspicious "DEEPSEEK_API_KEY" "Se a chave veio por copy/paste, revise antes do setup."
+  warn_if_secret_suspicious "EXOCORTEX_DEFAULT_API_KEY" "Se a chave veio por copy/paste, revise antes do setup."
   warn_if_secret_suspicious "TELEGRAM_BOT_TOKEN" "Tokens do BotFather normalmente têm formato numérico + dois pontos + segredo."
 
-  if [ -z "${OPENROUTER_API_KEY:-}" ] && [ -z "${DEEPSEEK_API_KEY:-}" ]; then
-    warn "Nenhuma key de reasoning remoto foi detectada. O bootstrap continua, mas partes do ecossistema vão subir sem rota remota pronta."
-  elif [ -z "${OPENROUTER_API_KEY:-}" ] && [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-    info "DeepSeek direto foi detectado. Fluxos compatíveis funcionarão, mas componentes que ainda checam OPENROUTER_API_KEY por nome podem pedir essa env var depois."
+  if [ -z "${EXOCORTEX_DEFAULT_API_KEY:-}" ]; then
+    warn "Papel LLM 'default' não detectado (EXOCORTEX_DEFAULT_API_KEY). O setup vai migrar chaves legadas e/ou perguntar. Sem ele, o reasoning remoto sobe sem rota pronta."
   fi
 
   if [ -z "${FIRECRAWL_API_KEY:-}" ]; then

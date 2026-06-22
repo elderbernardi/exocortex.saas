@@ -21,8 +21,15 @@ configure_openrouter_free_router() {
     return 0
   fi
 
-  if [ -z "${OPENROUTER_API_KEY:-}" ]; then
-    info "OPENROUTER_API_KEY ausente; gerando ranking de contingência sem aplicar provider/model"
+  # A contingência --imbroke precisa de uma credencial OpenRouter (sk-or-…).
+  # O roteador a busca nos papéis LLM (qualquer papel com provider openrouter)
+  # ou nas vars legadas. Aqui só decidimos se há como APLICAR (precisa de chave)
+  # ou apenas RANQUEAR.
+  exocortex_resolve_role default
+  _imbroke_key="${OPENROUTER_API_KEY:-}"
+  case "$ROLE_API_KEY" in sk-or-*) _imbroke_key="$ROLE_API_KEY" ;; esac
+  if [ -z "$_imbroke_key" ]; then
+    info "Sem credencial OpenRouter (sk-or-…) nos papéis/legado; gerando ranking de contingência sem aplicar provider/model"
     if python3 "$router_script" --imbroke --report-path "$report_path" --format text >/dev/null 2>&1; then
       log "Ranking OpenRouter free gerado em $report_path"
     else
@@ -50,27 +57,99 @@ configure_openrouter_free_router() {
   fi
 }
 
-# ─── API Keys ────────────────────────────────────────────────────────────────
+# ─── Provedores LLM (3 papéis) ───────────────────────────────────────────────
+# Fonte única: EXOCORTEX_{DEFAULT,VISION,AUX}_*. vision/aux herdam o default.
+# Resolução, herança e catálogo de providers vivem em scripts/lib/llm_roles.py
+# (via setup/lib/llm-roles.sh). Aqui: resolver → reportar → PING real → gravar
+# config.yaml a partir do papel 'default'.
 
-info "Verificando keys de API..."
-if [ -n "${OPENROUTER_API_KEY:-}" ]; then
-  log "OPENROUTER_API_KEY definida [recomendada]"
-else
-  warn "OPENROUTER_API_KEY não definida [recomendada] — integrações que exigem essa env var literal podem falhar. Obtenha em openrouter.ai/keys"
+source "$(dirname "${BASH_SOURCE[0]}")/lib/llm-roles.sh"
+
+info "Verificando provedores LLM (papéis default / vision / auxiliar)..."
+
+# Mascara uma chave para exibição.
+_mask_key() { local v="$1"; [ -z "$v" ] && { echo "(vazia)"; return; }; [ "${#v}" -le 8 ] && { echo "****"; return; }; echo "${v:0:4}...${v: -4}"; }
+
+# Reporta + (opcionalmente) faz ping de um papel. $1=papel $2=rótulo $3=obrigatório
+verify_role() {
+  local role="$1" label="$2" required="${3:-0}"
+  exocortex_resolve_role "$role"
+  if [ "$ROLE_USABLE" != "1" ]; then
+    if [ "$required" = "1" ]; then
+      warn "Papel '$label' NÃO configurado (provider=$ROLE_PROVIDER model=$ROLE_MODEL key=$(_mask_key "$ROLE_API_KEY"))."
+      warn "  Configure EXOCORTEX_DEFAULT_* no .env.local — é o papel obrigatório. Rode: bash setup.sh"
+    else
+      info "Papel '$label' não configurado — herdará o 'default' em runtime."
+    fi
+    return 0
+  fi
+
+  # F-030: model ids com maiúsculas costumam ser rejeitados por gateways.
+  if [ "$ROLE_MODEL" != "$(printf '%s' "$ROLE_MODEL" | tr '[:upper:]' '[:lower:]')" ]; then
+    warn "model '$ROLE_MODEL' ($label) tem maiúsculas — muitos gateways rejeitam (ex.: minimax-m3)."
+  fi
+
+  log "Papel '$label': provider=$ROLE_PROVIDER model=$ROLE_MODEL key=$(_mask_key "$ROLE_API_KEY")"
+  info "  endpoint: $ROLE_CHAT_URL"
+
+  # PING real (1 chamada) — pula em modo não-interativo (--yes/CI) ou EXOCORTEX_NO_PING=1.
+  if [ "${INTERACTIVE_MODE:-1}" = "1" ] && [ "${EXOCORTEX_NO_PING:-0}" != "1" ]; then
+    info "  testando conexão (ping)..."
+    if exocortex_ping_role "$role"; then
+      log "  ✓ ping OK (HTTP $PING_STATUS) — chave+modelo+endpoint válidos"
+    else
+      case "$PING_STATUS" in
+        401|403) warn "  ✗ ping HTTP $PING_STATUS — chave de API inválida/sem permissão para '$label'." ;;
+        404)     warn "  ✗ ping HTTP $PING_STATUS — modelo '$ROLE_MODEL' ou endpoint não encontrado. Confira o id do modelo." ;;
+        400)     warn "  ✗ ping HTTP $PING_STATUS — requisição rejeitada (modelo '$ROLE_MODEL' provavelmente inválido para este provider)." ;;
+        no-curl) info "  curl ausente; ping pulado." ;;
+        000)     warn "  ✗ sem resposta do endpoint $ROLE_CHAT_URL (rede/URL). Verifique provider/base_url." ;;
+        *)       warn "  ✗ ping HTTP $PING_STATUS para '$label' (provider=$ROLE_PROVIDER model=$ROLE_MODEL)." ;;
+      esac
+      warn "  Ajuste EXOCORTEX_$(printf '%s' "$role" | tr '[:lower:]' '[:upper:]')_* no .env.local e rode novamente."
+    fi
+  fi
+}
+
+verify_role default  "default"   1
+verify_role vision   "vision"    0
+verify_role aux      "auxiliar"  0
+
+# ─── Gravar config.yaml a partir do papel 'default' ──────────────────────────
+# O runtime Hermes lê model.provider/default/base_url de $HERMES_HOME/config.yaml.
+# Em vez de só inspecionar, projetamos o papel 'default' nele (fonte única).
+exocortex_resolve_role default
+if [ "$ROLE_USABLE" = "1" ]; then
+  if command -v hermes >/dev/null 2>&1; then
+    hermes config set model.provider "$ROLE_PROVIDER" >/dev/null 2>&1 || true
+    hermes config set model.default  "$ROLE_MODEL"    >/dev/null 2>&1 || true
+    hermes config set model.base_url "$ROLE_BASE_URL" >/dev/null 2>&1 || true
+    log "config.yaml sincronizado com o papel 'default' (provider=$ROLE_PROVIDER model=$ROLE_MODEL)"
+  elif command -v python3 >/dev/null 2>&1; then
+    HERMES_CONFIG="$HERMES_HOME/config.yaml" python3 - "$ROLE_PROVIDER" "$ROLE_MODEL" "$ROLE_BASE_URL" <<'PY' || true
+import os, sys
+try:
+    import yaml
+    path = os.environ["HERMES_CONFIG"]
+    cfg = {}
+    if os.path.exists(path):
+        with open(path) as f:
+            cfg = yaml.safe_load(f) or {}
+    model = cfg.get("model", {}) or {}
+    model["provider"], model["default"], model["base_url"] = sys.argv[1], sys.argv[2], sys.argv[3]
+    cfg["model"] = model
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        yaml.safe_dump(cfg, f, sort_keys=False, allow_unicode=True)
+    print("ok")
+except Exception as e:
+    print(f"skip: {e}", file=sys.stderr)
+PY
+    log "config.yaml gravado a partir do papel 'default' (provider=$ROLE_PROVIDER model=$ROLE_MODEL)"
+  fi
 fi
-if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-  log "DEEPSEEK_API_KEY definida [opcional]"
-else
-  info "DEEPSEEK_API_KEY não definida [opcional] — DeepSeek direto ficará indisponível; não substitui OPENROUTER_API_KEY por nome"
-fi
-if [ -n "${OPENROUTER_API_KEY:-}" ] || [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-  log "Rota de reasoning remoto disponível para fluxos multiagente / Mixture of Agents"
-else
-  warn "Nem OPENROUTER_API_KEY nem DEEPSEEK_API_KEY foram definidas — reasoning remoto ficará limitado"
-fi
-if [ -z "${OPENROUTER_API_KEY:-}" ] && [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-  info "DeepSeek direto está disponível, mas componentes que checam OPENROUTER_API_KEY por nome ainda exigirão essa variável."
-fi
+
+# Serviços não-LLM verificados abaixo.
 if [ -n "${CONTEXT7_API_KEY:-}" ]; then
   log "CONTEXT7_API_KEY definida"
 else
@@ -84,72 +163,16 @@ else
   info "Se você subir Firecrawl localmente, use por default: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 fi
 
-# ─── Modelo LLM canônico (deepseek-v4-pro) ───────────────────────────────────
-# Validação não-destrutiva do modelo configurado. O id do modelo vive em
-# $HERMES_HOME/config.yaml (escrito pelo runtime Hermes, não pelo Exocórtex), por
-# isso aqui apenas inspecionamos e orientamos — nunca reescrevemos o config.
-# Resolve F-030 (case errado, ex.: 'MiniMax-M3' rejeitado por gateway que serve
-# 'minimax-m3') e F-031 (provider/var de key incompatível).
-
-CANONICAL_MODEL="deepseek-v4-pro"
-info "Verificando modelo LLM (canônico/testado: $CANONICAL_MODEL via DEEPSEEK_API_KEY)..."
-
-HERMES_CONFIG="$HERMES_HOME/config.yaml"
-if [ -f "$HERMES_CONFIG" ] && command -v python3 >/dev/null 2>&1; then
-  eval "$(python3 - "$HERMES_CONFIG" <<'PY' || true
-import sys
-try:
-    import yaml
-    cfg = yaml.safe_load(open(sys.argv[1])) or {}
-    model = cfg.get("model", {}) or {}
-    default_model = str(model.get("default", "") or "")
-    provider = str(model.get("provider", "") or "")
-    print(f"CFG_MODEL={default_model!r}".replace('"', ''))
-    print(f"CFG_PROVIDER={provider!r}".replace('"', ''))
-except Exception:
-    pass
-PY
-)"
-  CFG_MODEL="${CFG_MODEL:-}"
-  CFG_PROVIDER="${CFG_PROVIDER:-}"
-  if [ -n "$CFG_MODEL" ]; then
-    info "config.yaml: model.default='$CFG_MODEL'${CFG_PROVIDER:+ provider='$CFG_PROVIDER'}"
-    # F-030: gateways de model id servem ids minúsculos; um id com maiúsculas é
-    # frequentemente rejeitado (ex.: 'MiniMax-M3' vs 'minimax-m3').
-    if [ "$CFG_MODEL" != "$(printf '%s' "$CFG_MODEL" | tr '[:upper:]' '[:lower:]')" ]; then
-      warn "model.default '$CFG_MODEL' tem letras maiúsculas — muitos gateways rejeitam (ex.: minimax-m3)."
-      warn "  Se o agente falhar com 'Model ... is not supported', reconfigure: hermes model"
-    fi
-    # F-031: provider rotulado mas sem a var de key correspondente.
-    if [ -n "$CFG_PROVIDER" ]; then
-      # Sanitiza para um identificador de shell válido: maiúsculas + qualquer
-      # caractere não-alfanumérico vira '_' (ex.: 'opencode-go' -> 'OPENCODE_GO').
-      # Sem isso, a expansão indireta ${!var} quebra com nomes contendo hífen.
-      PROVIDER_KEY_VAR="$(printf '%s' "$CFG_PROVIDER" | tr '[:lower:]' '[:upper:]' | tr -c 'A-Z0-9' '_')_API_KEY"
-      if [[ "$PROVIDER_KEY_VAR" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] && [ -z "${!PROVIDER_KEY_VAR:-}" ]; then
-        info "provider '$CFG_PROVIDER' normalmente exige $PROVIDER_KEY_VAR (não definida)."
-        info "  Se o gateway usa outra credencial (ex.: OPENCODE_API_KEY), mapeie: export $PROVIDER_KEY_VAR=\$OPENCODE_API_KEY"
-      fi
-    fi
-  else
-    info "config.yaml sem model.default — Hermes usará seu default. Recomendado: $CANONICAL_MODEL."
-  fi
-else
-  info "config.yaml ainda não existe (será criado pelo runtime Hermes)."
-  info "  Modelo recomendado/testado: $CANONICAL_MODEL (requer DEEPSEEK_API_KEY). Configure com: hermes model"
-fi
-
-if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
-  info "Para usar o modelo canônico $CANONICAL_MODEL, defina DEEPSEEK_API_KEY (deepseek.com)."
-fi
-
 # ─── last30days skill keys ───────────────────────────────────────────────────
 
 info "Verificando keys para last30days (pesquisa multi-plataforma)..."
-if [ -n "${DEEPSEEK_API_KEY:-}" ]; then
-  log "DEEPSEEK_API_KEY definida — last30days reasoning ativado"
+# Reasoning do last30days vem do papel 'default' (provider openrouter/gemini/
+# openai/xai); vision do papel 'vision'. Ver setup/lib/llm-roles.sh.
+exocortex_resolve_role default
+if [ "$ROLE_USABLE" = "1" ]; then
+  log "Reasoning do last30days via papel 'default' (provider=$ROLE_PROVIDER)"
 else
-  info "DEEPSEEK_API_KEY não definida (opcional — last30days usará fallback determinístico para planejamento)"
+  info "Papel 'default' não configurado — last30days usará fallback determinístico para planejamento"
 fi
 if [ -n "${XAI_API_KEY:-}" ]; then
   log "XAI_API_KEY definida — last30days X/Twitter ativado"

@@ -648,26 +648,30 @@ if should_run "T24"; then
 fi
 
 # =============================================================================
-# T25: verify-keys reconhece DeepSeek como rota remota válida
+# T25: verify-keys resolve o papel 'default' e sincroniza o config.yaml
 # =============================================================================
 
 if should_run "T25"; then
-  echo -e "${BOLD}T25: step-12 reconhece DEEPSEEK_API_KEY${NC}"
+  echo -e "${BOLD}T25: step-12 resolve papel 'default' e grava config.yaml${NC}"
   test_dir=$(setup_test_env)
 
   output=$(bash -c "
     export HERMES_HOME='$test_dir/hermes'
     export HOME='$test_dir/home'
     export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
-    export DEEPSEEK_API_KEY='test-deepseek-key'
+    export INTERACTIVE_MODE=0 EXOCORTEX_NO_PING=1
+    export EXOCORTEX_DEFAULT_PROVIDER='deepseek'
+    export EXOCORTEX_DEFAULT_MODEL='deepseek-v4-pro'
+    export EXOCORTEX_DEFAULT_API_KEY='test-default-key'
     bash '$REPO_ROOT/setup/step-12-verify-keys.sh' 2>&1
   " 2>/dev/null || true)
 
-  if echo "$output" | grep -q "Rota de reasoning remoto disponível para fluxos multiagente" \
-    && echo "$output" | grep -q "componentes que checam OPENROUTER_API_KEY por nome"; then
-    pass "T25: DeepSeek direto é tratado como rota remota válida"
+  if echo "$output" | grep -q "Papel 'default'" \
+    && echo "$output" | grep -q "config.yaml" \
+    && echo "$output" | grep -q "deepseek-v4-pro"; then
+    pass "T25: papel 'default' resolvido e projetado no config.yaml"
   else
-    fail_test "T25" "saída não trouxe o guidance esperado"
+    fail_test "T25" "saída não trouxe o relatório de papel/config esperado"
   fi
 
   cleanup_test_env "$test_dir"
@@ -749,14 +753,14 @@ EOF
   output=$(env PATH="$bin_dir:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin" \
     HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
     EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$REPO_ROOT" VERSION="main" \
-    OPENROUTER_API_KEY="$secret" FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
+    EXOCORTEX_DEFAULT_API_KEY="$secret" FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
     bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1 || true)
 
   if echo "$output" | grep -q "Preflight do bootstrap Hermes" \
     && echo "$output" | grep -q "Modo headless (--yes)" \
     && echo "$output" | grep -q "sk-or-...3456" \
     && ! echo "$output" | grep -q "$secret"; then
-    pass "T28: preflight narra o modo e mascara OPENROUTER_API_KEY"
+    pass "T28: preflight narra o modo e mascara a chave do papel default"
   else
     fail_test "T28" "preflight não exibiu a narrativa/mascara esperadas"
   fi
@@ -858,11 +862,11 @@ if should_run "T31"; then
 fi
 
 # =============================================================================
-# T32: show_api_key_guidance traz tier, fallback e desambiguação DeepSeek
+# T32: show_api_key_guidance explica os 3 papéis e a herança
 # =============================================================================
 
 if should_run "T32"; then
-  echo -e "${BOLD}T32: guidance por-key com tier/fallback/desambiguação${NC}"
+  echo -e "${BOLD}T32: guidance explica os 3 papéis (default/vision/auxiliar)${NC}"
 
   result=$(bash -c "
     export _EXOCORTEX_SCRIPT_DIR='$REPO_ROOT'
@@ -871,13 +875,13 @@ if should_run "T32"; then
     show_api_key_guidance
   " 2>&1 || true)
 
-  if echo "$result" | grep -q "\[recomendada\]" \
-    && echo "$result" | grep -q "NÃO intercambiável" \
-    && echo "$result" | grep -q "não substitui OPENROUTER_API_KEY por nome" \
-    && echo "$result" | grep -q "Fallback: usa OPENROUTER_API_KEY"; then
-    pass "T32: guidance expõe tier, fallback DocBrain e desambiguação DeepSeek"
+  if echo "$result" | grep -q "default" \
+    && echo "$result" | grep -q "vision" \
+    && echo "$result" | grep -q "auxiliar" \
+    && echo "$result" | grep -qi "herda o default"; then
+    pass "T32: guidance expõe os 3 papéis e a regra de herança"
   else
-    fail_test "T32" "guidance não trouxe os elementos esperados"
+    fail_test "T32" "guidance não trouxe os 3 papéis esperados"
   fi
 fi
 

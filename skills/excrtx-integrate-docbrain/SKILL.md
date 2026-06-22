@@ -31,10 +31,10 @@ metadata:
 
         3. Descreve o fluxo de processamento: PDFs → DocBrain → intake → Acervo
 
-        4. Alerta sobre necessidade de OPENROUTER_API_KEY ou DOCBRAIN_LLM_API_KEY'
+        4. Alerta sobre necessidade do papel auxiliar (EXOCORTEX_AUX_*), que gera o .env do DocBrain (DOCBRAIN_LLM_API_KEY)'
       remediation_tip: 'FALHA: DocBrain assumido como disponível sem verificação. Verifique: ''test -d ${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}''
         e ''node --version''. Se não instalado, oriente: ''git clone github.com/ProjetoBB/docBrainBB.git && npm install &&
-        npm run build''.'
+        npm run build''. A chave LLM do DocBrain vem do papel auxiliar (EXOCORTEX_AUX_*), que herda o papel default quando vazio.'
 ---
 # DocBrain CLI API
 
@@ -62,7 +62,9 @@ Do not use the human `docbrain ingest` command for Hermes automation unless the 
 
 ## Key Policy
 
-DocBrain must reuse the main Hermes LLM key when possible.
+DocBrain is driven by the Exocórtex **auxiliar** LLM role (`EXOCORTEX_AUX_{PROVIDER,MODEL,API_KEY,BASE_URL}`), which is reserved for external software (DocBrain, the Hindsight LLM backend). When the aux role is left empty it inherits the **default** role field-by-field, so DocBrain reuses the main Hermes LLM by default.
+
+The operator no longer sets `DOCBRAIN_LLM_API_KEY` by hand. `setup/step-08-integration-docbrain.sh` resolves the aux role (via `setup/lib/llm-roles.sh`) and writes the DocBrain `.env` (`DOCBRAIN_LLM_API_KEY/MODEL/BASE_URL`) from it. `DOCBRAIN_LLM_API_KEY` still exists, but only as DocBrain's **internal contract** — generated from the aux role, not configured directly.
 
 ## Workspace Resolution
 
@@ -85,26 +87,15 @@ Validation rule:
 Reminder hygiene:
 
 - if a reminder file says the LLM key is missing, verify the live environment before trusting the reminder;
-- stale reminders should not override a live environment that already exposes `DOCBRAIN_LLM_API_KEY` or `OPENROUTER_API_KEY`.
+- stale reminders should not override a live environment whose DocBrain `.env` already carries a working `DOCBRAIN_LLM_API_KEY` (generated from the aux role).
 
-Preferred environment variable:
+Where the key comes from:
 
-```bash
-OPENROUTER_API_KEY
-```
+- the operator configures the **auxiliar** role (`EXOCORTEX_AUX_*`), not `DOCBRAIN_LLM_API_KEY` directly;
+- `setup/step-08-integration-docbrain.sh` writes DocBrain's `.env` from the resolved aux role (which inherits the default role when empty);
+- inside DocBrain, `DOCBRAIN_LLM_API_KEY` is the internal contract the runtime reads.
 
-DocBrain-specific override:
-
-```bash
-DOCBRAIN_LLM_API_KEY
-```
-
-Runtime precedence:
-
-1. `DOCBRAIN_LLM_API_KEY`
-2. `OPENROUTER_API_KEY`
-
-If no key exists during a new Exocortex install, do not block setup. Create a non-secret reminder at:
+If the aux role resolves to no key during a new Exocortex install, do not block setup. Create a non-secret reminder at:
 
 ```bash
 ${HERMES_HOME:-$HOME/.hermes}/reminders/docbrain-llm-key.md
@@ -222,7 +213,7 @@ npm install
 npm run build
 ```
 
-If `OPENROUTER_API_KEY` exists in the Hermes environment, DocBrain will reuse it. If no key exists, create the reminder file and continue.
+Prefer running `setup/step-08-integration-docbrain.sh`, which generates DocBrain's `.env` from the aux role. If the aux role resolves to a key (directly or by inheriting the default role), DocBrain uses it. If no key resolves, create the reminder file and continue.
 
 ## Validation
 

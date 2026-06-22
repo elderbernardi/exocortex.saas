@@ -55,7 +55,7 @@ SKILLS_DST="$HERMES_HOME/skills/excrtx"
 # canonical Acervo so test runs never pollute semantic memory. Shared with
 # sync-repairs-to-repo.sh (same default + env var).
 EXOCORTEX_REPORT_DIR="${EXOCORTEX_REPORT_DIR:-$HERMES_HOME/reports/provisioning}"
-HARNESS_MODEL="${EXOCORTEX_HARNESS_MODEL:-${EXOCORTEX_MODEL:-}}"
+HARNESS_MODEL="${EXOCORTEX_HARNESS_MODEL:-${EXOCORTEX_DEFAULT_MODEL:-}}"
 REPO_PATH="${EXOCORTEX_REPO_PATH:-}"
 SYNC_ENABLED="${EXOCORTEX_SYNC_ENABLED:-1}"
 NO_REPAIR="${NO_REPAIR:-0}"
@@ -509,7 +509,7 @@ run_smoke_test() {
   fi
 
   if [ -z "$HARNESS_MODEL" ]; then
-    _log "  ${_YELLOW}⚠ Smoke test pulado — EXOCORTEX_MODEL não configurado${_NC}"
+    _log "  ${_YELLOW}⚠ Smoke test pulado — papel 'default' não configurado (EXOCORTEX_DEFAULT_MODEL)${_NC}"
     TOTAL_SMOKE_SKIPPED=$((TOTAL_SMOKE_SKIPPED + 1))
     return 0
   fi
@@ -866,7 +866,7 @@ print_summary() {
   echo ""
   if [ "$TOTAL_SMOKE_SKIPPED" -gt 0 ] && [ ${#DEFINITIVE_FAILS[@]} -eq 0 ]; then
     echo -e "  ${_YELLOW}${_BOLD}⚠ ${TOTAL_PASSED}/${TOTAL_TESTED} features passaram (determinístico), mas ${TOTAL_SMOKE_SKIPPED} smoke tests foram pulados.${_NC}"
-    echo -e "  ${_YELLOW}  Defina EXOCORTEX_MODEL para validação completa: export EXOCORTEX_MODEL=\"seu-modelo\"${_NC}"
+    echo -e "  ${_YELLOW}  Configure o papel 'default' (bash setup.sh) ou export EXOCORTEX_HARNESS_MODEL para validação completa${_NC}"
   elif [ ${#DEFINITIVE_FAILS[@]} -eq 0 ]; then
     echo -e "  ${_GREEN}${_BOLD}✅ Todas as features operacionais.${_NC}"
   else

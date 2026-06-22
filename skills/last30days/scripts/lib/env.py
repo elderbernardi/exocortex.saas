@@ -342,6 +342,40 @@ def get_config() -> dict[str, Any]:
     for key, default in keys:
         config[key] = os.environ.get(key) or merged_env.get(key, default)
 
+    # Seed reasoning/vision LLM config from the central Exocórtex roles
+    # (EXOCORTEX_DEFAULT_* / EXOCORTEX_VISION_*) when last30days' own keys are
+    # absent. These roles are exported as env vars by the Exocórtex installer
+    # (persist-env.sh); we read them directly — no dependency on the repo's
+    # llm_roles module, since the installed skill runs detached from the repo.
+    # 'vision' inherits 'default' field-by-field. Providers last30days can't
+    # serve (e.g. deepseek) are simply skipped — no regression, reasoning stays
+    # on its existing path / local fallback.
+    def _role_env(role: str, field: str) -> str:
+        name = f'EXOCORTEX_{role}_{field}'
+        return (os.environ.get(name) or merged_env.get(name) or '').strip()
+
+    _provider_key_slot = {
+        'openrouter': 'OPENROUTER_API_KEY',
+        'gemini': 'GEMINI_API_KEY',
+        'openai': 'OPENAI_API_KEY',
+        'xai': 'XAI_API_KEY',
+    }
+    for _role in ('DEFAULT', 'VISION'):
+        _prov = _role_env(_role, 'PROVIDER')
+        _key = _role_env(_role, 'API_KEY')
+        if _role == 'VISION':  # herda default campo a campo
+            _prov = _prov or _role_env('DEFAULT', 'PROVIDER')
+            _key = _key or _role_env('DEFAULT', 'API_KEY')
+        _slot = _provider_key_slot.get(_prov.lower())
+        if _slot and _key and not config.get(_slot):
+            config[_slot] = _key
+            if _slot == 'OPENAI_API_KEY':
+                config['OPENAI_AUTH_STATUS'] = AUTH_STATUS_OK
+                config['OPENAI_AUTH_SOURCE'] = config.get('OPENAI_AUTH_SOURCE') or AUTH_SOURCE_API_KEY
+        # O papel 'default' dirige o provider de reasoning quando deixado em 'auto'.
+        if _role == 'DEFAULT' and _slot and config.get('LAST30DAYS_REASONING_PROVIDER') in (None, '', 'auto'):
+            config['LAST30DAYS_REASONING_PROVIDER'] = _prov.lower()
+
     # Backward-compat: ScrapeCreators' own examples and tutorials use the
     # SCRAPE_CREATORS_API_KEY spelling (with underscore between SCRAPE and
     # CREATORS). Accept that form too so users who follow the vendor's docs

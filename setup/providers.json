@@ -1,0 +1,68 @@
+{
+  "_comment": "Catálogo único de providers LLM do Exocórtex. Fonte de verdade para base URLs e capacidades. Lido pelo resolvedor Python (scripts/lib/llm_roles.py) e shell (setup/lib/llm-roles.sh). 'base_url' é a raiz; o resolvedor concatena 'chat_path' para obter o endpoint de chat completions. 'style' = formato da API (openai-compatible vs gemini). 'legacy_key_env' é usado só pela migração one-shot (scripts/migrate-env-roles.py).",
+  "providers": {
+    "openrouter": {
+      "base_url": "https://openrouter.ai/api/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": true,
+      "legacy_key_env": "OPENROUTER_API_KEY",
+      "default_model": "deepseek/deepseek-chat"
+    },
+    "deepseek": {
+      "base_url": "https://api.deepseek.com/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": false,
+      "legacy_key_env": "DEEPSEEK_API_KEY",
+      "default_model": "deepseek-v4-pro"
+    },
+    "openai": {
+      "base_url": "https://api.openai.com/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": true,
+      "legacy_key_env": "OPENAI_API_KEY",
+      "default_model": "gpt-5.4-nano"
+    },
+    "gemini": {
+      "base_url": "https://generativelanguage.googleapis.com/v1beta",
+      "chat_path": "/openai/chat/completions",
+      "models_path": "/openai/models",
+      "style": "openai",
+      "vision": true,
+      "legacy_key_env": "GEMINI_API_KEY",
+      "default_model": "gemini-3.1-flash-lite"
+    },
+    "xai": {
+      "base_url": "https://api.x.ai/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": true,
+      "legacy_key_env": "XAI_API_KEY",
+      "default_model": "grok-4-1-fast"
+    },
+    "opencode": {
+      "base_url": "https://opencode.ai/zen/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": false,
+      "legacy_key_env": "OPENCODE_API_KEY",
+      "default_model": "nemotron-3-ultra-free"
+    },
+    "opencode-go": {
+      "base_url": "https://opencode.ai/zen/go/v1",
+      "chat_path": "/chat/completions",
+      "models_path": "/models",
+      "style": "openai",
+      "vision": false,
+      "legacy_key_env": "OPENCODE_GO_API_KEY",
+      "default_model": "glm-5.2"
+    }
+  }
+}

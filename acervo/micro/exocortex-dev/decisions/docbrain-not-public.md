@@ -21,7 +21,7 @@ DocBrain (`github.com/ProjetoBB/docBrainBB.git`) é um repositório privado. O s
 ## Superfícies afetadas
 
 1. **README.md** — catálogo de skills (EX-27), seção "Full Installation" (`DOCBRAIN_LLM_API_KEY`), descrição de steps, seção "5. DocBrain Parser Engine Setup" inteira com instruções de clone e build
-2. **install.sh** — preflight de env vars lista `DOCBRAIN_LLM_API_KEY` (linha 64 e 217)
+2. **install.sh** — preflight de env vars lista `DOCBRAIN_LLM_API_KEY` (linha 64 e 217 — números possivelmente desatualizados; verificar no arquivo atual)
 3. **setup/step-08-integration-docbrain.sh** — clona o repo privado diretamente; falha para qualquer usuário externo
 4. **skills/excrtx-integrate-docbrain/** — skill inteira referenciando DocBrain
 
@@ -42,3 +42,15 @@ Usuário externo que roda `curl | bash` vê:
 ## Nota
 
 Tag v1.0.1 já publicada no remote inclui as referências na README. Remediação requer novo commit + push + atualização de tag.
+
+## Atualização factual (config de LLM consolidada em 3 papéis)
+
+> Esta nota apenas corrige referências factualmente desatualizadas; a decisão e
+> o raciocínio histórico acima permanecem inalterados.
+
+A `DOCBRAIN_LLM_API_KEY` deixou de ser uma var de provider configurada
+diretamente. A config de LLM foi consolidada em 3 papéis e o `.env` do DocBrain
+agora é gerado a partir do papel **auxiliar** (`EXOCORTEX_AUX_*`): o
+`setup/step-08-integration-docbrain.sh` escreve a `DOCBRAIN_LLM_API_KEY` do
+DocBrain derivada do papel aux. A var legada foi migrada uma única vez por
+`scripts/migrate-env-roles.py`.
