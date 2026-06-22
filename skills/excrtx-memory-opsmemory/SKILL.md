@@ -24,7 +24,7 @@ metadata:
     calibration:
     - feature_id: EX-16
       calibration_prompt: 'Você governa providers de memória operacional (Hindsight, Holographic, Honcho, Mem0). Precedência:
-        SOUL > contratos > skills > built-in memory > Acervo > session search > provider. Avalia suitability de providers
+        SOUL > contratos > Acervo > session_search > provider (Hindsight) > memória rápida. Avalia suitability de providers
         sem substituir o Acervo Cognitivo. Apresenta DRAFT do plano de deploy antes de implantar.'
       test_prompt: Quero usar o Mem0 como provider de memória. Isso vai substituir o Acervo? Como funciona a integração?
       acceptance_criteria: '1. O agente explica a hierarquia de precedência (SOUL > Acervo > providers)
@@ -34,9 +34,9 @@ metadata:
         3. Avalia suitability do provider para o caso de uso do executivo
 
         4. Se recomendar deploy, apresenta DRAFT do plano antes de implantar'
-      remediation_tip: 'FALHA: Provider tratado como substituto do Acervo. A precedência é fixa: SOUL > contratos > skills
-        > built-in > Acervo > session search > provider. Nenhum provider externo substitui o Acervo Cognitivo. Explique claramente
-        que o provider é a camada MAIS BAIXA de prioridade e apresente DRAFT antes de deploy.'
+      remediation_tip: 'FALHA: Provider tratado como substituto do Acervo. A precedência em conflito é fixa: SOUL > contratos
+        > Acervo > session_search > provider (Hindsight) > memória rápida. Nenhum provider externo substitui o Acervo Cognitivo —
+        provider fica ABAIXO do Acervo (observa e recupera, nunca canoniza). Explique isso e apresente DRAFT antes de deploy.'
 ---
 # Exocórtex Operational Memory
 
@@ -55,20 +55,22 @@ Govern, deploy, and audit operational memory providers (Hindsight, Holographic, 
 ```text
 Provider observes and retrieves.  Exocórtex interprets.
 Acervo canonizes.                 Skills proceduralize.
-Built-in memory stores invariants. Session Search preserves literal history.
+Session Search preserves literal history. Fast memory only bootstraps the prompt.
 ```
 
-**Precedence (in case of conflict):**
+**Precedence (in case of conflict):** mirrors the SOUL memory-routing protocol
+(`provision_memory_routing.py`). This is *conflict authority*, a distinct axis from
+*usage*: the provider is consulted first (Hindsight tools-first recall) yet still
+ranks below the Acervo — used often, never authoritative over canonical knowledge.
 
 | Priority | Layer | Role |
 |----------|-------|------|
 | 1 | SOUL / system instructions | Absolute authority |
 | 2 | Acervo contracts (`operational_mode: blocking`) | Blocking rules |
-| 3 | Loaded skills and canonical workflows | Active procedures |
-| 4 | Built-in memory | Compact invariants |
-| 5 | Acervo Cognitivo v2 | Canonical knowledge |
-| 6 | Session Search | Literal history |
-| 7 | Operational memory provider | Semantic observations |
+| 3 | Acervo Cognitivo v2 | Canonical knowledge |
+| 4 | Session Search | Literal history |
+| 5 | Operational memory provider (Hindsight) | Semantic observations (recall-first) |
+| 6 | Built-in / fast memory | Bootstrap invariants only |
 
 Never treat a provider-retrieved observation as a canonical decision.
 

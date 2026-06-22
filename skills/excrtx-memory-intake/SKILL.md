@@ -37,9 +37,9 @@ metadata:
         3. Aplica o Filtro de Domínio para rotear ao microverso correto (cliente-alfa)
 
         4. NÃO copia o PDF bruto diretamente para o Acervo semântico — passa pelo pipeline'
-      remediation_tip: 'FALHA: Material bruto copiado diretamente para o Acervo. O pipeline exige: 1) Receber em _inbox/incoming,
-        2) Processar (extrair texto, classificar), 3) Gerar IntakeEnvelope com manifest, 4) Promover para Acervo semântico.
-        Nunca copie um PDF bruto direto para micro/{slug}/contracts/.'
+      remediation_tip: 'FALHA: Material bruto copiado diretamente para o Acervo. O pipeline canônico é o Standard Flow de 5 fases:
+        1) Reception (_inbox/incoming), 2) Initial Manifest, 3) Extraction by Type, 4) Cognitive Triage, 5) Promotion para o Acervo
+        semântico (gerando IntakeEnvelope com manifest). Nunca copie um PDF bruto direto para micro/{slug}/contracts/.'
 compiled_rules: |
   - The inbox is checked only on explicit request ("verifique o inbox" or "inseri arquivo X no inbox"); never poll it automatically.
   - On "verifique o inbox": list _inbox/ files newest-first, classify each, and propose a destination microverso/directory — then stop and wait for confirmation.

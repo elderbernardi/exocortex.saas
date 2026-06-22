@@ -6,6 +6,17 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+### Changed
+- `excrtx-memory-opsmemory` (EX-16): the conflict-precedence table now mirrors the
+  SOUL-injected memory-routing protocol — `SOUL > contratos > Acervo > session_search >
+  provider (Hindsight) > memória rápida` — resolving a divergence where the skill ranked
+  built-in memory above the Acervo and the provider dead-last while the runtime SOUL block
+  placed Hindsight above fast memory. Clarifies that *usage* (Hindsight is recall-first)
+  and *conflict authority* (provider stays below the Acervo) are distinct axes.
+- `excrtx-memory-intake` (EX-17): `remediation_tip` now references the canonical 5-phase
+  Standard Flow (Reception · Manifest · Extraction · Triage · Promotion) instead of a
+  compressed 4-step list, removing the 4-vs-5 stage-count ambiguity.
+
 ### Fixed
 - `exocortex_runtime_guard.py` resolved the Acervo write-scope root from its own
   **script location** (installer clone, `~/.exocortex-installer/acervo`) instead of the
