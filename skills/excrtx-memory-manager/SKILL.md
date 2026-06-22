@@ -198,6 +198,7 @@ Write content to the Acervo with Domain Filter.
    ```bash
    python scripts/exocortex_runtime_guard.py guard-write \
      --path "$TARGET_PATH" \
+     --acervo-root "$ACERVO" \
      --active-microverso "{slug}"
    ```
 

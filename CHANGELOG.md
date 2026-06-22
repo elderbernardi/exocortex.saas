@@ -6,6 +6,15 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+### Fixed
+- `exocortex_runtime_guard.py` resolved the Acervo write-scope root from its own
+  **script location** (installer clone, `~/.exocortex-installer/acervo`) instead of the
+  live Acervo (`$EXOCORTEX_HOME/acervo`), so every legitimate WRITE was denied as a
+  false cross-microverso violation — leaving **EX-11 (excrtx-memory-manager)
+  non-operational for writes** in production. The guard now resolves the root from the
+  environment (`$ACERVO` > `$EXOCORTEX_HOME/acervo` > `$HERMES_HOME/acervo` > repo
+  fallback) and `excrtx-memory-manager` passes `--acervo-root "$ACERVO"` explicitly.
+
 ## [1.0.4] — 2026-06-22
 
 ### Fixed

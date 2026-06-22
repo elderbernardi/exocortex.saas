@@ -21,7 +21,31 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
-ACERVO_ROOT = REPO_ROOT / "acervo"
+
+
+def _resolve_acervo_root() -> Path:
+    """Resolve the live Acervo root for write-scope checks.
+
+    Precedence (matches excrtx-memory-manager / setup/common.sh):
+    $ACERVO > $EXOCORTEX_HOME/acervo > $HERMES_HOME/acervo > repo-relative.
+
+    Must NOT be derived from the script location: in production the guard
+    runs from the installer clone (cwd ~/.exocortex-installer) while the live
+    Acervo is at $EXOCORTEX_HOME/acervo, so a repo-relative root denies every
+    legitimate write as a false cross-microverso violation.
+    """
+    if env := os.environ.get("ACERVO"):
+        return Path(env).expanduser()
+    for home_var in ("EXOCORTEX_HOME", "HERMES_HOME"):
+        home = os.environ.get(home_var)
+        if home:
+            candidate = Path(home).expanduser() / "acervo"
+            if candidate.is_dir():
+                return candidate
+    return REPO_ROOT / "acervo"
+
+
+ACERVO_ROOT = _resolve_acervo_root()
 QUALITY_GATE_SKILL = "excrtx-quality-gate"
 
 
