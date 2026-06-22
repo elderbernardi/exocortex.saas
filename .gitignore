@@ -23,3 +23,6 @@ _design/*.html
 # Debug/runtime artifacts
 nohup.out
 
+
+# AcervoIndex runtime manifest (mutable state, not seed)
+acervo/global/tools/state/

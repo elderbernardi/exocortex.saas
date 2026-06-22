@@ -192,6 +192,15 @@ else
 fi
 
 echo ""
+echo "Smoke test de memória:"
+if python3 "$SCRIPT_DIR/scripts/smoke_memory_routing.py" --hermes-home "$HERMES_HOME" --acervo "$ACERVO" --scan-global --skip-micro-scan >/tmp/exocortex_memory_smoke.log 2>&1; then
+  log "memory routing smoke: OK"
+else
+  warn "memory routing smoke falhou; veja /tmp/exocortex_memory_smoke.log"
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
 if [ $ERRORS -eq 0 ]; then
   echo "╔═══════════════════════════════════════════════╗"
   echo "║   ✅ Setup Candidate-Release completo.        ║"

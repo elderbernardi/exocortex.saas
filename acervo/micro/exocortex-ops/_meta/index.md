@@ -32,6 +32,8 @@ Microverso canônico para setup, operação, manutenção, diagnóstico, integra
 
 ### Context
 - `context/current-state.md`
+- `context/memory-excellence-progress.md`
+- `context/memory-excellence-handoff-log.md`
 - `_meta/provision-manifest.md`
 - `_meta/drift-register.md`
 
@@ -62,6 +64,8 @@ Microverso canônico para setup, operação, manutenção, diagnóstico, integra
 - `workflows/base-microverse-provisioning.md`
 - `workflows/post-change-validation.md`
 - `workflows/incident-response.md`
+- `workflows/memory-excellence-execution-plan.md`
+- `workflows/installer-memory-improvements-task.md`
 
 ### Tools
 - `tools/hermes-cli.md`

@@ -242,6 +242,15 @@ source "$SETUP_DIR/setup/step-05-install-profiles.sh"
 info "Compiling behavioral rules into SOUL..."
 python3 "$SETUP_DIR/scripts/compile_soul.py" --skills-dir "$HERMES_HOME/skills/excrtx" --soul "$HERMES_HOME/SOUL.md" 2>&1 || warn "compile_soul.py failed — SOUL.md may be stale"
 
+info "Provisioning memory routing (Hindsight tools-first + AcervoIndex)..."
+python3 "$SETUP_DIR/scripts/provision_memory_routing.py" \
+  --hermes-home "$HERMES_HOME" \
+  --acervo "$ACERVO" \
+  --repo-root "$SETUP_DIR" \
+  --scan-global \
+  --skip-micro-scan \
+  --consolidate-memory 2>&1 || warn "provision_memory_routing.py failed — memory routing may need manual review"
+
 source "$SETUP_DIR/setup/step-06-hardening.sh"
 source "$SETUP_DIR/setup/step-06b-google-auth.sh"
 source "$SETUP_DIR/setup/step-07-install-identity.sh"

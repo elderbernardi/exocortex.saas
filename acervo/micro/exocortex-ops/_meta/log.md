@@ -51,3 +51,5 @@ Files:
 - _meta/snapshots/2026-06-05-1500-after-setup-provisioning-approval.md
 Reason: aprovação explícita para tornar exocortex-ops provisionável no installer.
 Result: seed copiado, setup.sh patchado, validação isolada concluída com preservação de mutação local.
+## 2026-06-21 | canonicalize | Runbooks de memória absorvidos
+Absorvidos de `micro/exocortex-dev` os runbooks/contextos operacionais da reforma de memória: plano de execução, tarefa do instalador, progresso e handoff.

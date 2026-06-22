@@ -131,8 +131,8 @@ EOF
   "mode": "local_external",
   "api_url": "http://localhost:8888",
   "bank_id": "exocortex",
-  "memory_mode": "hybrid",
-  "auto_recall": true,
+  "memory_mode": "tools",
+  "auto_recall": false,
   "auto_retain": true,
   "retain_async": true,
   "retain_every_n_turns": 2,
@@ -146,10 +146,24 @@ EOF
     log "Config Hindsight criada em $target"
   else
     log "Config Hindsight preservada em $target"
-    if grep -q '"mode": "local_embedded"' "$target"; then
-      sed -i 's/"mode": "local_embedded"/"mode": "local_external"/' "$target"
-      log "Corrigido modo de conexão Hindsight para local_external no config.json"
-    fi
+    python3 - "$target" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+cfg = json.loads(path.read_text(encoding="utf-8"))
+cfg.update({
+    "mode": "local_external",
+    "memory_mode": "tools",
+    "auto_recall": False,
+    "auto_retain": True,
+    "recall_budget": "low",
+    "recall_max_input_chars": 800,
+})
+path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+PY
+    log "Config Hindsight alinhada para tools-first em $target"
   fi
 
   if [ -f "$parent_config" ] && command -v python3 >/dev/null 2>&1; then
