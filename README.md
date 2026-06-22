@@ -211,7 +211,7 @@ TELEGRAM_BOT_TOKEN="your_telegram_bot_token" curl -fsSL https://raw.githubuserco
 To pin a specific tag or version:
 
 ```bash
-VERSION=v1.0.1 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
+VERSION=v1.0.4 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 ```
 
 #### Full Installation (All Utilities)
