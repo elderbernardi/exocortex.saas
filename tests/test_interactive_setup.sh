@@ -58,6 +58,9 @@ setup_test_env() {
   export EXOCORTEX_HOME="$test_dir/exocortex"
   export ACERVO="$EXOCORTEX_HOME/acervo"
   export HOME="$test_dir/home"
+  # Keep interactive.sh's save_to_env_local off the real repo .env.local
+  # (otherwise the temp HERMES_HOME above gets persisted into it).
+  export ENV_LOCAL_FILE="$test_dir/.env.local"
   mkdir -p "$HERMES_HOME/skills" "$HERMES_HOME/memories" "$HERMES_HOME/profiles"
   mkdir -p "$EXOCORTEX_HOME" "$HOME"
   echo "$test_dir"
@@ -93,6 +96,29 @@ echo -e "${BOLD}╔════════════════════�
 echo -e "${BOLD}║   Exocórtex — Testes do Setup Interativo             ║${NC}"
 echo -e "${BOLD}╚═══════════════════════════════════════════════════════╝${NC}"
 echo ""
+
+# ─── Protect the developer's real .env.local ─────────────────────────────────
+# Several tests write to / delete $REPO_ROOT/.env.local directly (T10/T11 cp+rm;
+# any setup_test_env-based test where interactive.sh's save_to_env_local falls
+# back to the repo default). Without this guard a test run leaks the temp
+# HERMES_HOME into the real .env.local, silently redirecting later setup steps
+# (e.g. step-17 cron creation) to a dead /tmp home. Back up once, restore on exit.
+REAL_ENV_LOCAL="$REPO_ROOT/.env.local"
+ENV_LOCAL_BACKUP=""
+if [ -f "$REAL_ENV_LOCAL" ]; then
+  ENV_LOCAL_BACKUP="$(mktemp)"
+  cp "$REAL_ENV_LOCAL" "$ENV_LOCAL_BACKUP"
+fi
+restore_env_local() {
+  if [ -n "$ENV_LOCAL_BACKUP" ]; then
+    cp "$ENV_LOCAL_BACKUP" "$REAL_ENV_LOCAL"
+    rm -f "$ENV_LOCAL_BACKUP"
+  else
+    # No real file existed before the suite — remove any that tests created.
+    rm -f "$REAL_ENV_LOCAL"
+  fi
+}
+trap restore_env_local EXIT
 
 # =============================================================================
 # T01: validate-environment.sh executa sem erros de sintaxe
