@@ -6,6 +6,13 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+### Fixed (cron)
+- Maintenance cron creation (step-17 + `scripts/activate-maintenance-crons.sh`) passed
+  `--schedule`/`--prompt` flags, but `hermes cron create` takes `schedule` and `prompt` as
+  **positional** args — so all 5 síndico crons failed with `unrecognized arguments` and the
+  autonomous maintenance (ADR-018) never ran. Switched to positional args; step-17 now also
+  surfaces the real `hermes` error instead of swallowing stderr.
+
 ### Changed
 - `excrtx-memory-opsmemory` (EX-16): the conflict-precedence table now mirrors the
   SOUL-injected memory-routing protocol — `SOUL > contratos > Acervo > session_search >

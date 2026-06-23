@@ -28,10 +28,13 @@ create_cron_if_missing() {
   if hermes cron list 2>/dev/null | grep -q "$name"; then
     log "Cron '$name' já existe — pulando."
   else
-    if hermes cron create --schedule "$schedule" --name "$name" --prompt "$prompt" 2>/dev/null; then
+    # `schedule` e `prompt` são posicionais no `hermes cron create` (não há
+    # flags --schedule/--prompt). Captura stderr para diagnóstico real.
+    local err
+    if err=$(hermes cron create --name "$name" "$schedule" "$prompt" 2>&1); then
       log "Cron criado: $name ($schedule)"
     else
-      warn "Falha ao criar cron '$name' — configure manualmente."
+      warn "Falha ao criar cron '$name': ${err##*$'\n'}"
       CRON_FAILURES=$((CRON_FAILURES + 1))
     fi
   fi

@@ -36,9 +36,9 @@ echo ""
 # -----------------------------------------------------------------------------
 info "Criando: maintenance-weekly (dom 03:00)"
 hermes cron create \
-  --schedule "0 3 * * 0" \
   --name "maintenance-weekly" \
-  --prompt "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance. Execute todos os 6 passos do Procedure: pré-requisitos, varredura de saúde, revisão de pendências, auditoria de artefatos, triagem de inbox, relatório final. Envie o relatório no formato padronizado."
+  "0 3 * * 0" \
+  "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance. Execute todos os 6 passos do Procedure: pré-requisitos, varredura de saúde, revisão de pendências, auditoria de artefatos, triagem de inbox, relatório final. Envie o relatório no formato padronizado."
 ok "maintenance-weekly → dom 03:00"
 
 # -----------------------------------------------------------------------------
@@ -46,9 +46,9 @@ ok "maintenance-weekly → dom 03:00"
 # -----------------------------------------------------------------------------
 info "Criando: inbox-triage (seg 03:30)"
 hermes cron create \
-  --schedule "30 3 * * 1" \
   --name "inbox-triage" \
-  --prompt "Execute triagem de inbox com rotina rtn_inbox_triage. Persona: arquivista. Liste itens no inbox (raw/) com >7 dias sem promoção. Classifique cada item como: promover para knowledge/context, arquivar, ou manter. NÃO mova itens — apenas recomende ações ao executivo. Envie relatório padronizado."
+  "30 3 * * 1" \
+  "Execute triagem de inbox com rotina rtn_inbox_triage. Persona: arquivista. Liste itens no inbox (raw/) com >7 dias sem promoção. Classifique cada item como: promover para knowledge/context, arquivar, ou manter. NÃO mova itens — apenas recomende ações ao executivo. Envie relatório padronizado."
 ok "inbox-triage → seg 03:30"
 
 # -----------------------------------------------------------------------------
@@ -56,9 +56,9 @@ ok "inbox-triage → seg 03:30"
 # -----------------------------------------------------------------------------
 info "Criando: artifact-audit (1º e 15º 04:00)"
 hermes cron create \
-  --schedule "0 4 1,15 * *" \
   --name "artifact-audit" \
-  --prompt "Execute auditoria de artefatos com rotina rtn_artifact_quality_audit. Persona: auditor. Verifique artefatos sem receipt/hash válido. Cheque manifests YAML. Identifique artefatos órfãos sem referência em index.md. Valide links em documentos canônicos. Envie relatório padronizado."
+  "0 4 1,15 * *" \
+  "Execute auditoria de artefatos com rotina rtn_artifact_quality_audit. Persona: auditor. Verifique artefatos sem receipt/hash válido. Cheque manifests YAML. Identifique artefatos órfãos sem referência em index.md. Valide links em documentos canônicos. Envie relatório padronizado."
 ok "artifact-audit → dias 1 e 15, 04:00"
 
 # -----------------------------------------------------------------------------
@@ -66,9 +66,9 @@ ok "artifact-audit → dias 1 e 15, 04:00"
 # -----------------------------------------------------------------------------
 info "Criando: publication-check (diário 04:30)"
 hermes cron create \
-  --schedule "30 4 * * *" \
   --name "publication-check" \
-  --prompt "Execute verificação de publicações pendentes com rotina rtn_ready_artifact_publication. Persona: operador. Identifique artefatos com status ready/approved ainda não publicados. Verifique se passaram pelos quality gates. Liste para o executivo com recomendação de canal. Envie relatório padronizado."
+  "30 4 * * *" \
+  "Execute verificação de publicações pendentes com rotina rtn_ready_artifact_publication. Persona: operador. Identifique artefatos com status ready/approved ainda não publicados. Verifique se passaram pelos quality gates. Liste para o executivo com recomendação de canal. Envie relatório padronizado."
 ok "publication-check → diário 04:30"
 
 # -----------------------------------------------------------------------------
@@ -76,9 +76,9 @@ ok "publication-check → diário 04:30"
 # -----------------------------------------------------------------------------
 info "Criando: acervo-index-reconcile (diário 05:00)"
 hermes cron create \
-  --schedule "0 5 * * *" \
   --name "acervo-index-reconcile" \
-  --prompt "Execute a reconciliação diária do AcervoIndex (ADR-020). Persona: síndico. Rode 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" scan --all' e depois 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" report'. Entregue ao home channel um relatório compacto com: novos indexados, alterados, órfãos (orphaned_manifest_entries), ignorados por lifecycle e erros. NÃO apague entradas Hindsight nesta versão — apenas reporte órfãos. Se o scan retornar erros, liste os arquivos afetados."
+  "0 5 * * *" \
+  "Execute a reconciliação diária do AcervoIndex (ADR-020). Persona: síndico. Rode 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" scan --all' e depois 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" report'. Entregue ao home channel um relatório compacto com: novos indexados, alterados, órfãos (orphaned_manifest_entries), ignorados por lifecycle e erros. NÃO apague entradas Hindsight nesta versão — apenas reporte órfãos. Se o scan retornar erros, liste os arquivos afetados."
 ok "acervo-index-reconcile → diário 05:00"
 
 # -----------------------------------------------------------------------------
