@@ -6,6 +6,28 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+## [1.0.6] — 2026-06-23
+
+Follow-up to the 1.0.5 maintenance-cron fix: the crons still failed to reach the live
+`~/.hermes` because a test run had leaked a temp `HERMES_HOME` into `.env.local`, and the
+weekly síndico cron duplicated the legacy `Acervo Syndic` job.
+
+### Fixed
+- The interactive-setup test suite (`tests/test_interactive_setup.sh`) operated on the
+  real `$REPO_ROOT/.env.local`: `setup_test_env` exports a temp `HERMES_HOME` that
+  `interactive.sh`'s `save_to_env_local` persisted into the repo file, and T10/T11
+  `cp`+`rm` over it. A leaked temp `HERMES_HOME` silently redirected later setup steps
+  (notably `step-17` cron creation) to a dead `/tmp` home, so maintenance crons never
+  landed in the live `~/.hermes`. The suite now backs up the real `.env.local` and
+  restores it via `trap … EXIT`, and points `ENV_LOCAL_FILE` at each test's temp dir.
+
+### Changed
+- `step-17` + `scripts/activate-maintenance-crons.sh` now skip `maintenance-weekly` when
+  the legacy `Acervo Syndic` cron exists (same Sunday 03:00 slot / syndic scope), avoiding
+  a double síndico run. On a fresh install `maintenance-weekly` attaches its skills via
+  `--skill` (`excrtx-harness-maintenance`, `excrtx-memory-syndic`) instead of only naming
+  them in the prompt; `create_cron_if_missing` forwards extra args to `hermes cron create`.
+
 ## [1.0.5] — 2026-06-23
 
 Post-provisioning smoke-test hardening: fixes surfaced by running the EX-* smoke suite on a
