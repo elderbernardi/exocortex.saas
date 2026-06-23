@@ -34,12 +34,20 @@ echo ""
 # -----------------------------------------------------------------------------
 # 1. Manutenção semanal — Domingos 03:00
 # -----------------------------------------------------------------------------
-info "Criando: maintenance-weekly (dom 03:00)"
-hermes cron create \
-  --name "maintenance-weekly" \
-  "0 3 * * 0" \
-  "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance. Execute todos os 6 passos do Procedure: pré-requisitos, varredura de saúde, revisão de pendências, auditoria de artefatos, triagem de inbox, relatório final. Envie o relatório no formato padronizado."
-ok "maintenance-weekly → dom 03:00"
+# Pula maintenance-weekly se o cron legado 'Acervo Syndic' (mesmo horário/escopo
+# de síndico, criado pelo plano 09-syndic-cron.md) já existir — evita zeladoria
+# dupla no domingo 03h. Anexa a skill via --skill (mais confiável que no prompt).
+if hermes cron list 2>/dev/null | grep -q "Acervo Syndic"; then
+  warn "Cron de síndico legado 'Acervo Syndic' já existe — pulando 'maintenance-weekly' (evita duplicação)."
+else
+  info "Criando: maintenance-weekly (dom 03:00)"
+  hermes cron create \
+    --name "maintenance-weekly" \
+    --skill excrtx-harness-maintenance \
+    "0 3 * * 0" \
+    "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance. Execute todos os 6 passos do Procedure: pré-requisitos, varredura de saúde, revisão de pendências, auditoria de artefatos, triagem de inbox, relatório final. Envie o relatório no formato padronizado."
+  ok "maintenance-weekly → dom 03:00"
+fi
 
 # -----------------------------------------------------------------------------
 # 2. Triagem de inbox — Segundas 03:30

@@ -19,19 +19,23 @@ if ! command -v hermes &>/dev/null; then
   return 0 2>/dev/null || exit 0
 fi
 
-# Verifica se cron já existe antes de criar (idempotente)
+# Verifica se cron já existe antes de criar (idempotente).
+# Args posicionais: name, schedule, prompt. Quaisquer args extras ("$@" após
+# `shift 3`) são repassados verbatim ao `hermes cron create` — ex.: flags --skill.
 create_cron_if_missing() {
   local name="$1"
   local schedule="$2"
   local prompt="$3"
+  shift 3
 
   if hermes cron list 2>/dev/null | grep -q "$name"; then
     log "Cron '$name' já existe — pulando."
   else
     # `schedule` e `prompt` são posicionais no `hermes cron create` (não há
-    # flags --schedule/--prompt). Captura stderr para diagnóstico real.
+    # flags --schedule/--prompt). Flags extras ("$@") vêm antes dos posicionais.
+    # Captura stderr para diagnóstico real.
     local err
-    if err=$(hermes cron create --name "$name" "$schedule" "$prompt" 2>&1); then
+    if err=$(hermes cron create --name "$name" "$@" "$schedule" "$prompt" 2>&1); then
       log "Cron criado: $name ($schedule)"
     else
       warn "Falha ao criar cron '$name': ${err##*$'\n'}"
@@ -42,8 +46,18 @@ create_cron_if_missing() {
 
 CRON_FAILURES=0
 
-create_cron_if_missing "maintenance-weekly" "0 3 * * 0" \
-  "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance (manutenção geral) e a skill excrtx-memory-syndic (lifecycle do Acervo: scan → quarentena → purge). Para o syndic: (1) varre arquivos voláteis com last_accessed_at > 90 dias e deprecated_at > 180 dias, (2) move candidatos para .quarantine/ via excrtx-memory-quarantine, (3) purga arquivos com quarantine_expires_at vencido, (4) registra em log.md e .purge_log. Envie o relatório consolidado no formato padronizado."
+# O 'maintenance-weekly' cobre o ciclo do síndico (scan → quarentena → purge) +
+# manutenção geral, anexando as skills via --skill (mais confiável que apenas
+# mencioná-las no prompt). Se o cron legado 'Acervo Syndic' (mesmo horário, mesma
+# skill de síndico, criado pelo plano 09-syndic-cron.md) já existir nesta máquina,
+# NÃO cria o maintenance-weekly — evita zeladoria dupla no domingo 03h.
+if hermes cron list 2>/dev/null | grep -q "Acervo Syndic"; then
+  log "Cron de síndico legado 'Acervo Syndic' já existe — pulando 'maintenance-weekly' (evita duplicação)."
+else
+  create_cron_if_missing "maintenance-weekly" "0 3 * * 0" \
+    "Execute tarefas de manutenção completa do perfil manut. Persona: síndico. Use a skill excrtx-harness-maintenance (manutenção geral) e a skill excrtx-memory-syndic (lifecycle do Acervo: scan → quarentena → purge). Para o syndic: (1) varre arquivos voláteis com last_accessed_at > 90 dias e deprecated_at > 180 dias, (2) move candidatos para .quarantine/ via excrtx-memory-quarantine, (3) purga arquivos com quarantine_expires_at vencido, (4) registra em log.md e .purge_log. Envie o relatório consolidado no formato padronizado." \
+    --skill excrtx-harness-maintenance --skill excrtx-memory-syndic
+fi
 
 create_cron_if_missing "inbox-triage" "30 3 * * 1" \
   "Execute triagem de inbox com rotina rtn_inbox_triage. Persona: arquivista. Liste itens no inbox (raw/) com >7 dias sem promoção. Classifique e recomende ações ao executivo. NÃO mova itens. Envie relatório padronizado."
