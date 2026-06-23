@@ -6,11 +6,24 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
-### Fixed (cron)
-- Maintenance cron creation (step-17 + `scripts/activate-maintenance-crons.sh`) passed
+## [1.0.5] — 2026-06-23
+
+Post-provisioning smoke-test hardening: fixes surfaced by running the EX-* smoke suite on a
+fresh box — runtime memory writes, maintenance cron scheduling, and two memory-skill
+documentation divergences.
+
+### Fixed
+- `exocortex_runtime_guard.py` resolved the Acervo write-scope root from its own
+  **script location** (installer clone, `~/.exocortex-installer/acervo`) instead of the
+  live Acervo (`$EXOCORTEX_HOME/acervo`), so every legitimate WRITE was denied as a
+  false cross-microverso violation — leaving **EX-11 (excrtx-memory-manager)
+  non-operational for writes** in production. The guard now resolves the root from the
+  environment (`$ACERVO` > `$EXOCORTEX_HOME/acervo` > `$HERMES_HOME/acervo` > repo
+  fallback) and `excrtx-memory-manager` passes `--acervo-root "$ACERVO"` explicitly.
+- Maintenance cron creation (`step-17` + `scripts/activate-maintenance-crons.sh`) passed
   `--schedule`/`--prompt` flags, but `hermes cron create` takes `schedule` and `prompt` as
   **positional** args — so all 5 síndico crons failed with `unrecognized arguments` and the
-  autonomous maintenance (ADR-018) never ran. Switched to positional args; step-17 now also
+  autonomous maintenance (ADR-018) never ran. Switched to positional args; `step-17` now also
   surfaces the real `hermes` error instead of swallowing stderr.
 
 ### Changed
@@ -25,15 +38,6 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
   compressed 4-step list, removing the 4-vs-5 stage-count ambiguity. The EX-17 smoke prompt
   (`test-registry.sh`, `migrate_calibration_metadata.py`) was also asking for "4 estágios" —
   now aligned to the 5 phases so the check no longer reports a spurious count divergence.
-
-### Fixed
-- `exocortex_runtime_guard.py` resolved the Acervo write-scope root from its own
-  **script location** (installer clone, `~/.exocortex-installer/acervo`) instead of the
-  live Acervo (`$EXOCORTEX_HOME/acervo`), so every legitimate WRITE was denied as a
-  false cross-microverso violation — leaving **EX-11 (excrtx-memory-manager)
-  non-operational for writes** in production. The guard now resolves the root from the
-  environment (`$ACERVO` > `$EXOCORTEX_HOME/acervo` > `$HERMES_HOME/acervo` > repo
-  fallback) and `excrtx-memory-manager` passes `--acervo-root "$ACERVO"` explicitly.
 
 ## [1.0.4] — 2026-06-22
 
