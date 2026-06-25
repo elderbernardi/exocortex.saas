@@ -308,6 +308,9 @@ Classify every input before responding:
 
   - Ambiguous → ask: "execute, explore, or maintain?"
 
+## Crawler Brasil
+# This skill does not inject runtime rules; it is a tool-only skill.
+
 ## Draft-First
 External actions (push, deploy, email, message, calendar, shared
   docs): generate DRAFT, present to executive, wait for explicit approval.
@@ -327,6 +330,9 @@ Least privilege: use the simplest tool that solves the task.
   Prefer read-only tools when gathering information. Batch related tool calls.
 
   File operations: always verify path exists before writing.
+
+## Integrate Agent Reach
+# This skill does not inject runtime rules; it is a tool-only skill.
 
 ## Memory Deprecate
 - On every new file creation in knowledge/, context/, contracts/, tools/ natures, run a semantic revision check before the WRITE commits.
@@ -396,4 +402,10 @@ Prose for executive: score with anti-slop (min 35/50). Below threshold: rewrite 
   Code and technical docs: no quality gate — deliver directly.
 
   The agent that produces output is the agent that ensures its quality. Orchestrator never corrects — it returns.
+
+## Research Cpg Brasil
+# This skill does not inject runtime rules; it is a tool-only skill.
+
+## Source Cnpj
+# This skill does not inject runtime rules; it is a tool-only skill.
 <!-- COMPILED_RULES_END -->
