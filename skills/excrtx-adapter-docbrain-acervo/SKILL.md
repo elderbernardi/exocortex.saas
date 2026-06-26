@@ -40,6 +40,12 @@ python3 scripts/docbrain_to_acervo.py \
   --microverso comercial \
   --acervo-root /abs/path/acervo \
   --docbrain-dir /abs/path/docbrain
+
+# Ou resolver o destino por entidade quando o microverso explícito não vier do chamador
+python3 scripts/docbrain_to_acervo.py \
+  --input /abs/path/documento.pdf \
+  --company "Girando Sol" \
+  --acervo-root /abs/path/acervo
 ```
 
 Saída esperada em stdout:
@@ -50,10 +56,15 @@ Saída esperada em stdout:
   "docbrain_dir": "/abs/path/docbrain",
   "output_file": "/abs/path/acervo/micro/comercial/knowledge/documento.md",
   "relative_output": "micro/comercial/knowledge/documento.md",
+  "microverso": "comercial",
   "document_id": "sha256:...",
   "job_id": "job_...",
-  "sections": 12,
-  "tables": 3
+  "entity_candidates": [
+    {"source": "microverso", "value": "comercial", "slug": "comercial"}
+  ],
+  "sections_count": 12,
+  "tables_count": 3,
+  "summary_excerpt": "Primeira linha útil do documento"
 }
 ```
 
@@ -84,7 +95,7 @@ python3 scripts/skill_judge.py --skill excrtx-adapter-docbrain-acervo --d1-only
 2. **Workspace errado do DocBrain** — não assumir path fixo. Use `--docbrain-dir` quando houver mais de um checkout.
 3. **Frontmatter inválido** — a escrita só é considerada válida se `validate_frontmatter.py` retornar exit code 0.
 4. **Sem LLM não é sem parse** — health check e `parse.create` determinístico funcionam sem chave LLM; a chave só importa para caminhos com `--llm`.
-5. **Classificação semântica ainda mínima** — esta primeira versão escreve no microverso indicado pelo operador; não descobre empresa automaticamente.
+5. **Classificação semântica ainda mínima** — agora o adaptador aceita `--entity-slug`, `--company` e `--brand` para resolver o destino; ainda assim a resolução é conservadora por slug e não substitui curadoria de microverso.
 
 ## Verification Checklist
 

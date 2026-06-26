@@ -72,6 +72,50 @@ def relative_to_acervo(path: Path, acervo_root: Path) -> str:
     return path.resolve().relative_to(acervo_root.resolve()).as_posix()
 
 
+def build_entity_candidates(args: argparse.Namespace) -> list[dict[str, str]]:
+    candidates: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+
+    def add(source: str, value: str | None, slug: str | None = None) -> None:
+        if not value:
+            return
+        resolved_slug = slug or slugify(value)
+        key = (source, resolved_slug)
+        if key in seen:
+            return
+        seen.add(key)
+        candidates.append({"source": source, "value": value, "slug": resolved_slug})
+
+    add("microverso", args.microverso, args.microverso)
+    add("entity_slug", args.entity_slug, args.entity_slug)
+    add("company", args.company)
+    add("brand", args.brand)
+    return candidates
+
+
+def resolve_microverso(args: argparse.Namespace) -> str:
+    if args.microverso:
+        return args.microverso
+    if args.entity_slug:
+        return args.entity_slug
+    if args.company:
+        return slugify(args.company)
+    if args.brand:
+        return slugify(args.brand)
+    raise RuntimeError(
+        "Destino indefinido: informe --microverso ou forneça uma pista explícita (--entity-slug, --company, --brand)."
+    )
+
+
+def build_summary_excerpt(payload: dict[str, Any]) -> str:
+    sections = payload.get("data", {}).get("sections") or []
+    for section in sections:
+        text = (section.get("text") or "").strip()
+        if text:
+            return text.splitlines()[0].strip()[:240]
+    return ""
+
+
 def run_json_command(args: list[str], cwd: Path) -> dict[str, Any]:
     result = subprocess.run(args, cwd=cwd, capture_output=True, text=True)
     if result.returncode != 0:
@@ -326,16 +370,18 @@ def command(args: argparse.Namespace) -> dict[str, Any]:
 
     acervo_root = Path(args.acervo_root).expanduser().resolve()
     ts = now_utc()
+    entity_candidates = build_entity_candidates(args)
+    microverso = resolve_microverso(args)
     docbrain_dir, health = resolve_docbrain_dir(args.docbrain_dir)
     payload = call_docbrain_parse(docbrain_dir, input_path)
     if payload.get("ok") is not True or payload.get("api_version") != "docbrain.cli.v1":
         raise RuntimeError(f"Parse DocBrain inválido: {payload}")
 
     markdown, title = render_markdown(payload, input_path, ts)
-    knowledge_dir, index_path, log_path = ensure_microverso_structure(acervo_root, args.microverso)
+    knowledge_dir, index_path, log_path = ensure_microverso_structure(acervo_root, microverso)
     filename = slugify(args.output_name or input_path.stem) + ".md"
     output_path = knowledge_dir / filename
-    guard_write(output_path, acervo_root=acervo_root, microverso=args.microverso)
+    guard_write(output_path, acervo_root=acervo_root, microverso=microverso)
     output_path.write_text(markdown, encoding="utf-8")
     validate_frontmatter(output_path)
 
@@ -344,6 +390,8 @@ def command(args: argparse.Namespace) -> dict[str, Any]:
     append_log(log_path, relative_output, input_path, ts)
 
     data = payload["data"]
+    sections_count = len(data.get("sections") or [])
+    tables_count = len(data.get("tables") or [])
     return {
         "ok": True,
         "docbrain_dir": str(docbrain_dir),
@@ -351,20 +399,28 @@ def command(args: argparse.Namespace) -> dict[str, Any]:
         "output_file": str(output_path),
         "relative_output": relative_output,
         "title": title,
+        "microverso": microverso,
         "document_id": data.get("document_id"),
         "job_id": payload.get("job", {}).get("job_id"),
-        "sections": len(data.get("sections") or []),
-        "tables": len(data.get("tables") or []),
+        "entity_candidates": entity_candidates,
+        "sections_count": sections_count,
+        "tables_count": tables_count,
+        "summary_excerpt": build_summary_excerpt(payload),
+        "sections": sections_count,
+        "tables": tables_count,
     }
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Adaptador mínimo DocBrain → Acervo")
     parser.add_argument("--input", required=True, help="Arquivo local a processar")
-    parser.add_argument("--microverso", required=True, help="Slug do microverso de destino")
+    parser.add_argument("--microverso", help="Slug explícito do microverso de destino")
     parser.add_argument("--acervo-root", required=True, help="Raiz do Acervo")
     parser.add_argument("--docbrain-dir", help="Workspace DocBrain explícito")
     parser.add_argument("--output-name", help="Slug base do arquivo de saída (sem .md)")
+    parser.add_argument("--entity-slug", help="Slug explícito da entidade/microverso quando --microverso não for informado")
+    parser.add_argument("--company", help="Empresa-alvo para resolver o microverso por slugificação conservadora")
+    parser.add_argument("--brand", help="Marca-alvo para resolver o microverso por slugificação conservadora")
     return parser
 
 

@@ -1,6 +1,6 @@
 ---
 name: excrtx-research-cpg-brasil
-description: Skill-wrapper de pesquisa setorial para indústria de bens de consumo no Brasil. Orquestra last30days (global), Agent-Reach (web/social) e crawler-brasil (setorial) e entrega briefing executivo unificado em PT-BR seguindo o contrato de síntese adaptado do last30days.
+description: Skill-wrapper de pesquisa setorial para indústria de bens de consumo no Brasil. Orquestra last30days (global), Agent-Reach (web/social), crawler-brasil (setorial) e documentos locais via DocBrain, entregando briefing executivo unificado em PT-BR seguindo o contrato de síntese adaptado do last30days.
 version: 1.0.0
 category: excrtx
 platforms: [linux]
@@ -71,6 +71,15 @@ python3 skills/excrtx-research-cpg-brasil/scripts/orchestrate.py --template supp
 
 # Skip last30days para teste rápido (~30s)
 python3 skills/excrtx-research-cpg-brasil/scripts/orchestrate.py --template varejo --skip-l30d
+
+# Incluir documento local promovido via DocBrain no briefing e no JSON estruturado
+python3 skills/excrtx-research-cpg-brasil/scripts/orchestrate.py \
+  --template panorama \
+  --skip-l30d \
+  --output json \
+  --document /abs/path/dossie.pdf \
+  --document-microverso exocortex-dev \
+  --document-acervo-root /abs/path/acervo
 ```
 
 ### 2. Interpretar o briefing
@@ -119,7 +128,8 @@ A skill-wrapper adapta o contrato last30days (LAWs 1-8) para o contexto multi-fo
 3. **"PADRÕES-CHAVE":** Lista numerada com padrões e tendências identificados
 4. **Emoji-footer:** Bloco final com fontes ativas e contagem total
 5. **PT-BR sem slop:** Anti-slop ≥ 35/50. Sem jargão corporativo vazio
-6. **Atribuição por fonte:** Cada insight indica origem (`[supervarejo]`, `[l30d]`, `[web·AR]`)
+6. **Atribuição por fonte:** Cada insight indica origem (`[supervarejo]`, `[l30d]`, `[web·AR]`, `[docbrain]`)
+7. **Documentos estruturados opcionais:** `--document` injeta artefatos promovidos via DocBrain em `structured_sources.docbrain` e os reflete nos padrões-chave
 
 ## Pitfalls
 

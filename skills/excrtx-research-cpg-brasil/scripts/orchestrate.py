@@ -46,6 +46,7 @@ CRAWLER_CLI = str(REPO_ROOT / "tools" / "excrtx_crawler_brasil" / "cli.py")
 GOOGLE_TRENDS_CLI = "tools.excrtx_source_google_trends.cli"
 RECLAMEAQUI_CLI = "tools.excrtx_source_reclameaqui.cli"
 CNPJ_CLI = "tools.excrtx_source_cnpj.cli"
+DOCBRAIN_ADAPTER = str(REPO_ROOT / "scripts" / "docbrain_to_acervo.py")
 
 
 # ── Templates ───────────────────────────────────────────────────────────────
@@ -232,13 +233,60 @@ def run_cnpj_source(cnpj: str | None) -> dict | None:
     )
 
 
+def run_docbrain_adapter(
+    documents: list[str],
+    *,
+    microverso: str = "",
+    company: str = "",
+    brand: str = "",
+    acervo_root: str | None = None,
+) -> list[dict]:
+    if not documents:
+        return []
+
+    acervo_dir = str(Path(acervo_root).resolve()) if acervo_root else str((REPO_ROOT / "acervo").resolve())
+    payloads: list[dict] = []
+
+    for document in documents:
+        args = [
+            sys.executable,
+            DOCBRAIN_ADAPTER,
+            "--input",
+            str(Path(document).resolve()),
+            "--acervo-root",
+            acervo_dir,
+        ]
+        if microverso:
+            args.extend(["--microverso", microverso])
+        if company:
+            args.extend(["--company", company])
+        if brand:
+            args.extend(["--brand", brand])
+
+        result = subprocess.run(
+            args,
+            capture_output=True,
+            text=True,
+            timeout=180,
+            cwd=str(REPO_ROOT),
+        )
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"DocBrain adapter falhou para {document}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+            )
+        payloads.append(json.loads(result.stdout))
+
+    return payloads
+
+
 # ── Síntese ─────────────────────────────────────────────────────────────────
 
 def synthesize(template_name: str, template: dict, l30d: Optional[dict],
                ar_items: list[dict], cr_items: list[dict],
                trends_payload: Optional[dict] = None,
                reclame_payload: Optional[dict] = None,
-               cnpj_payload: Optional[dict] = None) -> str:
+               cnpj_payload: Optional[dict] = None,
+               docbrain_payloads: Optional[list[dict]] = None) -> str:
     """Produz briefing executivo unificado em PT-BR."""
 
     label = template.get("label", template_name)
@@ -252,6 +300,7 @@ def synthesize(template_name: str, template: dict, l30d: Optional[dict],
     ar_count = len(ar_items)
     cr_count = len(cr_items)
     total = l30d_count + ar_count + cr_count
+    docbrain_ok = [payload for payload in (docbrain_payloads or []) if payload.get("ok")]
 
     lines.append(f"📊 CPG Brasil · {label} · {today}")
     lines.append(f"   Fontes: last30days ({l30d_count} itens) + Agent-Reach ({ar_count}) + Crawler BR ({cr_count}) = {total} total")
@@ -351,6 +400,18 @@ def synthesize(template_name: str, template: dict, l30d: Optional[dict],
                 f"[↗]({cnpj_payload.get('provenance', {}).get('url', '')})"
             )
 
+    for payload in docbrain_ok[:2]:
+        relative_output = payload.get("relative_output", "")
+        title = payload.get("title") or Path(relative_output).stem or "Documento"
+        sections = payload.get("sections_count", payload.get("sections", 0))
+        tables = payload.get("tables_count", payload.get("tables", 0))
+        excerpt = payload.get("summary_excerpt") or "Documento promovido ao Acervo."
+        target = Path(payload.get("output_file") or (REPO_ROOT / relative_output)).resolve()
+        insights.append(
+            f"**[docbrain]** {title} — {sections} seções, {tables} tabelas, promovido em `{relative_output}`. "
+            f"{excerpt} [↗](file://{target})"
+        )
+
     # Emite insights
     for i, insight in enumerate(insights[:8]):
         lines.append(f"{insight}")
@@ -402,8 +463,14 @@ def synthesize(template_name: str, template: dict, l30d: Optional[dict],
     if cnpj_payload and not cnpj_payload.get("errors"):
         cnpj_data = cnpj_payload.get("data") or {}
         structured_hits.append(f"CNPJ ({cnpj_data.get('situacao_cadastral') or 'situação n/d'})")
+    if docbrain_ok:
+        structured_hits.append(f"DocBrain ({len(docbrain_ok)} documento(s))")
     if structured_hits:
         lines.append(f"{pattern_idx}. **Fontes públicas estruturadas:** {' · '.join(structured_hits)}.")
+        pattern_idx += 1
+    if docbrain_ok:
+        promoted = ", ".join(f"`{payload.get('relative_output', '')}`" for payload in docbrain_ok[:3])
+        lines.append(f"{pattern_idx}. **Documentos promovidos:** {promoted}.")
         pattern_idx += 1
 
     # Emoji-footer
@@ -422,6 +489,8 @@ def synthesize(template_name: str, template: dict, l30d: Optional[dict],
         emoji_sources.append("🧾 reclame-aqui")
     if cnpj_payload and not cnpj_payload.get("errors"):
         emoji_sources.append("🏢 cnpj")
+    if docbrain_ok:
+        emoji_sources.append("📄 docbrain")
     lines.append(f"✅ {' · '.join(emoji_sources)}")
     lines.append(f"   {total} itens + sinais estruturados · {today}")
 
@@ -447,6 +516,11 @@ async def main():
     parser.add_argument("--company", help="Empresa-alvo para enriquecer com Reclame Aqui", default="")
     parser.add_argument("--brand", help="Marca/termo para enriquecer com Google Trends", default="")
     parser.add_argument("--cnpj", help="CNPJ para enriquecer com dados cadastrais", default="")
+    parser.add_argument("--document", action="append", default=[], help="Documento local para promover via DocBrain antes da síntese")
+    parser.add_argument("--document-microverso", default="", help="Microverso explícito para ingestão documental")
+    parser.add_argument("--document-company", default="", help="Empresa para resolver o destino documental quando não houver microverso explícito")
+    parser.add_argument("--document-brand", default="", help="Marca para resolver o destino documental quando não houver microverso explícito")
+    parser.add_argument("--document-acervo-root", default=str((REPO_ROOT / "acervo").resolve()), help="Raiz do Acervo para promoção documental")
     parser.add_argument("--trends-period", default="5y", help="Período do Google Trends (default: 5y)")
     parser.add_argument("--trends-geo", default="BR", help="Geo do Google Trends (default: BR)")
     args = parser.parse_args()
@@ -471,6 +545,7 @@ async def main():
     trends_payload = None
     reclame_payload = None
     cnpj_payload = None
+    docbrain_payloads = []
 
     if brand:
         print(f"   ⏳ Google Trends ({brand})...", file=sys.stderr)
@@ -481,6 +556,15 @@ async def main():
     if args.cnpj:
         print(f"   ⏳ CNPJ ({args.cnpj})...", file=sys.stderr)
         cnpj_payload = run_cnpj_source(args.cnpj)
+    if args.document:
+        print(f"   ⏳ DocBrain ({len(args.document)} documento(s))...", file=sys.stderr)
+        docbrain_payloads = run_docbrain_adapter(
+            args.document,
+            microverso=args.document_microverso,
+            company=args.document_company or args.company,
+            brand=args.document_brand or args.brand,
+            acervo_root=args.document_acervo_root,
+        )
 
     synthesis = synthesize(
         args.template,
@@ -491,6 +575,7 @@ async def main():
         trends_payload=trends_payload,
         reclame_payload=reclame_payload,
         cnpj_payload=cnpj_payload,
+        docbrain_payloads=docbrain_payloads,
     )
 
     if args.output == "json":
@@ -507,6 +592,7 @@ async def main():
                 "google_trends": trends_payload,
                 "reclameaqui": reclame_payload,
                 "cnpj": cnpj_payload,
+                "docbrain": docbrain_payloads,
             },
             "synthesis": synthesis,
         }
@@ -515,6 +601,7 @@ async def main():
         print(synthesis)
 
     print(f"\n✅ Pesquisa concluída", file=sys.stderr)
+    return 0
 
 
 if __name__ == "__main__":

@@ -150,6 +150,87 @@ class TestDocbrainToAcervo:
         assert "CREATED:" in log_text
         assert payload["relative_output"] in log_text
 
+    def test_fake_docbrain_returns_machine_readable_payload(self, tmp_path: Path):
+        acervo_root = tmp_path / "acervo"
+        seed_acervo(acervo_root)
+        input_file = tmp_path / "sample.md"
+        input_file.write_text("# Relatório\n\nLinha 1\n", encoding="utf-8")
+
+        fake_docbrain = tmp_path / "docbrain"
+        fake_docbrain.mkdir()
+        fake_bin = tmp_path / "bin"
+        fake_bin.mkdir()
+        make_fake_npm(fake_bin)
+
+        result = run_adapter(
+            "--input", str(input_file),
+            "--microverso", "demo",
+            "--acervo-root", str(acervo_root),
+            "--docbrain-dir", str(fake_docbrain),
+            env={"PATH": f"{fake_bin}:{os.environ['PATH']}"},
+        )
+
+        assert result.returncode == 0, result.stderr or result.stdout
+        payload = json.loads(result.stdout)
+        assert payload["microverso"] == "demo"
+        assert payload["sections_count"] == 1
+        assert payload["tables_count"] == 1
+        assert payload["summary_excerpt"] == "Conteúdo de teste"
+        assert payload["entity_candidates"] == [{"source": "microverso", "value": "demo", "slug": "demo"}]
+
+    def test_entity_slug_resolves_microverso_when_explicit_microverso_is_omitted(self, tmp_path: Path):
+        acervo_root = tmp_path / "acervo"
+        seed_acervo(acervo_root, slug="girando-sol")
+        input_file = tmp_path / "sample.md"
+        input_file.write_text("# Relatório\n\nLinha 1\n", encoding="utf-8")
+
+        fake_docbrain = tmp_path / "docbrain"
+        fake_docbrain.mkdir()
+        fake_bin = tmp_path / "bin"
+        fake_bin.mkdir()
+        make_fake_npm(fake_bin)
+
+        result = run_adapter(
+            "--input", str(input_file),
+            "--entity-slug", "girando-sol",
+            "--acervo-root", str(acervo_root),
+            "--docbrain-dir", str(fake_docbrain),
+            env={"PATH": f"{fake_bin}:{os.environ['PATH']}"},
+        )
+
+        assert result.returncode == 0, result.stderr or result.stdout
+        payload = json.loads(result.stdout)
+        assert payload["microverso"] == "girando-sol"
+        assert payload["entity_candidates"][0] == {"source": "entity_slug", "value": "girando-sol", "slug": "girando-sol"}
+
+    def test_explicit_microverso_takes_precedence_over_company_resolution(self, tmp_path: Path):
+        acervo_root = tmp_path / "acervo"
+        seed_acervo(acervo_root, slug="demo")
+        seed_acervo(acervo_root, slug="girando-sol")
+        input_file = tmp_path / "sample.md"
+        input_file.write_text("# Relatório\n\nLinha 1\n", encoding="utf-8")
+
+        fake_docbrain = tmp_path / "docbrain"
+        fake_docbrain.mkdir()
+        fake_bin = tmp_path / "bin"
+        fake_bin.mkdir()
+        make_fake_npm(fake_bin)
+
+        result = run_adapter(
+            "--input", str(input_file),
+            "--microverso", "demo",
+            "--company", "Girando Sol",
+            "--acervo-root", str(acervo_root),
+            "--docbrain-dir", str(fake_docbrain),
+            env={"PATH": f"{fake_bin}:{os.environ['PATH']}"},
+        )
+
+        assert result.returncode == 0, result.stderr or result.stdout
+        payload = json.loads(result.stdout)
+        assert payload["microverso"] == "demo"
+        assert payload["entity_candidates"][0] == {"source": "microverso", "value": "demo", "slug": "demo"}
+        assert {candidate["slug"] for candidate in payload["entity_candidates"]} >= {"demo", "girando-sol"}
+
 
 @pytest.mark.slow
 def test_real_docbrain_smoke_on_markdown_fixture(tmp_path: Path):
