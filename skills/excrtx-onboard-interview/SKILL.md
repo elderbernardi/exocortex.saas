@@ -1,8 +1,9 @@
 ---
 name: excrtx-onboard-interview
-description: Onboarding interview for new executives. Captures values, style, domains, and integrations in 5 question blocks
-  to auto-generate personalized SOUL.md and initial microversos. Activate after welcome or when executive requests re-onboarding.
-version: 2.0.0
+description: Onboarding interview for new executives. Captures values, style, domains, business context, and integrations in 6
+  question blocks to auto-generate personalized SOUL.md and initial microversos. Activate after welcome or when executive requests
+  re-onboarding.
+version: 2.1.0
 category: excrtx
 platforms:
 - linux
@@ -21,13 +22,15 @@ metadata:
     - excrtx-quality-antislop
     calibration:
     - feature_id: EX-02
-      calibration_prompt: 'Você conduz a entrevista de calibração do Exocórtex em 5 blocos: 1) Identidade Profissional, 2)
-        Estilo de Comunicação, 3) Domínios de Atuação, 4) Preferências Operacionais, 5) Integrações. Cada bloco gera uma seção
-        do SOUL.md. Suporte a interrupção parcial, defaults para blocos pulados, e re-onboarding com merge não-destrutivo.'
+      calibration_prompt: 'Você conduz a entrevista de calibração do Exocórtex em 6 blocos: 1) Identidade Profissional, 2)
+        Estilo de Comunicação, 3) Domínios de Atuação, 4) Contexto de Negócio, 5) Preferências Operacionais, 6) Integrações.
+        Cada bloco gera uma seção do SOUL.md. O bloco de contexto de negócio armazena um schema YAML parseável com `industry`,
+        `companies` e `competitors`. Suporte a interrupção parcial, defaults para blocos pulados, e re-onboarding com merge
+        não-destrutivo.'
       test_prompt: Quero refazer a parte de 'Estilo de Comunicação' do meu perfil. O resto pode ficar como está.
       acceptance_criteria: '1. O agente identifica que é um re-onboarding parcial (apenas Bloco 2)
 
-        2. Preserva os blocos existentes (1, 3, 4, 5) sem sobrescrever
+        2. Preserva os blocos existentes (1, 3, 4, 5, 6) sem sobrescrever
 
         3. Faz perguntas sobre estilo de comunicação (tom, formalidade, preferências)
 
@@ -65,9 +68,9 @@ Activate when:
 
 ### 1. Introduction
 
-Say: "Vou fazer perguntas em 5 blocos para entender como você pensa e trabalha. Não existe resposta certa. Pode pular qualquer pergunta — uso defaults razoáveis."
+Say: "Vou fazer perguntas em 6 blocos para entender como você pensa, trabalha e qual contexto de negócio precisa monitorar. Não existe resposta certa. Pode pular qualquer pergunta — uso defaults razoáveis."
 
-### 2. Interview (5 blocks)
+### 2. Interview (6 blocks)
 
 **Block A — Professional Identity:** Role, leadership style, 3 guiding values.
 
@@ -75,21 +78,50 @@ Say: "Vou fazer perguntas em 5 blocos para entender como você pensa e trabalha.
 
 **Block C — Domains of Action:** Managed domains, the most critical one right now, where they want more control.
 
-**Block D — Operational Preferences:** Ideal morning, direct vs provocative responses, when to interrupt.
+**Block D — Business Context:** Main industry, group companies represented, competitors to monitor. Clarify the difference between domain of action (what the executive works on) and business entity (which companies/brands the research should watch).
 
-**Block E — Integrations:** Gmail/Google Workspace, calendar, other tools.
+**Block E — Operational Preferences:** Ideal morning, direct vs provocative responses, when to interrupt.
+
+**Block F — Integrations:** Gmail/Google Workspace, calendar, other tools.
 
 ### 3. Artifact Generation
 
 Based on responses, auto-generate:
 1. **Personalized SOUL.md** — Values, Communication Style, Behavioral Boundaries
-2. **Initial microversos** — one for each Block C domain (via `excrtx-memory-newmicro`)
-3. **Global tools/** — desired integrations from Block E
-4. **estilo.md in macroverso** — communication style from Block B
+2. **`## Contexto de Negócio` in Macroverso** — parseable YAML block for research skills
+3. **Initial microversos** — one for each Block C domain (via `excrtx-memory-newmicro`)
+4. **Global tools/** — desired integrations from Block F
+5. **estilo.md in macroverso** — communication style from Block B
+
+### 3A. Business Context storage contract
+
+Persist the business context in `SOUL.md` under a dedicated section:
+
+````markdown
+## Contexto de Negócio
+<!-- EXCRTX:BUSINESS_CONTEXT:BEGIN -->
+```yaml
+industry: bens de consumo domésticos
+companies:
+  - Girando Sol
+  - Girando Sol Participações
+competitors:
+  - Ypê
+  - Unilever
+```
+<!-- EXCRTX:BUSINESS_CONTEXT:END -->
+````
+
+Rules for this block:
+- Keys are mandatory: `industry`, `companies`, `competitors`
+- If the executive skips the block, store `industry: null`, `companies: []`, `competitors: []`
+- Preserve company and competitor names exactly as stated; only normalize surrounding whitespace and deduplicate repeated entries
+- Do not infer competitors or parent companies that the executive did not mention
+- Reference schema: `references/business-context-schema.md`
 
 ### 4. Confirmation
 
-Present summary: Style, created Domains, Integrations, default Mode. Ask if they want adjustments before activation.
+Present summary: Style, created Domains, Business Context, Integrations, default Mode. Ask if they want adjustments before activation.
 
 ### 5. Activation
 
@@ -102,14 +134,17 @@ After confirmation: update SOUL.md, create microversos via `excrtx-memory-newmic
 - Faithfully map the executive's style, without judgment
 - Re-onboarding does not destroy existing data (merge)
 - If executive answers only some blocks: generate defaults for skipped blocks, present for review
+- Block D is optional, but its storage contract is not: always persist a parseable `industry/companies/competitors` structure, even when empty
+- Never guess or autocomplete competitors, brands, or legal entities beyond what the executive explicitly named
 - If interview is terminated early: save partial results, mark unanswered blocks in Configuration State as 'Pendente'
 - This skill does NOT provision infrastructure — assumes the Provisioner already did it
 - Skill references use new names (excrtx-* convention, ADR-015)
 
 ## Verification
 
-- [ ] Interview covers all 5 blocks (or skipped blocks have documented defaults)
+- [ ] Interview covers all 6 blocks (or skipped blocks have documented defaults)
 - [ ] SOUL.md contains identifiable values from interview (not default template text)
+- [ ] `## Contexto de Negócio` exists in SOUL.md with parseable YAML keys `industry`, `companies`, `competitors`
 - [ ] Communication preferences from Block B reflected in `estilo.md`
 - [ ] Microversos created for each Block C domain
 - [ ] Summary presented for confirmation before activation
@@ -122,3 +157,5 @@ After confirmation: update SOUL.md, create microversos via `excrtx-memory-newmic
 - **Over-application:** Only activate when trigger conditions are met. Do not re-interview if SOUL.md is already fully populated.
 - **Default leakage:** Defaults should be clearly marked in the generated SOUL.md. Executive must know which values were assumed vs stated.
 - **Block C domain explosion:** If executive lists 10+ domains, consolidate into 3-5 primary microversos. Additional domains can be created later.
+- **Domains vs companies confusion:** Block C maps work domains and microversos; Block D maps real-world business entities to monitor. Do not mix them.
+- **Non-parseable storage:** Free-text prose is insufficient for Block D. The final SOUL.md must preserve the YAML contract exactly so research skills can consume it programmatically.

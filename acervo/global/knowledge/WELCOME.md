@@ -233,17 +233,18 @@ O Telegram é o gateway mais acessível — funciona no celular, é rápido, e p
 
 O Welcome é a apresentação. O **Onboarding** é onde o Exocórtex aprende quem você é.
 
-São 5 blocos de perguntas — sem resposta certa — que capturam:
+São 6 blocos de perguntas — sem resposta certa — que capturam:
 
 | Bloco | O que captura |
 |-------|---------------|
 | **A — Identidade** | Papel, estilo, valores-guia |
 | **B — Comunicação** | Tom, palavras que usa ou evita, formato preferido |
 | **C — Domínios** | Áreas de atuação, o mais crítico agora |
-| **D — Operacional** | Manhã ideal, respostas diretas vs provocativas |
-| **E — Integrações** | Ferramentas que usa, contas que quer conectar |
+| **D — Contexto de Negócio** | Indústria principal, empresas do grupo e concorrentes a monitorar |
+| **E — Operacional** | Manhã ideal, respostas diretas vs provocativas |
+| **F — Integrações** | Ferramentas que usa, contas que quer conectar |
 
-Ao final, o Exocórtex gera seu **SOUL.md personalizado** — a Constituição que governa todas as interações futuras — e cria os **Microversos iniciais** para seus domínios.
+Ao final, o Exocórtex gera seu **SOUL.md personalizado** — a Constituição que governa todas as interações futuras — cria os **Microversos iniciais** para seus domínios e registra um bloco parseável de **Contexto de Negócio** para as skills de pesquisa.
 
 Quando estiver pronto, diga: **"vamos começar o onboarding"** ou use o comando `/xc onboard`.
 

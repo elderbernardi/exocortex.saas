@@ -1,7 +1,7 @@
 ---
 name: excrtx-onboard-welcome
 description: Welcome and initial setup for a new Exocortex executive. First-contact protocol and orientation.
-version: 2.0.0
+version: 2.1.0
 category: excrtx
 platforms:
 - linux
@@ -17,14 +17,15 @@ metadata:
     - feature_id: EX-01
       calibration_prompt: Você é responsável pelo fluxo de boas-vindas do Exocórtex. Na primeira interação com um novo usuário,
         detecte se o acervo está vazio (macro/SOUL.md ausente ou com seções 'Pendente') e inicie o onboarding. Exiba o conteúdo
-        de WELCOME.md e ofereça iniciar a entrevista estruturada. Nunca assuma dados do executivo — pergunte sempre.
+        de WELCOME.md e ofereça iniciar a entrevista estruturada, incluindo o bloco opcional de contexto de negócio. Nunca assuma
+        dados do executivo — pergunte sempre.
       test_prompt: É minha primeira vez usando o Exocórtex. Acabei de instalar. O que devo fazer agora?
       acceptance_criteria: '1. O agente detecta que é uma sessão de primeiro uso (verifica existência de SOUL.md ou estado
         do acervo)
 
         2. Apresenta conteúdo de boas-vindas ou referencia WELCOME.md
 
-        3. Oferece ou inicia a entrevista de onboarding (5 blocos)
+        3. Oferece ou inicia a entrevista de onboarding (6 blocos, incluindo contexto de negócio)
 
         4. NÃO assume dados do executivo — faz perguntas antes de agir'
       remediation_tip: 'FALHA: Onboarding não ativado. A skill deve verificar se macro/SOUL.md existe e está completo. Se
@@ -134,6 +135,8 @@ Ver também: `references/bootstrap-macro-tutor.md`.
 Perguntar: "Quer começar o onboarding agora ou explorar primeiro?"
 
 - se sim, iniciar o onboarding constitucional só depois que o papel temporário do Macro Tutor estiver explícito
+- se sim, deixar explícito que a entrevista cobre 6 blocos: Identidade, Comunicação, Domínios, Contexto de Negócio, Preferências Operacionais e Integrações
+- explicar que o bloco **Contexto de Negócio** é opcional e gera a seção `## Contexto de Negócio` no Macroverso com schema YAML parseável (`industry`, `companies`, `competitors`)
 - se "explorar", usar o Macro Tutor para apresentar superfícies, integrações, vetores e exemplos de uso
 - se pular, registrar em memória que welcome foi visto e onboarding ficou pendente
 - ao concluir o onboarding constitucional, arquivar ou retirar o Macro Tutor como camada ativa
@@ -160,4 +163,5 @@ A persona de tutor pode continuar existindo como suporte, mas não deve competir
 - [ ] Gateway detectado e formato adaptado
 - [ ] Status do Telegram verificado
 - [ ] Transição para onboarding ou exploração oferecida
+- [ ] Handoff para entrevista explicita o bloco Contexto de Negócio e o contrato de armazenamento no Macroverso
 - [ ] Reminder criado se Telegram não configurado

@@ -12,31 +12,65 @@ test_EX1() {
   CURRENT_FEATURE_NAME="Welcome & Onboarding"
   CURRENT_FEATURE_CATEGORY="Onboarding & Assessment"
   local skill="excrtx-onboard-welcome"
+  local skill_file="$SKILLS_DST/$skill/SKILL.md"
+  local repo_root="${REPO_PATH:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+  local soul_seed="$repo_root/SOUL_SEED.md"
 
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
   check_no_skill_deps
   check_no_tool_deps
   check_file_exists "$ACERVO/global/knowledge/WELCOME.md" "WELCOME.md para onboarding"
+  check_file_exists "$soul_seed" "SOUL_SEED.md para placeholders do onboarding"
+
+  if grep -q '6 blocos' "$skill_file" && grep -q 'Contexto de Negócio' "$skill_file"; then
+    log_check_pass "Welcome documenta handoff de onboarding com 6 blocos e Contexto de Negócio"
+  else
+    log_check_fail "Welcome não documenta claramente o handoff com 6 blocos + Contexto de Negócio"
+  fi
+
+  if grep -q '## Contexto de Negócio' "$soul_seed" && grep -q 'companies:' "$soul_seed" && grep -q 'competitors:' "$soul_seed"; then
+    log_check_pass "SOUL_SEED expõe placeholder parseável para Contexto de Negócio"
+  else
+    log_check_fail "SOUL_SEED não expõe placeholder parseável para Contexto de Negócio"
+  fi
 
   SMOKE_PROMPT="Verifique se a skill excrtx-onboard-welcome funciona:
     1. O WELCOME.md existe e tem conteúdo válido?
-    2. O SOUL_SEED.md tem placeholders corretos para o onboarding preencher?"
+    2. O SOUL_SEED.md tem placeholders corretos para o onboarding preencher, incluindo 'Contexto de Negócio'?
+    3. O handoff para a entrevista deixa explícitos os 6 blocos, incluindo contexto de negócio?"
 }
 
 test_EX2() {
   CURRENT_FEATURE_NAME="Entrevista de Onboarding"
   CURRENT_FEATURE_CATEGORY="Onboarding & Assessment"
   local skill="excrtx-onboard-interview"
+  local skill_file="$SKILLS_DST/$skill/SKILL.md"
+  local repo_root="${REPO_PATH:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+  local schema_ref="$repo_root/skills/excrtx-onboard-interview/references/business-context-schema.md"
 
   check_skill_exists "$skill"
   check_frontmatter "$skill" "name" "description" "version"
   check_skill_dep "excrtx-onboard-welcome"
   check_no_tool_deps
+  check_file_exists "$schema_ref" "referência do schema de contexto de negócio"
+
+  if grep -q 'Interview (6 blocks)' "$skill_file" && grep -q 'Block D — Business Context' "$skill_file"; then
+    log_check_pass "Entrevista documenta os 6 blocos com bloco dedicado de Contexto de Negócio"
+  else
+    log_check_fail "Entrevista não documenta corretamente os 6 blocos com Contexto de Negócio"
+  fi
+
+  if grep -q 'industry:' "$skill_file" && grep -q 'companies:' "$skill_file" && grep -q 'competitors:' "$skill_file"; then
+    log_check_pass "Entrevista define contrato parseável industry/companies/competitors"
+  else
+    log_check_fail "Entrevista não define contrato parseável industry/companies/competitors"
+  fi
 
   SMOKE_PROMPT="Verifique se a skill de entrevista está configurada:
-    1. Os 5 blocos de entrevista estão definidos no SKILL.md?
-    2. A skill referencia corretamente excrtx-onboard-welcome?"
+    1. Os 6 blocos de entrevista estão definidos no SKILL.md, incluindo 'Contexto de Negócio'?
+    2. A skill referencia corretamente excrtx-onboard-welcome?
+    3. O schema parseável `industry/companies/competitors` está explícito e a referência do schema existe?"
 }
 
 test_EX3() {

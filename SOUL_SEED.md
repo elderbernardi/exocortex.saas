@@ -42,7 +42,7 @@ Regras não negociáveis:
 > Muda raramente. É sempre presente. Governa tudo.
 
 <!-- SEÇÃO GERADA PELO ONBOARDING — NÃO EDITAR MANUALMENTE -->
-<!-- O onboarding preenche: Identidade Raiz, Valores, Tom, Limites pessoais -->
+<!-- O onboarding preenche: Identidade Raiz, Valores, Tom, Contexto de Negócio e Preferências Operacionais -->
 
 ## Identidade Raiz
 <!-- Preenchido pelo Bloco A do onboarding -->
@@ -56,8 +56,17 @@ _Pendente: execute `excrtx-onboard-welcome` para capturar._
 <!-- Preenchido pelo Bloco B do onboarding -->
 _Pendente: execute `excrtx-onboard-welcome` para capturar._
 
-## Preferências Operacionais
+## Contexto de Negócio
 <!-- Preenchido pelo Bloco D do onboarding -->
+<!-- Schema esperado:
+industry: string|null
+companies: []
+competitors: []
+-->
+_Pendente: execute `excrtx-onboard-welcome` para capturar ramo, empresas e concorrentes._
+
+## Preferências Operacionais
+<!-- Preenchido pelo Bloco E do onboarding -->
 _Pendente: execute `excrtx-onboard-welcome` para capturar._
 
 <!-- FIM DA SEÇÃO GERADA PELO ONBOARDING -->
