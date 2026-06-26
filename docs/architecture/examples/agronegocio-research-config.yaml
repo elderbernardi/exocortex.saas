@@ -1,0 +1,112 @@
+domain_slug: agronegocio-brasil
+skill_name: excrtx-research-agronegocio-brasil
+extends: excrtx-research-cpg-brasil
+label: Agronegócio Brasil
+
+layers:
+  last30days:
+    enabled: true
+    default_search: reddit,youtube
+  agent_reach:
+    enabled: true
+    default_channels: web,youtube
+  crawler_br:
+    enabled: true
+    registry_file: tools/excrtx_crawler_brasil/sources.py
+
+sources:
+  institutional:
+    - slug: abag
+      name: ABAG
+      url: https://abag.com.br/
+      role: associação setorial
+    - slug: cna-brasil
+      name: CNA Brasil
+      url: https://cnabrasil.org.br/
+      role: representação institucional
+    - slug: embrapa
+      name: Embrapa
+      url: https://www.embrapa.br/
+      role: pesquisa pública
+    - slug: cepea
+      name: Cepea/Esalq-USP
+      url: https://www.cepea.esalq.usp.br/
+      role: indicadores e estudos
+    - slug: noticias-agricolas
+      name: Notícias Agrícolas
+      url: https://www.noticiasagricolas.com.br/
+      role: mídia vertical
+
+templates:
+  panorama:
+    label: Panorama Agronegócio Brasil
+    l30d_query: Brazil agribusiness trends OR agro export OR farm input costs
+    l30d_subreddits: agriculture,commodities,economics
+    l30d_search: reddit,youtube
+    ar_query: agronegócio Brasil tendências exportação produtividade 2026
+    ar_channels: web,youtube
+    cr_domain: agronegocio
+    cr_sources:
+      - abag
+      - cna-brasil
+      - embrapa
+      - cepea
+      - noticias-agricolas
+    focus: política setorial, produção, exportação, produtividade
+
+  graos:
+    label: Grãos e Safra
+    l30d_query: soy corn brazil crop outlook logistics climate
+    l30d_subreddits: agriculture,commodities,weather
+    l30d_search: reddit,youtube
+    ar_query: soja milho Brasil safra clima logística 2026
+    ar_channels: web,youtube
+    cr_domain: graos
+    cr_sources:
+      - cepea
+      - embrapa
+      - noticias-agricolas
+    focus: safra, clima, logística, preços
+
+  pecuaria:
+    label: Pecuária e Proteína Animal
+    l30d_query: brazil cattle beef dairy costs sanitary outlook
+    l30d_subreddits: agriculture,livestock,commodities
+    l30d_search: reddit,youtube
+    ar_query: pecuária bovina leite Brasil custos sanidade 2026
+    ar_channels: web,youtube
+    cr_domain: pecuaria
+    cr_sources:
+      - cna-brasil
+      - cepea
+      - embrapa
+      - noticias-agricolas
+    focus: boi, leite, sanidade, custos
+
+  insumos:
+    label: Insumos e Máquinas
+    l30d_query: fertilizer pesticide farm machinery brazil market
+    l30d_subreddits: agriculture,commodities,manufacturing
+    l30d_search: reddit,youtube
+    ar_query: fertilizantes defensivos máquinas agrícolas Brasil mercado 2026
+    ar_channels: web,youtube
+    cr_domain: insumos
+    cr_sources:
+      - abag
+      - embrapa
+      - noticias-agricolas
+    focus: fertilizantes, defensivos, máquinas, custos
+
+  comercio_exterior:
+    label: Comércio Exterior do Agro
+    l30d_query: brazil agribusiness exports china trade barriers fx
+    l30d_subreddits: economics,commodities,geopolitics
+    l30d_search: reddit,youtube
+    ar_query: exportações agronegócio Brasil China câmbio barreiras 2026
+    ar_channels: web,youtube
+    cr_domain: agronegocio
+    cr_sources:
+      - abag
+      - cna-brasil
+      - cepea
+    focus: exportação, câmbio, barreiras, destinos
