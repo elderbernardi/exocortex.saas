@@ -12,7 +12,7 @@
 | 2 | #98 | Crawler BR (15 fontes setoriais: RSS, HTML, API e browser) | ✅ Concluído |
 | 3 | #99 | Skill-wrapper CPG (orquestração) | ✅ Concluído |
 | F0 | #9 | **Firecrawl local/MCP** (capacidade opcional de scrape/search quando configurada) | ✅ Concluído 2026-06-25 |
-| 4 | #111–#113 | **Fontes públicas estruturadas** (Reclame Aqui, Google Trends, CNPJ) | 🚧 Em execução local: #113 adiantada; #111/#112 não iniciadas |
+| 4 | #111–#113 | **Fontes públicas estruturadas** (Reclame Aqui, Google Trends, CNPJ) | ✅ Implementadas localmente com testes; pendente publicação/fechamento remoto |
 | 5 | #114–#115 | **DocBrain pipeline** (PDF, Office, scrape → Acervo) | 📋 Este plano |
 | 6 | #116 | **Browser agent LLM** (e-commerce, sites sem API, gov arcaico) | 📋 Este plano |
 | 7 | #117–#119 | **Sinais estruturados profundos** (INPI, ANVISA, Glassdoor, Diário Oficial) | 📋 Este plano |
@@ -20,13 +20,13 @@
 | 9 | #100 | Onboarding — captura de ramo, empresas, concorrentes | ⬜ Existente |
 | 10 | #101 | Blueprint de generalização para outros domínios | ⬜ Existente |
 
-### Estado local verificado em 2026-06-25
+### Estado local verificado em 2026-06-26
 
 | Issue | Estado no GitHub | Estado no working tree |
 |---|---|---|
-| #111 | aberta | não iniciada |
-| #112 | aberta | não iniciada |
-| #113 | aberta | `tools/excrtx_source_cnpj/`, `tests/test_source_cnpj.py` e `skills/excrtx-source-cnpj/SKILL.md` já existem; smoke real executado |
+| #111 | aberta | `tools/excrtx_source_reclameaqui/`, `tests/test_source_reclameaqui.py` e `skills/excrtx-source-reclameaqui/SKILL.md` criados; smoke real executado com `Girando Sol` |
+| #112 | aberta | `tools/excrtx_source_google_trends/`, `tests/test_source_google_trends.py` e `skills/excrtx-source-google-trends/SKILL.md` criados; smoke real executado com `Girando Sol`; sujeito a rate limit |
+| #113 | aberta | `tools/excrtx_source_cnpj/`, `tests/test_source_cnpj.py` e `skills/excrtx-source-cnpj/SKILL.md` existem; smoke real executado |
 
 Este plano passa a refletir **estado real de execução local**, não apenas intenção de roadmap. Se o working tree avançar antes da publicação no GitHub, o plano deve ser atualizado no mesmo turno.
 
@@ -115,18 +115,18 @@ A imprensa cobre ~20% dessas dimensões. As fontes abaixo cobrem o resto.
 
 ## Fase 4 — Fontes Públicas Estruturadas (zero auth)
 
-> **Status:** Em execução local — #113 já implementada localmente e validada; #111 e #112 ainda não iniciadas
+> **Status:** Implementada localmente — #111, #112 e #113 com tool, testes, skill e smoke real; falta governança remota (comentários/fechamento) e eventual push
 > **Prioridade:** P0 — é o maior gap de sinal com menor complexidade
-> **Dependências:** Nenhuma para #113 e #111. #112 depende de decisão explícita sobre `pytrends` se a biblioteca não estiver disponível.
+> **Dependências:** Nenhuma crítica para execução local. Google Trends usa endpoint público próprio e continua sujeito a rate limit.
 > **Issues relacionadas:** #97 (META), #111, #112, #113
 
 ### Estado operacional da fase
 
 | Issue | Objetivo | Situação |
 |---|---|---|
-| #113 | CNPJ / dados cadastrais | ferramenta, testes, skill e smoke real já feitos localmente; falta publicação remota e eventual integração explícita com #99 |
-| #112 | Google Trends | ainda não iniciada; requer validar dependência `pytrends` antes de implementar |
-| #111 | Reclame Aqui | ainda não iniciada; recomendação: HTTP/HTML primeiro, browser só se necessário |
+| #113 | CNPJ / dados cadastrais | ferramenta, testes, skill, smoke real e integração opcional com `#99 excrtx-research-cpg-brasil` já feitos localmente; falta publicação remota |
+| #112 | Google Trends | implementada localmente com endpoint público próprio, testes passando, smoke real executado e integração opcional com `#99`; limite conhecido: rate limit intermitente |
+| #111 | Reclame Aqui | implementada localmente com parsing HTML/JSON-LD, testes passando, smoke real executado e integração opcional com `#99` |
 
 ### Contrato comum para a Fase 4
 
@@ -324,8 +324,8 @@ Output: {
 - smoke real executado com `33000167000101`
 
 **Ainda pendente para encerrar a issue:**
-- decidir se a integração explícita com `#99 excrtx-research-cpg-brasil` entra no mesmo ticket ou vira follow-up local
 - publicar comentário remoto da issue só após aprovação explícita
+- decidir se o fechamento remoto já inclui referência ao wrapper `#99` ou se isso fica detalhado no comentário da própria `#99`
 
 **Arquivo de saída:** `tools/excrtx_source_cnpj/`
 **Skill wrapper:** `skills/excrtx-source-cnpj/SKILL.md`
@@ -700,9 +700,9 @@ Fase 1 │ #108 Agent-Reach                ✅
 Fase 2 │ #98 Crawler BR                  ✅
 Fase 3 │ #99 Wrapper CPG                 ✅
        │
-Fase 4 │ 4a Reclame Aqui                 ⬜ (independente)
-       │ 4b Google Trends                ⬜ (independente)
-       │ 4c CNPJ                         ⬜ (independente)
+Fase 4 │ 4a Reclame Aqui                 ✅
+       │ 4b Google Trends                ✅
+       │ 4c CNPJ                         ✅
        │
 Fase 5 │ 5a DocBrain health check        ⬜ (depende de #11 path drift)
        │ 5b Adapter DocBrain→Acervo      ⬜ (depende de 5a)

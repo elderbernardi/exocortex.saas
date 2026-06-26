@@ -54,11 +54,11 @@ Agora entramos na **Fase 4 — Fontes Públicas Estruturadas**. O objetivo é ca
 
 | Issue | Componente | Estado local |
 |---|---|---|
-| #113 | `excrtx-source-cnpj` | em andamento local: tool + testes + skill já existem |
-| #112 | `excrtx-source-google-trends` | não iniciado |
-| #111 | `excrtx-source-reclameaqui` | não iniciado |
+| #113 | `excrtx-source-cnpj` | implementada localmente: tool + testes + skill + smoke real |
+| #112 | `excrtx-source-google-trends` | implementada localmente: tool + testes + skill + smoke real; sujeito a rate limit |
+| #111 | `excrtx-source-reclameaqui` | implementada localmente: tool + testes + skill + smoke real |
 
-Se o estado local e o plano divergirem, atualize o plano antes de abrir nova frente de implementação.
+Se o estado local e o plano divergirem, atualize o plano antes de abrir nova frente de implementação. A partir deste ponto, a frente principal deixa de ser build e passa a ser governança remota: comentário de evidências, fechamento das issues filhas e atualização da meta.
 
 ---
 
