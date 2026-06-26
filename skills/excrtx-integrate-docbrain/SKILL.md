@@ -74,8 +74,8 @@ Before the first DocBrain action in a task, resolve the workspace by testing can
 Recommended resolution order:
 
 1. `$EXOCORTEX_DOCBRAIN_DIR` when explicitly set;
-2. the current local tool copy used by Exocortex/Hermes workflows;
-3. the documented canonical repository clone;
+2. the repository-local checkout validated in the current workspace;
+3. the current managed tool copy used by Exocortex/Hermes workflows;
 4. any other known DocBrain checkout the operator asked you to use.
 
 Validation rule:
@@ -106,7 +106,8 @@ ${HERMES_HOME:-$HOME/.hermes}/reminders/docbrain-llm-key.md
 Run before the first DocBrain action in a task, after resolving the workspace:
 
 ```bash
-DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+# substitute the workspace you just resolved via api health
+DOCBRAIN_DIR="/abs/path/to/resolved/docbrain"
 cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api health --output json
 ```
@@ -122,20 +123,17 @@ Expected:
 Default Hermes call:
 
 ```bash
-DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+DOCBRAIN_DIR="/abs/path/to/resolved/docbrain"
 cd "$DOCBRAIN_DIR"
 npm run --silent cli -- api parse create \
   --input /abs/path/document.pdf \
-  --include document,job,sections,tables \
-  --reprocess-policy skip \
+  --include tables,sections \
   --output json
 ```
 
 Defaults for agents:
 
-- use `--reprocess-policy skip`;
-- request `document,job` by default;
-- add `sections,tables` when the intake needs structured content;
+- `document` and `job` already come in the envelope; request `tables,sections` explicitly;
 - add `raw_text` only when the user or downstream workflow needs full text;
 - do not write wiki files.
 
@@ -144,7 +142,7 @@ Defaults for agents:
 Use stdin for complex requests:
 
 ```bash
-DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+DOCBRAIN_DIR="/abs/path/to/resolved/docbrain"
 cd "$DOCBRAIN_DIR"
 printf '%s' "$REQUEST_JSON" | npm run --silent cli -- api parse create --request -
 ```
@@ -155,45 +153,19 @@ Payload shape:
 {
   "input": "/abs/path/document.pdf",
   "input_kind": "file",
-  "include": ["document", "job", "sections", "tables"],
-  "reprocess_policy": "skip",
-  "llm": "auto",
+  "include": ["sections", "tables"],
+  "llm": false,
   "citation": "Documento recebido pelo intake",
   "tags": ["intake"],
-  "project_root": "${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
+  "project_root": "/abs/path/to/resolved/docbrain"
 }
 ```
 
-## Query Jobs
+## Deferred Commands
 
-Latest by document id:
-
-```bash
-npm run --silent cli -- api parse get \
-  --document-id 'sha256:...' \
-  --latest \
-  --include document,job
-```
-
-By job id:
-
-```bash
-npm run --silent cli -- api parse get \
-  --job-id 'sha256_...-r1' \
-  --include document,job
-```
-
-Recent jobs:
-
-```bash
-npm run --silent cli -- api parse list --limit 20 --status completed
-```
-
-Revisions:
-
-```bash
-npm run --silent cli -- api parse revisions --document-id 'sha256:...'
-```
+`api parse get`, `api parse list` and `api parse revisions` are still deferred in
+the current `docbrain.cli.v1` runtime. Do not document or automate them as if they
+were available; consume the `parse.create` envelope directly.
 
 ## New Exocortex Installation
 

@@ -51,3 +51,6 @@ Microverso para o desenvolvimento do próprio Exocórtex.IA. Cobre design e impl
 ## Próxima ação
 
 Calibrar novas skills e expandir a suite de testes conforme novos requisitos surgirem.
+
+### Knowledge
+- `micro/exocortex-dev/knowledge/purpose-docbrain-smoke.md`

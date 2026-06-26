@@ -428,9 +428,10 @@ NotebookLM integration requires the `notebooklm-mcp-cli` python package.
 DocBrain is used to parse complex documents and PDFs.
 
 1. Ensure Node.js and `npm` are installed.
-2. The setup script clones the parser repository to `~/exocortex/tools/docbrain`. Verify and build:
+2. Fresh installs may clone the parser repository to `~/exocortex/tools/docbrain`, but the live runtime can also use a repository-local checkout. Resolve the active workspace with `api health`, then verify/build that workspace:
    ```bash
-   cd ~/exocortex/tools/docbrain
+   DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/exocortex/tools/docbrain}"
+   cd "$DOCBRAIN_DIR"
    npm install
    npm run build
    ```

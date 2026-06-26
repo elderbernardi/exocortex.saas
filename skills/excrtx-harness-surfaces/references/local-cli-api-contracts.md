@@ -112,12 +112,9 @@ A local document parser engine should expose at least:
 ```bash
 <tool> api health --output json
 <tool> api capabilities --output json
-<tool> api parse create --input /abs/file.pdf --include document,job --reprocess-policy skip --output json
+<tool> api parse create --input /abs/file.pdf --include tables,sections --output json
 <tool> api parse create --request -
-<tool> api parse get --job-id <id> --include document,job
-<tool> api parse get --document-id <sha256:id> --latest --include job
-<tool> api parse list --limit 20 --status completed
-<tool> api parse revisions --document-id <sha256:id>
+# optional/deferred in early runtimes: get/list/revisions only after the engine actually ships them
 ```
 
 Default parse output should return the structured document contract and job metadata. Raw text, markdown-only views, wiki projections, entities, sections, and tables should be selectable through `--include` so Hermes can control token and payload size.
