@@ -8,6 +8,7 @@ Implementei o menor avanço verificável do pipeline DocBrain → Acervo, com ev
 - `skills/excrtx-adapter-docbrain-acervo/SKILL.md`
 - `tests/test_docbrain_to_acervo.py`
 - `pytest.ini` (registro do marker `slow`)
+- migração do adaptador para o control plane oficial do Acervo (`acervoctl`)
 
 ## O que a primeira versão já faz
 

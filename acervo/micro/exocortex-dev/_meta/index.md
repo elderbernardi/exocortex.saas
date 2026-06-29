@@ -40,6 +40,7 @@ Microverso para o desenvolvimento do próprio Exocórtex.IA. Cobre design e impl
 
 ### Decisions (Decisões de Design)
 - [skill-vs-mcp-selection.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md) — ADR-006: critérios de decisão entre criar uma Skill ou usar um servidor MCP.
+- [adr-022-acervo-mcp-control-plane.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/decisions/adr-022-acervo-mcp-control-plane.md) — ADR-022: filesystem como verdade física; core semântico local como verdade operacional; CLI/MCP como superfícies do Acervo.
 
 ### Knowledge (Arquitetura e Conceitos)
 - [architecture.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/knowledge/architecture.md) — arquitetura geral e fluxo de execução (Trilho A vs. Trilho B).

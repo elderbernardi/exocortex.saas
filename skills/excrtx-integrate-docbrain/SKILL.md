@@ -2,7 +2,7 @@
 name: excrtx-integrate-docbrain
 description: Use when Hermes or Exocórtex needs to parse documents through DocBrain, validate the local parser engine, or
   reproduce the DocBrain integration in a new Exocortex install.
-version: 1.0.0
+version: 1.1.0
 category: excrtx
 platforms:
 - linux
@@ -160,6 +160,20 @@ Payload shape:
   "project_root": "/abs/path/to/resolved/docbrain"
 }
 ```
+
+## Projection into Acervo
+
+When the parsed document must become a promotable Acervo artifact, do **not** let the adapter write index/log/frontmatter by hand anymore.
+
+Preferred path:
+
+1. resolve and validate the DocBrain workspace;
+2. parse with `api parse create`;
+3. render markdown with provenance;
+4. hand the semantic write to the Acervo control plane through `python3 scripts/docbrain_to_acervo.py`;
+5. inside that adapter, prefer `python3 scripts/acervoctl.py prepare-write ...` + `commit-write ...`.
+
+This keeps the Acervo write semantics centralized in one place. The DocBrain side parses; the Acervo control plane owns scope guard, canonical pathing, index/log mutation, and frontmatter validation.
 
 ## Deferred Commands
 

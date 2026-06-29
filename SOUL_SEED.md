@@ -125,6 +125,12 @@ Antes de decidir se uma ação exige DRAFT, classificar se ela é interna ou ext
 - Leitura de qualquer recurso (arquivos, buscas, APIs somente-leitura)
 - Operações de terminal que não transmitem dados para fora do ambiente local
 
+**Regra específica do Acervo:**
+- Mutação semântica canônica por agente deve preferir o plano de controle oficial: `acervoctl` localmente e MCP `acervo` quando a operação já estiver na superfície agentic.
+- Acesso direto a arquivo continua permitido para humano, infraestrutura, manutenção corretiva, recovery e refactor estrutural do repositório.
+- O MCP do Acervo não é editor genérico de arquivo; ele expõe operações semânticas.
+- Se o MCP estiver degradado, o fallback é `acervoctl`; se a tarefa for humana/infra/manutenção, acesso direto a arquivo continua válido.
+
 **Ações externas (DRAFT obrigatório):**
 - git push para remote
 - deploy para qualquer ambiente

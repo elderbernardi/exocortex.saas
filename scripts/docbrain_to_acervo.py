@@ -3,7 +3,7 @@
 
 Recebe um arquivo local, resolve um workspace DocBrain válido via `api health`,
 executa `api parse create`, renderiza markdown estruturado com provenance e grava
-em `acervo/micro/{slug}/knowledge/`.
+no Acervo pelo control plane oficial (`acervoctl`).
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,9 +23,9 @@ from typing import Any
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+ACERVOCTL = REPO_ROOT / "scripts" / "acervoctl.py"
 DEFAULT_DOCBRAIN_SIBLING = REPO_ROOT.parent / "docbrain"
 DEFAULT_MANAGED_DOCBRAIN = Path(os.environ.get("EXOCORTEX_HOME", str(Path.home() / "exocortex"))) / "tools" / "docbrain"
-VALIDATOR = REPO_ROOT / "scripts" / "validate_frontmatter.py"
 
 
 def now_utc() -> datetime:
@@ -66,10 +67,6 @@ def render_markdown_table(table: dict[str, Any]) -> str:
     if not body:
         body.append("| " + " | ".join("—" for _ in columns) + " |")
     return "\n".join([header, sep, *body])
-
-
-def relative_to_acervo(path: Path, acervo_root: Path) -> str:
-    return path.resolve().relative_to(acervo_root.resolve()).as_posix()
 
 
 def build_entity_candidates(args: argparse.Namespace) -> list[dict[str, str]]:
@@ -130,6 +127,36 @@ def run_json_command(args: list[str], cwd: Path) -> dict[str, Any]:
         raise RuntimeError(
             f"Saída não é JSON válido para {' '.join(args)}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
         ) from exc
+
+
+def run_acervoctl(args: list[str]) -> dict[str, Any]:
+    result = subprocess.run(
+        [sys.executable, str(ACERVOCTL), *args],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    stdout = (result.stdout or "").strip()
+    stderr = (result.stderr or "").strip()
+    payload: dict[str, Any] | None = None
+    if stdout:
+        try:
+            parsed = json.loads(stdout)
+            if isinstance(parsed, dict):
+                payload = parsed
+        except json.JSONDecodeError:
+            payload = None
+    if result.returncode != 0:
+        if payload and payload.get("error"):
+            raise RuntimeError(f"acervoctl {' '.join(args)} falhou: {payload['error']}")
+        raise RuntimeError(
+            f"acervoctl falhou ({result.returncode}): {' '.join(args)}\nstdout:\n{stdout}\nstderr:\n{stderr}"
+        )
+    if not payload:
+        raise RuntimeError(
+            f"acervoctl retornou stdout não-JSON para {' '.join(args)}\nstdout:\n{stdout}\nstderr:\n{stderr}"
+        )
+    return payload
 
 
 def resolve_docbrain_dir(explicit: str | None) -> tuple[Path, dict[str, Any]]:
@@ -277,92 +304,6 @@ def render_markdown(payload: dict[str, Any], input_path: Path, ts: datetime) -> 
     return markdown, title
 
 
-def ensure_microverso_structure(acervo_root: Path, microverso: str) -> tuple[Path, Path, Path]:
-    micro_root = acervo_root / "micro" / microverso
-    knowledge_dir = micro_root / "knowledge"
-    meta_dir = micro_root / "_meta"
-    index_path = meta_dir / "index.md"
-    log_path = meta_dir / "log.md"
-
-    if not micro_root.exists():
-        raise RuntimeError(f"Microverso inexistente: {micro_root}")
-    knowledge_dir.mkdir(parents=True, exist_ok=True)
-    meta_dir.mkdir(parents=True, exist_ok=True)
-    if not index_path.exists():
-        raise RuntimeError(f"Índice ausente: {index_path}")
-    if not log_path.exists():
-        raise RuntimeError(f"Log ausente: {log_path}")
-    return knowledge_dir, index_path, log_path
-
-
-def guard_write(target_path: Path, acervo_root: Path, microverso: str) -> None:
-    guard_script = REPO_ROOT / "scripts" / "exocortex_runtime_guard.py"
-    result = subprocess.run(
-        [
-            sys.executable,
-            str(guard_script),
-            "guard-write",
-            "--path",
-            str(target_path),
-            "--active-microverso",
-            microverso,
-            "--acervo-root",
-            str(acervo_root),
-        ],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(result.stdout or result.stderr or "guard-write falhou")
-    payload = json.loads(result.stdout)
-    if payload.get("allowed") is not True:
-        raise RuntimeError(payload.get("message") or str(payload))
-
-
-def update_index(index_path: Path, relative_output: str) -> None:
-    content = index_path.read_text(encoding="utf-8")
-    bullet = f"- `{relative_output}`"
-    if bullet in content:
-        return
-
-    if "### Knowledge" in content:
-        pattern = r"(### Knowledge\n)"
-        content, count = re.subn(pattern, r"\1" + bullet + "\n", content, count=1)
-        if count:
-            index_path.write_text(content, encoding="utf-8")
-            return
-
-    separator = "\n" if content.endswith("\n") else "\n\n"
-    content += f"{separator}### Knowledge\n{bullet}\n"
-    index_path.write_text(content, encoding="utf-8")
-
-
-def append_log(log_path: Path, relative_output: str, input_path: Path, ts: datetime) -> None:
-    date = ts.strftime("%Y-%m-%d")
-    entry = f"- CREATED: {relative_output} (volátil) — ingestão DocBrain de {input_path.name}"
-    content = log_path.read_text(encoding="utf-8")
-    if entry in content:
-        return
-
-    heading = f"## {date}"
-    if heading in content:
-        content = content.rstrip() + "\n" + entry + "\n"
-    else:
-        suffix = "\n" if content.endswith("\n") else "\n\n"
-        content = content + suffix + heading + "\n" + entry + "\n"
-    log_path.write_text(content, encoding="utf-8")
-
-
-def validate_frontmatter(path: Path) -> None:
-    result = subprocess.run(
-        [sys.executable, str(VALIDATOR), "--file", str(path)],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(f"Frontmatter inválido para {path}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}")
-
-
 def command(args: argparse.Namespace) -> dict[str, Any]:
     input_path = Path(args.input).expanduser().resolve()
     if not input_path.exists():
@@ -378,16 +319,47 @@ def command(args: argparse.Namespace) -> dict[str, Any]:
         raise RuntimeError(f"Parse DocBrain inválido: {payload}")
 
     markdown, title = render_markdown(payload, input_path, ts)
-    knowledge_dir, index_path, log_path = ensure_microverso_structure(acervo_root, microverso)
     filename = slugify(args.output_name or input_path.stem) + ".md"
-    output_path = knowledge_dir / filename
-    guard_write(output_path, acervo_root=acervo_root, microverso=microverso)
-    output_path.write_text(markdown, encoding="utf-8")
-    validate_frontmatter(output_path)
 
-    relative_output = relative_to_acervo(output_path, acervo_root)
-    update_index(index_path, relative_output)
-    append_log(log_path, relative_output, input_path, ts)
+    with tempfile.TemporaryDirectory(prefix="docbrain-acervo-") as tmpdir:
+        tmpdir_path = Path(tmpdir)
+        receipt_path = tmpdir_path / "receipt.json"
+        content_path = tmpdir_path / filename
+        content_path.write_text(markdown, encoding="utf-8")
+
+        prepared = run_acervoctl(
+            [
+                "prepare-write",
+                "--acervo-root",
+                str(acervo_root),
+                "--microverso",
+                microverso,
+                "--nature",
+                "knowledge",
+                "--title",
+                title,
+                "--filename",
+                filename,
+                "--receipt-out",
+                str(receipt_path),
+            ]
+        )
+        committed = run_acervoctl(
+            [
+                "commit-write",
+                "--receipt",
+                str(receipt_path),
+                "--content-file",
+                str(content_path),
+                "--description",
+                f"ingestão DocBrain de {input_path.name}",
+                "--class-name",
+                "volátil",
+            ]
+        )
+
+    relative_output = committed["relative_output"]
+    output_path = Path(committed["target_path"])
 
     data = payload["data"]
     sections_count = len(data.get("sections") or [])
@@ -408,6 +380,11 @@ def command(args: argparse.Namespace) -> dict[str, Any]:
         "summary_excerpt": build_summary_excerpt(payload),
         "sections": sections_count,
         "tables": tables_count,
+        "control_plane": {
+            "surface": "acervoctl",
+            "prepare": prepared,
+            "commit": committed,
+        },
     }
 
 

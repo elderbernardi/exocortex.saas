@@ -88,6 +88,10 @@ quádruplo de env vars (`{PROVIDER,MODEL,API_KEY,BASE_URL}`):
 ```bash
 # Verifique todos os pré-requisitos de uma vez:
 bash scripts/validate-environment.sh
+
+# Smoke check do control plane local do Acervo
+python3 scripts/acervoctl.py list-microversos
+python3 scripts/acervo_mcp_server.py --self-test --acervo-root "$PWD/acervo"
 ```
 
 ### Binários Obrigatórios
@@ -581,6 +585,32 @@ fi
 
 ---
 
+## Step 11b — Acervo MCP
+
+**Objetivo**: Registrar o MCP semântico local do Acervo e validar saúde do control plane agentic.
+
+### Execução
+
+```bash
+bash "$SCRIPT_DIR/setup/step-11b-integration-acervo-mcp.sh"
+```
+
+### O que este step faz
+
+1. roda `python3 scripts/acervo_mcp_server.py --self-test --acervo-root "$ACERVO"`
+2. registra `acervo` via `hermes mcp add` com `python3` + `scripts/acervo_mcp_server.py`
+3. reconcilia `config.yaml` para fixar `ACERVO`, `EXOCORTEX_HOME` e `HERMES_HOME`
+4. executa `hermes mcp test acervo`
+5. se falhar, grava reminder em `$HERMES_HOME/reminders/acervo-mcp.md`
+
+### Modo degradado
+
+Se o MCP não ficar saudável, a operação continua com:
+- `python3 scripts/acervoctl.py` como superfície local oficial
+- acesso direto a arquivos para humano, infra e manutenção
+
+---
+
 ## Step 12 — Verificação de Keys
 
 **Objetivo**: Verificar se as chaves de API estão configuradas e criar reminders para pendentes.
@@ -630,6 +660,7 @@ bash "$SCRIPT_DIR/setup/step-13-final-verification.sh"
 6. **Bundle exocortex-alpha.yaml** presente
 7. **SOUL.md** presente
 8. **hermes CLI** disponível no PATH
+9. **Acervo MCP** presente, auto-registrado e saudável (`self-test` + `hermes mcp test acervo`)
 
 ### Resultado
 - `0 erros` → ✅ Instalação completa
@@ -730,6 +761,11 @@ test -f "$PROFILES_DST/manut/profile.yaml" && echo "✓ Profile manut" || echo "
 
 # 6. Hermes CLI
 command -v hermes >/dev/null && echo "✓ hermes $(hermes --version 2>/dev/null | head -1)" || echo "✗ hermes"
+
+# 7. Acervo MCP
+python3 "$SCRIPT_DIR/scripts/acervo_mcp_server.py" --self-test --acervo-root "$ACERVO" >/dev/null && echo "✓ acervo mcp self-test" || echo "✗ acervo mcp self-test"
+hermes mcp list 2>/dev/null | grep -Eq '^[[:space:]]*acervo[[:space:]]' && echo "✓ acervo registrado" || echo "✗ acervo não registrado"
+hermes mcp test acervo >/dev/null 2>&1 && echo "✓ acervo health check" || echo "✗ acervo health check"
 
 echo ""
 echo "Paths:"

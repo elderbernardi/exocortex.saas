@@ -189,6 +189,36 @@ if command -v hermes > /dev/null 2>&1; then
   log "hermes CLI: $(hermes --version 2>/dev/null | head -1)"
 else
   warn "hermes CLI não encontrado no PATH"
+  ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
+echo "Acervo MCP (registro + health):"
+if [ -f "$SCRIPT_DIR/scripts/acervo_mcp_server.py" ]; then
+  log "Servidor MCP do Acervo presente"
+else
+  warn "Servidor MCP do Acervo ausente em $SCRIPT_DIR/scripts/acervo_mcp_server.py"
+  ERRORS=$((ERRORS + 1))
+fi
+if python3 "$SCRIPT_DIR/scripts/acervo_mcp_server.py" --self-test --acervo-root "$ACERVO" >/tmp/exocortex_acervo_mcp_selftest.log 2>&1; then
+  log "Acervo MCP self-test local: OK"
+else
+  warn "Acervo MCP self-test falhou; veja /tmp/exocortex_acervo_mcp_selftest.log"
+  ERRORS=$((ERRORS + 1))
+fi
+if command -v hermes > /dev/null 2>&1; then
+  if hermes mcp list 2>/dev/null | grep -Eq '^[[:space:]]*acervo[[:space:]]'; then
+    log "MCP server 'acervo' registrado"
+    if hermes mcp test acervo >/tmp/exocortex_acervo_mcp_health.log 2>&1; then
+      log "MCP server 'acervo' health check: OK"
+    else
+      warn "MCP server 'acervo' health check falhou; veja /tmp/exocortex_acervo_mcp_health.log"
+      ERRORS=$((ERRORS + 1))
+    fi
+  else
+    warn "MCP server 'acervo' não registrado em hermes mcp list"
+    ERRORS=$((ERRORS + 1))
+  fi
 fi
 
 echo ""

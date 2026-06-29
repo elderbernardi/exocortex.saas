@@ -53,3 +53,6 @@ Reason: aprovação explícita para tornar exocortex-ops provisionável no insta
 Result: seed copiado, setup.sh patchado, validação isolada concluída com preservação de mutação local.
 ## 2026-06-21 | canonicalize | Runbooks de memória absorvidos
 Absorvidos de `micro/exocortex-dev` os runbooks/contextos operacionais da reforma de memória: plano de execução, tarefa do instalador, progresso e handoff.
+
+## 2026-06-28
+- UPDATED: micro/exocortex-ops/knowledge/mcp-registry.md — registry passou a reservar o MCP `acervo` em estado planned, com health check e modo degradado definidos.

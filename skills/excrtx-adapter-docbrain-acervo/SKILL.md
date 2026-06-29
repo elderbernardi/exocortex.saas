@@ -1,7 +1,7 @@
 ---
 name: excrtx-adapter-docbrain-acervo
 description: Use when Exocórtex precisa transformar a saída estruturada do DocBrain em markdown com provenance pronto para entrada no Acervo.
-version: 1.0.0
+version: 1.1.0
 category: excrtx
 platforms: [linux]
 metadata:
@@ -76,9 +76,9 @@ Saída esperada em stdout:
    - frontmatter OKF/Acervo compatível;
    - provenance (`document_id`, `job_id`, `request_id`, `extractor`, `sources`);
    - seções e tabelas em markdown.
-4. Grava em `knowledge/` do microverso informado.
-5. Atualiza `_meta/index.md` e `_meta/log.md`.
-6. Valida o frontmatter com `scripts/validate_frontmatter.py`.
+4. Prepara a mutação semântica via `python3 scripts/acervoctl.py prepare-write ...`.
+5. Efetiva a escrita via `python3 scripts/acervoctl.py commit-write ...`.
+6. Delega ao control plane do Acervo o `scope guard`, a escrita do arquivo, a atualização de `_meta/index.md` e `_meta/log.md`, e a validação de frontmatter.
 
 ## Verificações
 
@@ -101,6 +101,7 @@ python3 scripts/skill_judge.py --skill excrtx-adapter-docbrain-acervo --d1-only
 
 - [ ] `api health` respondeu `ok=true` e `api_version=docbrain.cli.v1`
 - [ ] o adaptador gerou arquivo `.md` em `micro/{slug}/knowledge/`
+- [ ] o payload JSON inclui `control_plane.surface = acervoctl`
 - [ ] `_meta/index.md` recebeu a referência do novo arquivo
 - [ ] `_meta/log.md` registrou `CREATED:`
-- [ ] `scripts/validate_frontmatter.py --file <arquivo>` passou
+- [ ] o commit do control plane retornou caminho canônico e receipt consistente

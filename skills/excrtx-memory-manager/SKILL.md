@@ -2,7 +2,7 @@
 name: excrtx-memory-manager
 description: Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared)
   with context isolation.
-version: 2.0.0
+version: 2.2.0
 category: excrtx
 platforms:
 - linux
@@ -101,6 +101,38 @@ acervo/
 ```
 
 Full details in `acervo/README.md`.
+
+## Operational Surfaces
+
+There are now three distinct surfaces over the same Acervo authority model:
+
+1. **filesystem** — physical truth, always valid for human/infra/maintenance access;
+2. **`scripts/acervoctl.py`** — official local semantic control plane for `prepare-write`, `commit-write`, validation and export;
+3. **`scripts/acervo_mcp_server.py`** — official agentic MCP surface, thin over the same core.
+
+Rule:
+
+- for semantic writes performed by automations, adapters, or reusable flows, prefer **`acervoctl`**;
+- use the MCP surface when the caller is an agent already operating through Hermes tools;
+- keep direct file access for audits, maintenance, recovery, and explicit human intervention.
+
+If these surfaces disagree, the architecture regressed. The CLI/MCP must converge on the same behavior, receipts, scope guard, index/log updates, and frontmatter validation.
+
+## Control Plane Semântico (agentic writes)
+
+Quando a tarefa for **mutação semântica canônica** do Acervo, a regra preferencial passa a ser:
+
+- **filesystem** = verdade física
+- **semantic core** = verdade operacional da mutação
+- **CLI local (`acervoctl`)** e **MCP** = superfícies sobre o mesmo core
+
+Implicações operacionais:
+- Para **agentes**, preferir `prepare/commit` via `acervoctl` (e futuramente MCP) em vez de editar arquivos diretamente quando a operação for semântica: criar entrada canônica, atualizar entrada canônica, validar escopo, exportar microverso.
+- Para **humanos, infraestrutura e manutenção corretiva**, escrita direta em arquivo continua permitida.
+- O MCP do Acervo **não** deve virar editor genérico de arquivos; ele deve expor operações semânticas.
+- O primeiro contrato local verificável é `python3 scripts/acervoctl.py`; qualquer tool futura do MCP deve ter equivalente local nele.
+
+Referência operacional curta: `references/acervo-control-plane-cli.md`.
 
 ## Resuming (CRITICAL — do this every session)
 

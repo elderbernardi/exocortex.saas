@@ -48,3 +48,13 @@ When extending Exocortex.IA, developers often face the choice of whether to writ
 
 *   **Custom Skill Complexity**: Adding many skills increases the size of `SOUL_SEED.md`. While the selective loading protocol mitigates this, developers must ensure skill prompts are concise to avoid context bloat.
 *   **MCP Setup Overhead**: Adding MCP servers requires proper credential management. Developers must configure OAuth client secrets or environment tokens securely in `~/.hermes/` (as described in EX-26) to prevent leaking secrets.
+
+## Special Case — Acervo as Semantic Control Plane
+
+When the integration is the Exocórtex's own canonical memory, the question is not "skill or MCP instead of files". The correct split is:
+
+- filesystem remains the physical source of truth
+- a local semantic core owns mutation rules
+- CLI and MCP become two surfaces over the same core
+
+For this case, an MCP is justified only if it exposes **semantic operations** (`prepare`, `commit`, `validate`, `search`, `export`) rather than arbitrary file editing. If the proposed MCP behaves like a generic file editor, the architecture is wrong.

@@ -21,3 +21,7 @@ Criada a documentação completa de desenvolvimento: SCHEMA, architecture, devel
 
 ## 2026-06-26
 - CREATED: micro/exocortex-dev/knowledge/purpose-docbrain-smoke.md (volátil) — ingestão DocBrain de purpose.md
+
+## 2026-06-28
+- CREATED: micro/exocortex-dev/decisions/adr-022-acervo-mcp-control-plane.md (perene) — decisão arquitetural do control plane semântico do Acervo, com filesystem como verdade física e core local como autoridade operacional.
+- UPDATED: micro/exocortex-dev/decisions/skill-vs-mcp-selection.md — ADR-006 passou a tratar o Acervo como caso especial de control plane semântico, com core local abaixo de CLI/MCP.

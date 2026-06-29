@@ -23,7 +23,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 
 
-def _resolve_acervo_root() -> Path:
+def resolve_acervo_root() -> Path:
     """Resolve the live Acervo root for write-scope checks.
 
     Precedence (matches excrtx-memory-manager / setup/common.sh):
@@ -45,7 +45,11 @@ def _resolve_acervo_root() -> Path:
     return REPO_ROOT / "acervo"
 
 
-ACERVO_ROOT = _resolve_acervo_root()
+def _resolve_acervo_root() -> Path:
+    return resolve_acervo_root()
+
+
+ACERVO_ROOT = resolve_acervo_root()
 QUALITY_GATE_SKILL = "excrtx-quality-gate"
 
 

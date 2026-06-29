@@ -1,7 +1,7 @@
 ---
 name: excrtx-integrate-mcp
 description: Add, configure, and test MCP servers in Hermes for the Exocórtex ecosystem. Covers stdio and HTTP transports, discovery, and CLI pitfalls with workarounds.
-version: 1.2.0
+version: 1.3.0
 category: excrtx
 platforms:
 - linux
@@ -208,6 +208,14 @@ also gets an alias with a `wikipedia_` prefix (pattern from some MCP servers).
 - [ ] A test query using an MCP tool returns valid results
 
 ## Known Server Patterns
+
+### Acervo Control Plane (local semantic MCP)
+- **Command:** `python3 scripts/acervo_mcp_server.py`
+- **Transport:** stdio
+- **Design rule:** thin adapter over `acervo_semantic_core.py` and parity with `acervoctl.py`
+- **Tool surface:** 10 semantic tools only (`list/search/read/prepare/commit/create/update/validate/export`)
+- **Smoke check:** `python3 scripts/acervo_mcp_server.py --self-test --acervo-root "$PWD/acervo"`
+- **Reference:** `references/acervo-mcp-server.md`
 
 ### Wikipedia (`Rudra-ravi/wikipedia-mcp`)
 - **Package:** `wikipedia-mcp` (PyPI)

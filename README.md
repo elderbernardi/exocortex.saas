@@ -485,10 +485,28 @@ For developers looking to contribute, extend, or troubleshoot Exocortex.IA, the 
 - **System Architecture**: Detailed internal system structure and Trilho A/B pathways are documented in [architecture.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/knowledge/architecture.md).
 - **Development Standards**: For coding style guidelines, skill requirements, and automated validation gates, see [development-standards.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/contracts/development-standards.md).
 - **Skill vs. MCP Choice**: Deciding when to build a custom skill vs. adding an MCP server is documented in [skill-vs-mcp-selection.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md) (ADR-006).
+- **Acervo Control Plane**: The Acervo-specific authority model is documented in [adr-022-acervo-mcp-control-plane.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/decisions/adr-022-acervo-mcp-control-plane.md) (ADR-022): filesystem stays the physical truth, while semantic agentic writes should converge on a shared core exposed by CLI and MCP.
 - **Creating Custom Skills**: Step-by-step workflow (SOP) to scaffold, compile, and test skills is available in [create-custom-skill.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/workflows/create-custom-skill.md).
 - **Running Preflight Audits**: Process to execute deterministic and semantic checks before committing code can be found in [run-preflight-checks.md](file:///home/elder/projetos/projetob/exocortex.saas/acervo/micro/exocortex-dev/workflows/run-preflight-checks.md).
+- **Acervo Control Plane (CLI + MCP)**: The local operational contract is `python3 scripts/acervoctl.py`, and the agentic MCP surface now lives in `python3 scripts/acervo_mcp_server.py` as a thin adapter over the same core. The installer auto-registers `acervo` in Hermes and runs both the local self-test and `hermes mcp test acervo`; if that health check fails, degraded mode is explicit: keep using `acervoctl` and direct file access for human/infra/maintenance.
+
+  Use each surface on purpose:
+  - **human / infra / corrective maintenance** → direct filesystem access is valid
+  - **local scripts, tests, adapters, repeatable semantic flows** → `python3 scripts/acervoctl.py`
+  - **agents already operating through Hermes tools** → MCP `acervo`
+  - **if MCP health fails** → fall back to `acervoctl`, not ad hoc MCP-only logic
+
+  ```bash
+  python3 scripts/acervoctl.py list-microversos
+  python3 scripts/acervoctl.py search --query macroverso
+  python3 scripts/acervoctl.py prepare-write --microverso exocortex-dev --nature decisions --title "Nova decisão"
+  python3 scripts/acervo_mcp_server.py --self-test --acervo-root "$PWD/acervo"
+  hermes mcp test acervo
+  ```
 
 Always check this Microverso memory first to ensure your development aligns with the active conventions and architectural guidelines of the Exocortex.
+
+> Installer note: `setup.sh` now wires the local `acervo` MCP automatically. If health fails, the fallback is deliberate — `acervoctl` remains the official local surface and direct filesystem access stays valid for human/infra/maintenance.
 
 ---
 
