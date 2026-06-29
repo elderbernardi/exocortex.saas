@@ -266,7 +266,7 @@ def extract_frontmatter(text):
     # V-004: Body should be non-empty (WARN)
     if not body.strip():
         issues.append((
-            "V-004", "WARN",
+            "V-004", "ERROR",
             "File body is empty (non-empty markdown body recommended)",
         ))
 
@@ -311,7 +311,7 @@ def _check_okf_values(data, issues):
             if "\n" in title or "\r" in title:
                 issues.append(("V-023", "ERROR", "'title' must not contain newlines"))
             if len(title) > 200:
-                issues.append(("V-022", "WARN",
+                issues.append(("V-022", "ERROR",
                                f"'title' exceeds 200 characters ({len(title)} chars)"))
 
     # description
@@ -321,10 +321,10 @@ def _check_okf_values(data, issues):
             issues.append(("V-024", "ERROR", "'description' must be a non-empty string"))
         elif isinstance(desc, str):
             if "\n" in desc or "\r" in desc:
-                issues.append(("V-025", "WARN",
+                issues.append(("V-025", "ERROR",
                                "'description' should not contain newlines"))
             if len(desc) > 120:
-                issues.append(("V-026", "WARN",
+                issues.append(("V-026", "ERROR",
                                f"'description' exceeds 120 characters ({len(desc)} chars)"))
 
     # tags
@@ -519,7 +519,7 @@ def _check_cross_field(data, issues):
 
     # V-072: promoted_at + class volátil → WARN (suggest updating class)
     if "promoted_at" in data and data.get("class") == "volátil":
-        issues.append(("V-072", "WARN",
+        issues.append(("V-072", "ERROR",
                        "'promoted_at' is present but 'class' is 'volátil'. "
                        "The file is treated as 'perene' at runtime; consider "
                        "updating 'class: perene' for consistency."))
@@ -545,7 +545,7 @@ def _check_legacy(data, issues):
     if "confidence" in data:
         conf = data["confidence"]
         if not isinstance(conf, str) or conf not in ALLOWED_CONFIDENCE:
-            issues.append(("V-075", "WARN",
+            issues.append(("V-075", "ERROR",
                            f"'confidence' should be one of {sorted(ALLOWED_CONFIDENCE)}, "
                            f"got {repr(conf)}"))
 

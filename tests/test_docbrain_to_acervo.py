@@ -125,6 +125,8 @@ class TestDocbrainToAcervo:
         assert payload["ok"] is True
         assert payload["document_id"] == "sha256:test"
         assert payload["tables"] == 1
+        assert payload["control_plane"]["surface"] == "acervoctl"
+        assert payload["control_plane"]["commit"]["relative_output"] == payload["relative_output"]
 
         output_file = Path(payload["output_file"])
         assert output_file.exists()
@@ -177,6 +179,7 @@ class TestDocbrainToAcervo:
         assert payload["tables_count"] == 1
         assert payload["summary_excerpt"] == "Conteúdo de teste"
         assert payload["entity_candidates"] == [{"source": "microverso", "value": "demo", "slug": "demo"}]
+        assert payload["control_plane"]["prepare"]["target_path"].endswith("micro/demo/knowledge/sample.md")
 
     def test_entity_slug_resolves_microverso_when_explicit_microverso_is_omitted(self, tmp_path: Path):
         acervo_root = tmp_path / "acervo"
