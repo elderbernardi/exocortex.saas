@@ -9,6 +9,14 @@ if [ "${_EXOCORTEX_COMMON_LOADED:-}" != "1" ]; then
 fi
 
 configure_context7_mcp() {
+  # Toggle gate: proceed when EXOCORTEX_ENABLE_CONTEXT7=1 OR CONTEXT7_API_KEY is
+  # set (back-compat: key-based installs keep working without the flag).
+  if [ "${EXOCORTEX_ENABLE_CONTEXT7:-0}" != "1" ] && [ -z "${CONTEXT7_API_KEY:-}" ]; then
+    info "Context7 não ativado (EXOCORTEX_ENABLE_CONTEXT7 != 1 e CONTEXT7_API_KEY não definida)"
+    info "  Para configurar: EXOCORTEX_ENABLE_CONTEXT7=1 bash setup.sh"
+    return 0
+  fi
+
   if ! command -v hermes >/dev/null 2>&1; then
     warn "hermes CLI não encontrado; pulando context7 MCP"
     return 0

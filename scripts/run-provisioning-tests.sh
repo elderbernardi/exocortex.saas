@@ -219,13 +219,26 @@ if [ "${NO_SMOKE:-0}" != "1" ]; then
     echo -e "  ${_GRAY}Hermes WebUI: skipped — disabled (EXOCORTEX_ENABLE_HERMES_WEBUI != 1)${_NC}"
   fi
 
-  # ── Context7 (stub — filled by task C2) ───────────────────────────────────
-  # if [ "${EXOCORTEX_ENABLE_CONTEXT7:-0}" = "1" ]; then
-  #   bash "$SCRIPT_DIR/../provision/context7/scripts/smoke.sh" || \
-  #     { TOTAL_FAILED=$((TOTAL_FAILED + 1)); DEFINITIVE_FAILS+=("CONTEXT7_SMOKE"); }
-  # else
-  #   echo -e "  ${_GRAY}Context7: skipped — disabled${_NC}"
-  # fi
+  # ── Context7 ───────────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_CONTEXT7:-0}" = "1" ] || [ -n "${CONTEXT7_API_KEY:-}" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Context7: running smoke..."
+    _ctx7_smoke="$SCRIPT_DIR/../provision/context7/scripts/smoke.sh"
+    if [ -f "$_ctx7_smoke" ]; then
+      if bash "$_ctx7_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Context7 smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Context7 smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("CONTEXT7_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Context7 smoke script not found: $_ctx7_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("CONTEXT7_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Context7: skipped — disabled (EXOCORTEX_ENABLE_CONTEXT7 != 1 and CONTEXT7_API_KEY unset)${_NC}"
+  fi
 
   # ── Firecrawl (stub — filled by task C1) ──────────────────────────────────
   # if [ "${EXOCORTEX_ENABLE_FIRECRAWL:-0}" = "1" ]; then
