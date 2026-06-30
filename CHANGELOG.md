@@ -6,6 +6,27 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-06-30
+
+Post-GA fixes from a real-environment validation (CI first run + a real first
+boot of the Firecrawl self-host stack).
+
+### Fixed
+- **CI green on first real run**: add missing `beautifulsoup4` + `fastmcp` test
+  dependencies; run shellcheck with `-x --severity=error` (info/warnings are
+  advisory, only errors block); move the LLM-key gate out of an invalid
+  job-level `if: ${{ secrets… }}` into the sweep step; run `pytest -m "not slow"`
+  (the repo marks network/integration tests `@pytest.mark.slow`) and skip the
+  hermes-CLI test when hermes is absent.
+- **Firecrawl self-host now actually boots**: a real first boot showed the `api`
+  container crash-looping — the vendored compose had dropped the `rabbitmq`
+  service that the harness' extract-worker hard-requires (`NUQ_RABBITMQ_URL`),
+  so the worker threw on boot and the harness killed the whole process group.
+  Re-added `rabbitmq:3-management` + healthcheck, `NUQ_RABBITMQ_URL` /
+  `HARNESS_STARTUP_TIMEOUT_MS`, and gated the api on postgres/redis/rabbitmq
+  `service_healthy`. Verified live: the 5-container stack boots in ~20s
+  (api restarts = 0) and completes a real `/v1/scrape`.
+
 ## [1.1.0] — 2026-06-29
 
 General Availability release. Closes the GA surface: Codex removed, installer
