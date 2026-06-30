@@ -3,8 +3,12 @@
 # Step 08: Integração — DocBrain (parser engine via GitHub clone)
 # =============================================================================
 # Clona/atualiza o DocBrain em $EXOCORTEX_HOME/tools/docbrain e constrói
-# o projeto. A ref usada é pinada em provision/sources/sources.lock.yaml
-# (entrada 'docbrain') para garantir installs reprodutíveis.
+# o projeto. DocBrain rastreia o branch main de
+# https://github.com/elderbernardi/docbrain — veja provision/sources/sources.lock.yaml
+# (entrada 'docbrain', allow_upstream_main: true) para o registro informativo.
+#
+# Decisão de produto: reproducibilidade foi trocada por continuidade de entrega
+# — o branch main é sempre o mais recente. Registrado no contrato exocortex→docbrain.
 # =============================================================================
 
 # Standalone support
@@ -15,97 +19,37 @@ fi
 # Resolvedor de papéis LLM (DocBrain usa o papel 'auxiliar').
 source "$(dirname "${BASH_SOURCE[0]}")/lib/llm-roles.sh"
 
-# ─── Read pinned ref from sources.lock.yaml ───────────────────────────────────
-
-_resolve_docbrain_pin() {
-  local lock_file="$SCRIPT_DIR/provision/sources/sources.lock.yaml"
-  if [ ! -f "$lock_file" ]; then
-    fail "sources.lock.yaml não encontrado em $lock_file — não é possível resolver ref pinada do DocBrain"
-  fi
-
-  local controlled_ref
-  controlled_ref=$(python3 - "$lock_file" <<'PY'
-import sys
-from pathlib import Path
-
-lock_path = Path(sys.argv[1])
-text = lock_path.read_text(encoding='utf-8').splitlines()
-
-in_docbrain = False
-in_controlled = False
-
-for line in text:
-    stripped = line.strip()
-    if stripped == 'docbrain:':
-        in_docbrain = True
-        in_controlled = False
-        continue
-    if in_docbrain:
-        # Another top-level source key ends the docbrain block
-        indent = len(line) - len(line.lstrip(' '))
-        if indent == 2 and stripped.endswith(':') and stripped != 'docbrain:':
-            in_docbrain = False
-            continue
-        if stripped == 'controlled:':
-            in_controlled = True
-            continue
-        if in_controlled and stripped.startswith('ref:') and 'audited_from' not in stripped:
-            ref = stripped.split('ref:', 1)[1].strip().strip('"').strip("'")
-            print(ref)
-            sys.exit(0)
-PY
-  )
-
-  if [ -z "$controlled_ref" ]; then
-    fail "Ref pinada do DocBrain não encontrada em $lock_file (entrada 'docbrain.controlled.ref')"
-  fi
-
-  # Enforce that the ref is a full 40-char commit SHA — never a floating branch
-  if ! echo "$controlled_ref" | grep -qE '^[0-9a-f]{40}$'; then
-    fail "Ref pinada do DocBrain não é um SHA-1 completo de 40 caracteres: '$controlled_ref'. Atualize sources.lock.yaml."
-  fi
-
-  echo "$controlled_ref"
-}
-
 configure_docbrain_engine() {
   local docbrain_dir="${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}"
-  local repo="https://github.com/ProjetoBB/docBrainBB.git"
+  local repo="https://github.com/elderbernardi/docbrain"
+  local branch="main"
 
   if ! command -v git >/dev/null 2>&1; then
     warn "git não encontrado; pulando clone do DocBrain"
     return 0
   fi
 
-  # Resolve the pinned ref before doing anything with the repo
-  local pinned_ref
-  pinned_ref=$(_resolve_docbrain_pin)
-  info "DocBrain ref pinada: $pinned_ref"
-
   mkdir -p "$(dirname "$docbrain_dir")"
 
   if [ ! -d "$docbrain_dir/.git" ]; then
-    info "Clonando DocBrain em $docbrain_dir"
-    # Clone without checking out (we will checkout the pinned ref explicitly)
-    if ! git clone --no-checkout "$repo" "$docbrain_dir" >/dev/null 2>&1; then
+    info "Clonando DocBrain (branch $branch) em $docbrain_dir"
+    if ! git clone --branch "$branch" "$repo" "$docbrain_dir" >/dev/null 2>&1; then
       warn "Falha ao clonar DocBrain"
       return 0
     fi
   else
-    log "Repositório DocBrain encontrado: $docbrain_dir"
-    # Fetch to make the pinned ref available locally; network may be unavailable
-    # in offline/airgap environments — failure is non-fatal (pinned ref may
-    # already be present from a prior fetch).
-    git -C "$docbrain_dir" fetch --quiet origin 2>/dev/null || \
-      warn "Fetch do DocBrain falhou (offline?); usando ref já presente no clone"
+    log "Repositório DocBrain encontrado: $docbrain_dir — atualizando para origin/$branch"
+    # Fetch latest from origin/main; offline failure is non-fatal.
+    if git -C "$docbrain_dir" fetch --quiet origin "$branch" 2>/dev/null; then
+      # Fast-forward to origin/main — hard reset so even a dirty tree becomes clean.
+      git -C "$docbrain_dir" checkout --quiet "$branch" 2>/dev/null || true
+      git -C "$docbrain_dir" reset --hard "origin/$branch" --quiet 2>/dev/null || \
+        warn "Não foi possível avançar para origin/$branch (offline?); usando o checkout existente"
+    else
+      warn "Fetch do DocBrain falhou (offline?); usando checkout existente"
+    fi
   fi
-
-  # Checkout the pinned ref — this is the reproducibility guarantee
-  if ! git -C "$docbrain_dir" checkout --quiet "$pinned_ref" 2>/dev/null; then
-    warn "git checkout da ref pinada falhou ($pinned_ref). Execute um fetch manual para obtê-la."
-    return 0
-  fi
-  log "DocBrain em ref pinada: $pinned_ref"
+  log "DocBrain em $(git -C "$docbrain_dir" rev-parse --short HEAD 2>/dev/null || echo 'desconhecido') (origin/$branch)"
 
   # ── npm install + build ──────────────────────────────────────────────────
   # npm absent: degrade gracefully (write reminder, warn, continue).
@@ -118,7 +62,7 @@ configure_docbrain_engine() {
     cat > "$HERMES_HOME/reminders/docbrain-npm-missing.md" <<'REMINDER'
 # DocBrain sem build (npm ausente)
 
-O DocBrain foi clonado em ref pinada, mas o `npm` não estava disponível
+O DocBrain foi clonado (branch main), mas o `npm` não estava disponível
 no momento do setup, então `npm install` e `npm run build` foram pulados.
 
 Para completar a instalação:

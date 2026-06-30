@@ -70,28 +70,28 @@ sources:
       - Fork controlado: elderbernardi/hermes-webui, branch exocortex/stable (skin EXCRTX, MOD-001..005). Ver EXOCRTX_MODIFICATIONS.md no fork.
       - Nunca consumir upstream master como produção.
   docbrain:
+    # INFORMATIONAL entry — DocBrain intentionally tracks origin/main (not a pinned SHA).
+    # Product decision: delivery continuity takes priority over reproducibility for this component.
+    # Trade-off recorded in the exocortex→docbrain contract and CHANGELOG (handled by E1/A4).
     component: docbrain-parser-engine
     upstream:
-      owner_repo: ProjetoBB/docBrainBB
-      git: https://github.com/ProjetoBB/docBrainBB.git
+      owner_repo: elderbernardi/docbrain
+      git: https://github.com/elderbernardi/docbrain
       default_branch: main
-    controlled:
-      owner_repo: ProjetoBB/docBrainBB
-      git: https://github.com/ProjetoBB/docBrainBB.git
-      ref: 5b5210fe7b374233050ae38c4b0c0b8a0768f2c9
-      audited_from_upstream_ref: main
-      audited_at: 2026-06-29T00:00:00Z
+      branch: main
     production_ref_policy:
-      allow_upstream_main: false
+      allow_upstream_main: true
       allow_upstream_head: false
-      require_controlled_ref: true
+      require_controlled_ref: false
+    # last_seen_sha: informational snapshot only — not enforced by step-08
+    # last_seen_sha: <updated-on-each-provision>
     license:
       spdx: MIT
       commercial_use_requires_license: false
     local_sync:
       path: provision/sources/worktrees/docbrain
-      mode: direct-upstream-pinned
+      mode: track-upstream-main
     notes:
-      - DocBrain parser engine — clonado localmente em $EXOCORTEX_HOME/tools/docbrain pelo step-08.
-      - Ref pinada para garantir installs reprodutíveis; atualizar após auditoria de breaking changes.
-      - step-08 faz checkout da ref pinada após clone/fetch; nunca consome main flutuante em produção.
+      - DocBrain parser engine — clonado/atualizado em $EXOCORTEX_HOME/tools/docbrain pelo step-08.
+      - Rastreia origin/main (elderbernardi/docbrain); deps refrescadas com npm install a cada provision.
+      - Não usa SHA pin — allow_upstream_main é true por decisão de produto.
