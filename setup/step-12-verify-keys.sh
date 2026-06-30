@@ -109,6 +109,88 @@ verify_role() {
       warn "  Ajuste EXOCORTEX_$(printf '%s' "$role" | tr '[:lower:]' '[:upper:]')_* no .env.local e rode novamente."
     fi
   fi
+
+  # Model-id validation against /v1/models (F-030 guard).
+  # Absent id → warn + non-zero return (caller decides how to handle).
+  # Endpoint unreachable / not supported → warn only (don't block air-gapped installs).
+  _verify_model_id "$role" "$label" || true
+}
+
+# Checks that the configured model id actually exists in the provider's model list.
+# Queries <base_url>/v1/models — OpenAI-compatible endpoint.
+# Args: $1=role $2=label
+_verify_model_id() {
+  local role="$1" label="$2"
+  exocortex_resolve_role "$role"
+  [ "$ROLE_USABLE" != "1" ] && return 0
+  command -v curl >/dev/null 2>&1 || return 0
+
+  local models_url="${ROLE_BASE_URL%/}/v1/models"
+  # Use a temp file to capture body + status code separately (compat with all curl versions).
+  local http_code _tmpf
+  _tmpf="$(mktemp)"
+  http_code="$(curl -sS -o "$_tmpf" \
+    --write-out '%{http_code}' \
+    --max-time 15 \
+    -H "Authorization: Bearer $ROLE_API_KEY" \
+    "$models_url" 2>/dev/null || echo "000")"
+  local body
+  body="$(cat "$_tmpf" 2>/dev/null || true)"
+  rm -f "$_tmpf"
+
+  case "$http_code" in
+    2*)
+      # Extract model ids from JSON {"data":[{"id":"..."},...]} — no jq dependency.
+      local ids
+      ids="$(printf '%s' "$body" | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    ids = [m["id"] for m in d.get("data", []) if "id" in m]
+    print("\n".join(ids))
+except Exception:
+    pass
+' 2>/dev/null || true)"
+
+      if [ -z "$ids" ]; then
+        # Endpoint returned 2xx but no parseable list — treat as unsupported; warn only.
+        warn "  ⚠ /v1/models retornou resposta não-parseável para '$label' — validação de model id pulada."
+        return 0
+      fi
+
+      if printf '%s\n' "$ids" | grep -qxF "$ROLE_MODEL"; then
+        log "  ✓ model id '$ROLE_MODEL' ($label) confirmado em /v1/models"
+        return 0
+      fi
+
+      # Model not in list — build "did you mean" hint.
+      local hint=""
+      local lc_target
+      lc_target="$(printf '%s' "$ROLE_MODEL" | tr '[:upper:]' '[:lower:]')"
+      local near
+      near="$(printf '%s\n' "$ids" | awk -v t="$lc_target" '
+        function lower(s,  r,i,c) { r=""; for(i=1;i<=length(s);i++) {
+          c=substr(s,i,1); r=r ((c>="A"&&c<="Z") ? sprintf("%c",ord(c)+32) : c) }; return r }
+        BEGIN { for(i=0; i<256; i++) ord[sprintf("%c",i)]=i }
+        { if (lower($0) == t) { print $0; exit } }
+      ' 2>/dev/null || true)"
+      if [ -n "$near" ]; then
+        hint=" — você quis dizer '$near'?"
+      fi
+      warn "  ✗ model id '$ROLE_MODEL' ($label) NÃO encontrado em $models_url${hint}"
+      warn "    Ajuste EXOCORTEX_$(printf '%s' "$role" | tr '[:lower:]' '[:upper:]')_MODEL no .env.local."
+      return 1
+      ;;
+    000)
+      warn "  ⚠ /v1/models inalcançável para '$label' ($models_url) — validação de model id pulada (modo offline/air-gapped OK)."
+      ;;
+    401|403)
+      # Key invalid already flagged by ping; skip model check noise.
+      ;;
+    *)
+      warn "  ⚠ /v1/models retornou HTTP $http_code para '$label' — validação de model id pulada."
+      ;;
+  esac
 }
 
 verify_role default  "default"   1

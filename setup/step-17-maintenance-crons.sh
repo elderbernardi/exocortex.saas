@@ -20,6 +20,8 @@ if ! command -v hermes &>/dev/null; then
 fi
 
 # Verifica se cron já existe antes de criar (idempotente).
+# Guard matches the name as a whitespace-delimited field so 'foo' does NOT match
+# 'foobar' or 'foo-bar' (hyphens are NOT word-boundary chars for grep -w).
 # Args posicionais: name, schedule, prompt. Quaisquer args extras ("$@" após
 # `shift 3`) são repassados verbatim ao `hermes cron create` — ex.: flags --skill.
 create_cron_if_missing() {
@@ -28,7 +30,7 @@ create_cron_if_missing() {
   local prompt="$3"
   shift 3
 
-  if hermes cron list 2>/dev/null | grep -q "$name"; then
+  if hermes cron list 2>/dev/null | grep -Eq "(^|[[:space:]])${name}([[:space:]]|$)"; then
     log "Cron '$name' já existe — pulando."
   else
     # `schedule` e `prompt` são posicionais no `hermes cron create` (não há
@@ -51,7 +53,7 @@ CRON_FAILURES=0
 # mencioná-las no prompt). Se o cron legado 'Acervo Syndic' (mesmo horário, mesma
 # skill de síndico, criado pelo plano 09-syndic-cron.md) já existir nesta máquina,
 # NÃO cria o maintenance-weekly — evita zeladoria dupla no domingo 03h.
-if hermes cron list 2>/dev/null | grep -q "Acervo Syndic"; then
+if hermes cron list 2>/dev/null | grep -qF "Acervo Syndic"; then
   log "Cron de síndico legado 'Acervo Syndic' já existe — pulando 'maintenance-weekly' (evita duplicação)."
 else
   create_cron_if_missing "maintenance-weekly" "0 3 * * 0" \
