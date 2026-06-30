@@ -101,14 +101,26 @@ services:
       PORT: ${INTERNAL_PORT:-3002}
       EXTRACT_WORKER_PORT: ${EXTRACT_WORKER_PORT:-3004}
       WORKER_PORT: ${WORKER_PORT:-3005}
+      # The harness' extract-worker hard-requires RabbitMQ (NUQ_RABBITMQ_URL);
+      # without it the worker throws on boot and the harness kills the whole
+      # process group → restart loop. (Upstream ships this; an earlier vendoring
+      # dropped it along with the experimental FoundationDB backend.)
+      NUQ_RABBITMQ_URL: ${NUQ_RABBITMQ_URL:-amqp://rabbitmq:5672}
+      HARNESS_STARTUP_TIMEOUT_MS: ${HARNESS_STARTUP_TIMEOUT_MS:-60000}
       ENV: local
+    # Gate on DB/cache HEALTH (not just started): the api harness' nuq-prefetch
+    # worker connects to postgres immediately on boot, and a not-yet-ready
+    # postgres causes ECONNREFUSED → the whole harness shuts down and the
+    # container restart-loops on first boot. service_healthy prevents that.
     depends_on:
       redis:
-        condition: service_started
+        condition: service_healthy
       playwright-service:
         condition: service_started
       nuq-postgres:
-        condition: service_started
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     # Bind to the host port from FIRECRAWL_BASE_URL (default 3002). The
     # provisioner exports PORT before `docker compose up`.
     ports:
@@ -135,6 +147,29 @@ services:
     networks:
       - firecrawl
     command: redis-server --bind 0.0.0.0
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    logging: *common-logging
+
+  rabbitmq:
+    # Queue transport hard-required by the api harness' extract-worker. Pinned
+    # to the upstream-documented tag (rabbitmq:3-management).
+    image: rabbitmq:3-management
+    container_name: exocortex-firecrawl-rabbitmq
+    restart: unless-stopped
+    command: rabbitmq-server
+    networks:
+      - firecrawl
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 18
+      start_period: 10s
     logging: *common-logging
 
   nuq-postgres:
@@ -152,6 +187,12 @@ services:
       - firecrawl
     volumes:
       - firecrawl-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 18
+      start_period: 20s
     logging: *common-logging
 
 networks:

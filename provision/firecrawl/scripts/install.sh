@@ -2,7 +2,7 @@
 # =============================================================================
 # Firecrawl — Install Script (Tier 1: self-hosted via Docker)
 # =============================================================================
-# Sobe a stack self-hosted do Firecrawl (api + playwright + redis + postgres)
+# Sobe a stack self-hosted do Firecrawl (api + playwright + redis + postgres + rabbitmq)
 # a partir do docker-compose.yml vendorizado em provision/firecrawl/, e aguarda
 # a API responder. Idempotente (safe re-run: down/up guardados, .env preservado).
 #
