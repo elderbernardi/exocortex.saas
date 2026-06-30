@@ -1,0 +1,164 @@
+# =============================================================================
+# Firecrawl — Self-hosted stack for Exocórtex (Tier 1)
+# =============================================================================
+# Vendored from the OFFICIAL upstream self-host compose:
+#   https://raw.githubusercontent.com/firecrawl/firecrawl/main/docker-compose.yaml
+#   (fetched 2026-06-29; firecrawl/firecrawl == mendableai/firecrawl mirror)
+#
+# Differences from upstream (deliberate, for a standalone vendored deploy):
+#   1. Upstream `build:` directives are replaced by the official pre-built
+#      images the upstream file documents in its own comments
+#      (ghcr.io/firecrawl/{firecrawl,playwright-service,nuq-postgres}). We do
+#      NOT ship Firecrawl's source tree, so building locally is not an option.
+#   2. Image tags are PINNED (no `:latest`):
+#        - api          → ghcr.io/firecrawl/firecrawl:2.10.4 (latest stable
+#                         production tag; 2.10.5 is staging-only)
+#        - playwright   → pinned by digest (upstream publishes only `:latest`)
+#        - nuq-postgres → pinned by digest (upstream publishes only `:latest`)
+#        - redis/rabbitmq → pinned to specific upstream tags
+#      Digests were resolved from ghcr.io on 2026-06-29 (see comments per image).
+#   3. The experimental FoundationDB queue backend (`foundationdb`,
+#      `foundationdb-init`, NUQ_BACKEND=fdb) is OMITTED. nuq-postgres is the
+#      stable default queue backend; FDB is upstream-experimental.
+#   4. The API container's `command` keeps upstream's harness orchestrator
+#      (`node dist/src/harness.js --start-docker`) which runs the workers
+#      in-process — no separate `worker` service is needed in this image-based
+#      layout.
+#
+# Self-hosted instances do NOT require a Firecrawl API key (auth is bypassed,
+# per upstream SELF_HOST.md). BULL_AUTH_KEY guards the queue admin UI only.
+#
+# To re-pin: docker compose -f docker-compose.yml pull && re-resolve digests.
+# =============================================================================
+name: exocortex-firecrawl
+
+x-common-logging: &common-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+    compress: "true"
+
+x-common-env: &common-env
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+  REDIS_RATE_LIMIT_URL: ${REDIS_URL:-redis://redis:6379}
+  PLAYWRIGHT_MICROSERVICE_URL: ${PLAYWRIGHT_MICROSERVICE_URL:-http://playwright-service:3000/scrape}
+  POSTGRES_USER: ${POSTGRES_USER:-postgres}
+  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+  POSTGRES_DB: ${POSTGRES_DB:-postgres}
+  POSTGRES_HOST: ${POSTGRES_HOST:-nuq-postgres}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  USE_DB_AUTHENTICATION: ${USE_DB_AUTHENTICATION:-false}
+  NUM_WORKERS_PER_QUEUE: ${NUM_WORKERS_PER_QUEUE:-8}
+  CRAWL_CONCURRENT_REQUESTS: ${CRAWL_CONCURRENT_REQUESTS:-10}
+  MAX_CONCURRENT_JOBS: ${MAX_CONCURRENT_JOBS:-5}
+  BROWSER_POOL_SIZE: ${BROWSER_POOL_SIZE:-5}
+  # AI features (JSON-mode scrape, /extract). Optional — wired to the Exocórtex
+  # LLM role env vars when present; left empty otherwise (Firecrawl degrades to
+  # non-AI scraping). See provision/firecrawl/README.md.
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+  MODEL_NAME: ${MODEL_NAME:-}
+  MODEL_EMBEDDING_NAME: ${MODEL_EMBEDDING_NAME:-}
+  BULL_AUTH_KEY: ${BULL_AUTH_KEY:-CHANGEME}
+  LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
+  PROXY_SERVER: ${PROXY_SERVER:-}
+  PROXY_USERNAME: ${PROXY_USERNAME:-}
+  PROXY_PASSWORD: ${PROXY_PASSWORD:-}
+
+services:
+  playwright-service:
+    # ghcr.io/firecrawl/playwright-service:latest — upstream publishes no semver
+    # tag for this image, so it is pinned by digest (resolved 2026-06-29).
+    image: ghcr.io/firecrawl/playwright-service@sha256:6359b0d9070f27400b4a9b615509be06919e40121fc1fdc42d4efeddf02653d2
+    container_name: exocortex-firecrawl-playwright
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      PROXY_SERVER: ${PROXY_SERVER:-}
+      PROXY_USERNAME: ${PROXY_USERNAME:-}
+      PROXY_PASSWORD: ${PROXY_PASSWORD:-}
+      BLOCK_MEDIA: ${BLOCK_MEDIA:-}
+      MAX_CONCURRENT_PAGES: ${CRAWL_CONCURRENT_REQUESTS:-10}
+    networks:
+      - firecrawl
+    cpus: 2.0
+    mem_limit: 4G
+    memswap_limit: 4G
+    logging: *common-logging
+    tmpfs:
+      - /tmp/.cache:noexec,nosuid,size=1g
+
+  api:
+    # ghcr.io/firecrawl/firecrawl:2.10.4
+    # digest: sha256:06ee63222b45fce4d29b9871507e81442f09eadc278bc7f125d1788b051e9738
+    image: ghcr.io/firecrawl/firecrawl:2.10.4
+    container_name: exocortex-firecrawl-api
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      HOST: "0.0.0.0"
+      PORT: ${INTERNAL_PORT:-3002}
+      EXTRACT_WORKER_PORT: ${EXTRACT_WORKER_PORT:-3004}
+      WORKER_PORT: ${WORKER_PORT:-3005}
+      ENV: local
+    depends_on:
+      redis:
+        condition: service_started
+      playwright-service:
+        condition: service_started
+      nuq-postgres:
+        condition: service_started
+    # Bind to the host port from FIRECRAWL_BASE_URL (default 3002). The
+    # provisioner exports PORT before `docker compose up`.
+    ports:
+      - "${PORT:-3002}:${INTERNAL_PORT:-3002}"
+    # Upstream harness orchestrator: starts API + in-process workers.
+    command: node dist/src/harness.js --start-docker
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - firecrawl
+    cpus: 4.0
+    mem_limit: 8G
+    memswap_limit: 8G
+    logging: *common-logging
+
+  redis:
+    image: redis:7-alpine
+    container_name: exocortex-firecrawl-redis
+    restart: unless-stopped
+    networks:
+      - firecrawl
+    command: redis-server --bind 0.0.0.0
+    logging: *common-logging
+
+  nuq-postgres:
+    # ghcr.io/firecrawl/nuq-postgres:latest — upstream publishes no semver tag
+    # for this image, so it is pinned by digest (resolved 2026-06-29).
+    # NOTE: no host port is mapped (kept internal); see SELF_HOST.md security notes.
+    image: ghcr.io/firecrawl/nuq-postgres@sha256:aed86f62858f29bd971abddcdeb301c12888098d2cf5d33c1ba42b053bc460f6
+    container_name: exocortex-firecrawl-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    networks:
+      - firecrawl
+    volumes:
+      - firecrawl-pgdata:/var/lib/postgresql/data
+    logging: *common-logging
+
+networks:
+  firecrawl:
+    name: exocortex-firecrawl
+    driver: bridge
+
+volumes:
+  firecrawl-pgdata:
+    name: exocortex-firecrawl-pgdata

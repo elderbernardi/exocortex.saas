@@ -52,7 +52,8 @@ Before installing, verify:
 the raw README URL without cloning. Use `gh api repos/<owner>/<repo>/git/trees/main?recursive=1`
 to list the file structure.
 
-If `web_extract` is unavailable (e.g., no Firecrawl), use:
+If `web_extract` is unavailable (e.g., no Firecrawl — see
+`$HERMES_HOME/reminders/firecrawl.md` when degraded), fall back to:
 
 **Option A:** `browser_navigate` + `browser_vision` — for pages with dynamic content
 or that need rendering. `browser_vision` takes a screenshot + describes.

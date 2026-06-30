@@ -285,12 +285,31 @@ if [ -n "${CONTEXT7_API_KEY:-}" ]; then
 else
   info "CONTEXT7_API_KEY não definida (opcional — context7 pode ser adicionado depois)"
 fi
+_firecrawl_effective_url="${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 if [ -n "${FIRECRAWL_API_KEY:-}" ]; then
   log "FIRECRAWL_API_KEY definida"
-  info "FIRECRAWL_BASE_URL efetiva: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
+  info "FIRECRAWL_BASE_URL efetiva: ${_firecrawl_effective_url}"
 else
-  info "FIRECRAWL_API_KEY não definida (opcional — crawling/extract pode ser adicionado depois)"
-  info "Se você subir Firecrawl localmente, use por default: ${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
+  info "FIRECRAWL_API_KEY não definida (opcional — self-host dispensa key)"
+  info "Endpoint efetivo: ${_firecrawl_effective_url}"
+fi
+# Health probe (não-fatal): se FIRECRAWL_BASE_URL responde, confirma; senão WARN.
+# Tolerante: qualquer resposta HTTP (2xx/3xx/4xx) conta como "no ar".
+if command -v curl >/dev/null 2>&1; then
+  _fc_probe_url="${_firecrawl_effective_url%/}/"
+  if curl -sf --max-time 5 "$_fc_probe_url" >/dev/null 2>&1; then
+    log "Firecrawl alcançável em ${_firecrawl_effective_url}"
+  else
+    _fc_code="$(curl -so /dev/null --max-time 5 -w "%{http_code}" "$_fc_probe_url" 2>/dev/null || true)"
+    if [ -n "$_fc_code" ] && [ "$_fc_code" != "000" ]; then
+      log "Firecrawl alcançável em ${_firecrawl_effective_url} (HTTP $_fc_code)"
+    else
+      warn "Firecrawl não respondeu em ${_firecrawl_effective_url} (ok se não provisionado — skills degradam)"
+      info "  Para subir self-hosted: EXOCORTEX_ENABLE_FIRECRAWL=1 bash setup.sh"
+    fi
+  fi
+else
+  info "curl não disponível — pulando health probe do Firecrawl"
 fi
 
 # ─── last30days skill keys ───────────────────────────────────────────────────

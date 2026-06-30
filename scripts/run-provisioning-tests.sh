@@ -171,7 +171,8 @@ fi
 #
 # Toggle names:   EXOCORTEX_ENABLE_HINDSIGHT
 #                 EXOCORTEX_ENABLE_HERMES_WEBUI
-# (Context7 + Firecrawl hooks added by C2/C1)
+#                 EXOCORTEX_ENABLE_CONTEXT7
+#                 EXOCORTEX_ENABLE_FIRECRAWL
 # =============================================================================
 if [ "${NO_SMOKE:-0}" != "1" ]; then
   echo ""
@@ -240,13 +241,26 @@ if [ "${NO_SMOKE:-0}" != "1" ]; then
     echo -e "  ${_GRAY}Context7: skipped — disabled (EXOCORTEX_ENABLE_CONTEXT7 != 1 and CONTEXT7_API_KEY unset)${_NC}"
   fi
 
-  # ── Firecrawl (stub — filled by task C1) ──────────────────────────────────
-  # if [ "${EXOCORTEX_ENABLE_FIRECRAWL:-0}" = "1" ]; then
-  #   bash "$SCRIPT_DIR/../provision/firecrawl/scripts/smoke.sh" || \
-  #     { TOTAL_FAILED=$((TOTAL_FAILED + 1)); DEFINITIVE_FAILS+=("FIRECRAWL_SMOKE"); }
-  # else
-  #   echo -e "  ${_GRAY}Firecrawl: skipped — disabled${_NC}"
-  # fi
+  # ── Firecrawl ──────────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_FIRECRAWL:-0}" = "1" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Firecrawl: running smoke..."
+    _fc_smoke="$SCRIPT_DIR/../provision/firecrawl/scripts/smoke.sh"
+    if [ -f "$_fc_smoke" ]; then
+      if bash "$_fc_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Firecrawl smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Firecrawl smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("FIRECRAWL_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Firecrawl smoke script not found: $_fc_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("FIRECRAWL_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Firecrawl: skipped — disabled (EXOCORTEX_ENABLE_FIRECRAWL != 1)${_NC}"
+  fi
 
   echo ""
   echo -e "${_BOLD}═══ Optional Services Smoke completo ═══${_NC}"
