@@ -20,7 +20,6 @@ metadata:
     related_skills:
     - excrtx-memory-manager
     - excrtx-govern-tools
-    - excrtx-harness-hermesops
 ---
 # last30days Integration
 v1.2.0 changelog: added SC "one-shot 200" trap diagnostic (§1.1 of references/scrapecreators-credits-and-sandbox-env.md), new pre-flight probe script `scripts/diagnose-sc-key.sh`, and corresponding pitfall in SKILL.md.

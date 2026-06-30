@@ -158,9 +158,6 @@ graph TD
 ### 7. Harness & Infrastructure
 
 - **`excrtx-harness-promptlog` (EX-31)**: Auditable log of all configuration prompts written to `MEMORY.md`.
-- **`excrtx-harness-codexint` (EX-32)**: Configures OpenAI Codex CLI and Hermes provider integration.
-- **`excrtx-harness-core` (EX-33)**: Core execution wrapper for Codex CLI logging, capturing runs in `~/.hermes/codex-learning/`.
-- **`excrtx-harness-hermesops` (EX-34)**: Splits Codex work into clear pathways: execution (Trilho A) or delegation/reasoning (Trilho B).
 - **`excrtx-harness-surfaces` (EX-35)**: Routes communication interfaces (Telegram for Chat, TUI/CLI for Admin, Dashboard for cockpit).
 - **`excrtx-harness-imbroke` (EX-48)**: financial contingency model fallback (OpenRouter free model watchdog and recovery router).
 - **`excrtx-harness-tooldev` (EX-50)**: Standard API for writing and registering custom `/tool` extensions.

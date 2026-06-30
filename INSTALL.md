@@ -302,11 +302,6 @@ cp -r "$SCRIPT_DIR/acervo/global/tools/harness/"* \
   "$ACERVO/global/tools/harness/" 2>/dev/null || true
 chmod +x "$ACERVO/global/tools/harness/"*.py 2>/dev/null || true
 
-# Codex wrappers (EX-33)
-mkdir -p "$HERMES_HOME/scripts/codex_learning"
-mkdir -p "$HERMES_HOME/codex-learning"/{runs,events,reviews}
-cp -r "$SCRIPT_DIR/scripts/codex_learning/"* \
-  "$HERMES_HOME/scripts/codex_learning/" 2>/dev/null || true
 ```
 
 ### Verificação

@@ -57,10 +57,7 @@ skills:
   - excrtx-brandkit-generator
   - assessment-question-authoring
 
-  # ── Integration: codex, docbrain, notebooklm ────────────────────────
-  - excrtx-harness-core
-  - excrtx-harness-codexint
-  - excrtx-harness-hermesops
+  # ── Integration: docbrain, notebooklm ───────────────────────────────
   - excrtx-harness-delivery
   - excrtx-harness-maintenance
   - excrtx-integrate-docbrain

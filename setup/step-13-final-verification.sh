@@ -41,7 +41,6 @@ EXPECTED_SKILLS=(
   "excrtx-produce-slides" "excrtx-produce-oficios" "excrtx-brandkit-generator"
   "assessment-question-authoring"
   # Integration
-  "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops"
   "excrtx-harness-delivery" "excrtx-harness-maintenance"
   "excrtx-integrate-docbrain"
   "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-imbroke" "excrtx-harness-tooldev"

@@ -331,24 +331,6 @@ def probe_feature_environment(root: Path, feature_id: str) -> list[dict[str, Any
                 "path_contract_matches": declared_script.exists() and declared_script.resolve() == actual_script.resolve(),
             }
         )
-    elif feature_id == "EX-33":
-        run_wrapper = hermes_home() / "scripts" / "codex_learning" / "run_codex_with_learning.py"
-        review_wrapper = hermes_home() / "scripts" / "codex_learning" / "review_latest_run.py"
-        learning_dir = hermes_home() / "codex-learning"
-        events.append(
-            {
-                "tool": "terminal",
-                "probe": "ex33_codex_harness_wrappers",
-                "command": "test -f $HERMES_HOME/scripts/codex_learning/run_codex_with_learning.py && test -f $HERMES_HOME/scripts/codex_learning/review_latest_run.py",
-                "approval_explicit": True,
-                "run_wrapper": str(run_wrapper),
-                "run_wrapper_exists": run_wrapper.is_file(),
-                "review_wrapper": str(review_wrapper),
-                "review_wrapper_exists": review_wrapper.is_file(),
-                "codex_learning_dir": str(learning_dir),
-                "codex_learning_dir_exists": learning_dir.is_dir(),
-            }
-        )
     elif feature_id == "EX-48":
         router_script = root / "scripts" / "openrouter_free_model_router.py"
         sentinel = hermes_home() / "model-routing" / "imbroke-state.json"
@@ -520,27 +502,6 @@ def classify_ex30(probe: dict[str, Any], feature_id: str, risk: str) -> dict[str
     }
 
 
-def classify_ex33(probe: dict[str, Any], feature_id: str, risk: str) -> dict[str, Any]:
-    run_ok = bool(probe.get("run_wrapper_exists"))
-    review_ok = bool(probe.get("review_wrapper_exists"))
-    learning_ok = bool(probe.get("codex_learning_dir_exists"))
-    status = "PASS" if run_ok and review_ok and learning_ok else "FAIL"
-    summary = "Codex harness wrappers e diretório de aprendizado presentes." if status == "PASS" else "Codex harness incompleto: wrappers ou diretório de aprendizado ausentes."
-    return {
-        "feature_id": feature_id,
-        "status": status,
-        "risk": risk,
-        "summary": "Real-agent: " + summary,
-        "criteria": [
-            {"criterion": "Wrapper de execução existe.", "met": run_ok, "evidence": f"run_wrapper={probe.get('run_wrapper')}"},
-            {"criterion": "Wrapper de revisão existe.", "met": review_ok, "evidence": f"review_wrapper={probe.get('review_wrapper')}"},
-            {"criterion": "Diretório de aprendizado existe.", "met": learning_ok, "evidence": f"codex_learning_dir={probe.get('codex_learning_dir')}"},
-        ],
-        "artifacts": artifact_paths(),
-        "blocked_reason": None,
-    }
-
-
 def classify_generic_probe(probe: dict[str, Any], feature_id: str, risk: str) -> dict[str, Any]:
     failed_keys = [key for key, value in probe.items() if key.endswith("_exists") and value is False]
     status = "FAIL" if failed_keys else "PASS"
@@ -588,10 +549,6 @@ def classify_agent_transcript(scenario: dict[str, Any], transcript: str, tool_tr
         probe = first_probe(tool_trace, "ex30_browser_dependency_path")
         if probe:
             return classify_ex30(probe, feature_id, risk)
-    if feature_id == "EX-33":
-        probe = first_probe(tool_trace, "ex33_codex_harness_wrappers")
-        if probe:
-            return classify_ex33(probe, feature_id, risk)
     if feature_id in {"EX-48", "EX-49", "EX-52"}:
         probe = tool_trace[0] if tool_trace else None
         if probe:

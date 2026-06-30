@@ -747,44 +747,6 @@ test_EX31() {
   SMOKE_PROMPT="Verifique se MEMORY.md existe e contém registros de prompts."
 }
 
-test_EX32() {
-  CURRENT_FEATURE_NAME="Codex Integration"
-  CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
-  local skill="excrtx-harness-codexint"
-
-  check_skill_exists "$skill"
-  check_frontmatter "$skill" "name" "description"
-  check_skill_dep "excrtx-harness-core"
-
-  SMOKE_PROMPT="Verifique se a skill define os dois modos (CLI e provider)."
-}
-
-test_EX33() {
-  CURRENT_FEATURE_NAME="Codex Core Harness"
-  CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
-  local skill="excrtx-harness-core"
-
-  check_skill_exists "$skill"
-  check_frontmatter "$skill" "name" "description"
-  check_no_skill_deps
-  check_tool_in_path "python3"
-
-  SMOKE_PROMPT="Verifique se os scripts runner e review existem."
-}
-
-test_EX34() {
-  CURRENT_FEATURE_NAME="Hermes Ops"
-  CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
-  local skill="excrtx-harness-hermesops"
-
-  check_skill_exists "$skill"
-  check_frontmatter "$skill" "name" "description"
-  check_skill_dep "excrtx-harness-core"
-  check_skill_dep "excrtx-harness-codexint"
-
-  SMOKE_PROMPT="Verifique se a skill define Trilho A (CLI) e Trilho B (Delegação)."
-}
-
 test_EX35() {
   CURRENT_FEATURE_NAME="Surface Architecture"
   CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
@@ -866,7 +828,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-p0)
       run_id="dogfood-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48 EX-49 EX-50 EX-52; do
+      for feature_id in EX-08 EX-25 EX-30 EX-48 EX-49 EX-50 EX-52; do
         python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \
           --run-id "$run_id" \
@@ -884,7 +846,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-real-p0)
       run_id="dogfood-real-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-33 EX-48 EX-49 EX-50 EX-52; do
+      for feature_id in EX-08 EX-25 EX-30 EX-48 EX-49 EX-50 EX-52; do
         DOGFOOD_AGENT_TIMEOUT="${DOGFOOD_AGENT_TIMEOUT:-120}" \
           python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \

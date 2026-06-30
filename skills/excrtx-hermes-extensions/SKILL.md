@@ -14,7 +14,6 @@ metadata:
     - hermes
     - extensions
     related_skills:
-    - excrtx-harness-hermesops
     - excrtx-harness-tooldev
     - excrtx-govern-tools
     calibration:
@@ -55,7 +54,6 @@ Advanced-level skill for developers who need to modify Hermes behavior or add ne
 
 **Don't use for:**
 - General tool development (creating MCP tools) → use `excrtx-harness-tooldev`
-- Hermes operational workflows (starting/stopping, delegation) → use `excrtx-harness-hermesops`
 - Tool governance and classification → use `excrtx-govern-tools`
 - Modifying agent behavior at the prompt/persona level → use `excrtx-behavior-canvas`
 
