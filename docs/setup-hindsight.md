@@ -102,6 +102,57 @@
    hermes gateway restart
    ```
 
+### Health Check / Troubleshooting
+
+After `EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh`, the setup script automatically
+polls the Hindsight API health endpoint at `http://127.0.0.1:<port>/health` (default
+port 8888, overridden by `EXOCORTEX_HINDSIGHT_API_PORT`). It tries up to 3 times with
+a 5-second timeout per attempt.
+
+**Reading the output:**
+
+| Log message | Meaning | Action |
+|---|---|---|
+| `✓ Hindsight health check: API respondendo em …` | Container up, API healthy | None |
+| `⚠ Hindsight health check: sem resposta em … após 3 tentativas` | Container still starting or failed | See below |
+| `⚠ Hindsight health check: curl não disponível` | `curl` not installed | Install curl; health check won't run |
+
+**If the API is not responding after setup:**
+
+1. Check container state:
+   ```bash
+   docker ps --filter name=exocortex-hindsight
+   docker logs exocortex-hindsight
+   ```
+
+2. Container not running — re-provision:
+   ```bash
+   EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh
+   ```
+
+3. Container running but API not answering — wait ~30 s for first-time initialization,
+   then probe manually:
+   ```bash
+   curl -v http://127.0.0.1:8888/health
+   ```
+
+4. Persistent failure — check `.env` in `~/.hermes/hindsight-local/.env`:
+   ```bash
+   grep CHANGE_ME ~/.hermes/hindsight-local/.env
+   # Output should be empty; if not, fill in the API key and restart:
+   docker restart exocortex-hindsight
+   ```
+
+**Standalone smoke test** (run after provisioning to verify):
+
+```bash
+bash provision/hindsight/scripts/smoke.sh
+```
+
+This checks directory structure, `.env`, container state, and the health endpoint.
+Exit 0 = all critical checks passed. Exit 1 = critical failure (see output for
+details).
+
 ### Validação
 
 ```bash

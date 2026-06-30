@@ -106,6 +106,37 @@ EOF
   (cd "$hs_dir" && docker compose pull >/dev/null 2>&1 || true && docker compose up -d >/dev/null 2>&1)
   log "Hindsight local ativo (API: :${hs_api_port}, UI: :${hs_ui_port})"
 
+  # Runtime health check — poll /health on the API port (WARN-not-fail: slow
+  # container start should not abort setup; a timeout is expected on first run).
+  local hs_health_url="http://127.0.0.1:${hs_api_port}/health"
+  local hs_health_ok=0
+  local hs_attempt
+  if command -v curl >/dev/null 2>&1; then
+    for hs_attempt in 1 2 3; do
+      if curl -sf --max-time 5 "$hs_health_url" >/dev/null 2>&1; then
+        hs_health_ok=1
+        break
+      fi
+      # Probe for any HTTP response (2xx or otherwise) on a wider timeout
+      local _http_code
+      _http_code=$(curl -so /dev/null --max-time 5 -w "%{http_code}" "$hs_health_url" 2>/dev/null || true)
+      if [ -n "$_http_code" ] && [ "$_http_code" != "000" ]; then
+        hs_health_ok=1
+        break
+      fi
+      [ "$hs_attempt" -lt 3 ] && sleep 3
+    done
+    if [ "$hs_health_ok" = "1" ]; then
+      log "Hindsight health check: API respondendo em ${hs_health_url}"
+    else
+      warn "Hindsight health check: sem resposta em ${hs_health_url} após 3 tentativas"
+      warn "  Container pode ainda estar inicializando — verifique: docker logs exocortex-hindsight"
+      warn "  Se o serviço não subir: EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh (re-provisiona)"
+    fi
+  else
+    warn "Hindsight health check: curl não disponível, pulando verificação de saúde"
+  fi
+
   mkdir -p "$HERMES_HOME/hindsight"
   local target="$HERMES_HOME/hindsight/config.json"
   if [ ! -f "$target" ]; then
