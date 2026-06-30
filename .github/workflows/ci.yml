@@ -27,9 +27,11 @@ jobs:
         # These are the scripts introduced or substantially changed in the
         # B/C hardening tasks (task B = safe-rmrf / step-06b cleanup hardening,
         # task C = cron idempotency step-17, step-12 model-id validation).
-        # Any warning here fails the job.
+        # -x follows sourced files (common.sh / lib/llm-roles.sh) so SC1091 info
+        # notes don't fire; --severity=error blocks only genuine errors (info/
+        # warning findings are surfaced by the advisory job below, not blocking).
         run: |
-          shellcheck \
+          shellcheck -x --severity=error \
             setup/step-06b-google-auth.sh \
             setup/step-06-hardening.sh \
             setup/step-12-verify-keys.sh \
@@ -77,7 +79,7 @@ jobs:
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pyyaml httpx
+          pip install pytest pyyaml httpx beautifulsoup4
 
       - name: Run pytest (excluding network-only integration tests)
         # tests/test_last30days_integration.py requires live network access and

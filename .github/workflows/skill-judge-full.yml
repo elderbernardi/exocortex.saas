@@ -13,11 +13,8 @@ on:
 jobs:
   d1-d5-sweep:
     runs-on: ubuntu-latest
-
-    # Skip the entire job when the LLM key is absent (prevents noisy failures
-    # from forks or branches without secrets).
-    if: ${{ secrets.DEEPSEEK_API_KEY != '' }}
-
+    # NOTE: the `secrets` context is NOT available in a job-level `if:`, so the
+    # LLM-key gate lives inside the sweep step below (no-ops cleanly when absent).
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +34,10 @@ jobs:
           # Falls back to the role's configured default when unset.
           HARNESS_MODEL: ${{ secrets.HARNESS_MODEL }}
         run: |
+          if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
+            echo "DEEPSEEK_API_KEY not set — skipping D1–D5 sweep (no LLM key)."
+            exit 0
+          fi
           python scripts/skill_judge.py \
             --all \
             --compare-baseline .dogfood/baselines/skill-judge-baseline.json
