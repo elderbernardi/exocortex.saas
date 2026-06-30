@@ -9,7 +9,7 @@ tags:
 - hindsight
 - acervo
 timestamp: '2026-06-21'
-class: volátil
+class: perene
 created_at: '2026-06-21T16:37:51Z'
 nature: context
 excrtx_type: context
