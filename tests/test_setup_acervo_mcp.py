@@ -22,6 +22,7 @@ class SetupAcervoMcpTest(unittest.TestCase):
         env["ACERVO"] = str(acervo_root)
         return env
 
+    @unittest.skipUnless(shutil.which("hermes"), "requires the hermes CLI on PATH")
     def test_step_registers_acervo_mcp_idempotently(self):
         with tempfile.TemporaryDirectory() as td:
             isolated = Path(td)
