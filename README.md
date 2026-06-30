@@ -56,9 +56,9 @@ The Exocortex is strictly forbidden from claiming that a system action (e.g., cl
 
 ---
 
-## 🧩 The 50 Custom Skills Catalog
+## 🧩 The Skills Catalog — 57 Skills, 7 Categories
 
-This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. They are organized into 8 functional categories:
+This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. **57 skills total**: 43 formally cataloged (each with a dogfood EX-ID test scenario) + 15 supporting/auxiliary skills. They are organized into 7 functional categories. See [FEATURES.md](FEATURES.md) for the full per-skill catalog with dependencies, usage, and test scenarios.
 
 ```mermaid
 graph TD
@@ -128,17 +128,20 @@ graph TD
 - **`excrtx-memory-newmicro` (EX-13)**: Scaffolds a new Microverso directory structure from standard templates.
 - **`excrtx-memory-mvsetup` (EX-14)**: Designates a microverso as a replication seed for future setup runs.
 - **`excrtx-memory-mvinstall` (EX-15)**: Installs packaged microversos, resolving skill, python/node, and API dependencies.
+- **`excrtx-memory-mvexport` (EX-58)**: Microverso Package Exporter — packages a microverso into a portable, self-contained `.mvpkg` (Docker-like bundle) with OKF gate, clean-portable transformation, embedded deps, and `MANIFEST.sum`. Counterpart of EX-15.
 - **`excrtx-memory-opsmemory` (EX-16)**: Orchestrates operational memories (e.g., Hindsight) to act as short-term retrieval buffers.
 - **`excrtx-memory-intake` (EX-17)**: Multi-channel file and media intake pipeline (OCR, STT, PDF parsing) routed to `$ACERVO/_inbox/`.
 
 ### 4. Quality Gates
 
 - **`excrtx-quality-antislop` (EX-18)**: Text quality gate. Grades generated prose on directness, density, rhythm, and authenticity, rejecting AI cliches. Requires a minimum score of `35/50`.
-- **`excrtx-quality-taste` (EX-19)**: Visual quality gate. Rotes layouts to specialized sub-skills (`gpt-taste`, `brutalist`, `brandkit`). Rejects headers > 3 lines and repeating grid templates.
+- **`excrtx-quality-taste` (EX-19)**: Visual quality gate. Routes layouts to specialized sub-skills (`gpt-taste`, `brutalist`, `brandkit`). Rejects headers > 3 lines and repeating grid templates.
 - **`excrtx-quality-designsys` (EX-20)**: Design token cascade resolver (Global `DESIGN.md` -> Microverso `DESIGN.md`).
 - **`excrtx-quality-gate` (EX-21)**: Unified quality gate controller that intercepts all outbound responses.
-- **`excrtx-quality-skilljudge`**: Automated skill quality evaluation using multi-dimensional rubric and LLM judge.
-- **`excrtx-quality-gepa`**: GEPA (Genkit Eval Prompt Audit) loop for automated skill rewriting and quality gating.
+- **`excrtx-quality-gate` (EX-52)**: Quality Gate Enforced — programmatic rejection at the harness level (validate_artifact_manifest.py) ensuring all produced artifacts pass anti-slop and taste gates.
+- **`excrtx-quality-gepa` (EX-53)**: GEPA — closed-loop automated skill rewriting: judge → rewrite → re-judge → accept/rollback. Uses LLM-as-Judge for evaluation and LLM as rewriter, with safety gates preserving D1 structure and `compiled_rules`.
+- **`excrtx-quality-skilljudge` (EX-54)**: Skill Judge — LLM-as-Judge framework evaluating skills on 5 dimensions (D1 Structural, D2 Clarity, D3 Alignment, D4 Fitness, D5 Economy). Generates baselines and PASS/IMPROVE/REWRITE verdicts.
+- **`excrtx-brandkit-generator` (EX-55)**: Brandkit Generator — extracts brand identity from a corporate logo and generates a WCAG-ready `DESIGN.md` with design tokens for the Acervo.
 
 ### 5. Production & Artifacts
 
@@ -159,15 +162,31 @@ graph TD
 
 - **`excrtx-harness-promptlog` (EX-31)**: Auditable log of all configuration prompts written to `MEMORY.md`.
 - **`excrtx-harness-surfaces` (EX-35)**: Routes communication interfaces (Telegram for Chat, TUI/CLI for Admin, Dashboard for cockpit).
-- **`excrtx-harness-imbroke` (EX-48)**: financial contingency model fallback (OpenRouter free model watchdog and recovery router).
+- **`excrtx-harness-imbroke` (EX-48)**: Financial contingency model fallback (OpenRouter free model watchdog and recovery router).
 - **`excrtx-harness-tooldev` (EX-50)**: Standard API for writing and registering custom `/tool` extensions.
 - **`excrtx-hermes-extensions` (EX-51)**: Guidelines for writing custom commands and dispatch paths in `gateway/run.py`.
-- **`excrtx-harness-delivery`**: Delivery pipeline orchestration for artifact publication and distribution.
 - **`excrtx-harness-maintenance` (EX-56)**: Síndico persona with 4 maintenance routines (weekly audit, inbox triage, artifact quality, publication check).
+- **`last30days` (EX-57)**: Multi-platform research skill (community, MIT) scanning 15 sources over the last 30 days. Pipline: resolve → search → cluster → synthesize. Modes: comparison, hiring signals, deep research, briefing HTML, ELI5.
+
+#### Supporting / Auxiliary Skills
+
+The following 15 skills have no formal EX-ID but sustain cataloged features or provide cross-cutting capabilities. They are loaded by the main bundle:
+
+- **`excrtx-harness-delivery`**: Delivery pipeline orchestration for artifact publication and distribution.
 - **`excrtx-integrate-mcp`**: MCP server discovery, registration, and lifecycle management.
-- **`excrtx-brandkit-generator`**: Brand identity kit generation from Macroverso design tokens.
 - **`excrtx-github-issue-planning`**: GitHub issue planning and roadmap coordination.
 - **`assessment-question-authoring`**: Structured assessment question creation for calibration and evaluation.
+- **`excrtx-memory-deprecate`**: Semantic revision on insert — detects contradictions and auto-deprecates superseded `volátil` Acervo files (ADR-014/016).
+- **`excrtx-memory-quarantine`**: Quarantine cycle — moves stale/deprecated files, purges expired, restores within the 30-day window (ADR-015).
+- **`excrtx-memory-syndic`**: Autonomous Acervo cleanup agent — scans, quarantines, purges. Runs under the `manut` profile (ADR-018).
+- **`excrtx-adapter-docbrain-acervo`**: Transforms DocBrain structured output into provenance-annotated Acervo-ready markdown.
+- **`excrtx-integrate-last30days`**: Operator skill for the `last30days` research engine — install, provider config, patching, and tests.
+- **`excrtx-integrate-agent-reach`**: Adapter for Agent-Reach CLI; produces normalized research items for the research pipeline.
+- **`excrtx-crawler-brasil`**: Brazilian sector crawler for CPG/FMCG; scans 10+ RSS sources with local cache and normalized JSON output.
+- **`excrtx-research-cpg-brasil`**: Research wrapper for Brazilian CPG industry — orchestrates `last30days`, Agent-Reach, crawler, and DocBrain.
+- **`excrtx-source-cnpj`**: Public CNPJ data collector (BrasilAPI + ReceitaWS) with normalized JSON envelope and local cache.
+- **`excrtx-source-google-trends`**: Google Trends public API — interest over time, regional interest, related queries.
+- **`excrtx-source-reclameaqui`**: Brazilian company reputation collector (Reclame Aqui), Cloudflare-aware, structured JSON output.
 
 ---
 
@@ -237,11 +256,11 @@ What each marker activates:
 | `EXOCORTEX_VISION_*` | Vision LLM role | Multimodal (image/OCR) model. Each empty field **inherits the default** role field-by-field. |
 | `EXOCORTEX_AUX_*` | Auxiliary LLM role | External software: DocBrain parser and the Hindsight LLM backend. Each empty field **inherits the default**. |
 | `TELEGRAM_BOT_TOKEN` | Telegram Gateway | Bot token from BotFather. Enables remote chat interface. |
-| `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | MIT-licensed `nesquena/hermes-webui`. Access at `127.0.0.1:8787` or via Tailscale. |
-| `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session memory. Requires `docker` + `docker compose`. |
-| `FIRECRAWL_API_KEY` | Firecrawl crawling/extract | Web scraping engine. Optional — only if running a Firecrawl instance. |
+| `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | Controlled fork of `nesquena/hermes-webui` with Exocórtex customizations. Access at `127.0.0.1:8787` or via Tailscale. See [`provision/hermes-webui/README.md`](provision/hermes-webui/README.md). |
+| `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session operational memory (used by EX-16). Requires `docker` + `docker compose`. See [`docs/setup-hindsight.md`](docs/setup-hindsight.md). |
+| `FIRECRAWL_API_KEY` | Firecrawl web scraping | First-class supported service — high-fidelity web scraping/extraction used by EX-30 (Browser Automation) and the research pipeline. Three tiers: self-host → existing server → degrade to alternative. Set `EXOCORTEX_ENABLE_FIRECRAWL=1` to wire provisioning. See [`docs/setup-firecrawl.md`](docs/setup-firecrawl.md). |
 | `FIRECRAWL_BASE_URL` | Firecrawl endpoint | Default: `http://127.0.0.1:3002`. Set if your instance runs elsewhere. |
-| `CONTEXT7_API_KEY` | Context7 docs MCP | Technical documentation lookup. Optional. |
+| `CONTEXT7_API_KEY` | Context7 docs MCP | First-class supported service — technical documentation lookup for libraries via MCP. Set `EXOCORTEX_ENABLE_CONTEXT7=1` to auto-register. See [`docs/setup-context7.md`](docs/setup-context7.md). |
 
 > **The 3 LLM roles** are the single source of truth for every LLM call in this repo. Configure
 > just the **default** role for most setups — **vision** and **auxiliar** inherit it field-by-field
@@ -294,7 +313,7 @@ HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --step-by-step
 ```
 
-To also provision the Hermes WebUI web cockpit (optional, MIT-licensed `nesquena/hermes-webui`):
+To also provision the Hermes WebUI cockpit (controlled fork of `nesquena/hermes-webui` with Exocórtex customizations — see [`provision/hermes-webui/README.md`](provision/hermes-webui/README.md)):
 
 ```bash
 EXOCORTEX_ENABLE_HERMES_WEBUI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
@@ -307,13 +326,13 @@ The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SH
 - **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
 - **`step-01`**: Provision Hindsight database container if `EXOCORTEX_ENABLE_HINDSIGHT=1` is provided.
 - **`step-02`**: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.
-- **`step-03` to `step-05`**: Copies and installs all 50 `excrtx` skills, bundles, and execution profiles (`default` and `manut`).
+- **`step-03` to `step-05`**: Copies and installs all 57 skills (43 EX-ID cataloged + 15 supporting), bundles, and execution profiles (`default` and `manut`).
 - **`step-06` (Hardening)**:
   - Applies a search paging patch to `google_api.py`.
   - Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
   - Removes `composio` from the MCP registry in favor of direct API clients.
-- **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit (`nesquena/hermes-webui`, MIT), and links Context7 documentation MCP.
-- **`step-12` to `step-14`**: Performs final key verifications and validates that all 50 skills are correctly mapped in the runtime.
+- **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine (`elderbernardi/docbrain`, tracking main, deps refreshed before build), installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit, Context7 MCP, Hindsight Docker container, and Firecrawl integration.
+- **`step-12` to `step-14`**: Performs final key verifications (real LLM ping per role, model-id validation) and validates that all skills are correctly mapped in the runtime.
 - **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
 
 ---
@@ -536,6 +555,38 @@ python3 .agent/scripts/checklist.py .
 # Run complete validation, including E2E and Lighthouse
 python3 .agent/scripts/verify_all.py . --url http://localhost:3000
 ```
+
+---
+
+## 📋 Release Notes — v1.1.0 (GA)
+
+**Released:** 2026-06-29
+
+This is the General Availability release of Exocórtex.IA. Key changes from v1.0.x:
+
+- **EX-32/33/34 removed:** The OpenAI code-model integration trio (EX-32/33/34) has been cut from the GA surface. These features were never part of the stable skill surface and are no longer wired in the installer or bundles. See CHANGELOG.md for details.
+- **Installer hardening:**
+  - DocBrain now provisioned from `elderbernardi/docbrain` tracking `main` with dependency refresh before each build/start (note: reproducibility trades off against always-latest).
+  - Unguarded `rm -rf` in `step-06b-google-auth.sh` replaced with guarded removal.
+  - Silent `npm run build` failure now surfaces as an explicit error.
+  - Setup logs are now durable under `$HERMES_HOME/logs/setup/` (survives reruns).
+  - `step-12-verify-keys.sh` now validates model-id format before committing it to `config.yaml`.
+  - Cron creation is idempotent: `create_cron_if_missing` prevents duplicate síndico entries.
+  - `persist-env` now correctly persists the `CONTEXT7` toggle.
+- **4 optional services promoted to first-class GA:** Context7, Hindsight, Hermes WebUI, and Firecrawl each have dedicated provisioning scripts, health checks, smoke tests, and documentation. Tiered Firecrawl support: self-host → existing server → degrade gracefully.
+- **Catalog truth-up:** FEATURES.md, README.md, CHANGELOG.md, and INSTALL.md now reflect the canonical counts: 57 skills (43 EX-IDs + 15 supporting), 7 functional categories, and the 4 first-class optional services. Supporting Skills and Serviços Opcionais sections added to FEATURES.md.
+
+See [CHANGELOG.md](CHANGELOG.md) for the detailed change log.
+
+---
+
+## ⚠️ Known Limitations
+
+- **Optional-service live smoke requires a real environment:** The smoke harnesses for Context7, Hindsight, WebUI, and Firecrawl need a live box with real API keys, a running Docker daemon, and network access. They are not gating in CI runs against emulated environments.
+- **Firecrawl self-host stack:** The self-hosted Firecrawl tier pulls a multi-container stack (~large image). Budget download time and ensure sufficient disk space before provisioning.
+- **D2–D5 skill quality tests are non-gating in CI:** The LLM-judge dimensions (D2 Clarity, D3 Alignment, D4 Fitness, D5 Economy) require a live LLM key and introduce non-determinism. They are scheduled/advisory in CI; only D1 (structural check) is gating.
+- **DocBrain tracks `main`:** DocBrain is cloned from `elderbernardi/docbrain` and follows `main`. This means the installed version is always the latest rather than a pinned release. If a breaking change lands in DocBrain upstream, it will affect the next install or `git pull`. Pin `EXOCORTEX_DOCBRAIN_DIR` to a local checkout to freeze the version.
+- **Hermes WebUI is a controlled fork:** `provision/hermes-webui` is a customized fork of `nesquena/hermes-webui`. Upstream changes are not blindly merged — see `hermes-webui/EXOCRTX_MODIFICATIONS.md` for the customization catalog.
 
 ---
 

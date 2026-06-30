@@ -6,6 +6,54 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-06-29
+
+General Availability release. Closes the GA surface: Codex removed, installer
+hardened, 4 optional services promoted to first-class, catalog docs truth-up.
+
+### Removed
+- OpenAI Codex integration (EX-32/33/34) and all associated wiring (installer
+  steps, bundle references, skill files). Codex was never part of the stable
+  skill surface.
+
+### Changed
+- DocBrain provisioned from `elderbernardi/docbrain` (tracking `main`); deps
+  are refreshed (`npm install`) before every build/start. Note: this trades
+  reproducibility for always-latest; pin `EXOCORTEX_DOCBRAIN_DIR` to a local
+  checkout to freeze the version.
+- Durable setup logs: installer output now written to
+  `$HERMES_HOME/logs/setup/` and survives reruns.
+- `step-12-verify-keys.sh` now validates the model-id format (rejects IDs with
+  uppercase, spaces, or unexpected characters) before writing `config.yaml`.
+- Cron creation is idempotent: `create_cron_if_missing` skips the call if the
+  named cron already exists, preventing duplicate síndico entries.
+
+### Added
+- First-class provisioning for 4 optional services: **Context7** (MCP for tech
+  docs, `docs/setup-context7.md`), **Hindsight** (Docker operational memory,
+  `docs/setup-hindsight.md`), **Hermes WebUI** (cockpit fork,
+  `provision/hermes-webui/README.md`), and **Firecrawl** (tiered scraping,
+  `docs/setup-firecrawl.md`). Each service ships a provisioning script, health
+  check, and smoke test.
+- Supporting-Skills and Serviços Opcionais catalog sections in `FEATURES.md`.
+- `README.md` — Release Notes v1.1.0 and Known Limitations sections; 57-skill
+  count (43 EX-IDs + 15 supporting) and 7-category framing.
+
+### Fixed
+- Unguarded `rm -rf` in `step-06b-google-auth.sh` (google-auth hardening).
+- Silent `npm run build` failure in DocBrain provisioning now surfaces as an
+  explicit error and aborts the step.
+- `persist-env` helper now correctly persists the `EXOCORTEX_ENABLE_CONTEXT7`
+  toggle to `.env.local`.
+
+## [1.0.8] — 2026-06-23
+
+Add Acervo MCP/CLI control plane documentation and scripts.
+
+## [1.0.7] — 2026-06-23
+
+Make Acervo MCP validation stricter (treat warnings as errors).
+
 ## [1.0.6] — 2026-06-23
 
 Follow-up to the 1.0.5 maintenance-cron fix: the crons still failed to reach the live
