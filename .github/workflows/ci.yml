@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: shellcheck
+  # Run shellcheck over all .sh files in setup/, provision/, and scripts/.
+  # Strategy: GA-release scripts (those added/changed in this release cycle, i.e.
+  # the task B/C harness scripts) are BLOCKING. All pre-existing scripts are
+  # advisory (exit 0 regardless) because the baseline has many pre-existing
+  # warnings that are out of scope for this PR gate.
+  # ---------------------------------------------------------------------------
+  shellcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Shellcheck — blocking (GA-release scripts)
+        # These are the scripts introduced or substantially changed in the
+        # B/C hardening tasks (task B = safe-rmrf / step-06b cleanup hardening,
+        # task C = cron idempotency step-17, step-12 model-id validation).
+        # Any warning here fails the job.
+        run: |
+          shellcheck \
+            setup/step-06b-google-auth.sh \
+            setup/step-06-hardening.sh \
+            setup/step-12-verify-keys.sh \
+            setup/step-17-maintenance-crons.sh \
+            tests/test_setup_safe_rmrf.sh \
+            tests/test_step12_model_validation.sh \
+            tests/test_step17_cron_idempotency.sh \
+            tests/test_step01_hindsight_health.sh \
+            tests/test_step11_context7_toggle.sh \
+            tests/test_step11c_firecrawl_tiers.sh 2>&1 || {
+            echo "::error::Shellcheck found issues in GA-release scripts (blocking)."
+            exit 1
+          }
+
+      - name: Shellcheck — advisory (pre-existing scripts)
+        # Pre-existing scripts may have accumulated warnings out of scope for
+        # this release. Failures are reported but do NOT block the PR gate.
+        # || true is intentional: pre-existing warnings should not block new PRs.
+        run: |
+          find setup provision scripts -name "*.sh" \
+            ! -name "step-06b-google-auth.sh" \
+            ! -name "step-06-hardening.sh" \
+            ! -name "step-12-verify-keys.sh" \
+            ! -name "step-17-maintenance-crons.sh" \
+            -print0 \
+          | xargs -0 shellcheck 2>&1 || true  # advisory: pre-existing warnings not blocking
+
+  # ---------------------------------------------------------------------------
+  # Job 2: python-tests
+  # Full pytest suite minus the network-only last30days integration test.
+  # Also runs the two validators (frontmatter and dogfood catalog).
+  # ---------------------------------------------------------------------------
+  python-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pyyaml httpx
+
+      - name: Run pytest (excluding network-only integration tests)
+        # tests/test_last30days_integration.py requires live network access and
+        # real LLM credentials. It is excluded here and runs in the scheduled
+        # full-stack-smoke workflow instead.
+        run: |
+          python -m pytest -q \
+            --ignore=tests/test_last30days_integration.py
+
+      - name: Validate Acervo frontmatter
+        run: python3 scripts/validate_frontmatter.py --dir acervo
+
+      - name: Validate dogfood catalog
+        run: python3 scripts/dogfood_validate_catalog.py
+
+  # ---------------------------------------------------------------------------
+  # Job 3: bash-tests
+  # Run each standalone bash test; any failure fails the job.
+  # ---------------------------------------------------------------------------
+  bash-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: test_setup_safe_rmrf
+        run: bash tests/test_setup_safe_rmrf.sh
+
+      - name: test_step01_hindsight_health
+        run: bash tests/test_step01_hindsight_health.sh
+
+      - name: test_step11_context7_toggle
+        run: bash tests/test_step11_context7_toggle.sh
+
+      - name: test_step11c_firecrawl_tiers
+        run: bash tests/test_step11c_firecrawl_tiers.sh
+
+      - name: test_step12_model_validation
+        run: bash tests/test_step12_model_validation.sh
+
+      - name: test_step17_cron_idempotency
+        run: bash tests/test_step17_cron_idempotency.sh

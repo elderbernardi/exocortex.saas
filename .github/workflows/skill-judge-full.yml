@@ -1,0 +1,42 @@
+name: skill-judge-full (D1–D5)
+
+# Full 5-dimension skill quality sweep. NOT gating — runs on schedule and on
+# demand. Requires the DEEPSEEK_API_KEY (or HARNESS_MODEL) secret for LLM
+# dimensions D2–D5; if the secret is absent the job is skipped entirely.
+# D1 continues to run as a blocking per-PR gate in skill-judge-d1.yml.
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly on Sunday at 04:00 UTC (off-peak, avoids CI contention)
+    - cron: '0 4 * * 0'
+
+jobs:
+  d1-d5-sweep:
+    runs-on: ubuntu-latest
+
+    # Skip the entire job when the LLM key is absent (prevents noisy failures
+    # from forks or branches without secrets).
+    if: ${{ secrets.DEEPSEEK_API_KEY != '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pyyaml
+
+      - name: SkillJudge D1–D5 full sweep
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          # HARNESS_MODEL can override the model for the 'default' LLM role.
+          # Falls back to the role's configured default when unset.
+          HARNESS_MODEL: ${{ secrets.HARNESS_MODEL }}
+        run: |
+          python scripts/skill_judge.py \
+            --all \
+            --compare-baseline .dogfood/baselines/skill-judge-baseline.json

@@ -1,0 +1,59 @@
+name: Full-Stack Smoke
+
+# Heavy / slow workflow: NOT triggered on push or pull_request.
+# Runs weekly on schedule and on demand. Intended for provisioning smoke tests
+# that require Docker builds and optional LLM credentials.
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly on Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job: fresh-box installer smoke
+  # Builds the Dockerfile.setup-test image and runs the interactive setup
+  # test harness. LLM-dependent smoke tests (Hindsight, Hermes WebUI integration)
+  # are enabled when the DEEPSEEK_API_KEY secret is present; they are skipped
+  # automatically when the secret is absent.
+  # ---------------------------------------------------------------------------
+  installer-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build fresh-box test image
+        run: |
+          docker build \
+            -f tests/Dockerfile.setup-test \
+            -t exocortex-setup-test \
+            .
+
+      - name: Run installer smoke (optional services enabled)
+        env:
+          # LLM-dependent smokes (Hindsight, calibration) are skipped when
+          # DEEPSEEK_API_KEY is absent. The image's CMD handles this gracefully.
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          HARNESS_MODEL: ${{ secrets.HARNESS_MODEL }}
+        run: |
+          docker run --rm \
+            -e DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-}" \
+            -e HARNESS_MODEL="${HARNESS_MODEL:-}" \
+            -e EXOCORTEX_ENABLE_HINDSIGHT=1 \
+            -e EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
+            exocortex-setup-test
+
+      - name: Run provisioning-tests harness (NO_SMOKE when no LLM key)
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          HARNESS_MODEL: ${{ secrets.HARNESS_MODEL }}
+        run: |
+          # NO_SMOKE=1 skips LLM-dependent probes when no key is available.
+          # The script already handles this flag internally.
+          if [ -z "${DEEPSEEK_API_KEY:-}" ]; then
+            echo "DEEPSEEK_API_KEY not set — running with NO_SMOKE=1 (LLM smoke tests skipped)."
+            export NO_SMOKE=1
+          fi
+          bash scripts/run-provisioning-tests.sh --skip-api --no-sync
