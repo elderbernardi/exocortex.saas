@@ -69,3 +69,29 @@ sources:
       - Stack Python + Vanilla JS, zero build step.
       - Fork controlado: elderbernardi/hermes-webui, branch exocortex/stable (skin EXCRTX, MOD-001..005). Ver EXOCRTX_MODIFICATIONS.md no fork.
       - Nunca consumir upstream master como produção.
+  docbrain:
+    component: docbrain-parser-engine
+    upstream:
+      owner_repo: ProjetoBB/docBrainBB
+      git: https://github.com/ProjetoBB/docBrainBB.git
+      default_branch: main
+    controlled:
+      owner_repo: ProjetoBB/docBrainBB
+      git: https://github.com/ProjetoBB/docBrainBB.git
+      ref: 5b5210fe7b374233050ae38c4b0c0b8a0768f2c9
+      audited_from_upstream_ref: main
+      audited_at: 2026-06-29T00:00:00Z
+    production_ref_policy:
+      allow_upstream_main: false
+      allow_upstream_head: false
+      require_controlled_ref: true
+    license:
+      spdx: MIT
+      commercial_use_requires_license: false
+    local_sync:
+      path: provision/sources/worktrees/docbrain
+      mode: direct-upstream-pinned
+    notes:
+      - DocBrain parser engine — clonado localmente em $EXOCORTEX_HOME/tools/docbrain pelo step-08.
+      - Ref pinada para garantir installs reprodutíveis; atualizar após auditoria de breaking changes.
+      - step-08 faz checkout da ref pinada após clone/fetch; nunca consome main flutuante em produção.

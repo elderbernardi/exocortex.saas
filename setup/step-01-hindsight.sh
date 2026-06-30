@@ -34,6 +34,8 @@ setup_hindsight_local_docker() {
   if [ "${EXOCORTEX_HINDSIGHT_RESET_DATA:-0}" = "1" ]; then
     if [ "${EXOCORTEX_HINDSIGHT_CONFIRM_DELETE:-}" = "DELETE_HINDSIGHT_MEMORY" ]; then
       warn "Confirmado: removendo memória local Hindsight (data/)"
+      # docker compose down failure is non-fatal: container may already be stopped
+      # or not yet created; the rm -rf below handles cleanup regardless.
       (cd "$hs_dir" && docker compose down >/dev/null 2>&1 || true)
       rm -rf "$hs_data"
       mkdir -p "$hs_data"
@@ -98,6 +100,9 @@ EOF
     warn "Preencha HINDSIGHT_API_LLM_API_KEY em $hs_env antes de subir o serviço"
     return 0
   fi
+  # docker compose pull failure is non-fatal: the image may already be cached
+  # locally (offline/airgap) or may not yet be available on the registry.
+  # docker compose up -d failure IS fatal (set -euo pipefail propagates it).
   (cd "$hs_dir" && docker compose pull >/dev/null 2>&1 || true && docker compose up -d >/dev/null 2>&1)
   log "Hindsight local ativo (API: :${hs_api_port}, UI: :${hs_ui_port})"
 
