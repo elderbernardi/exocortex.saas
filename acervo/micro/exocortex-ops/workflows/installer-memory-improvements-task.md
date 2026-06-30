@@ -11,7 +11,7 @@ tags:
 - acervo
 - smoke-test
 timestamp: '2026-06-21'
-class: volátil
+class: perene
 created_at: '2026-06-21T21:13:33Z'
 nature: workflows
 excrtx_type: workflow

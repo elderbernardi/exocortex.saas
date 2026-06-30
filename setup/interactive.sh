@@ -372,6 +372,8 @@ show_config_table() {
   echo -e "${BOLD}║ Features (flags)${NC}"
   _show_row "EXOCORTEX_ENABLE_HINDSIGHT"   "${EXOCORTEX_ENABLE_HINDSIGHT:-0}"     "ok"
   _show_row "EXOCORTEX_ENABLE_HERMES_WEBUI" "${EXOCORTEX_ENABLE_HERMES_WEBUI:-0}" "ok"
+  _show_row "EXOCORTEX_ENABLE_CONTEXT7"    "${EXOCORTEX_ENABLE_CONTEXT7:-0}"      "ok"
+  _show_row "EXOCORTEX_ENABLE_FIRECRAWL"   "${EXOCORTEX_ENABLE_FIRECRAWL:-0}"     "ok"
   _show_row "IMBROKE_MODE"                  "${IMBROKE_MODE:-0}"                   "ok"
   _show_row "CALIBRATE_MODE"                "${CALIBRATE_MODE:-0}"                "ok"
 
@@ -437,6 +439,8 @@ run_interactive_init() {
   pause_step_by_step "Por fim, revise as features opcionais. Enter para continuar: " || return 130
   prompt_flag "EXOCORTEX_ENABLE_HINDSIGHT"    "${EXOCORTEX_ENABLE_HINDSIGHT:-1}"    "Ativar Hindsight (memória Docker local)?"
   prompt_flag "EXOCORTEX_ENABLE_HERMES_WEBUI" "${EXOCORTEX_ENABLE_HERMES_WEBUI:-0}" "Ativar Hermes WebUI (cockpit web)?"
+  prompt_flag "EXOCORTEX_ENABLE_CONTEXT7"     "${EXOCORTEX_ENABLE_CONTEXT7:-0}"     "Ativar Context7 (docs de tech stacks via MCP)?"
+  prompt_flag "EXOCORTEX_ENABLE_FIRECRAWL"    "${EXOCORTEX_ENABLE_FIRECRAWL:-0}"    "Provisionar Firecrawl self-hosted via Docker? (senão: usa FIRECRAWL_BASE_URL ou degrada)"
   echo ""
 
   # ─── Paths opcionais (só se features ativadas) ─────────────────────

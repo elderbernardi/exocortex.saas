@@ -249,9 +249,9 @@ test -d "$ACERVO/_tasks" && echo "✓ _tasks" || echo "✗ _tasks"
 
 ---
 
-## Step 03 — Instalar Skills (50 skills excrtx-*)
+## Step 03 — Instalar Skills (57 skills no total)
 
-**Objetivo**: Copiar todas as 50 skills `excrtx-*` (mais as skills empacotadas `last30days` e `assessment-question-authoring`, 52 pacotes no total) do repositório para o runtime do Hermes.
+**Objetivo**: Copiar as 57 skills do repositório para o runtime do Hermes: 43 skills `excrtx-*` com ID EX-catalogado formal + 15 skills de suporte/auxiliares (incluindo `last30days`, `assessment-question-authoring` e outras skills transversais), totalizando ~57 diretórios de skill.
 
 ### Execução
 
@@ -267,8 +267,8 @@ done
 ### Verificação
 ```bash
 INSTALLED=$(find "$SKILLS_DST" -mindepth 1 -maxdepth 1 -type d | wc -l)
-echo "Skills instaladas: $INSTALLED (esperado: ≥ 50 excrtx-*)"
-test "$INSTALLED" -ge 50 && echo "✓ OK" || echo "✗ FALHA"
+echo "Skills instaladas: $INSTALLED (esperado: ≥ 57 skills no total)"
+test "$INSTALLED" -ge 57 && echo "✓ OK" || echo "⚠ pode estar incompleto"
 ```
 
 ---
@@ -302,11 +302,6 @@ cp -r "$SCRIPT_DIR/acervo/global/tools/harness/"* \
   "$ACERVO/global/tools/harness/" 2>/dev/null || true
 chmod +x "$ACERVO/global/tools/harness/"*.py 2>/dev/null || true
 
-# Codex wrappers (EX-33)
-mkdir -p "$HERMES_HOME/scripts/codex_learning"
-mkdir -p "$HERMES_HOME/codex-learning"/{runs,events,reviews}
-cp -r "$SCRIPT_DIR/scripts/codex_learning/"* \
-  "$HERMES_HOME/scripts/codex_learning/" 2>/dev/null || true
 ```
 
 ### Verificação
@@ -461,7 +456,7 @@ test -f "$BRANDING/exocortex-logo.sh" && \
 
 ```bash
 DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}"
-REPO="https://github.com/ProjetoBB/docBrainBB.git"
+REPO="https://github.com/elderbernardi/docbrain.git"
 
 mkdir -p "$(dirname "$DOCBRAIN_DIR")"
 if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
@@ -469,9 +464,14 @@ if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
 fi
 cd "$DOCBRAIN_DIR"
 git pull --ff-only origin main 2>/dev/null || true
-npm install 2>/dev/null || true
-npm run build 2>/dev/null || true
+npm install   # refresh deps before each build
+npm run build
 ```
+
+> **DocBrain rastreia `main`:** O repositório fonte é `elderbernardi/docbrain` (branch `main`).
+> As dependências são atualizadas (`npm install`) antes de cada build/start — prioriza
+> sempre-atualizado sobre reprodutibilidade fixada. Para fixar uma versão, aponte
+> `EXOCORTEX_DOCBRAIN_DIR` para um checkout local.
 
 ### Verificação
 ```bash
@@ -585,6 +585,20 @@ fi
 
 ---
 
+## Serviços Opcionais — Tabela de Referência Rápida
+
+Os quatro serviços opcionais foram promovidos a **first-class GA** nesta release. Cada um possui
+provisioning script, health check, smoke test e documentação própria.
+
+| Serviço | Toggle | Propósito | Documentação |
+|---------|--------|-----------|--------------|
+| **Context7** | `CONTEXT7_API_KEY` / `EXOCORTEX_ENABLE_CONTEXT7=1` | Documentação técnica de bibliotecas via MCP (nuvem Context7). | [`docs/setup-context7.md`](docs/setup-context7.md) |
+| **Hindsight** | `EXOCORTEX_ENABLE_HINDSIGHT=1` | Memória operacional Docker — armazenamento persistente de observações de sessão (usado por EX-16). Requer `docker` + `docker compose`. | [`docs/setup-hindsight.md`](docs/setup-hindsight.md) |
+| **Hermes WebUI** | `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Cockpit web — fork controlado de `nesquena/hermes-webui` com customizações do Exocórtex. Acesso em `127.0.0.1:8787`. | [`provision/hermes-webui/README.md`](provision/hermes-webui/README.md) |
+| **Firecrawl** | `EXOCORTEX_ENABLE_FIRECRAWL=1` + `FIRECRAWL_API_KEY` | Scraping e extração web de alta fidelidade; usado por EX-30 e pelo pipeline de pesquisa. Três níveis: self-host → servidor existente → degradar graciosamente. | [`docs/setup-firecrawl.md`](docs/setup-firecrawl.md) |
+
+---
+
 ## Step 11b — Acervo MCP
 
 **Objetivo**: Registrar o MCP semântico local do Acervo e validar saúde do control plane agentic.
@@ -652,7 +666,7 @@ bash "$SCRIPT_DIR/setup/step-13-final-verification.sh"
 
 ### Critérios de Sucesso (o script verifica tudo automaticamente)
 
-1. **≥ 50 skills excrtx-*** instaladas em `$SKILLS_DST`
+1. **≥ 57 skills** instaladas em `$SKILLS_DST` (43 EX-ID catalogadas + 15 de suporte)
 2. **4 camadas** do Acervo presentes (macro, global, micro, shared)
 3. **5 diretórios operacionais** v0.4 (_tasks, _routines, _automations, _inbox, _artifacts)
 4. **Microverso exocortex-ops** com todos os arquivos esperados
@@ -743,7 +757,7 @@ echo "=== Exocórtex Release Verification ==="
 
 # 1. Skills
 SKILL_COUNT=$(find "$SKILLS_DST" -mindepth 1 -maxdepth 1 -type d | wc -l)
-echo "Skills: $SKILL_COUNT (esperado: ≥ 50 excrtx-*)"
+echo "Skills: $SKILL_COUNT (esperado: ≥ 57)"
 
 # 2. Acervo
 for layer in macro global micro shared; do

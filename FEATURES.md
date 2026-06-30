@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais, totalizando **44 skills**.
+Organizadas em 7 categorias funcionais. **57 skills no total** (43 EX-IDs formalmente catalogados, cada um com cenário de teste dogfood, + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
 
 ---
 
@@ -482,36 +482,6 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Dependências de Skills** | Nenhuma                                                                                                                                                                                                                                                                |
 | **Dependências de Tools**  | Nenhuma                                                                                                                                                                                                                                                                |
 
-#### EX-32. Codex Integration (`excrtx-harness-codexint`)
-
-| Campo                      | Detalhe                                                                                                                                                                                                   |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Funcionalidade**         | Integra OpenAI Codex (CLI e provider) ao Hermes/Exocórtex com governança, roteamento e verificação. Define dois modos de operação: CLI para execução com código e delegação via provider para raciocínio. |
-| **Como usar**              | Ativado quando o executivo pede para usar Codex para codificação, refatoração ou planejamento.                                                                                                            |
-| **Instalação**             | `setup.sh` copia skill.                                                                                                                                                                                   |
-| **Dependências de Skills** | `excrtx-harness-core`                                                                                                                                                                                     |
-| **Dependências de Tools**  | Codex CLI, `openai-codex` provider no Hermes                                                                                                                                                              |
-
-#### EX-33. Codex Core Harness (`excrtx-harness-core`)
-
-| Campo                      | Detalhe                                                                                                                                                                                                                     |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Funcionalidade**         | Harness caseiro para operar Codex CLI com rastreabilidade e verificação leve. Captura evidência local (JSON) em disco via wrapper Python. Scripts: `run_codex_with_learning.py` (runner) e `review_latest_run.py` (review). |
-| **Como usar**              | Chamado internamente por `excrtx-harness-codexint`. Runner em `~/.hermes/scripts/codex_learning/`.                                                                                                                          |
-| **Instalação**             | `setup.sh` copia a skill, provisiona `~/.hermes/scripts/codex_learning/` e cria `~/.hermes/codex-learning/{runs,events,reviews}`.                                                                                           |
-| **Dependências de Skills** | Nenhuma                                                                                                                                                                                                                     |
-| **Dependências de Tools**  | Codex CLI, Python 3.11+                                                                                                                                                                                                     |
-
-#### EX-34. Hermes Ops (`excrtx-harness-hermesops`)
-
-| Campo                      | Detalhe                                                                                                                                                                                                                                                                                                                                              |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Funcionalidade**         | Opera Codex no ecossistema Hermes com dois trilhos: **Trilho A** (CLI/execução: editar/criar arquivos, rodar comandos, revisão com diffs) e **Trilho B** (Delegação/raciocínio: análise, síntese, plano, alternativas). Tabela comparativa de purpose/method/safety flags/evidence por trilho. Cada trilho declarado explicitamente. Nunca misturar. |
-| **Como usar**              | Ativado quando o executivo pede: "delegue pro Codex", "integre Codex", "use Codex só para pensar". Trilho A via wrapper caseiro, Trilho B via `delegate_task` com provider `openai-codex`.                                                                                                                                                           |
-| **Instalação**             | `setup.sh` copia skill e templates. Requer `hermes auth list` com `openai-codex` configurado.                                                                                                                                                                                                                                                        |
-| **Dependências de Skills** | `excrtx-harness-core`, `excrtx-govern-tools`                                                                                                                                                                                                                                                                                                         |
-| **Dependências de Tools**  | Codex CLI, Hermes auth (`openai-codex` provider)                                                                                                                                                                                                                                                                                                     |
-
 #### EX-35. Surface Architecture (`excrtx-harness-surfaces`)
 
 | Campo                      | Detalhe                                                                                                                                                                                                                                                                                                             |
@@ -549,7 +519,7 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Funcionalidade**         | Instruções e guias para estender o Hermes Agent com comandos slash personalizados adicionando registros a `commands.py`, handlers em `cli.py` e dispatches em `gateway/run.py` (cadeia principal e `_DEDICATED_HANDLERS`). Inclui guia de diagnóstico de dispatches de slash commands no Telegram/Discord. |
 | **Como usar**              | Seguir a arquitetura de dispatch e registro de comandos detalhada no guia `slash-command-dispatch-debug.md`.                                                                                                                                                                                               |
 | **Instalação**             | `setup.sh` copia a skill.                                                                                                                                                                                                                                                                                  |
-| **Dependências de Skills** | `excrtx-harness-hermesops`, `excrtx-harness-tooldev`, `excrtx-govern-tools`                                                                                                                                                                                                                                |
+| **Dependências de Skills** | `excrtx-harness-tooldev`, `excrtx-govern-tools`                                                                                                                                                                                                                                |
 | **Dependências de Tools**  | Hermes runtime, Telegram/Discord Gateway                                                                                                                                                                                                                                                                   |
 
 #### EX-52. Quality Gate Enforced (`excrtx-quality-gate`)
@@ -614,6 +584,82 @@ Organizadas em 7 categorias funcionais, totalizando **44 skills**.
 | **Fontes gratuitas**       | Reddit (RSS público), Hacker News (Algolia), YouTube (yt-dlp), Polymarket (API pública), GitHub (gh CLI).                                                                                                                                                                           |
 | **Fontes com key**         | X/Twitter (`XAI_API_KEY`), TikTok/Instagram/Threads/Pinterest (`SCRAPECREATORS_API_KEY`), Bluesky (`BSKY_HANDLE`+`BSKY_APP_PASSWORD`), Web Search (`BRAVE_API_KEY`), Deep Research (papel LLM **default**).                                                                         |
 | **Dependências de Tools**  | Python 3.12+, yt-dlp, Node.js, gh CLI. Reasoning (planner/reranker) usa o papel LLM **default** (`EXOCORTEX_DEFAULT_*`).                                                                                                                                                            |
+
+---
+
+## Supporting / Auxiliary Skills
+
+Skills de suporte que não carregam um ID EX-catalogado próprio, mas sustentam features catalogadas ou fornecem capacidades transversais. Cada uma tem `SKILL.md` em `skills/` e é carregada pelo bundle principal.
+
+| Skill | Propósito | Suporta |
+| ----- | --------- | ------- |
+| `assessment-question-authoring` | Produz e revisa questões de múltipla escolha de alta qualidade a partir de materiais de curso locais e/ou NotebookLM, com foco em distratores plausíveis e entrega de rascunho para curadoria manual. | EX-03, EX-04 |
+| `excrtx-adapter-docbrain-acervo` | Transforma a saída estruturada do DocBrain em markdown com proveniência pronto para entrada no Acervo. | EX-27, EX-11 |
+| `excrtx-crawler-brasil` | Crawler setorial brasileiro para pesquisa CPG/FMCG; varre 10+ fontes RSS com cache local e saída JSON normalizada compatível com o pipeline de pesquisa do Exocórtex. | `excrtx-research-cpg-brasil`, EX-57 |
+| `excrtx-github-issue-planning` | Transforma planos, refatorações e trabalhos de microverso do Exocórtex em grafos de issues no GitHub com meta-issue, subissues dependentes e critérios de aceitação legíveis por subagentes. | EX-10, infraestrutura de desenvolvimento |
+| `excrtx-harness-delivery` | Arquitetura de entrega Hermes — conectores OAuth, publicação de artefatos, APIs CLI locais, separação runtime/workspace e ativação de superfície de contingência. | EX-22, EX-24, EX-25 |
+| `excrtx-integrate-agent-reach` | Skill adaptadora para a CLI Agent-Reach; produz itens de pesquisa normalizados para o pipeline de pesquisa do Exocórtex. | EX-57, `excrtx-research-cpg-brasil` |
+| `excrtx-integrate-last30days` | Opera e mantém a skill de pesquisa `last30days` — motor multi-plataforma que varre 15 fontes nos últimos 30 dias. Cobre instalação, configuração de provider, isolamento de env, patching e testes. | EX-57 |
+| `excrtx-integrate-mcp` | Adiciona, configura e testa servidores MCP no Hermes para o ecossistema Exocórtex. Cobre transportes stdio e HTTP, descoberta e armadilhas de CLI com soluções. | EX-26, H-03 |
+| `excrtx-memory-deprecate` | Revisão semântica na inserção — detecta contradições entre uma nova memória do Acervo e as existentes no mesmo microverso; depreca arquivos voláteis superados automaticamente (ADR-014/016). | EX-11 (Acervo Manager), EX-56 (Síndico) |
+| `excrtx-memory-quarantine` | Ciclo de quarentena do Acervo — move arquivos obsoletos ou deprecados para quarentena, purga itens expirados, restaura dentro da janela de 30 dias (ADR-015). | EX-11 (Acervo Manager), EX-56 (Síndico) |
+| `excrtx-memory-syndic` | Agente autônomo de limpeza do Acervo — varre arquivos obsoletos/deprecados, coloca elegíveis em quarentena, purga quarentenas expiradas, reporta candidatos à consolidação. Executa sob o perfil `manut` (ADR-018). | EX-11 (Acervo Manager), EX-56 (Síndico) |
+| `excrtx-research-cpg-brasil` | Wrapper de pesquisa setorial para a indústria de bens de consumo no Brasil. Orquestra `last30days`, Agent-Reach, `excrtx-crawler-brasil` e documentos locais via DocBrain, entregando briefing executivo unificado em PT-BR. | EX-57, EX-07, EX-27 |
+| `excrtx-source-cnpj` | Coletor público de dados de CNPJ do registro de empresas brasileiro via BrasilAPI e ReceitaWS, com envelope JSON normalizado e cache local. | `excrtx-research-cpg-brasil`, EX-27 |
+| `excrtx-source-google-trends` | Consulta pública do Google Trends para interesse ao longo do tempo, interesse regional e consultas relacionadas via API Explore, com envelope JSON normalizado. | `excrtx-research-cpg-brasil`, EX-57 |
+| `excrtx-source-reclameaqui` | Coletor público de reputação de empresas brasileiras no Reclame Aqui, com tratamento de erros Cloudflare-aware e envelope JSON estruturado. | `excrtx-research-cpg-brasil` |
+
+> **Nota sobre o trio de memória:** `excrtx-memory-deprecate`, `excrtx-memory-quarantine` e `excrtx-memory-syndic` implementam o ciclo de vida autônomo do Acervo (ADR-014/015/018) orquestrado por EX-11 (Acervo Manager) e ativado sob o perfil de manutenção pelo EX-56 (Síndico).
+
+---
+
+## Serviços Opcionais & Infraestrutura
+
+Estes quatro serviços foram promovidos a **first-class GA** nesta release: cada um possui provisionamento dedicado, health check, smoke test e documentação própria.
+
+### Context7
+
+| Campo | Detalhe |
+| ----- | ------- |
+| **Toggle / Env** | `EXOCORTEX_ENABLE_CONTEXT7=1` / `CONTEXT7_API_KEY` |
+| **O que fornece** | Documentação técnica atualizada de bibliotecas via MCP (Context7 cloud). Resolve docs pelo nome do pacote/versão em tempo real. |
+| **Ativação** | `setup/step-11-integration-context7.sh` (executado pelo `setup.sh` quando habilitado) |
+| **Health / Smoke** | `provision/context7/scripts/smoke.sh` |
+| **Documentação** | `docs/setup-context7.md` |
+
+### Hindsight
+
+| Campo | Detalhe |
+| ----- | ------- |
+| **Toggle / Env** | `EXOCORTEX_ENABLE_HINDSIGHT=1` |
+| **O que fornece** | Memória operacional Docker — armazenamento persistente de observações de sessão fora do Acervo Cognitivo. Usado pelo EX-16 (Memória Operacional). |
+| **Ativação** | `setup/step-01-hindsight.sh` |
+| **Health / Smoke** | Endpoint `/health` em runtime; `provision/hindsight/scripts/smoke.sh` |
+| **Documentação** | `docs/setup-hindsight.md` |
+
+### Hermes WebUI
+
+| Campo | Detalhe |
+| ----- | ------- |
+| **Toggle / Env** | `EXOCORTEX_ENABLE_HERMES_WEBUI=1` |
+| **O que fornece** | Cockpit web opcional para o runtime Hermes — fork controlado com customizações do Exocórtex (catálogo em `hermes-webui/EXOCRTX_MODIFICATIONS.md`). |
+| **Ativação** | `setup/step-10b-hermes-webui.sh` |
+| **Health / Smoke** | `provision/hermes-webui/scripts/smoke.sh` |
+| **Documentação** | `provision/hermes-webui/README.md` |
+
+### Firecrawl
+
+| Campo | Detalhe |
+| ----- | ------- |
+| **Toggle / Env** | `EXOCORTEX_ENABLE_FIRECRAWL=1` (três níveis: self-host → servidor existente → degradar para alternativa) |
+| **O que fornece** | Scraping e extração web de alta fidelidade; usado por EX-30 (Browser Automation) e pelo pipeline de pesquisa. |
+| **Ativação** | `setup/step-11c-integration-firecrawl.sh` |
+| **Health / Smoke** | `provision/firecrawl/` (compose + install + smoke) |
+| **Documentação** | `docs/setup-firecrawl.md` |
+
+### Acervo MCP (infraestrutura central)
+
+O servidor MCP do Acervo (`provision/acervo-mcp/`) é infraestrutura central madura — não é opcional, mas está incluído aqui para completeza. Expõe o Acervo Cognitivo como fonte MCP para ferramentas externas e para o próprio runtime Hermes.
 
 ---
 

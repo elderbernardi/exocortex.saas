@@ -130,39 +130,46 @@ _install_gcloud() {
   # User-space install (all distros): download tar.gz
   if [ ! -d "$GCLOUD_INSTALL_DIR" ]; then
     info "Instalando gcloud CLI (user-space, sem root)..."
-    local tmpdir
-    tmpdir=$(mktemp -d)
-    local tarball="$tmpdir/google-cloud-cli.tar.gz"
 
-    if command -v curl >/dev/null 2>&1; then
-      curl -sL -o "$tarball" \
-        "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz" || {
-        warn "Falha ao baixar gcloud CLI"
-        rm -rf "$tmpdir"
-        return 1
+    # Run the download/extract block in a subshell so the trap 'rm -rf "$tmpdir"'
+    # fires at subshell exit — while $tmpdir is still in scope — on BOTH success
+    # and failure. A function-level trap with a local variable leaks on the success
+    # path because $tmpdir is out of scope by the time the script-level EXIT fires.
+    (
+      tmpdir=$(mktemp -d)
+      # Guard: mktemp -d always produces a /tmp/* path, never empty or unsafe.
+      trap 'rm -rf "$tmpdir"' EXIT
+
+      tarball="$tmpdir/google-cloud-cli.tar.gz"
+
+      if command -v curl >/dev/null 2>&1; then
+        curl -sL -o "$tarball" \
+          "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz" || {
+          warn "Falha ao baixar gcloud CLI"
+          exit 1
+        }
+      elif command -v wget >/dev/null 2>&1; then
+        wget -q -O "$tarball" \
+          "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz" || {
+          warn "Falha ao baixar gcloud CLI"
+          exit 1
+        }
+      else
+        warn "curl/wget não disponível — necessário para baixar gcloud CLI"
+        exit 1
+      fi
+
+      mkdir -p "$GCLOUD_INSTALL_DIR"
+      tar -xzf "$tarball" -C "$GCLOUD_INSTALL_DIR" --strip-components=1 || {
+        warn "Falha ao extrair gcloud CLI"
+        exit 1
       }
-    elif command -v wget >/dev/null 2>&1; then
-      wget -q -O "$tarball" \
-        "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz" || {
-        warn "Falha ao baixar gcloud CLI"
-        rm -rf "$tmpdir"
-        return 1
-      }
-    else
-      warn "curl/wget não disponível — necessário para baixar gcloud CLI"
-      rm -rf "$tmpdir"
-      return 1
-    fi
 
-    mkdir -p "$GCLOUD_INSTALL_DIR"
-    tar -xzf "$tarball" -C "$GCLOUD_INSTALL_DIR" --strip-components=1 || {
-      warn "Falha ao extrair gcloud CLI"
-      rm -rf "$tmpdir"
-      return 1
-    }
-
-    "$GCLOUD_INSTALL_DIR/install.sh" --quiet --path-update=false 2>/dev/null || true
-    rm -rf "$tmpdir"
+      # gcloud's own install.sh modifies shell rc files; --path-update=false skips
+      # that. Non-zero exit here is expected on some distros/versions — intentional.
+      "$GCLOUD_INSTALL_DIR/install.sh" --quiet --path-update=false 2>/dev/null || true
+      # Subshell exits here; trap fires and removes $tmpdir cleanly.
+    ) || return 1
   fi
 
   if [ -x "$GCLOUD_BIN" ]; then

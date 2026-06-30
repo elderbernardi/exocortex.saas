@@ -60,7 +60,7 @@ Skill orquestradora que encapsula a persona **síndico** para tarefas de zelador
 - Acionamento automático via `hermes cron` (rotina agendada)
 - Perfil `manut` ativo (SOUL.md do manut carregado)
 
-**Don't use for:** Criação de artefatos ou conteúdo novo (use `excrtx-produce-*`). Execução de tarefas de produção (use perfil `exec` ou `chat`). Onboarding de novos microversos (use `excrtx-memory-newmicro`). Debugging ou diagnóstico técnico do Hermes runtime (use `excrtx-harness-hermesops`).
+**Don't use for:** Criação de artefatos ou conteúdo novo (use `excrtx-produce-*`). Execução de tarefas de produção (use perfil `exec` ou `chat`). Onboarding de novos microversos (use `excrtx-memory-newmicro`). Debugging ou diagnóstico técnico do Hermes runtime.
 
 ## Persona Síndico
 

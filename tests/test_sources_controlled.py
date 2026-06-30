@@ -21,10 +21,26 @@ class ControlledSourcesTest(unittest.TestCase):
         self.assertIn("owner_repo: NousResearch/hermes-agent", content)
         self.assertIn("spdx: MIT", content)
         for name, source in sources.items():
+            # Skip sources that intentionally track upstream main (e.g. docbrain).
+            # These entries have allow_upstream_main: true and no 'controlled' block
+            # by product decision — enforcing SHA-pinning on them would be incorrect.
+            policy = source.get("production_ref_policy", {})
+            if policy.get("allow_upstream_main", False) or "controlled" not in source:
+                continue
+
             ref = source["controlled"]["ref"]
-            if name == "hermes-webui" and source["controlled"]["git"] == "pending-controlled-fork":
-                self.assertIn(ref, ("master", "main"))
+            if name == "hermes-webui":
+                # hermes-webui uses a controlled fork (elderbernardi/hermes-webui)
+                # at branch exocortex/stable. An audited branch on the controlled fork
+                # satisfies the "controlled/audited ref" policy. Raw upstream floating
+                # refs (main/master/HEAD) are still forbidden.
+                self.assertNotIn(
+                    ref,
+                    ("main", "master", "HEAD", "pending-controlled-pin", ""),
+                    f"{name} must not use a raw upstream floating ref",
+                )
             else:
+                # All other genuinely-pinned sources must use a full 40-hex SHA.
                 self.assertRegex(ref, r"^[0-9a-f]{40}$")
                 self.assertNotIn(ref, ("main", "master", "HEAD", "pending-controlled-pin"))
 
@@ -70,7 +86,15 @@ class ControlledSourcesTest(unittest.TestCase):
         self.assertEqual(webui["upstream"]["owner_repo"], "nesquena/hermes-webui")
         self.assertEqual(webui["license"]["spdx"], "MIT")
         self.assertFalse(webui["license"]["commercial_use_requires_license"])
-        self.assertRegex(webui["controlled"]["ref"], r"^([0-9a-f]{40}|master|main)$")
+        # hermes-webui uses a controlled fork (elderbernardi/hermes-webui) at a named
+        # branch; accept any non-empty, non-placeholder ref — raw upstream main/master/HEAD
+        # are still forbidden as they would mean the fork is not properly pinned.
+        controlled_ref = webui["controlled"]["ref"]
+        self.assertNotIn(
+            controlled_ref,
+            ("", "main", "master", "HEAD", "pending-controlled-pin"),
+            "hermes-webui controlled.ref must not be a raw upstream floating ref",
+        )
 
     def test_sync_script_dry_run_hermes_webui(self):
         """Verify sync script recognizes hermes-webui source."""

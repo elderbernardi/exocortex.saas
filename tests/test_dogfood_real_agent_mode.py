@@ -196,45 +196,5 @@ class DogfoodRealAgentModeTest(unittest.TestCase):
             self.assertEqual(probe["local_uv"], "skills/excrtx-integrate-browser/.runtime/uv/uv")
 
 
-    def test_ex33_real_agent_probe_fails_when_wrappers_missing(self):
-        result = classify_agent_transcript(
-            {"feature_id": "EX-33", "risk": "P0"},
-            "Verifiquei localmente.",
-            [{"tool": "terminal", "probe": "ex33_codex_harness_wrappers", "run_wrapper_exists": False, "review_wrapper_exists": False, "codex_learning_dir_exists": False}],
-        )
-        self.assertEqual(result["status"], "FAIL")
-        self.assertTrue(any(c["met"] is False for c in result["criteria"]))
-
-    def test_ex33_real_agent_probe_uses_hermes_home_and_detects_wrappers(self):
-        with tempfile.TemporaryDirectory() as td:
-            root = Path(td) / "repo"
-            root.mkdir()
-            hermes_home = Path(td) / "hermes-home"
-            run_wrapper = hermes_home / "scripts" / "codex_learning" / "run_codex_with_learning.py"
-            review_wrapper = hermes_home / "scripts" / "codex_learning" / "review_latest_run.py"
-            learning_dir = hermes_home / "codex-learning"
-            run_wrapper.parent.mkdir(parents=True)
-            learning_dir.mkdir(parents=True)
-            run_wrapper.write_text("#!/usr/bin/env python3\n", encoding="utf-8")
-            review_wrapper.write_text("#!/usr/bin/env python3\n", encoding="utf-8")
-
-            previous = os.environ.get("HERMES_HOME")
-            os.environ["HERMES_HOME"] = str(hermes_home)
-            try:
-                probe = probe_feature_environment(root, "EX-33")[0]
-            finally:
-                if previous is None:
-                    os.environ.pop("HERMES_HOME", None)
-                else:
-                    os.environ["HERMES_HOME"] = previous
-
-            self.assertTrue(probe["run_wrapper_exists"])
-            self.assertTrue(probe["review_wrapper_exists"])
-            self.assertTrue(probe["codex_learning_dir_exists"])
-            self.assertEqual(probe["run_wrapper"], str(run_wrapper))
-            self.assertEqual(probe["review_wrapper"], str(review_wrapper))
-            self.assertEqual(probe["codex_learning_dir"], str(learning_dir))
-
-
 if __name__ == "__main__":
     unittest.main()

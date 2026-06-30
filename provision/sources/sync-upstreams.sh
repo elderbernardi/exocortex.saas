@@ -210,7 +210,16 @@ for row in "${SOURCE_ROWS[@]}"; do
   [ -n "$UPSTREAM_GIT" ] || fail "Fonte $NAME sem upstream.git"
   [ -n "$CONTROLLED_REF" ] || fail "Fonte $NAME sem controlled.ref"
 
-  if [ "$NAME" != "hermes-webui" ]; then
+  if [ "$NAME" = "hermes-webui" ]; then
+    # hermes-webui uses a controlled fork (elderbernardi/hermes-webui) at a named
+    # branch (exocortex/stable). An audited branch on the controlled fork satisfies
+    # the "controlled/audited ref" policy; raw upstream floating refs are still forbidden.
+    case "$CONTROLLED_REF" in
+      main|master|HEAD|"pending-controlled-pin"|"")
+        fail "Fonte $NAME usa controlled.ref flutuante ou inválida proibida: $CONTROLLED_REF"
+        ;;
+    esac
+  else
     case "$CONTROLLED_REF" in
       main|master|HEAD)
         fail "Fonte $NAME usa controlled.ref flutuante proibida: $CONTROLLED_REF"
@@ -219,10 +228,6 @@ for row in "${SOURCE_ROWS[@]}"; do
 
     if [[ ! "$CONTROLLED_REF" =~ ^[0-9a-f]{40}$ ]]; then
       fail "Fonte $NAME deve usar controlled.ref com commit SHA-1 completo de 40 caracteres: $CONTROLLED_REF"
-    fi
-  else
-    if [[ ! "$CONTROLLED_REF" =~ ^([0-9a-f]{40}|master|main)$ ]]; then
-      fail "Fonte $NAME deve usar controlled.ref com commit SHA-1 completo, master ou main: $CONTROLLED_REF"
     fi
   fi
 

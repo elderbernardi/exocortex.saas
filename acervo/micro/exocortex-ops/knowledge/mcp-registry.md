@@ -3,7 +3,7 @@ type: knowledge
 title: Registro de MCPs
 description: '| Nome | Transporte | Tools | Status | Auth | Health check | Modo degradado |'
 tags: [mcp, notebooklm, acervo, integrations]
-timestamp: 2026-06-28
+timestamp: 2026-06-05
 class: volátil
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-28T00:00:00Z

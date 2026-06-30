@@ -41,7 +41,6 @@ EXPECTED_SKILLS=(
   "excrtx-produce-slides" "excrtx-produce-oficios" "excrtx-brandkit-generator"
   "assessment-question-authoring"
   # Integration
-  "excrtx-harness-core" "excrtx-harness-codexint" "excrtx-harness-hermesops"
   "excrtx-harness-delivery" "excrtx-harness-maintenance"
   "excrtx-integrate-docbrain"
   "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-imbroke" "excrtx-harness-tooldev"
@@ -200,19 +199,30 @@ else
   warn "Servidor MCP do Acervo ausente em $SCRIPT_DIR/scripts/acervo_mcp_server.py"
   ERRORS=$((ERRORS + 1))
 fi
-if python3 "$SCRIPT_DIR/scripts/acervo_mcp_server.py" --self-test --acervo-root "$ACERVO" >/tmp/exocortex_acervo_mcp_selftest.log 2>&1; then
+# Durable log dir — falls back to /tmp with a warning if HERMES_HOME is unset.
+_s13_log_dir=""
+if [ -n "${HERMES_HOME:-}" ]; then
+  _s13_log_dir="$HERMES_HOME/logs/setup"
+  mkdir -p "$_s13_log_dir"
+else
+  warn "HERMES_HOME não definido; logs de setup em /tmp (fallback)"
+  _s13_log_dir=/tmp
+fi
+_s13_ts="$(date +%Y%m%d_%H%M%S)"
+if python3 "$SCRIPT_DIR/scripts/acervo_mcp_server.py" --self-test --acervo-root "$ACERVO" \
+    >"$_s13_log_dir/step-13_mcp_selftest_${_s13_ts}.log" 2>&1; then
   log "Acervo MCP self-test local: OK"
 else
-  warn "Acervo MCP self-test falhou; veja /tmp/exocortex_acervo_mcp_selftest.log"
+  warn "Acervo MCP self-test falhou; veja $_s13_log_dir/step-13_mcp_selftest_${_s13_ts}.log"
   ERRORS=$((ERRORS + 1))
 fi
 if command -v hermes > /dev/null 2>&1; then
   if hermes mcp list 2>/dev/null | grep -Eq '^[[:space:]]*acervo[[:space:]]'; then
     log "MCP server 'acervo' registrado"
-    if hermes mcp test acervo >/tmp/exocortex_acervo_mcp_health.log 2>&1; then
+    if hermes mcp test acervo >"$_s13_log_dir/step-13_mcp_health_${_s13_ts}.log" 2>&1; then
       log "MCP server 'acervo' health check: OK"
     else
-      warn "MCP server 'acervo' health check falhou; veja /tmp/exocortex_acervo_mcp_health.log"
+      warn "MCP server 'acervo' health check falhou; veja $_s13_log_dir/step-13_mcp_health_${_s13_ts}.log"
       ERRORS=$((ERRORS + 1))
     fi
   else
@@ -223,10 +233,11 @@ fi
 
 echo ""
 echo "Smoke test de memória:"
-if python3 "$SCRIPT_DIR/scripts/smoke_memory_routing.py" --hermes-home "$HERMES_HOME" --acervo "$ACERVO" --scan-global --skip-micro-scan >/tmp/exocortex_memory_smoke.log 2>&1; then
+if python3 "$SCRIPT_DIR/scripts/smoke_memory_routing.py" --hermes-home "$HERMES_HOME" --acervo "$ACERVO" --scan-global --skip-micro-scan \
+    >"$_s13_log_dir/step-13_memory_smoke_${_s13_ts}.log" 2>&1; then
   log "memory routing smoke: OK"
 else
-  warn "memory routing smoke falhou; veja /tmp/exocortex_memory_smoke.log"
+  warn "memory routing smoke falhou; veja $_s13_log_dir/step-13_memory_smoke_${_s13_ts}.log"
   ERRORS=$((ERRORS + 1))
 fi
 

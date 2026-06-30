@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Step 04: Copiar acervo (seed + ops + templates + tools + codex)
+# Step 04: Copiar acervo (seed + ops + templates + tools)
 # =============================================================================
 
 # Standalone support
@@ -127,19 +127,4 @@ EOF
   log "Quarentena inicializada: $QUARANTINE_DIR"
 else
   log "Quarentena já existe: $QUARANTINE_DIR"
-fi
-
-# Instalar wrappers do Codex Core Harness (EX-33)
-CODEX_WRAPPERS_SRC="$SCRIPT_DIR/scripts/codex_learning"
-CODEX_WRAPPERS_DST="$HERMES_HOME/scripts/codex_learning"
-CODEX_LEARNING_DST="$HERMES_HOME/codex-learning"
-if [ -d "$CODEX_WRAPPERS_SRC" ]; then
-  mkdir -p "$CODEX_WRAPPERS_DST"
-  mkdir -p "$CODEX_LEARNING_DST"/{runs,events,reviews}
-  cp -r "$CODEX_WRAPPERS_SRC"/* "$CODEX_WRAPPERS_DST/" 2>/dev/null || true
-  chmod +x "$CODEX_WRAPPERS_DST"/*.py 2>/dev/null || true
-  log "Codex wrappers: $(ls -1 "$CODEX_WRAPPERS_DST"/*.py 2>/dev/null | wc -l) scripts"
-  log "Codex learning dir pronto: $CODEX_LEARNING_DST"
-else
-  warn "Wrappers do Codex não encontrados: $CODEX_WRAPPERS_SRC"
 fi

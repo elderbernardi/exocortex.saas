@@ -109,7 +109,19 @@ configure_acervo_mcp() {
   local python_bin
   python_bin="$(command -v python3)"
 
-  local self_test_log=/tmp/exocortex_acervo_mcp_selftest.log
+  # Durable log dir — falls back to /tmp with a warning if HERMES_HOME is unset.
+  local _log_dir
+  if [ -n "${HERMES_HOME:-}" ]; then
+    _log_dir="$HERMES_HOME/logs/setup"
+    mkdir -p "$_log_dir"
+  else
+    warn "HERMES_HOME não definido; logs de setup em /tmp (fallback)"
+    _log_dir=/tmp
+  fi
+  local _ts
+  _ts="$(date +%Y%m%d_%H%M%S)"
+
+  local self_test_log="$_log_dir/step-11b_selftest_${_ts}.log"
   if "$python_bin" "$server_script" --self-test --acervo-root "$ACERVO" >"$self_test_log" 2>&1; then
     log "Acervo MCP self-test local: OK"
   else
@@ -121,7 +133,7 @@ configure_acervo_mcp() {
   if _acervo_mcp_exists; then
     log "MCP server 'acervo' já configurado — reconciliando config"
   else
-    local add_log=/tmp/exocortex_acervo_mcp_add.log
+    local add_log="$_log_dir/step-11b_mcp_add_${_ts}.log"
     if printf 'y\n' | hermes mcp add acervo \
       --command "$python_bin" \
       --env "ACERVO=$ACERVO" "EXOCORTEX_HOME=$EXOCORTEX_HOME" "HERMES_HOME=$HERMES_HOME" \
@@ -140,7 +152,7 @@ configure_acervo_mcp() {
     return 0
   fi
 
-  local health_log=/tmp/exocortex_acervo_mcp_health.log
+  local health_log="$_log_dir/step-11b_health_${_ts}.log"
   if hermes mcp test acervo >"$health_log" 2>&1; then
     log "MCP server 'acervo' registrado e saudável"
     rm -f "$HERMES_HOME/reminders/acervo-mcp.md"

@@ -164,6 +164,112 @@ else
 fi
 
 # =============================================================================
+# FASE 2 — Optional Services Smoke
+# =============================================================================
+# Each enabled optional service runs its own smoke script. Disabled services
+# are cleanly skipped. Pass/fail aggregates into the suite error counter.
+#
+# Toggle names:   EXOCORTEX_ENABLE_HINDSIGHT
+#                 EXOCORTEX_ENABLE_HERMES_WEBUI
+#                 EXOCORTEX_ENABLE_CONTEXT7
+#                 EXOCORTEX_ENABLE_FIRECRAWL
+# =============================================================================
+if [ "${NO_SMOKE:-0}" != "1" ]; then
+  echo ""
+  echo -e "${_BOLD}═══ FASE 2 — Optional Services Smoke ═══${_NC}"
+
+  # ── Hindsight ──────────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_HINDSIGHT:-0}" = "1" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Hindsight: running smoke..."
+    _hs_smoke="$SCRIPT_DIR/../provision/hindsight/scripts/smoke.sh"
+    if [ -f "$_hs_smoke" ]; then
+      if bash "$_hs_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Hindsight smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Hindsight smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("HINDSIGHT_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Hindsight smoke script not found: $_hs_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("HINDSIGHT_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Hindsight: skipped — disabled (EXOCORTEX_ENABLE_HINDSIGHT != 1)${_NC}"
+  fi
+
+  # ── Hermes WebUI ───────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_HERMES_WEBUI:-0}" = "1" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Hermes WebUI: running smoke..."
+    _webui_smoke="$SCRIPT_DIR/../provision/hermes-webui/scripts/smoke.sh"
+    if [ -f "$_webui_smoke" ]; then
+      if bash "$_webui_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Hermes WebUI smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Hermes WebUI smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("HERMES_WEBUI_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Hermes WebUI smoke script not found: $_webui_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("HERMES_WEBUI_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Hermes WebUI: skipped — disabled (EXOCORTEX_ENABLE_HERMES_WEBUI != 1)${_NC}"
+  fi
+
+  # ── Context7 ───────────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_CONTEXT7:-0}" = "1" ] || [ -n "${CONTEXT7_API_KEY:-}" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Context7: running smoke..."
+    _ctx7_smoke="$SCRIPT_DIR/../provision/context7/scripts/smoke.sh"
+    if [ -f "$_ctx7_smoke" ]; then
+      if bash "$_ctx7_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Context7 smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Context7 smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("CONTEXT7_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Context7 smoke script not found: $_ctx7_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("CONTEXT7_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Context7: skipped — disabled (EXOCORTEX_ENABLE_CONTEXT7 != 1 and CONTEXT7_API_KEY unset)${_NC}"
+  fi
+
+  # ── Firecrawl ──────────────────────────────────────────────────────────────
+  if [ "${EXOCORTEX_ENABLE_FIRECRAWL:-0}" = "1" ]; then
+    echo -e "  ${_CYAN}ℹ${_NC} Firecrawl: running smoke..."
+    _fc_smoke="$SCRIPT_DIR/../provision/firecrawl/scripts/smoke.sh"
+    if [ -f "$_fc_smoke" ]; then
+      if bash "$_fc_smoke"; then
+        echo -e "  ${_GREEN}✓${_NC} Firecrawl smoke PASS"
+      else
+        echo -e "  ${_RED}✗${_NC} Firecrawl smoke FAIL"
+        TOTAL_FAILED=$((TOTAL_FAILED + 1))
+        DEFINITIVE_FAILS+=("FIRECRAWL_SMOKE")
+      fi
+    else
+      echo -e "  ${_YELLOW}⚠${_NC} Firecrawl smoke script not found: $_fc_smoke"
+      TOTAL_FAILED=$((TOTAL_FAILED + 1))
+      DEFINITIVE_FAILS+=("FIRECRAWL_SMOKE")
+    fi
+  else
+    echo -e "  ${_GRAY}Firecrawl: skipped — disabled (EXOCORTEX_ENABLE_FIRECRAWL != 1)${_NC}"
+  fi
+
+  echo ""
+  echo -e "${_BOLD}═══ Optional Services Smoke completo ═══${_NC}"
+else
+  echo ""
+  echo -e "${_GRAY}Optional Services Smoke pulado (--no-smoke)${_NC}"
+fi
+
+# =============================================================================
 # FASE 3 — Auto-Repair (Hermes headless conserta features que falharam)
 # =============================================================================
 if [ "$NO_REPAIR" != "1" ] && [ ${#FAILED_FEATURES[@]} -gt 0 ]; then

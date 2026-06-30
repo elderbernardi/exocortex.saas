@@ -1,7 +1,7 @@
 ---
 type: context
 title: Exocórtex Dev
-description: Desenvolvimento do framework Exocórtex.IA — skills, harness, acervo, integrações e evolução do sistema sobre Hermes Agent.
+description: Desenvolvimento do framework Exocórtex.IA — skills, harness, acervo, integrações e evolução do sistema com Hermes Agent.
 tags: []
 timestamp: 2026-06-08
 class: perene
