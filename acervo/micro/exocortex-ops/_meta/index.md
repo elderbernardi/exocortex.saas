@@ -68,8 +68,8 @@ Microverso canônico para setup, operação, manutenção, diagnóstico, integra
 - `workflows/installer-memory-improvements-task.md`
 
 ### Tools
+- `micro/exocortex-ops/tools/docbrain-operacional.md`
 - `tools/hermes-cli.md`
-- `tools/docbrain.md`
 - `tools/notebooklm.md`
 
 ### Templates
