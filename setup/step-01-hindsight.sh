@@ -31,6 +31,28 @@ setup_hindsight_local_docker() {
   local hs_api_port="${EXOCORTEX_HINDSIGHT_API_PORT:-8888}"
   local hs_ui_port="${EXOCORTEX_HINDSIGHT_UI_PORT:-9999}"
   mkdir -p "$hs_data"
+
+  # Hindsight roda rootless como UID 1000 dentro do container. Em hosts onde o
+  # usuário executor tem outro UID (ex.: ubuntu=1001), o bind mount nasce com
+  # ownership incompatível e o banco embutido entra em crash-loop. Tentar
+  # corrigir proativamente quando sudo non-interactive estiver disponível; se
+  # não estiver, seguir e deixar um aviso explícito antes do compose up.
+  local hs_container_uid="${EXOCORTEX_HINDSIGHT_CONTAINER_UID:-1000}"
+  local hs_container_gid="${EXOCORTEX_HINDSIGHT_CONTAINER_GID:-1000}"
+  local hs_owner_uid=""
+  if command -v stat >/dev/null 2>&1; then
+    hs_owner_uid=$(stat -c '%u' "$hs_data" 2>/dev/null || true)
+  fi
+  if [ -n "$hs_owner_uid" ] && [ "$hs_owner_uid" != "$hs_container_uid" ]; then
+    if sudo -n true >/dev/null 2>&1; then
+      sudo chown -R "${hs_container_uid}:${hs_container_gid}" "$hs_data"
+      log "Hindsight data ownership alinhado para ${hs_container_uid}:${hs_container_gid}"
+    else
+      warn "Hindsight data dir owner=${hs_owner_uid}; container espera UID ${hs_container_uid}"
+      warn "  Sem sudo non-interactive — pode haver crash-loop por permissão no banco embutido"
+    fi
+  fi
+
   if [ "${EXOCORTEX_HINDSIGHT_RESET_DATA:-0}" = "1" ]; then
     if [ "${EXOCORTEX_HINDSIGHT_CONFIRM_DELETE:-}" = "DELETE_HINDSIGHT_MEMORY" ]; then
       warn "Confirmado: removendo memória local Hindsight (data/)"
@@ -70,6 +92,36 @@ EOF
   local resolved_key="CHANGE_ME"
   local resolved_model="gpt-4o-mini"
   local resolved_base=""
+
+  # Em execuções isoladas (ex.: testes), o shell pode injetar apenas o papel
+  # default enquanto o resolvedor ainda enxerga EXOCORTEX_AUX_* em arquivos de
+  # fallback do repo. Quando o processo pai definiu explicitamente o default,
+  # mas não exportou um campo equivalente para aux, resolvemos primeiro o papel
+  # default e promovemos seus campos faltantes para aux no ambiente atual.
+  if [ -n "${_EXOCORTEX_PARENT_HAS_DEFAULT_PROVIDER:-}${_EXOCORTEX_PARENT_HAS_DEFAULT_MODEL:-}${_EXOCORTEX_PARENT_HAS_DEFAULT_API_KEY:-}${_EXOCORTEX_PARENT_HAS_DEFAULT_BASE_URL:-}" ]; then
+    local effective_provider="${_EXOCORTEX_PARENT_AUX_PROVIDER:-${_EXOCORTEX_PARENT_DEFAULT_PROVIDER:-}}"
+    local effective_model="${_EXOCORTEX_PARENT_AUX_MODEL:-${_EXOCORTEX_PARENT_DEFAULT_MODEL:-}}"
+    local effective_key="${_EXOCORTEX_PARENT_AUX_API_KEY:-${_EXOCORTEX_PARENT_DEFAULT_API_KEY:-}}"
+    local effective_base="${_EXOCORTEX_PARENT_AUX_BASE_URL:-}"
+
+    if [ -z "$effective_base" ] && [ -n "$effective_provider" ] && command -v python3 >/dev/null 2>&1; then
+      effective_base="$(python3 - "$SCRIPT_DIR/setup/providers.json" "$effective_provider" <<'PY'
+import json, sys
+providers_file, provider = sys.argv[1], sys.argv[2]
+try:
+    data = json.load(open(providers_file, encoding='utf-8'))
+    print(data.get('providers', {}).get(provider, {}).get('base_url', ''))
+except Exception:
+    print('')
+PY
+)"
+    fi
+
+    [ -n "$effective_provider" ] && export EXOCORTEX_AUX_PROVIDER="$effective_provider"
+    [ -n "$effective_model" ] && export EXOCORTEX_AUX_MODEL="$effective_model"
+    [ -n "$effective_key" ] && export EXOCORTEX_AUX_API_KEY="$effective_key"
+    [ -n "$effective_base" ] && export EXOCORTEX_AUX_BASE_URL="$effective_base"
+  fi
 
   exocortex_resolve_role aux
   if [ "$ROLE_USABLE" = "1" ]; then

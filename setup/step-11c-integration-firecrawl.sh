@@ -48,7 +48,7 @@ _firecrawl_write_reminder() {
 
 O Firecrawl não foi provisionado nem encontrado neste setup.
 
-- Self-host desligado: \`EXOCORTEX_ENABLE_FIRECRAWL\` != 1
+- Self-host não ficou ativo neste setup (toggle desligado, Docker ausente ou provisionamento falhou)
 - Nenhum servidor respondeu em \`FIRECRAWL_BASE_URL\` (${base:-não definida})
 
 ## Skills que degradam (fallback automático, sem erro fatal)
@@ -78,14 +78,25 @@ _firecrawl_register_mcp() {
     log "MCP server 'firecrawl' já configurado"
     return 0
   fi
+  command -v curl >/dev/null 2>&1 || { info "curl não encontrado; pulando registro MCP do Firecrawl"; return 0; }
   local mcp_url="${base%/}/mcp"
+  local mcp_code
+  mcp_code="$(curl -so /dev/null --max-time 5 -w "%{http_code}" "$mcp_url" 2>/dev/null || true)"
+  case "$mcp_code" in
+    200|204|400|401|403|405|406)
+      ;;
+    *)
+      info "Firecrawl ativo em $base, mas endpoint MCP não está disponível em $mcp_url (HTTP ${mcp_code:-000}) — pulando registro MCP"
+      return 0
+      ;;
+  esac
   # Firecrawl expõe um endpoint MCP HTTP; a key é opcional no self-host.
   if [ -n "${FIRECRAWL_API_KEY:-}" ]; then
-    printf 'y\n' | hermes mcp add firecrawl --url "$mcp_url" --env "FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}" >/dev/null 2>&1 \
+    printf 'n\ny\n' | hermes mcp add firecrawl --url "$mcp_url" --env "FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}" >/dev/null 2>&1 \
       && log "MCP server 'firecrawl' adicionado (url=$mcp_url, com API key)" \
       || warn "Falha ao adicionar MCP server 'firecrawl' (não-fatal; skills usam fallback)"
   else
-    printf 'y\n' | hermes mcp add firecrawl --url "$mcp_url" >/dev/null 2>&1 \
+    printf 'n\ny\n' | hermes mcp add firecrawl --url "$mcp_url" >/dev/null 2>&1 \
       && log "MCP server 'firecrawl' adicionado (url=$mcp_url, self-host sem key)" \
       || warn "Falha ao adicionar MCP server 'firecrawl' (não-fatal; skills usam fallback)"
   fi
@@ -98,29 +109,27 @@ configure_firecrawl() {
   # ── Tier 1: self-host via Docker ──────────────────────────────────────────
   if [ "${EXOCORTEX_ENABLE_FIRECRAWL:-0}" = "1" ]; then
     if ! command -v docker >/dev/null 2>&1; then
-      warn "Firecrawl self-host solicitado, mas docker não foi encontrado — pulando"
+      warn "Firecrawl self-host solicitado, mas docker não foi encontrado — tentando endpoint existente antes de degradar"
       info "  Instale Docker e rode novamente: EXOCORTEX_ENABLE_FIRECRAWL=1 bash setup.sh"
       info "  Ou aponte para um Firecrawl existente: FIRECRAWL_BASE_URL=<url> bash setup.sh"
-      return 0
-    fi
-    if [ ! -f "$FIRECRAWL_INSTALL_SCRIPT" ]; then
-      warn "Instalador do Firecrawl não encontrado: $FIRECRAWL_INSTALL_SCRIPT — pulando self-host"
-      return 0
-    fi
-    info "Tier 1: provisionando Firecrawl self-hosted (Docker)..."
-    # O instalador é idempotente (down/up guardados); falha dura aborta via
-    # set -euo pipefail no próprio install.sh — aqui tratamos como não-fatal
-    # para o setup global (a degradação cobre o resto).
-    if FIRECRAWL_BASE_URL="$base_url" bash "$FIRECRAWL_INSTALL_SCRIPT"; then
-      # Self-host = endpoint local; fixa a base URL para o restante do setup.
-      export FIRECRAWL_BASE_URL="$base_url"
-      log "Firecrawl self-hosted ativo em $base_url"
-      _firecrawl_register_mcp "$base_url"
+    elif [ ! -f "$FIRECRAWL_INSTALL_SCRIPT" ]; then
+      warn "Instalador do Firecrawl não encontrado: $FIRECRAWL_INSTALL_SCRIPT — tentando endpoint existente antes de degradar"
     else
-      warn "Falha ao provisionar Firecrawl self-hosted — caindo para degradação"
-      _firecrawl_write_reminder "$base_url"
+      info "Tier 1: provisionando Firecrawl self-hosted (Docker)..."
+      # O instalador é idempotente (down/up guardados); falha dura aborta via
+      # set -euo pipefail no próprio install.sh — aqui tratamos como não-fatal
+      # para o setup global (a degradação cobre o resto).
+      if FIRECRAWL_BASE_URL="$base_url" bash "$FIRECRAWL_INSTALL_SCRIPT"; then
+        # Self-host = endpoint local; fixa a base URL para o restante do setup.
+        export FIRECRAWL_BASE_URL="$base_url"
+        log "Firecrawl self-hosted ativo em $base_url"
+        _firecrawl_register_mcp "$base_url"
+      else
+        warn "Falha ao provisionar Firecrawl self-hosted — caindo para degradação"
+        _firecrawl_write_reminder "$base_url"
+      fi
+      return 0
     fi
-    return 0
   fi
 
   # ── Tier 2: servidor existente (BYO endpoint) ─────────────────────────────
@@ -132,7 +141,7 @@ configure_firecrawl() {
   fi
 
   # ── Tier 3: degradação graciosa ───────────────────────────────────────────
-  warn "Firecrawl indisponível (self-host desligado e $base_url não respondeu)"
+  warn "Firecrawl indisponível (self-host inativo/indisponível e $base_url não respondeu)"
   info "  Skills com dependência de Firecrawl usarão fallback (browser/erro estruturado)"
   _firecrawl_write_reminder "$base_url"
   return 0

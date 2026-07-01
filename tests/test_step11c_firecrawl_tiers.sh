@@ -10,7 +10,8 @@
 #         probe succeeds → uses existing, does NOT install, logs "existing".
 # T-FC04: Tier 3 (degrade) — toggle=0 AND probe fails → reminder written,
 #         install NOT invoked, exit 0 (never fails the run).
-# T-FC05: Tier 1 with docker absent → warn + skip (no install, exit 0).
+# T-FC05: Tier 1 with docker absent → try existing endpoint, then degrade with
+#         reminder when the probe fails; install NOT invoked, exit 0.
 # T-FC06: idempotent re-run of Tier 3 → still exit 0, reminder present.
 #
 # Strategy: source the step with EXOCORTEX_FIRECRAWL_SKIP_AUTORUN=1 so the
@@ -195,15 +196,16 @@ fi
 rm -rf "$BOX"
 
 # =============================================================================
-# T-FC05: Tier 1 but docker absent → warn + skip, no install, exit 0
+# T-FC05: Tier 1 but docker absent → degrade with reminder, no install, exit 0
 # =============================================================================
-echo -e "${BOLD}T-FC05: Tier 1 (toggle=1, docker ABSENT) → warn + skip${NC}"
+echo -e "${BOLD}T-FC05: Tier 1 (toggle=1, docker ABSENT) → degrade with reminder${NC}"
 BOX="$(make_sandbox absent down)"
 RC="$(run_tier "$BOX" "1" "http://127.0.0.1:3002")"
-if [ ! -f "$BOX/INSTALL_RAN" ] && [ "$RC" = "0" ]; then
-  pass "T-FC05: docker absent → skipped install, exit 0"
+REMINDER="$BOX/hermes_home/reminders/firecrawl.md"
+if [ ! -f "$BOX/INSTALL_RAN" ] && [ "$RC" = "0" ] && [ -f "$REMINDER" ]; then
+  pass "T-FC05: docker absent → degraded cleanly, reminder present, exit 0"
 else
-  fail_test "T-FC05" "expected no install + exit 0; rc=$RC ran=$([ -f "$BOX/INSTALL_RAN" ] && echo yes || echo no); out=$(cat "$BOX/OUT")"
+  fail_test "T-FC05" "expected no install + reminder + exit 0; rc=$RC ran=$([ -f "$BOX/INSTALL_RAN" ] && echo yes || echo no) reminder=$([ -f "$REMINDER" ] && echo yes || echo no); out=$(cat "$BOX/OUT")"
 fi
 rm -rf "$BOX"
 
