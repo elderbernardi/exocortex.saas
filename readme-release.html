@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exocórtex.IA — Custom Cognitive Extension for Executives</title>
+<title>Exocórtex.IA v1.1.1 — Cognitive Extension for Executives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,6 +18,7 @@
     --text-secondary: #8f8a91;
     --accent: #1376ed;
     --accent-glow: rgba(19, 118, 237, 0.25);
+    --success: #22c55e;
     --neutral: #d2d6e3;
     --border: rgba(210, 214, 227, 0.12);
     --code-bg: rgba(3, 18, 63, 0.6);
@@ -69,9 +70,35 @@
     line-height: 1.1;
     color: #fff;
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .hero h1 span { color: var(--accent); }
+  .hero .version-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .hero .ga-badge {
+    display: inline-block;
+    background: var(--success);
+    color: #03123f;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    margin-left: 8px;
+    vertical-align: middle;
+  }
   .hero .tagline {
     font-size: 1.15rem;
     color: var(--text-secondary);
@@ -82,7 +109,7 @@
   .hero .tagline strong { color: var(--accent); font-weight: 600; }
   .hero .blockquote-hero {
     position: relative;
-    max-width: 700px;
+    max-width: 720px;
     margin: 36px auto 0;
     padding: 24px 32px;
     background: var(--bg-elevated);
@@ -101,6 +128,34 @@
     margin: 0 auto;
     padding: 0 32px 80px;
   }
+
+  /* ── Highlights Grid ──────────────────────────── */
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .highlight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+  .highlight-card .label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+  }
+  .highlight-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .highlight-card .value.small { font-size: 1.15rem; }
 
   /* ── Headings ─────────────────────────────────── */
   h2 {
@@ -255,6 +310,16 @@
     font-family: var(--font-mono);
   }
 
+  /* ── Callout Box ──────────────────────────────── */
+  .callout {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .callout h4 { margin-top: 0; color: var(--accent); }
+
   /* ── Responsive ───────────────────────────────── */
   @media (max-width: 768px) {
     .hero { padding: 60px 20px 48px; }
@@ -262,6 +327,7 @@
     .container { padding: 0 20px 60px; }
     h2 { font-size: 1.4rem; margin-top: 44px; }
     pre { padding: 14px 16px; font-size: 0.78rem; }
+    .highlights-grid { grid-template-columns: 1fr; }
   }
 
   /* ── Print ────────────────────────────────────── */
@@ -280,38 +346,106 @@
 <!-- HERO                                             -->
 <!-- ═══════════════════════════════════════════════ -->
 <header class="hero">
+  <div class="version-badge">v1.1.1<span class="ga-badge">GA</span></div>
   <h1>Exocórtex<span>.IA</span></h1>
   <p class="tagline">Custom Cognitive Extension for Executives</p>
   <div class="blockquote-hero">
-    <strong>An exoskeleton for the mind.</strong> AI has no soul. You do.<br>
-    <strong>Exocórtex.IA</strong> is a structured cognitive extension designed for executives. It is not an autonomous replacement for your intelligence — it is a system designed to amplify what you are already capable of. Your cognition remains in command of thinking, creating, and deciding, while the Exocortex manages organization, memory persistence, context routing, and task execution.
+    <strong>An exoskeleton for the mind.</strong> AI has no soul. You do.<br><br>
+    <strong>Exocórtex.IA</strong> is a structured cognitive extension that amplifies executive cognition — not replaces it. It manages memory persistence, context routing, quality gates, and multi-domain execution while your mind stays in command of thinking, creating, and deciding.<br><br>
+    <strong>General Availability.</strong> 62 custom skills. 43 cataloged features. 4 optional infrastructure services. Runs on the Hermes Agent runtime. First GA release shipped 2026-06-29.
   </div>
 </header>
 
 <!-- ═══════════════════════════════════════════════ -->
-<!-- SYSTEM PHILOSOPHY                                -->
+<!-- HIGHLIGHTS                                       -->
 <!-- ═══════════════════════════════════════════════ -->
 <div class="container">
 
-<h2>🏛️ System Philosophy &amp; Foundations</h2>
+<h2>📊 Release at a Glance</h2>
 
-<p>The Exocortex operates on a fundamental premise: LLMs have vast knowledge of the past but lack intent and are blind to your immediate present. The Exocortex acts as the structural bridge, translating your intent and immediate context to govern and focus the processing power of the AI.</p>
+<div class="highlights-grid">
+  <div class="highlight-card">
+    <div class="label">Version</div>
+    <div class="value small">v1.1.1 — Post-GA</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Skills</div>
+    <div class="value">62</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Cataloged Features</div>
+    <div class="value">43 EX-IDs</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Codebase</div>
+    <div class="value small">201k lines</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Runtime</div>
+    <div class="value small">Hermes Agent</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">License</div>
+    <div class="value small">MIT</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Optional Services</div>
+    <div class="value">4</div>
+  </div>
+  <div class="highlight-card">
+    <div class="label">Release Date</div>
+    <div class="value small">30 Jun 2026</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- WHAT'S NEW IN V1.1                              -->
+<!-- ═══════════════════════════════════════════════ -->
+<h2>🆕 What's New in v1.1</h2>
+
+<h3>General Availability (v1.1.0)</h3>
+
+<ul>
+  <li><strong>Codex removed.</strong> OpenAI Codex integration (EX-32/33/34) retired — never part of the stable skill surface.</li>
+  <li><strong>Four optional services promoted to first-class</strong>: Context7 (tech docs MCP), Hindsight (Docker operational memory), Hermes WebUI (cockpit fork), and Firecrawl (tiered scraping). Each ships with a provisioning script, health check, and smoke test.</li>
+  <li><strong>Installer hardened.</strong> Durable setup logs in <code>$HERMES_HOME/logs/setup/</code>. Idempotent cron creation. Model-ID format validation at install time.</li>
+  <li><strong>DocBrain provisioned from live repo</strong> (<code>elderbernardi/docbrain</code> tracking main). Deps refreshed before every build.</li>
+  <li><strong>57→62 skills</strong> across 7 categories with new supporting skills for the GA surface.</li>
+</ul>
+
+<h3>Post-GA Fixes (v1.1.1)</h3>
+
+<ul>
+  <li><strong>CI green on first real run.</strong> Missing test dependencies added. Shellcheck severity restricted to errors. LLM-key gate moved into sweep step. Slow/integration tests excluded.</li>
+  <li><strong>Firecrawl self-host boots.</strong> Re-added <code>rabbitmq:3-management</code> + health gating. Verified live: 5-container stack boots in ~20s and completes a real <code>/v1/scrape</code>.</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SYSTEM PHILOSOPHY                                -->
+<!-- ═══════════════════════════════════════════════ -->
+<h2>🏛️ System Philosophy</h2>
+
+<p>The Exocortex operates on a fundamental premise: LLMs have vast knowledge of the past but lack intent and are blind to your immediate present. The Exocortex acts as the structural bridge — translating your intent and context to govern and focus the processing power of the AI.</p>
 
 <div class="mermaid">
 graph TD
     A[Executive / Intent] -->|Governs| B(Exocórtex.IA / Method)
     B -->|Operates| C(Hermes Agent / Execution)
-    C -->|Orchestrates| D[Skills, MCPs, Acervo and APIs]
+    C -->|Orchestrates| D[62 Skills, MCPs, Acervo, APIs]
 </div>
 
-<h3>1. The Three Concentric Layers <span style="font-weight:400;color:var(--text-secondary);font-size:0.9rem;">(A Estrutura em Três Camadas Concêntricas)</span></h3>
+<h3>1. The Three Concentric Layers</h3>
 
 <p>To eliminate semantic drift and optimize contextual efficiency, all information and operations are organized into three concentric depth levels:</p>
 
 <ul>
-  <li><strong>🏛️ Macroverso (Who Speaks):</strong> This is the executive's personal "Constitution." It defines your core identity, non-negotiable values, communication style, tone, and personal boundaries. Generated during the onboarding phase, it rarely changes and silently governs all interactions.</li>
-  <li><strong>🌍 Microversos (Semantic Domains):</strong> These are live, self-contained semantic and operational entities. They represent specific clients, projects, disciplines, or areas of responsibility (e.g., <code>microverso-financas</code>, <code>microverso-juridico</code>). Each Microverso preserves its own context, rules, memory, and <strong>sharing constraints</strong> (e.g., <code>deny: [ALL]</code>, <code>allow: [gabinete]</code>, where <code>allow</code> takes precedence over <code>deny</code>).</li>
-  <li><strong>🎯 Tarefa (The Operational Room):</strong> The concrete room where execution happens. A task is short-lived and represents the active project or action. A task is anchored to a primary Microverso and may pull secondary Microversos for support. <strong>Crucial semantic rule (EX-06):</strong> <em>A Microverso is never a room; the Tarefa is the room.</em></li>
+  <li><strong>🏛️ Macroverso (Who Speaks):</strong> The executive's personal "Constitution." Defines core identity, non-negotiable values, communication style, tone, and personal boundaries. Generated during onboarding; rarely changes; silently governs all interactions.</li>
+  <li><strong>🌍 Microversos (Semantic Domains):</strong> Live, self-contained semantic and operational entities — specific clients, projects, disciplines, or areas of responsibility. Each preserves its own context, rules, memory, and <strong>sharing constraints</strong> (<code>deny: [ALL]</code>, <code>allow: [gabinete]</code>, where <code>allow</code> takes precedence over <code>deny</code>).</li>
+  <li><strong>🎯 Tarefa (The Operational Room):</strong> The concrete room where execution happens. Short-lived. Anchored to a primary Microverso and may pull secondary Microversos for support. <strong>Rule EX-06:</strong> <em>A Microverso is never a room; the Tarefa is the room.</em></li>
 </ul>
 
 <hr>
@@ -326,8 +460,8 @@ graph TD
     <tr>
       <th>Vector</th>
       <th>Cognitive Posture</th>
-      <th>Focus Area</th>
-      <th>Exocortex Behavior</th>
+      <th>Focus</th>
+      <th>Behavior</th>
     </tr>
   </thead>
   <tbody>
@@ -335,19 +469,19 @@ graph TD
       <td><strong>🧠 Evolução (THINK)</strong></td>
       <td>Socratic Guide</td>
       <td>Idea refinement &amp; understanding</td>
-      <td>Challenging assumptions, asking 2-3 deep analytical questions, and promoting learnings to the Acervo. Never provides lazy, ready-made answers.</td>
+      <td>Challenges assumptions. Asks 2-3 deep analytical questions before concluding. Promotes learnings to the Acervo. Never gives lazy, ready-made answers.</td>
     </tr>
     <tr>
       <td><strong>⚡ Execução (DO)</strong></td>
       <td>Specialist Agent</td>
       <td>Production of premium deliverables</td>
-      <td>Fast, precise, and highly technical. Builds documents, drafts code, or coordinates execution with quality validation.</td>
+      <td>Fast, precise, highly technical. Builds documents, drafts code, coordinates execution with quality validation.</td>
     </tr>
     <tr>
       <td><strong>🧹 Manutenção (CLEAN)</strong></td>
       <td>Ecological Housekeeper</td>
       <td>Ecosystem health &amp; integrity</td>
-      <td>Background verification: runs quality audits, updates indexes, archives stale logs, and validates paths/manifests.</td>
+      <td>Background verification: quality audits, index updates, stale log archival, path/manifest validation. Autonomous síndico cron job per ADR-018.</td>
     </tr>
   </tbody>
 </table>
@@ -355,156 +489,154 @@ graph TD
 
 <hr>
 
-<h3>3. Core Governance &amp; Safety Protocols</h3>
+<h3>3. Core Governance Protocols</h3>
 
-<h4>Draft-First Protocol (<code>excrtx-govern-draftfirst</code>)</h4>
+<h4>Draft-First Protocol</h4>
 
-<p>Irreversible actions external to the local execution environment (e.g., sending emails, scheduling calendar events, committing/pushing to Git, publishing posts, or deploying code) <strong>must never</strong> be automated directly.</p>
+<p>Irreversible actions external to the local execution environment — sending emails, scheduling calendar events, pushing to Git, publishing posts, deploying code — <strong>must never</strong> be automated directly. The Exocortex prepares the payload, presents it as a <code>📋 DRAFT</code>, and waits for explicit executive approval before executing.</p>
 
-<ol>
-  <li>The Exocortex prepares the exact payload or plan.</li>
-  <li>The payload is displayed in the chat as a demarcated <code>📋 DRAFT</code>.</li>
-  <li>The system halts and waits for explicit approval (e.g., "OK", "proceed").</li>
-  <li>Execution occurs only after this consent.</li>
-</ol>
+<h4>Accuracy Verification (EX-49)</h4>
 
-<h4>Accuracy Verification (<code>excrtx-behavior-accuracy</code>)</h4>
+<p>The Exocortex is forbidden from claiming a system action succeeded without executing an empirical verification command and printing the raw output as physical proof. "Feito" requires evidence.</p>
 
-<p>The Exocortex is strictly forbidden from claiming that a system action (e.g., closing an issue, pushing a commit, creating a file) was successful without executing an empirical verification command and printing the raw command output as physical proof.</p>
+<h4>Anti-Slop Quality Gates (EX-18/EX-19)</h4>
+
+<p>Every piece of prose is scored on Directness, Rhythm, Trust, Authenticity, and Density. Minimum: <strong>35/50</strong>. Visual output is filtered for generic templates, meta-labels, and empty grids. AI patterns are rejected — the executive's voice is preserved.</p>
 
 <hr>
 
 <!-- ═══════════════════════════════════════════════ -->
-<!-- SKILLS CATALOG                                   -->
+<!-- SKILLS ECOSYSTEM                                 -->
 <!-- ═══════════════════════════════════════════════ -->
-<h2>🧩 The 47 Custom Skills Catalog</h2>
+<h2>🧩 The 62-Skill Ecosystem</h2>
 
-<p>This repository (<code>exocortex.saas</code>) packages the custom features and skills deployed on top of the <strong>Hermes Agent</strong> runtime. They are organized into 8 functional categories:</p>
+<p>The <code>exocortex.saas</code> repository packages custom features and skills deployed on top of the <strong>Hermes Agent</strong> runtime. Organized into 7 functional categories with 43 formally cataloged features:</p>
 
 <div class="mermaid">
 graph TD
-    subgraph "Memory (Acervo)"
-        EX11[EX-11 Acervo Mgr] --> EX12[EX-12 Wiki Adapt]
+    subgraph "Memory & Acervo (11 skills)"
+        EX11[EX-11 Acervo Manager] --> EX12[EX-12 Wiki Adapter]
         EX11 --> EX13[EX-13 New Micro]
         EX11 --> EX14[EX-14 MV Setup]
         EX11 --> EX15[EX-15 MV Install]
         EX11 --> EX16[EX-16 Ops Memory]
         EX11 --> EX17[EX-17 Intake]
+        EX11 --> EX58[EX-58 MV Export]
     end
 
-    subgraph "Behavior & Governance"
+    subgraph "Behavior & Governance (7 skills)"
         EX05[EX-05 Vector Classifier] --> EX06[EX-06 Canvas]
         EX05 --> EX07[EX-07 Briefing]
         EX08[EX-08 Draft-First]
         EX09[EX-09 Tool Gov]
-        EX49[EX-49 Accuracy Verification]
-        EX10[EX-10 Kanban Backlog]
+        EX49[EX-49 Accuracy]
+        EX10[EX-10 Kanban]
     end
 
-    subgraph "Quality Gates"
+    subgraph "Quality Gates (6 skills)"
         EX18[EX-18 Anti-Slop Prose]
         EX19[EX-19 Anti-Slop Visual]
         EX20[EX-20 Design System] --> EX19
-        EX21[EX-21 Quality Gate Orchestrator] --> EX18
+        EX21[EX-21 Quality Gate] --> EX18
         EX21 --> EX19
-        EX52[EX-52 Quality Enforced] --> EX21
     end
 
-    subgraph "Production"
-        EX22[EX-22 Artifacts Mgr] --> EX52
-        EX23[EX-23 Slide Gen] --> EX52
-        EX24[EX-24 Official Docs Gen] --> EX52
+    subgraph "Production (3 skills)"
+        EX22[EX-22 Artifacts Mgr]
+        EX23[EX-23 Slide Gen]
+        EX24[EX-24 Official Docs]
     end
 
-    subgraph "Integration"
+    subgraph "Integration (9 skills)"
         EX25[EX-25 Google Drive]
-        EX27[EX-27 DocBrain Parser]
-        EX28[EX-28 NotebookLM Route]
-        EX29[EX-29 NotebookLM Ops]
-        EX30[EX-30 Browser Automation]
+        EX27[EX-27 DocBrain]
+        EX28[EX-28 NLM Route]
+        EX29[EX-29 NLM Ops]
+        EX30[EX-30 Browser]
+        EX26[EX-26 OAuth MCP]
+    end
+
+    subgraph "Harness & Infrastructure (7 skills)"
+        EX31[EX-31 Prompt Log]
+        EX35[EX-35 Surfaces]
+        EX48[EX-48 Imbroke]
+        EX56[EX-56 Síndico]
     end
 </div>
 
 <h3>1. Onboarding &amp; Assessment</h3>
-
 <ul>
-  <li><strong><code>excrtx-onboard-welcome</code> (EX-01)</strong>: Welcome flow. Detects empty Acervo, presents <code>WELCOME.md</code>, and triggers calibration.</li>
-  <li><strong><code>excrtx-onboard-interview</code> (EX-02)</strong>: Conducts the structured 5-block interview to build the <code>SOUL.md</code> profile.</li>
-  <li><strong><code>excrtx-assess-selftest</code> (EX-03)</strong>: Self-test validator. Audits system state and prints a <code>N/5</code> checkpoint score.</li>
-  <li><strong><code>excrtx-assess-repofit</code> (EX-04)</strong>: Evaluates external repositories, identifying architectural fits and delta gaps.</li>
+  <li><strong><code>excrtx-onboard-welcome</code> (EX-01)</strong>: Welcome flow. Detects empty Acervo, presents WELCOME.md, triggers calibration.</li>
+  <li><strong><code>excrtx-onboard-interview</code> (EX-02)</strong>: Structured 6-block interview building the SOUL.md profile — Identity, Communication, Domains, Business Context, Operational Preferences, Integrations.</li>
+  <li><strong><code>excrtx-assess-selftest</code> (EX-03)</strong>: Self-test validator. Audits system state with N/5 checkpoint scoring.</li>
+  <li><strong><code>excrtx-assess-repofit</code> (EX-04)</strong>: Technical due diligence of external repositories — claims vs implementation, fallback quality, architecture sufficiency.</li>
 </ul>
 
 <h3>2. Behavior &amp; Governance</h3>
-
 <ul>
-  <li><strong><code>excrtx-behavior-vetor</code> (EX-05)</strong>: Classifies user inputs silently into Execution, Evolution, or Maintenance.</li>
-  <li><strong><code>excrtx-behavior-canvas</code> (EX-06)</strong>: Implements the cognitive canvas (Macroverso Status, Primary vs. Secondary Microversos, Sharing Constraints, and Task Anchor).</li>
-  <li><strong><code>excrtx-behavior-briefing</code> (EX-07)</strong>: Generates brief summaries of active microverso states and priority context.</li>
-  <li><strong><code>excrtx-govern-draftfirst</code> (EX-08)</strong>: Intercepts all external integrations to enforce Draft-First gates.</li>
-  <li><strong><code>excrtx-govern-tools</code> (EX-09)</strong>: Rules of engagement for tools, preventing unnecessary executions and enforcing strict logging.</li>
-  <li><strong><code>excrtx-harness-kanban</code> (EX-10)</strong>: Maps current task states to the persistent Hermes Kanban system.</li>
-  <li><strong><code>excrtx-behavior-accuracy</code> (EX-49)</strong>: Restricts the agent from asserting completion without printing command proof.</li>
+  <li><strong><code>excrtx-behavior-vetor</code> (EX-05)</strong>: Silent input classifier — Execution, Evolution, or Maintenance.</li>
+  <li><strong><code>excrtx-behavior-canvas</code> (EX-06)</strong>: Cognitive canvas — Macroverso status, Microverso anchoring, sharing constraints, task anchor.</li>
+  <li><strong><code>excrtx-behavior-briefing</code> (EX-07)</strong>: Cross-microverso state synthesis and priority context.</li>
+  <li><strong><code>excrtx-govern-draftfirst</code> (EX-08)</strong>: External action interceptor enforcing Draft-First gates.</li>
+  <li><strong><code>excrtx-govern-tools</code> (EX-09)</strong>: Tool engagement rules — least privilege, logging, classification.</li>
+  <li><strong><code>excrtx-harness-kanban</code> (EX-10)</strong>: Persistent Kanban backlog with artifact and retomada links.</li>
+  <li><strong><code>excrtx-behavior-accuracy</code> (EX-49)</strong>: Proof-before-claim enforcement on all external actions.</li>
 </ul>
 
 <h3>3. Memory &amp; Acervo</h3>
-
 <ul>
-  <li><strong><code>excrtx-memory-manager</code> (EX-11)</strong>: Core memory manager for the 4-layer Acervo. Enforces access scopes and directory routing.</li>
-  <li><strong><code>excrtx-memory-wikiadapt</code> (EX-12)</strong>: Translates native Hermes LLM-Wiki structures into the 11 Natures of the Exocortex Acervo.</li>
-  <li><strong><code>excrtx-memory-newmicro</code> (EX-13)</strong>: Scaffolds a new Microverso directory structure from standard templates.</li>
-  <li><strong><code>excrtx-memory-mvsetup</code> (EX-14)</strong>: Designates a microverso as a replication seed for future setup runs.</li>
-  <li><strong><code>excrtx-memory-mvinstall</code> (EX-15)</strong>: Installs packaged microversos, resolving skill, python/node, and API dependencies.</li>
-  <li><strong><code>excrtx-memory-opsmemory</code> (EX-16)</strong>: Orchestrates operational memories (e.g., Hindsight) to act as short-term retrieval buffers.</li>
-  <li><strong><code>excrtx-memory-intake</code> (EX-17)</strong>: Multi-channel file and media intake pipeline (OCR, STT, PDF parsing) routed to <code>$ACERVO/_inbox/</code>.</li>
+  <li><strong><code>excrtx-memory-manager</code> (EX-11)</strong>: Unified manager for the 4-layer Acervo — 11 Natures, scope resolution, frontmatter v2.</li>
+  <li><strong><code>excrtx-memory-wikiadapt</code> (EX-12)</strong>: Safe bridge from Hermes LLM Wiki to Acervo v2 multifocal ontology.</li>
+  <li><strong><code>excrtx-memory-newmicro</code> (EX-13)</strong>: Scaffolds new Microverso with full directory structure from templates.</li>
+  <li><strong><code>excrtx-memory-mvsetup</code> (EX-14)</strong>: Promotes Microversos to replication seeds for new installations.</li>
+  <li><strong><code>excrtx-memory-mvinstall</code> (EX-15)</strong>: Installs portable <code>.mvpkg</code> packages — integrity check, preflight, merge, hooks, registration.</li>
+  <li><strong><code>excrtx-memory-mvexport</code> (EX-58)</strong>: Exports Microversos as clean portable <code>.mvpkg</code> packages.</li>
+  <li><strong><code>excrtx-memory-opsmemory</code> (EX-16)</strong>: Governance for operational memory providers (Hindsight, etc.) with conflict precedence rules.</li>
+  <li><strong><code>excrtx-memory-intake</code> (EX-17)</strong>: Multi-channel file intake pipeline — Reception, Manifest, Extraction, Triage, Promotion.</li>
+  <li><strong><code>excrtx-memory-deprecate</code></strong>: Semantic revision on insert — detects and handles contradictions.</li>
+  <li><strong><code>excrtx-memory-quarantine</code></strong>: Lifecycle management — stale/deprecated file quarantine and 30-day purge.</li>
+  <li><strong><code>excrtx-memory-syndic</code></strong>: Autonomous cleanup agent — scans for stale/deprecated files per ADR-018.</li>
 </ul>
 
 <h3>4. Quality Gates</h3>
-
 <ul>
-  <li><strong><code>excrtx-quality-antislop</code> (EX-18)</strong>: Text quality gate. Grades generated prose on directness, density, rhythm, and authenticity, rejecting AI cliches. Requires a minimum score of <code>35/50</code>.</li>
-  <li><strong><code>excrtx-quality-taste</code> (EX-19)</strong>: Visual quality gate. Rotes layouts to specialized sub-skills (<code>gpt-taste</code>, <code>brutalist</code>, <code>brandkit</code>). Rejects headers &gt; 3 lines and repeating grid templates.</li>
-  <li><strong><code>excrtx-quality-designsys</code> (EX-20)</strong>: Design token cascade resolver (Global <code>DESIGN.md</code> → Microverso <code>DESIGN.md</code>).</li>
-  <li><strong><code>excrtx-quality-gate</code> (EX-21)</strong>: Unified quality gate controller that intercepts all outbound responses.</li>
-  <li><strong><code>excrtx-quality-skilljudge</code></strong>: Automated skill quality evaluation using multi-dimensional rubric and LLM judge.</li>
-  <li><strong><code>excrtx-quality-gepa</code></strong>: GEPA (Genkit Eval Prompt Audit) loop for automated skill rewriting and quality gating.</li>
+  <li><strong><code>excrtx-quality-antislop</code> (EX-18)</strong>: Text gate — grades prose on 5 dimensions. Minimum 35/50. Rejects AI cliches.</li>
+  <li><strong><code>excrtx-quality-taste</code> (EX-19)</strong>: Visual gate — routes to sub-skills (gpt-taste, brandkit, brutalist). Rejects repeating grids and meta-labels.</li>
+  <li><strong><code>excrtx-quality-designsys</code> (EX-20)</strong>: Design token cascade resolver — global → micro DESIGN.md with WCAG AA validation.</li>
+  <li><strong><code>excrtx-quality-gate</code> (EX-21)</strong>: Unified orchestrator — prose → antislop, visual → taste, technical → bypass.</li>
+  <li><strong><code>excrtx-quality-skilljudge</code></strong>: Multi-dimensional rubric for automated skill quality evaluation.</li>
+  <li><strong><code>excrtx-quality-gepa</code></strong>: Closed-loop LLM rewriting for automated skill improvement.</li>
 </ul>
 
 <h3>5. Production &amp; Artifacts</h3>
-
 <ul>
-  <li><strong><code>excrtx-produce-artifacts</code> (EX-22)</strong>: Manages creation, indexing, views, and exports of durable documents in <code>$ACERVO/_artifacts/</code>.</li>
-  <li><strong><code>excrtx-produce-slides</code> (EX-23)</strong>: Generates high-quality presentations using Marp Markdown to HTML/PDF/ZIP.</li>
-  <li><strong><code>excrtx-produce-oficios</code> (EX-24)</strong>: Builds formal institutional letters from DOCX/HTML templates.</li>
+  <li><strong><code>excrtx-produce-artifacts</code> (EX-22)</strong>: Durable artifact lifecycle — creation, indexing, views, exports.</li>
+  <li><strong><code>excrtx-produce-slides</code> (EX-23)</strong>: Premium presentations — Markdown → Marp → HTML/PDF/ZIP with cascade Design System.</li>
+  <li><strong><code>excrtx-produce-oficios</code> (EX-24)</strong>: Formal institutional documents from DOCX/HTML templates.</li>
 </ul>
 
 <h3>6. Integration</h3>
-
 <ul>
-  <li><strong><code>excrtx-integrate-gdrive</code> (EX-25)</strong>: Google Drive client. Hardened search queries (ignoring trashed files) and handle paginated list results.</li>
-  <li><strong><code>excrtx-integrate-oauth</code> (EX-26)</strong>: Setup and diagnostic utility for configuring external OAuth-based MCP servers.</li>
-  <li><strong><code>excrtx-integrate-docbrain</code> (EX-27)</strong>: Parser engine integration for ingesting legacy PDFs and documents.</li>
-  <li><strong><code>excrtx-integrate-nlmroute</code> (EX-28)</strong>: Routes research requests to NotebookLM CLI (<code>nlm</code>) or NotebookLM MCP.</li>
-  <li><strong><code>excrtx-integrate-nlmops</code> (EX-29)</strong>: Operational workflows to ingest sources and query NotebookLM notebooks.</li>
-  <li><strong><code>excrtx-integrate-browser</code> (EX-30)</strong>: Autonomously controls local Chrome instances using <code>playwright</code> and <code>browser-use</code>.</li>
+  <li><strong><code>excrtx-integrate-gdrive</code> (EX-25)</strong>: Google Drive client — hardened search (trash filter, pagination, expanded fields).</li>
+  <li><strong><code>excrtx-integrate-oauth</code> (EX-26)</strong>: OAuth MCP server configuration and 3-layer validation.</li>
+  <li><strong><code>excrtx-integrate-docbrain</code> (EX-27)</strong>: DocBrain parser engine for PDF and legacy document ingestion.</li>
+  <li><strong><code>excrtx-integrate-nlmroute</code> (EX-28)</strong>: NotebookLM CLI-first routing with MCP fallback.</li>
+  <li><strong><code>excrtx-integrate-nlmops</code> (EX-29)</strong>: Standard 6-step NotebookLM workflow — gate, resolve, ingest, query, gap-fill, deliver.</li>
+  <li><strong><code>excrtx-integrate-browser</code> (EX-30)</strong>: Autonomous browser automation via Playwright and browser-use.</li>
+  <li><strong><code>excrtx-integrate-mcp</code></strong>: MCP server discovery, registration, and lifecycle.</li>
+  <li><strong><code>excrtx-integrate-agent-reach</code></strong>: Agent-Reach CLI adapter for normalized research output.</li>
+  <li><strong><code>excrtx-integrate-google-trends</code></strong>: Google Trends integration for brand and market intelligence.</li>
 </ul>
 
 <h3>7. Harness &amp; Infrastructure</h3>
-
 <ul>
-  <li><strong><code>excrtx-harness-promptlog</code> (EX-31)</strong>: Auditable log of all configuration prompts written to <code>MEMORY.md</code>.</li>
-  <li><strong><code>excrtx-harness-codexint</code> (EX-32)</strong>: Configures OpenAI Codex CLI and Hermes provider integration.</li>
-  <li><strong><code>excrtx-harness-core</code> (EX-33)</strong>: Core execution wrapper for Codex CLI logging, capturing runs in <code>~/.hermes/codex-learning/</code>.</li>
-  <li><strong><code>excrtx-harness-hermesops</code> (EX-34)</strong>: Splits Codex work into clear pathways: execution (Trilho A) or delegation/reasoning (Trilho B).</li>
-  <li><strong><code>excrtx-harness-surfaces</code> (EX-35)</strong>: Routes communication interfaces (Telegram for Chat, TUI/CLI for Admin, Dashboard for cockpit).</li>
-  <li><strong><code>excrtx-harness-imbroke</code> (EX-48)</strong>: Financial contingency model fallback (OpenRouter free model watchdog and recovery router).</li>
-  <li><strong><code>excrtx-harness-tooldev</code> (EX-50)</strong>: Standard API for writing and registering custom <code>/tool</code> extensions.</li>
-  <li><strong><code>excrtx-hermes-extensions</code> (EX-51)</strong>: Guidelines for writing custom commands and dispatch paths in <code>gateway/run.py</code>.</li>
-  <li><strong><code>excrtx-harness-delivery</code></strong>: Delivery pipeline orchestration for artifact publication and distribution.</li>
-  <li><strong><code>excrtx-harness-maintenance</code> (EX-56)</strong>: Síndico persona with 4 maintenance routines (weekly audit, inbox triage, artifact quality, publication check).</li>
-  <li><strong><code>excrtx-integrate-mcp</code></strong>: MCP server discovery, registration, and lifecycle management.</li>
-  <li><strong><code>excrtx-brandkit-generator</code></strong>: Brand identity kit generation from Macroverso design tokens.</li>
-  <li><strong><code>excrtx-github-issue-planning</code></strong>: GitHub issue planning and roadmap coordination.</li>
-  <li><strong><code>assessment-question-authoring</code></strong>: Structured assessment question creation for calibration and evaluation.</li>
+  <li><strong><code>excrtx-harness-promptlog</code> (EX-31)</strong>: Auditable configuration prompt log in MEMORY.md.</li>
+  <li><strong><code>excrtx-harness-surfaces</code> (EX-35)</strong>: Delivery surface architecture — Telegram (executive), Dashboard (operator), CLI (admin).</li>
+  <li><strong><code>excrtx-harness-imbroke</code> (EX-48)</strong>: Financial contingency — free model routing with watchdog and recovery crons.</li>
+  <li><strong><code>excrtx-harness-tooldev</code> (EX-50)</strong>: Standard API for custom <code>/tool</code> extension development.</li>
+  <li><strong><code>excrtx-hermes-extensions</code> (EX-51)</strong>: Custom slash commands and dispatch paths in <code>gateway/run.py</code>.</li>
+  <li><strong><code>excrtx-harness-maintenance</code> (EX-56)</strong>: Síndico persona — 4 autonomous maintenance routines (weekly audit, inbox triage, artifact quality, publication check).</li>
+  <li><strong><code>excrtx-harness-delivery</code></strong>: Pipeline orchestration for artifact publication and distribution.</li>
 </ul>
 
 <hr>
@@ -512,264 +644,115 @@ graph TD
 <!-- ═══════════════════════════════════════════════ -->
 <!-- INSTALLATION                                     -->
 <!-- ═══════════════════════════════════════════════ -->
-<h2>⚙️ Installation &amp; Provisioning</h2>
+<h2>⚙️ Installation</h2>
 
 <h3>Prerequisites</h3>
-
 <ul>
   <li><strong>OS</strong>: Linux (Debian, Ubuntu, Arch) or macOS.</li>
-  <li><strong>System Tools</strong>: <code>git</code>, <code>curl</code>, <code>rsync</code>, <code>python3</code> (&gt;=3.11), <code>pip</code>, <code>venv</code>.</li>
-  <li><strong>Containers</strong>: <code>docker</code> &amp; <code>docker compose</code> (Required only if Hindsight local memory is enabled).</li>
+  <li><strong>System Tools</strong>: <code>git</code>, <code>curl</code>, <code>rsync</code>, <code>python3</code> (≥3.11), <code>pip</code>, <code>venv</code>.</li>
+  <li><strong>Containers</strong>: <code>docker</code> &amp; <code>docker compose</code> (required only if Hindsight or Firecrawl are enabled).</li>
 </ul>
 
-<hr>
-
 <blockquote>
-  <strong>🤖 AI Agents</strong>: If you are an AI agent (Claude, Gemini, GPT, etc.) installing or diagnosing this system via terminal, use <a href="INSTALL.md">INSTALL.md</a> instead. It is a structured runbook with pre-conditions, executable commands, and verification steps designed for machine consumption.
+  <strong>🤖 AI Agents</strong>: If you are an AI agent (Claude, Gemini, GPT, etc.) installing or diagnosing this system via terminal, use <a href="INSTALL.md">INSTALL.md</a> instead — a structured runbook with pre-conditions, executable commands, and verification steps designed for machine consumption.
 </blockquote>
 
-<h3>Step-by-Step Installation</h3>
+<h3>1. Bootstrap Installer</h3>
 
-<h4>1. Execute the Bootstrap Installer</h4>
-
-<p>This command pulls the installer, checks for OS dependencies, installs the Hermes Agent CLI (if not present), and clones the Exocortex repository to a local cache directory:</p>
+<p>Downloads the installer, checks OS dependencies, installs the Hermes Agent CLI (if absent), and clones the Exocortex repository:</p>
 
 <pre><code># Standard interactive installation
-curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash</code></pre>
+curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 
-<p>To automatically install and bind the <strong>Telegram Gateway</strong>, pass the token in the environment:</p>
+# With Telegram Gateway auto-provisioned
+TELEGRAM_BOT_TOKEN="your_token" curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 
-<pre><code>TELEGRAM_BOT_TOKEN="your_telegram_bot_token" curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash</code></pre>
+# Pin a specific version
+VERSION=v1.1.1 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash</code></pre>
 
-<p>To pin a specific tag or version:</p>
+<h3>2. Setup Orchestrator</h3>
 
-<pre><code>VERSION=v1.0.0-rc2 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash</code></pre>
-
-<h4>2. The <code>setup.sh</code> Orchestrator</h4>
-
-<p>The installer will automatically invoke <code>setup.sh</code>. If you want to customize home paths, you can run <code>setup.sh</code> manually:</p>
+<p>The installer invokes <code>setup.sh</code> automatically. Customize home paths manually:</p>
 
 <pre><code>HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh</code></pre>
 
-<p>To also provision the Hermes WebUI web cockpit (optional, MIT-licensed <code>nesquena/hermes-webui</code>):</p>
+<p>Enable optional services via environment variables:</p>
 
-<pre><code>EXOCORTEX_ENABLE_HERMES_WEBUI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh</code></pre>
+<pre><code># Hermes WebUI cockpit (MIT, port 8787)
+EXOCORTEX_ENABLE_HERMES_WEBUI=1 bash setup.sh
 
-<p>The WebUI source is pinned via <code>provision/sources/sources.lock.yaml</code> (audited SHA ref). Access at <code>http://127.0.0.1:8787</code> or via Tailscale.</p>
+# Hindsight operational memory (Docker)
+EXOCORTEX_ENABLE_HINDSIGHT=1 bash setup.sh
 
-<h5>What <code>setup.sh</code> Executes:</h5>
+# Firecrawl self-host tiered scraping (Docker)
+EXOCORTEX_ENABLE_FIRECRAWL=1 bash setup.sh
 
-<ul>
-  <li><strong><code>step-00</code></strong>: Validates Hermes version compatibility (Expected bounds: <code>2026.4.8</code> to <code>2026.4.16</code>).</li>
-  <li><strong><code>step-01</code></strong>: Provision Hindsight database container if <code>EXOCORTEX_ENABLE_HINDSIGHT=1</code> is provided.</li>
-  <li><strong><code>step-02</code></strong>: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.</li>
-  <li><strong><code>step-03</code> to <code>step-05</code></strong>: Copies and installs all 47 <code>excrtx</code> skills, bundles, and execution profiles (<code>default</code> and <code>manut</code>).</li>
-  <li><strong><code>step-06</code> (Hardening)</strong>:
-    <ul>
-      <li>Applies a search paging patch to <code>google_api.py</code>.</li>
-      <li>Removes legacy email skills (<code>himalaya</code> / <code>hymalaia</code>) to ensure Google Workspace takes precedence.</li>
-      <li>Removes <code>composio</code> from the MCP registry in favor of direct API clients.</li>
-    </ul>
-  </li>
-  <li><strong><code>step-06b</code> to <code>step-11</code></strong>: Sets up Google Auth tools, clones and compiles the DocBrain engine, installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit (<code>nesquena/hermes-webui</code>, MIT), and links Context7 documentation MCP.</li>
-  <li><strong><code>step-12</code> to <code>step-14</code></strong>: Performs final key verifications and validates that all 47 skills are correctly mapped in the runtime.</li>
-  <li><strong><code>step-15</code></strong>: Launches the interactive prompt calibration if <code>--calibrate</code> is passed.</li>
-</ul>
+# Context7 tech-docs MCP
+EXOCORTEX_ENABLE_CONTEXT7=1 bash setup.sh</code></pre>
+
+<p><strong>What setup.sh executes</strong> (15 steps):</p>
+<ol>
+  <li>Validates Hermes version compatibility.</li>
+  <li>Provisions optional Docker services (Hindsight, Firecrawl).</li>
+  <li>Initializes directory trees — workspace, logs, task boards, 4-layer Acervo.</li>
+  <li>Copies and installs all 62 <code>excrtx</code> skills, bundles, and execution profiles.</li>
+  <li>Hardening: patches Google Drive search pagination, removes legacy skills, replaces Composio with direct API clients.</li>
+  <li>Google OAuth setup, DocBrain engine clone &amp; build, NotebookLM CLI, Browser automation, Hermes WebUI (optional), Context7 MCP (optional).</li>
+  <li>LLM key verification — real ping per role, <code>config.yaml</code> write, model-ID format validation.</li>
+  <li>Creates idempotent maintenance crons (síndico per ADR-018).</li>
+  <li>Final skill mapping verification and calibration prompt.</li>
+</ol>
 
 <hr>
 
 <!-- ═══════════════════════════════════════════════ -->
 <!-- POST-INSTALL                                     -->
 <!-- ═══════════════════════════════════════════════ -->
-<h2>🛠️ Post-Installation &amp; Integration Guide</h2>
+<h2>🛠️ Post-Installation</h2>
 
-<p>For the Exocortex to operate at full capacity, complete the following post-installation steps:</p>
+<h3>1. Onboarding &amp; Calibration</h3>
 
-<h3>1. Account Calibration &amp; Onboarding</h3>
+<p>On first launch, the Exocortex detects an empty SOUL.md and triggers the welcome flow:</p>
 
-<p>Upon launching your first session, the Exocortex checks if your <code>SOUL.md</code> (the Macroverso) is populated. If empty, it triggers the welcome flow:</p>
+<pre><code>hermes                          # launch interactive session
+vamos começar o onboarding     # initiate 6-block interview</code></pre>
 
-<ol>
-  <li>Launch the interactive session:</li>
-</ol>
+<p>The interview covers Identity, Communication, Domains, Business Context, Operational Preferences, and Integrations — writing your personality profile to the Macroverso.</p>
 
-<pre><code>hermes</code></pre>
+<h3>2. Behavioral Calibration</h3>
 
-<ol start="2">
-  <li>Initiate the onboarding questionnaire:</li>
-</ol>
-
-<pre><code>vamos começar o onboarding</code></pre>
-
-<ol start="3">
-  <li>Answer the structured questions covering <strong>Identidade</strong>, <strong>Comunicação</strong>, <strong>Domínios</strong>, <strong>Preferências</strong>, and <strong>Integrações</strong>. This writes your personality profile to <code>~/.hermes/SOUL.md</code>.</li>
-</ol>
-
-<hr>
-
-<h3>2. Prompt-Driven Development (PDD) Behavior Calibration</h3>
-
-<p>To ensure the LLM model respects the 12 core behavioural features (Vector classification, Draft-first, verification proofs, etc.), run the interactive calibration suite:</p>
+<p>Ensure the LLM respects the 12 core behavioral features (Vector classification, Draft-first, verification proofs, etc.):</p>
 
 <pre><code>bash scripts/calibrate-hermes.sh</code></pre>
 
-<p>This script runs a test prompt for each feature, shows you the model output alongside the acceptance criteria, and asks for your verification. If the output drifts, it automatically injects a Socratic corrective prompt to recalibrate the model.</p>
+<h3>3. Google Workspace OAuth</h3>
 
-<hr>
+<p>Desktop OAuth flow — configure GCP Console, download client secret, then:</p>
 
-<h3>3. Google Workspace &amp; Drive API Setup (OAuth 2.0)</h3>
-
-<p>The Google Workspace integration uses direct desktop OAuth credentials.</p>
-
-<h4>Step A: Configure the GCP Console</h4>
-
-<ol>
-  <li>Go to the <a href="https://console.cloud.google.com/">Google Cloud Console</a>.</li>
-  <li>Create a project and name it (e.g., <code>Exocortex-Workspace</code>).</li>
-  <li>Search for <strong>Google Drive API</strong> in the API Library and click <strong>Enable</strong>.</li>
-  <li>Configure the <strong>OAuth Consent Screen</strong>:
-    <ul>
-      <li>Set User Type to <strong>External</strong>.</li>
-      <li>Add your email address under <strong>Test Users</strong>.</li>
-      <li>Add the <code>.../auth/drive</code> scope.</li>
-    </ul>
-  </li>
-  <li>Create Credentials:
-    <ul>
-      <li>Click <strong>Create Credentials</strong> &gt; <strong>OAuth client ID</strong>.</li>
-      <li>Choose <strong>Desktop application</strong>.</li>
-      <li>Download the credential JSON file and rename it to <code>google_client_secret.json</code>.</li>
-    </ul>
-  </li>
-</ol>
-
-<h4>Step B: Complete the OAuth Flow locally</h4>
-
-<p>Move the credential file to your home config and execute the setup utility:</p>
-
-<pre><code># 1. Move and register the client secret
-cp /path/to/downloaded/secret.json ~/.hermes/google_client_secret.json
+<pre><code>cp /path/to/secret.json ~/.hermes/google_client_secret.json
 python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --client-secret ~/.hermes/google_client_secret.json
+python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --auth-url
+# → open URL in browser, authorize, copy the code= parameter
+python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --auth-code "PASTE_CODE"
+python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check
+# → AUTHENTICATED</code></pre>
 
-# 2. Request authorization URL
-python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --auth-url</code></pre>
+<h3>4. NotebookLM CLI</h3>
 
-<p>Copy the output URL, paste it into your browser, log in, and authorize the application. Upon redirection, copy the string parameter after <code>code=</code> in the browser address bar.</p>
+<pre><code>uv tool install notebooklm-mcp-cli --force
+nlm login
+hermes mcp add notebooklm --command notebooklm-mcp</code></pre>
 
-<pre><code># 3. Save the token using the code copied
-python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --auth-code "PASTE_YOUR_OAUTH_CODE_HERE"
-
-# 4. Verify credentials
-python3 ~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check</code></pre>
-
-<p>If this prints <code>AUTHENTICATED</code>, the Google Workspace driver is fully functional.</p>
-
-<hr>
-
-<h3>4. NotebookLM Integration (<code>nlm</code> CLI)</h3>
-
-<p>NotebookLM integration requires the <code>notebooklm-mcp-cli</code> python package.</p>
-
-<ol>
-  <li>Verify <code>uv</code> is installed, then install the package:</li>
-</ol>
-
-<pre><code>uv tool install notebooklm-mcp-cli --force</code></pre>
-
-<p><em>(Fallback: <code>python3 -m pip install --upgrade notebooklm-mcp-cli</code>)</em></p>
-
-<ol start="2">
-  <li>Authenticate the CLI:</li>
-</ol>
-
-<pre><code>nlm login</code></pre>
-
-<ol start="3">
-  <li>Verify the authentication:</li>
-</ol>
-
-<pre><code>nlm login --check</code></pre>
-
-<ol start="4">
-  <li>Register the MCP server in Hermes:</li>
-</ol>
-
-<pre><code>hermes mcp add notebooklm --command notebooklm-mcp</code></pre>
-
-<hr>
-
-<h3>5. DocBrain Parser Engine Setup</h3>
-
-<p>DocBrain is used to parse complex documents and PDFs.</p>
-
-<ol>
-  <li>Ensure Node.js and <code>npm</code> are installed.</li>
-  <li>The setup script clones the parser repository to <code>~/exocortex/tools/docbrain</code>. Verify and build:</li>
-</ol>
+<h3>5. DocBrain Parser Engine</h3>
 
 <pre><code>cd ~/exocortex/tools/docbrain
-npm install
-npm run build</code></pre>
+npm install && npm run build</code></pre>
 
-<ol start="3">
-  <li>Set your API Key in your environment variables:</li>
-</ol>
-
-<pre><code>export OPENROUTER_API_KEY="your-deepseek-or-openrouter-key"</code></pre>
-
-<p><em>(Alternatively, isolate the key: <code>export DOCBRAIN_LLM_API_KEY="your-key"</code>)</em></p>
-
-<hr>
-
-<h3>6. Browser Automation Skill Runtime</h3>
-
-<p>The browser automation skill uses <code>browser-use</code> and <code>playwright</code>.</p>
-
-<ol>
-  <li>To install the chromium dependencies and python packages in the local skill sandbox:</li>
-</ol>
+<h3>6. Browser Automation</h3>
 
 <pre><code>cd ~/.hermes/skills/excrtx/excrtx-integrate-browser
-# The wrapper script does auto-provisioning on first execution:
-bash scripts/browser-use.sh open https://example.com</code></pre>
-
-<ol start="2">
-  <li>This will download and cache Playwright Chromium binaries under <code>.runtime/ms-playwright/</code>.</li>
-</ol>
-
-<hr>
-
-<h3>7. Financial Contingency Mode (Modo Imbroke)</h3>
-
-<p>If your OpenRouter account runs out of credits, you can toggle the system to use free models via the free-routing CLI:</p>
-
-<pre><code># Enable free-routing circuit breaker
-python3 scripts/openrouter_free_model_router.py --imbroke --activate
-
-# Check routing status
-python3 scripts/openrouter_free_model_router.py --status</code></pre>
-
-<p><em>Note: After enabling or disabling imbroke mode, restart your active Hermes sessions with <code>/new</code> to reload the settings.</em></p>
-
-<hr>
-
-<!-- ═══════════════════════════════════════════════ -->
-<!-- DEVELOPER ONBOARDING                             -->
-<!-- ═══════════════════════════════════════════════ -->
-<h2>🧑‍💻 Developer Onboarding &amp; Knowledge Base</h2>
-
-<p>For developers looking to contribute, extend, or troubleshoot Exocortex.IA, the primary and most up-to-date documentation is located inside the <code>exocortex-dev</code> Microverso:</p>
-
-<ul>
-  <li><strong>Wiki Catalog &amp; Schema</strong>: Refer to the Microverso Index at <code>acervo/micro/exocortex-dev/_meta/index.md</code> and <code>acervo/micro/exocortex-dev/_meta/SCHEMA.md</code>.</li>
-  <li><strong>System Architecture</strong>: Detailed internal system structure and Trilho A/B pathways are documented in <code>acervo/micro/exocortex-dev/knowledge/architecture.md</code>.</li>
-  <li><strong>Development Standards</strong>: For coding style guidelines, skill requirements, and automated validation gates, see <code>acervo/micro/exocortex-dev/contracts/development-standards.md</code>.</li>
-  <li><strong>Skill vs. MCP Choice</strong>: Deciding when to build a custom skill vs. adding an MCP server is documented in <code>acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md</code> (ADR-006).</li>
-  <li><strong>Creating Custom Skills</strong>: Step-by-step workflow (SOP) to scaffold, compile, and test skills is available in <code>acervo/micro/exocortex-dev/workflows/create-custom-skill.md</code>.</li>
-  <li><strong>Running Preflight Audits</strong>: Process to execute deterministic and semantic checks before committing code can be found in <code>acervo/micro/exocortex-dev/workflows/run-preflight-checks.md</code>.</li>
-</ul>
-
-<p>Always check this Microverso memory first to ensure your development aligns with the active conventions and architectural guidelines of the Exocortex.</p>
+bash scripts/browser-use.sh open https://example.com
+# → auto-provisions Playwright + Chromium on first run</code></pre>
 
 <hr>
 
@@ -778,27 +761,81 @@ python3 scripts/openrouter_free_model_router.py --status</code></pre>
 <!-- ═══════════════════════════════════════════════ -->
 <h2>🏃 Daily Operation</h2>
 
-<h3>1. Interactive Session (Execution &amp; Evolution)</h3>
-
-<p>Launch the standard interative session for daily tasks and cognitive evolution:</p>
-
+<h3>Interactive Session (Execution &amp; Evolution)</h3>
 <pre><code>hermes</code></pre>
 
-<h3>2. Maintenance Profile (Background Cleaning)</h3>
-
-<p>Run the housekeeping agent profile to check for dead links, audit file schemas, and clean session logs:</p>
-
+<h3>Maintenance Profile (Background Cleaning)</h3>
 <pre><code>hermes -p manut</code></pre>
 
-<h3>3. Pre-flight Quality Checks</h3>
-
-<p>Before committing changes to this repository, run the validation suites:</p>
-
-<pre><code># Run core quality audit checks
-python3 .agent/scripts/checklist.py .
-
-# Run complete validation, including E2E and Lighthouse
+<h3>Pre-flight Quality Checks</h3>
+<pre><code>python3 .agent/scripts/checklist.py .
 python3 .agent/scripts/verify_all.py . --url http://localhost:3000</code></pre>
+
+<h3>Skill Quality Audit</h3>
+<pre><code># D1 structural check only
+python3 scripts/skill_judge.py --skill excrtx-memory-manager --d1-only
+
+# Full 5-dimension sweep
+python3 scripts/skill_judge.py --skill excrtx-memory-manager</code></pre>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- DEVELOPER ONBOARDING                             -->
+<!-- ═══════════════════════════════════════════════ -->
+<h2>🧑‍💻 Developer Onboarding</h2>
+
+<p>For developers contributing to or extending Exocortex.IA, the primary documentation lives inside the <code>exocortex-dev</code> Microverso:</p>
+
+<ul>
+  <li><strong>Wiki Catalog &amp; Schema</strong>: <code>acervo/micro/exocortex-dev/_meta/index.md</code> and <code>_meta/SCHEMA.md</code>.</li>
+  <li><strong>System Architecture</strong>: <code>acervo/micro/exocortex-dev/knowledge/architecture.md</code> — internal structure and Trilho A/B pathways.</li>
+  <li><strong>Development Standards</strong>: <code>acervo/micro/exocortex-dev/contracts/development-standards.md</code> — coding style, skill requirements, validation gates.</li>
+  <li><strong>Skill vs. MCP Selection</strong>: <code>acervo/micro/exocortex-dev/decisions/skill-vs-mcp-selection.md</code> (ADR-006).</li>
+  <li><strong>Creating Custom Skills</strong>: <code>acervo/micro/exocortex-dev/workflows/create-custom-skill.md</code> — scaffold, compile, test.</li>
+  <li><strong>Preflight Audits</strong>: <code>acervo/micro/exocortex-dev/workflows/run-preflight-checks.md</code> — deterministic and semantic checks before commits.</li>
+</ul>
+
+<p>Always check this Microverso first to align with active conventions and architectural guidelines.</p>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- OPTIONAL SERVICES                                -->
+<!-- ═══════════════════════════════════════════════ -->
+<h2>🔌 Optional Infrastructure Services</h2>
+
+<p>Four first-class optional services, each with a provisioning script, health check, and smoke test:</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Service</th><th>Purpose</th><th>Enable via</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Hindsight</strong></td>
+      <td>Docker-based operational memory with semantic recall. Provider layer below the Acervo.</td>
+      <td><code>EXOCORTEX_ENABLE_HINDSIGHT=1</code></td>
+    </tr>
+    <tr>
+      <td><strong>Firecrawl</strong></td>
+      <td>Self-host tiered scraping (basic → stealth → enhanced). 5-container Docker stack.</td>
+      <td><code>EXOCORTEX_ENABLE_FIRECRAWL=1</code></td>
+    </tr>
+    <tr>
+      <td><strong>Hermes WebUI</strong></td>
+      <td>Cockpit fork (MIT, port 8787). Session oversight and admin surface.</td>
+      <td><code>EXOCORTEX_ENABLE_HERMES_WEBUI=1</code></td>
+    </tr>
+    <tr>
+      <td><strong>Context7</strong></td>
+      <td>MCP server for up-to-date tech library docs (React, Vue, etc.).</td>
+      <td><code>EXOCORTEX_ENABLE_CONTEXT7=1</code></td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 <hr>
 
@@ -809,11 +846,13 @@ python3 .agent/scripts/verify_all.py . --url http://localhost:3000</code></pre>
 
 <p>Distributed under the MIT License. See <a href="LICENSE">LICENSE</a> for details.</p>
 
+<p>Full changelog: <a href="CHANGELOG.md">CHANGELOG.md</a> &nbsp;|&nbsp; Feature catalog: <a href="FEATURES.md">FEATURES.md</a> &nbsp;|&nbsp; Installation runbook: <a href="INSTALL.md">INSTALL.md</a></p>
+
 <!-- ═══════════════════════════════════════════════ -->
 <!-- FOOTER                                           -->
 <!-- ═══════════════════════════════════════════════ -->
 <div class="footer">
-  <p><strong>Exocórtex.IA</strong> — <a href="https://github.com/elderbernardi/exocortex.saas">github.com/elderbernardi/exocortex.saas</a></p>
+  <p><strong>Exocórtex.IA v1.1.1</strong> — <a href="https://github.com/elderbernardi/exocortex.saas">github.com/elderbernardi/exocortex.saas</a></p>
   <p style="margin-top:4px;">MIT License &copy; 2026 Elder Bernardi</p>
 </div>
 
