@@ -21,9 +21,10 @@ created: 2026-06-05
 
 - Uso esperado: parser local de documentos para workflows de intake.
 - Modo de consumo: CLI API, não serviço HTTP.
-- Runtime funcional observado: `/home/elder/exocortex/tools/docbrain`.
+- Runtime funcional observado: `/home/ubuntu/exocortex/tools/docbrain`.
+- Link compatível mantido: `/home/ubuntu/exocortex/docBrain`.
 - Health check funcional observado: `npm run --silent cli -- api health --output json`.
-- Drift observado: skill apontava para path canônico inexistente neste ambiente.
+- Drift documental principal já foi saneado no microverso `exocortex-ops`.
 
 ## NotebookLM
 

@@ -71,7 +71,7 @@ workflows/setup-change-draftfirst.md
 workflows/base-microverse-provisioning.md
 workflows/post-change-validation.md
 tools/hermes-cli.md
-tools/docbrain.md
+tools/docbrain-operacional.md
 tools/notebooklm.md
 templates/ops-decision.md
 templates/drift-report.md
