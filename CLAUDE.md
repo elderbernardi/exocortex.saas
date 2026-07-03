@@ -85,6 +85,8 @@ python3 scripts/migrate_frontmatter.py <path>
 
 The schema is documented in `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` (canonical reference) and `docs/plans/2026-06-19_acervo-lifecycle-okf/schema-spec.md` (detailed spec with migration derivation rules). Decision: ADR-013.
 
+A full v2 redesign of the memory system (schema v0.2, episodes/entities/intentions, conflict-as-state, consolidation loop) is specified in `docs/plans/2026-07-03_memory-v2-spec/` — status: proposed (ADR-023).
+
 ### Skill Quality Audits
 
 ```bash

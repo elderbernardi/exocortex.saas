@@ -23,10 +23,10 @@ Este microverso nasce para cobrir uma lacuna do Acervo: faltava um domínio pró
 
 - O Exocórtex roda sobre Hermes Agent.
 - O perfil ativo reportado na sessão é `default`.
-- O acervo local existe em `/home/elder/.hermes/acervo`.
+- O acervo local resolve para `/home/ubuntu/exocortex/acervo`, com alias compatível em `/home/ubuntu/.hermes/acervo`.
 - Antes da criação deste microverso, havia apenas um microverso operacional: `estudio-criativo`.
 - Hindsight estava instalado como plugin, mas não ativo como provider externo de memória.
-- DocBrain funcional foi encontrado em `/home/elder/exocortex/tools/docbrain`; havia drift em relação ao path mencionado na skill.
+- DocBrain funcional está em `/home/ubuntu/exocortex/tools/docbrain`, com compatibilidade em `/home/ubuntu/exocortex/docBrain`.
 - NotebookLM estava disponível como MCP server.
 
 ## Limite

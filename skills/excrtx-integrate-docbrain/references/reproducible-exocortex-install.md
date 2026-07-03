@@ -7,7 +7,7 @@ DocBrain is the local document parser engine for Exocortex intake workflows. A n
 ## Canonical repository
 
 ```bash
-https://github.com/ProjetoBB/docBrainBB.git
+https://github.com/elderbernardi/docbrain.git
 ```
 
 ## Default install path
@@ -23,11 +23,11 @@ DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools
 mkdir -p "$(dirname "$DOCBRAIN_DIR")"
 
 if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
-  git clone https://github.com/ProjetoBB/docBrainBB.git "$DOCBRAIN_DIR"
+  git clone https://github.com/elderbernardi/docbrain.git "$DOCBRAIN_DIR"
 fi
 
 cd "$DOCBRAIN_DIR"
-git pull --ff-only origin main
+git pull --ff-only origin master
 npm install
 npm run build
 npm run --silent cli -- api health --output json
@@ -63,10 +63,11 @@ EOF
 
 When documenting or changing DocBrain setup, update all three layers:
 
-1. DocBrain repo docs:
-   - `docs/HERMES-INTEGRATION.md`
-   - `docs/CLI-API-CONTRACT.md`
-   - `docs/EXOCORTEX-INSTALLATION.md`
+1. DocBrain repo files:
+   - `README.md`
+   - `HARNESS.md`
+   - `schema.md`
+   - `plans/ARCHITECTURE.md`
 2. Hermes local skill:
    - `~/.hermes/skills/exocortex/excrtx-integrate-docbrain/SKILL.md`
 3. Setup microverso in the Acervo:

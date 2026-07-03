@@ -23,5 +23,5 @@ created: 2026-06-05
 |---|---|---|---|---|---|---|---|
 | DRIFT-2026-06-05-001 | 2026-06-05 | Installer | Source contém seed `acervo/micro/exocortex-ops` | Source ainda não contém seed | SEV2 | aberto | Preparar DRAFT de provisionamento |
 | DRIFT-2026-06-05-002 | 2026-06-05 | Setup | Setup preserva evolução local de microverso base | Step 3 usa `rsync -a` genérico | SEV1 | aberto | Propor patch com `--ignore-existing` |
-| DRIFT-2026-06-05-003 | 2026-06-05 | DocBrain | Docs/skills apontam path funcional | Runtime funcional em `/home/elder/exocortex/tools/docbrain`; docs antigas divergentes | SEV2 | aberto | Corrigir skill/doc em tarefa própria |
+| DRIFT-2026-06-05-003 | 2026-06-05 | DocBrain | Docs/skills apontam path funcional | Runtime funcional atual em `/home/ubuntu/exocortex/tools/docbrain`; drift documental original já saneado | SEV2 | resolvido | Manter referências canônicas em `tools/docbrain-operacional.md` e skill associada |
 | DRIFT-2026-06-05-004 | 2026-06-05 | Modelo | Identidade operacional gpt-5.5 | `hermes profile list` mostra gpt-5.4 | SEV2 | aberto | Auditar config/profile em manutenção separada |
