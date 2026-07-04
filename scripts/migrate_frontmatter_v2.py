@@ -123,7 +123,9 @@ SCHEMA_VALUE = "acervo/v0.2"
 EXCLUDED_DIRS = frozenset({
     "_artifacts", "raw", "_archive", ".quarantine",
     "_inbox", "_tasks", "_routines", "_automations",
-    "_template", "_fixture",
+    "_template",
+    "_retired",
+    "_ops_snapshots", "_fixture",
     "macro",
 })
 EXCLUDED_NAMES = frozenset({"README.md"})

@@ -1031,7 +1031,9 @@ DEFAULT_EXCLUDE_DIRS = frozenset({
     "_artifacts", "raw", "_archive", ".quarantine",
     "_inbox", "_tasks", "_routines", "_automations",
     # scaffolds / fixtures — not live semantic pages (carry placeholders)
-    "_template", "_fixture",
+    "_template",
+    "_retired",
+    "_ops_snapshots", "_fixture",
     # macro/ is the executive constitution, loaded VERBATIM into context at every
     # boot (cat SOUL.md/valores.md/estilo.md). Frontmatter there would leak as
     # literal identity context, so macro carries none — migrate_frontmatter.py
