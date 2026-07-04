@@ -16,7 +16,8 @@ last_accessed_at: 2026-05-27T04:03:03Z
 > Last updated: 2026-05-26 | Total cross-refs: 0
 
 ## Groups
-- [groups.md](groups.md) — Aliases de acesso (ALL, CLIENTS, PROJECTS)
+- [groups.md](../groups.md) — Registro canônico único de grupos de microversos (ALL, DOMAINS, PROJECTS, ROLES, CRIACAO)
+- [knowledge/groups.md](../knowledge/groups.md) — DEPRECADO (2026-07-04): superseded por `shared/groups.md`
 
 ## Glossário
 - [glossario.md](glossario.md) — Vocabulário comum entre domínios

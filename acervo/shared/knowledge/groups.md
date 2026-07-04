@@ -7,9 +7,14 @@ timestamp: 2026-05-27
 class: volátil
 created_at: 2026-05-27T04:03:03Z
 last_accessed_at: 2026-05-27T04:03:03Z
+deprecated: true
+deprecated_at: "2026-07-04T00:00:00Z"
+deprecated_reason: "Superseded por shared/groups.md, registro canônico único de grupos de microversos. Taxonomia ALL/CLIENTS/PROJECTS obsoleta; membro cliente-alfa não existe em acervo/micro/."
 ---
 
 # Shared Access Groups
+
+> **Superseded by:** [`shared/groups.md`](../groups.md) — registro canônico único de grupos (2026-07-04).
 
 > Define aliases para controle de acesso (firewall) entre Microversos.
 > Usado em tarefas com scope restrito via deny/allow.

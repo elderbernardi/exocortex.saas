@@ -161,17 +161,17 @@ This context snapshot is stale and has been quarantined by the syndic.
 
 ## 4. Validation Rule Summary
 
-The validator script (`scripts/validate_frontmatter.py`) enforces 41 `ERROR` and 8 `WARN` rules. Highlights:
+The validator script (`scripts/validate_frontmatter.py`) enforces 43 `ERROR` and 6 `WARN` rules (49 total). The `WARN` rules are V-004, V-022, V-025, V-026, V-072, V-075. Highlights:
 
 | Category | Key Rules |
 |----------|-----------|
 | **Structural (V-001–V-004)** | File must start with `---`; closing `---` present; valid YAML; non-empty body (WARN). |
 | **OKF Presence (V-010–V-014)** | `type`, `title`, `description`, `tags`, `timestamp` all required. |
-| **OKF Values (V-020–V-030)** | `type` must be one of the 6 concept types; `tags` must be a YAML list; `timestamp` must be a valid `YYYY-MM-DD` date. |
+| **OKF Values (V-020–V-030)** | `type` must be one of the 6 concept types; `tags` must be a YAML list; `timestamp` must be a valid `YYYY-MM-DD` date. WARN tier: `title` > 200 chars (V-022), `description` with newlines (V-025) or > 120 chars (V-026). |
 | **Acervo Extension (V-040–V-046)** | `class` required (`perene`/`volátil`); `created_at` required (ISO 8601 UTC); `last_accessed_at`/`promoted_at` format-checked if present. |
 | **Deprecation (V-050–V-056)** | If `deprecated: true` → `deprecated_at` + `deprecated_reason` required; if `deprecated` absent/false → the other two must NOT be present. |
 | **Quarantine (V-060–V-068)** | If `quarantined_at` present → `quarantine_reason` + `quarantine_expires_at` required; expiry ≥ `quarantined_at`. |
-| **Cross-Field (V-070–V-076)** | `created_at` date must equal `timestamp`; **deprecated XOR quarantined** (V-071 — never both); `promoted_at` present but `class: volátil` → WARN (suggest updating `class` to `perene`). |
+| **Cross-Field (V-070–V-076)** | `created_at` date must equal `timestamp`; **deprecated XOR quarantined** (V-071 — never both); `promoted_at` present but `class: volátil` → WARN (V-072 — suggest updating `class` to `perene`); `confidence` outside `low`/`medium`/`high` → WARN (V-075). |
 
 **Exit code:** `0` = pass (WARN allowed); `1` = one or more ERROR rules failed.
 

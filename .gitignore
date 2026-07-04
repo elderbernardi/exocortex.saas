@@ -27,4 +27,5 @@ nohup.out
 
 
 # AcervoIndex runtime manifest (mutable state, not seed)
-acervo/global/tools/state/
+# Keep the dir tracked (.gitkeep/README.md); ignore only the mutable manifests
+acervo/global/tools/state/*.json

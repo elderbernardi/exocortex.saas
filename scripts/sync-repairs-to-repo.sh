@@ -59,7 +59,7 @@ ALLOWED_SYNC_PREFIXES=(
 
 # Paths que NUNCA devem ser sincronizados
 BLOCKED_PATTERNS=(
-  "macro/soul.md"
+  "macro/SOUL.md"
   "macro/valores.md"
   "macro/estilo.md"
   "SOUL.md"

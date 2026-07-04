@@ -19,7 +19,7 @@ last_accessed_at: 2026-05-27T04:03:03Z
 ```
 acervo/
 ├── macro/                      # 🧠 Identidade (FLAT — sempre carregado)
-│   ├── soul.md                 #    Quem sou, propósito
+│   ├── SOUL.md                 #    Constituição do executivo — quem sou, propósito
 │   ├── valores.md              #    Princípios de decisão
 │   └── estilo.md               #    Tom e voz do executivo
 │
@@ -158,8 +158,8 @@ ferramentas. Especificação completa do formato:
 
 ## ADRs
 
-- [ADR-001: 4 Camadas](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-001-four-layer-acervo.md)
-- [ADR-002: Isolamento de Contexto](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-002-context-isolation.md)
-- [ADR-003: Natures Híbridas](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-003-hybrid-natures.md)
-- [ADR-004: LLM Wiki Alignment](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-004-llm-wiki-alignment.md)
-- [ADR-005: Consolidar Skills](../projetos/pessoal/exocortex.saas/docs/ADR/ADR-005-consolidate-nature-skills.md)
+- ADR-001: 4 Camadas *(histórico; não versionado neste repo)*
+- ADR-002: Isolamento de Contexto *(histórico; não versionado neste repo)*
+- ADR-003: Natures Híbridas *(histórico; não versionado neste repo)*
+- ADR-004: LLM Wiki Alignment *(histórico; não versionado neste repo)*
+- ADR-005: Consolidar Skills *(histórico; não versionado neste repo)*

@@ -8,7 +8,7 @@ Fix the §3-of-01 drift list. No design changes.
 
 - Create missing dirs (installer + live): `.quarantine/`, `global/tools/state/`, `_inbox/`.
 - Fix validator WARN tier (make V-004/022/025/026/072/075 actually WARN); align SCHEMA.md counts.
-- Delete/merge `macro/soul.md` vs `SOUL.md` (keep `SOUL.md` constitution; boot ritual updated); single `shared/groups` source; purge dead slugs; populate `microversos.yaml` from disk.
+- Delete/merge the lowercase `soul.md` duplicate vs `SOUL.md` in `macro/` (keep `SOUL.md` constitution; boot ritual updated — done 2026-07-04); single `shared/groups` source; purge dead slugs; populate `microversos.yaml` from disk.
 - Fix dead references (memory-manager `references/`, README ADR links); extract lifecycle constants (90/180/30) to one contract file.
 - Run `validate_frontmatter.py --dir acervo` clean; record baseline metrics (file counts, index entries, MEMORY.md usage).
 - **Test:** validator exit 0; `acervo_hindsight_index.py report` zero errors.

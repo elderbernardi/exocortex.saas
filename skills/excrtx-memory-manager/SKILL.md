@@ -138,12 +138,12 @@ Referência operacional curta: `references/acervo-control-plane-cli.md`.
 
 At every session boot:
 
-① **Read `macro/*`** — soul.md, valores.md, estilo.md (entire files, ~100 lines total)
+① **Read `macro/*`** — SOUL.md, valores.md, estilo.md (entire files, ~100 lines total)
 ② **Read `global/_meta/index.md`** — catalog of universal rules/processes/tools
 ③ **DO NOT load** micro/ or shared/ until a task defines the scope
 
 ```bash
-cat "$ACERVO/macro/soul.md"
+cat "$ACERVO/macro/SOUL.md"
 cat "$ACERVO/macro/valores.md"
 cat "$ACERVO/macro/estilo.md"
 cat "$ACERVO/global/_meta/index.md"
@@ -502,6 +502,7 @@ Superseded content is not deleted. Procedure:
 - **Scope conflicts:** When multiple microversos have similar content, verify `shared/groups.md` scope resolution. `allow` always overrides `deny`.
 - **`type` vs `excrtx_type` confusion:** The OKF `type` field (concept type: `decision`, `memory`, `knowledge`, ...) is NOT the old Acervo `type` (now `excrtx_type`: `fact`, `rule`, `workflow`, ...). They are orthogonal — `type` is for OKF interoperability, `excrtx_type` preserves the legacy vocabulary. Never use `excrtx_type` values in the `type` field or vice versa. See `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` §2.
 - **Stale frontmatter:** Files with old `last_accessed_at` (or legacy `updated`) dates may be outdated. Flag data with `last_accessed_at` > 90 days as potentially stale — these are quarantine candidates for the syndic.
+  (fonte canônica dos thresholds: `global/contracts/memory-lifecycle-constants.md`)
 - **Deprecated files in search results:** Always filter out `deprecated: true` files in SEARCH unless the executive explicitly asks for historical content. Returning deprecated data as current truth is a critical error.
 - **Quarantine directory leakage:** `.quarantine/` must never appear in search results or context loading. It is not active memory.
 - **Missing semantic revision on WRITE:** Every WRITE to `knowledge/`, `context/`, `contracts/`, or `tools/` must call `excrtx-memory-deprecate` before commit. Skipping this step leaves contradictory knowledge active — the agent may retrieve stale truth.

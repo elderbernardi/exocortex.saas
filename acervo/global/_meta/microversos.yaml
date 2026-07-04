@@ -8,4 +8,46 @@
 #     status: active
 #     requires_met: true|false
 #     content_digest: <sha256>
-installed: []
+#
+# Backfill 2026-07-04: entradas retroativas para os microversos que já
+# existiam fisicamente em acervo/micro/ antes do registro (Fase 0, memory-v2).
+# content_digest: sha256 do arquivo microverso.yaml do microverso (os
+# manifestos existentes não possuem provenance.content_digest, campo que o
+# mvinstall usa); null quando o microverso não tem manifesto.
+# version: 0.0.0 quando o manifesto não declara versão semver (ou não existe).
+installed:
+  - name: comercial
+    version: 0.1.0
+    installed_at: "2026-07-04T00:00:00Z"
+    path: micro/comercial
+    status: active
+    requires_met: true
+    content_digest: 893c0e27859c09a671acc55faeb08d14b5cf4e5107e209b17aa86706668285c1
+  - name: estudio-criativo
+    version: 1.0.0
+    installed_at: "2026-07-04T00:00:00Z"
+    path: micro/estudio-criativo
+    status: active
+    requires_met: true
+    content_digest: 93ecba4e06adab9af3b465d48631ab0f81ffd8d733ac880720ba566487373826
+  - name: excrtx
+    version: 0.0.0  # sem microverso.yaml (apenas DESIGN.md)
+    installed_at: "2026-07-04T00:00:00Z"
+    path: micro/excrtx
+    status: active
+    requires_met: true
+    content_digest: null
+  - name: exocortex-dev
+    version: 0.0.0  # sem microverso.yaml
+    installed_at: "2026-07-04T00:00:00Z"
+    path: micro/exocortex-dev
+    status: active
+    requires_met: true
+    content_digest: null
+  - name: exocortex-ops
+    version: 0.0.0  # manifesto legado (pré excrtx/v1) sem campo version
+    installed_at: "2026-07-04T00:00:00Z"
+    path: micro/exocortex-ops
+    status: active
+    requires_met: true
+    content_digest: 21e7592a84559c3e3972e09f3398c13d2ed8bd511ca65a272788c15b7a854d5a

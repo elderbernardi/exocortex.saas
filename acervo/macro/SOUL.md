@@ -28,6 +28,28 @@ Execute o onboarding para personalizar este arquivo:
 4. Uma entrevista em 6 blocos capturará sua essência e seu contexto de negócio
 5. Este arquivo será substituído pela sua constituição pessoal
 
+## Estrutura da Identidade Raiz
+
+A entrevista de onboarding preenche a **Identidade Raiz** — quem o Exocórtex serve —
+seguindo esta estrutura:
+
+```markdown
+## Quem sou
+[Nome, cargo, organização]
+
+## Propósito
+[Missão pessoal, o que move suas decisões]
+
+## Visão
+[Onde quer chegar em 1, 3, 5 anos]
+
+## Forças
+[Competências centrais, diferencial]
+
+## Pontos Cegos
+[Áreas onde precisa de suporte do Exocórtex]
+```
+
 ## Enquanto o onboarding não for feito
 
 O Exocórtex opera com defaults genéricos:

@@ -33,6 +33,7 @@ The syndic is the **orchestrator** — it decides *what* to act on. The
 `excrtx-memory-quarantine`. This separation ensures the quarantine skill's
 invariants (immunity checks, 30-day window, dual logging) are always honored
 regardless of who triggers the operation.
+(fonte canônica dos thresholds: `global/contracts/memory-lifecycle-constants.md`)
 
 ## Acervo Location
 
