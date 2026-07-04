@@ -1,22 +1,18 @@
 ---
-type: knowledge
+schema: acervo/v0.2
+type: workflow
 title: Plano de Execução — Memória Excelente, Econômica, Contextual e Manejável
-description: Plano executável para reformar a memória do Exocórtex com Hindsight,
-  Acervo, SOUL e agentes menores.
-tags:
-- memory
-- execution-plan
-- hindsight
-- acervo
-- agents
-timestamp: '2026-06-21'
+description: Plano executável para reformar a memória do Exocórtex com Hindsight, Acervo, SOUL e agentes menores.
+tags: [memory, execution-plan, hindsight, acervo, agents]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+created_at: 2026-06-21T16:37:51Z
 nature: workflows
 excrtx_type: workflow
 confidence: high
 canonical_from: micro/exocortex-dev/workflows/memory-excellence-execution-plan.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: exocortex-ops
 absorbed_from: micro/exocortex-dev/workflows/memory-excellence-execution-plan.md
 ---

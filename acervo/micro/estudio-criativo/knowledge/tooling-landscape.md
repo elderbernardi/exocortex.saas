@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Paisagem de Ferramentas Criativas
 description: O Estúdio deve operar com ferramentas com IA e sem IA. A escolha depende da tarefa, do ambiente disponível e da quali...
 tags: [knowledge, tools]
 timestamp: 2026-06-01
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

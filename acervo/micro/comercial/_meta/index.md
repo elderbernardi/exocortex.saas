@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Comercial
 description: Projetos de desenvolvimento de software e integrações para fins comerciais — clientes, produtos, entregas.
 tags: []
 timestamp: 2026-06-08
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-08T00:00:00Z
 last_accessed_at: 2026-06-08T00:00:00Z
 domain: Integrações Comerciais
@@ -12,6 +15,7 @@ excrtx_type: project
 slug: comercial
 priority: normal
 created: 2026-06-08
+nature: _meta
 ---
 
 # Comercial

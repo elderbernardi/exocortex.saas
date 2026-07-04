@@ -1,0 +1,9 @@
+# shared/groups.yaml — registro único de grupos (06-microverse-spec §6)
+# Validação: todo member deve existir em micro/ com status != retired.
+groups:
+  OPERACAO:
+    members: [operacoes, expansao-sul]
+    purpose: "Escopos operacionais internos; leitura cruzada permitida para naturezas expostas"
+  CLIENTES:
+    members: [cliente-norte]
+    purpose: "Escopos de cliente; isolados entre si e do restante por padrão (preços são restritos ao escopo)"

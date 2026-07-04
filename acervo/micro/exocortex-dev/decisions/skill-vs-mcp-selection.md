@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: 'ADR-006: Custom Skill vs. MCP Server Selection'
 description: When extending Exocortex.IA, developers often face the choice of whether to write a new custom Hermes skill (under `s...
 tags: []
 timestamp: 2026-06-11
 class: perene
+status: active
+epistemic: decision
 created_at: 2026-06-11T03:03:32Z
 last_accessed_at: 2026-06-11T03:03:32Z
+nature: decisions
 ---
 
 # ADR-006: Custom Skill vs. MCP Server Selection

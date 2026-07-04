@@ -1,6 +1,6 @@
 # Acervo Frontmatter Schema — Canonical Reference
 
-> **Version:** 1.0.0  ·  **Status:** Canonical (source of truth)
+> **Version:** 1.0.0  ·  **Status:** Superseded by [SCHEMA-v0.2](../2026-07-03_memory-v2-spec/13-artifacts/SCHEMA-v0.2.md) (ADR-023, 2026-07-04) — retained for pre-v0.2 files and migration rules
 > **Decision:** [ADR-013](ADR-013-frontmatter-schema-okf.md)  ·  **Detailed spec:** [schema-spec.md](schema-spec.md)
 > **OKF compatibility:** [ADR-017](ADR-017-okf-compatibility.md)
 

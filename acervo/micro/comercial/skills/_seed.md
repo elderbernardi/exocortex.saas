@@ -1,17 +1,19 @@
 ---
-title: "{{DOMAIN_NAME}} — Skills"
-type: knowledge
-description: "Capacidades e skills do domínio {{DOMAIN_NAME}}"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Skills'
+type: skill
+description: Capacidades e skills do domínio {{DOMAIN_NAME}}
 class: volátil
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: skills
 excrtx_type: tool
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Skills — {{DOMAIN_NAME}}

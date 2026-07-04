@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Registro de cron jobs
 description: Registro de cron jobs canônicos do microverso, incluindo a reconciliação diária do AcervoIndex.
 tags: [cron, automacao, manutencao]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-21T00:00:00Z
 updated: 2026-06-21

@@ -1,11 +1,14 @@
 ---
+schema: acervo/v0.2
 type: context
-title: "{{DOMAIN_NAME}} — Wiki Schema"
-description: "Convenções de schema e escrita do microverso {{DOMAIN_NAME}}"
+title: '{{DOMAIN_NAME}} — Wiki Schema'
+description: Convenções de schema e escrita do microverso {{DOMAIN_NAME}}
 tags: [schema, meta]
-timestamp: "2026-06-22"
+timestamp: 2026-06-22
 class: perene
-created_at: "2026-06-22T03:22:01Z"
+status: active
+epistemic: fact
+created_at: 2026-06-22T03:22:01Z
 nature: context
 ---
 

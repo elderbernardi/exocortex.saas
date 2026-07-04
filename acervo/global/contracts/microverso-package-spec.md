@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: contract
 title: Especificação do pacote de microverso (excrtx/v1 + formato .mvpkg)
 description: Schema do microverso.yaml e formato portátil .mvpkg para export/import de microversos.
 tags: [exocortex, microverso, package, excrtx-v1, mvpkg, okf]
 timestamp: 2026-06-20
 class: perene
+status: active
 created_at: 2026-06-20T00:00:00Z
 last_accessed_at: 2026-06-20T00:00:00Z
 updated: 2026-06-20

@@ -1,15 +1,19 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Shared Access Groups
 description: Define aliases para controle de acesso (firewall) entre Microversos.
 tags: []
 timestamp: 2026-05-27
 class: volátil
+status: deprecated
+epistemic: fact
 created_at: 2026-05-27T04:03:03Z
 last_accessed_at: 2026-05-27T04:03:03Z
 deprecated: true
-deprecated_at: "2026-07-04T00:00:00Z"
-deprecated_reason: "Superseded por shared/groups.md, registro canônico único de grupos de microversos. Taxonomia ALL/CLIENTS/PROJECTS obsoleta; membro cliente-alfa não existe em acervo/micro/."
+deprecated_at: 2026-07-04T00:00:00Z
+deprecated_reason: Superseded por shared/groups.md, registro canônico único de grupos de microversos. Taxonomia ALL/CLIENTS/PROJECTS obsoleta; membro cliente-alfa não existe em acervo/micro/.
+nature: knowledge
 ---
 
 # Shared Access Groups

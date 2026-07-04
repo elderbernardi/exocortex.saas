@@ -1,22 +1,20 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: purpose
 description: Ingestão DocBrain de purpose.md para promoção ao Acervo.
-tags:
-- docbrain
-- acervo
-- ingest
-- purpose
-timestamp: '2026-06-26'
+tags: [docbrain, acervo, ingest, purpose]
+timestamp: 2026-06-26
 class: volátil
-created_at: '2026-06-26T03:48:28Z'
-created: '2026-06-26'
-updated: '2026-06-26'
+status: active
+epistemic: fact
+created_at: 2026-06-26T03:48:28Z
+created: 2026-06-26
+updated: 2026-06-26
 nature: knowledge
 excrtx_type: fact
-confidence: medium
-sources:
-- /home/elder/projetos/projetob/docbrain/purpose.md
+confidence: likely
+sources: [/home/elder/projetos/projetob/docbrain/purpose.md]
 docbrain_document_id: sha256:52bfcb6cb1319f92d289a873b5413322ea3d983d04d9c3bd6a1a5327c0c36f57
 docbrain_job_id: job_507f7823-6db0-415c-9fb5-67622814f99e
 docbrain_request_id: req_7b1d199a-1adc-4040-b6fd-b192975adb6e

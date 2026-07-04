@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Exocórtex Dev
 description: Desenvolvimento do framework Exocórtex.IA — skills, harness, acervo, integrações e evolução do sistema com Hermes Agent.
 tags: []
 timestamp: 2026-06-08
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-08T00:00:00Z
 last_accessed_at: 2026-06-08T00:00:00Z
 domain: Desenvolvimento do Exocórtex
@@ -13,6 +16,7 @@ slug: exocortex-dev
 updated: 2026-06-11
 priority: high
 created: 2026-06-08
+nature: _meta
 ---
 
 # Exocórtex Dev

@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: 'Microverso: Estúdio Criativo'
 description: 'Type: `domain`'
 tags: []
 timestamp: 2026-06-04
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-04T16:15:44Z
 last_accessed_at: 2026-06-04T16:15:44Z
+nature: _meta
 ---
 
 # Microverso: Estúdio Criativo

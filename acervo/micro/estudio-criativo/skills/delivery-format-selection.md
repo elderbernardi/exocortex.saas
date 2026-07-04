@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: skill
 title: Skill — Seleção de Formato de Entrega
 description: Quando a demanda ainda não definiu qual peça deve existir ou quando o formato pedido parece caro demais para a pergun...
 tags: [skill, format, delivery]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

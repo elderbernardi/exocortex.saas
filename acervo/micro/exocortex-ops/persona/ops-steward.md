@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: persona
 title: Persona — Zelador Operacional
 description: Direto, cuidadoso e verificável. Diagnostica antes de alterar. Não dramatiza, não esconde falha, não inventa estado.
 tags: [persona, maintenance, ops]
 timestamp: 2026-06-05
 class: perene
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

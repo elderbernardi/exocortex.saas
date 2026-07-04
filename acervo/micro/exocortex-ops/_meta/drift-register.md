@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Registro de drift operacional — exocortex-ops
 description: '| ID | Data | Área | Esperado | Observado | Severidade | Status | Próxima ação |'
 tags: [drift, runtime, setup, ops]
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

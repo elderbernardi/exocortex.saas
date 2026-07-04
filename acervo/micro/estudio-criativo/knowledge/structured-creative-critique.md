@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Crítica Criativa Estruturada
 description: Dar ao Estúdio um modo repetível de avaliar uma peça, conceito ou narrativa sem cair em gosto pessoal solto.
 tags: [knowledge, critique, review, quality]
 timestamp: 2026-06-14
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

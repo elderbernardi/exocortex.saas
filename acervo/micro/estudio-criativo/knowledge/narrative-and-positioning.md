@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Narrativa e Posicionamento no Estúdio
 description: Dar ao Estúdio um recorte operacional para transformar hipótese, proposta e diferencial em linguagem percebida.
 tags: [knowledge, narrative, positioning, language]
 timestamp: 2026-06-14
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

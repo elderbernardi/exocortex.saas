@@ -7,7 +7,10 @@ Superfície local oficial para provar o contrato prepare/commit antes da camada 
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,6 +20,7 @@ from acervo_semantic_core import (
     export_microverso,
     list_microversos,
     prepare_write,
+    resolve_acervo_root,
     search_acervo,
     slugify,
     validate_entry,
@@ -86,6 +90,47 @@ def command_validate_frontmatter(args: argparse.Namespace) -> dict[str, Any]:
     return {"ok": True, "path": str(Path(args.path).expanduser().resolve())}
 
 
+def load_catalog_module(acervo_root: Path):
+    """Load acervo/global/tools/acervo_catalog.py (catalog is a Plane-2 tool that lives inside the Acervo)."""
+    candidates = [
+        acervo_root / "global" / "tools" / "acervo_catalog.py",
+        Path(__file__).resolve().parents[1] / "acervo" / "global" / "tools" / "acervo_catalog.py",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            spec = importlib.util.spec_from_file_location("acervo_catalog", candidate)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            return module
+    raise RuntimeError("acervo_catalog.py não encontrado em global/tools.")
+
+
+def command_reindex(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    catalog = load_catalog_module(root)
+    payload: dict[str, Any] = {"ok": True, "catalog_build": catalog.build_catalog(root)}
+    if args.with_hindsight:
+        indexer = root / "global" / "tools" / "acervo_hindsight_index.py"
+        proc = subprocess.run(
+            [sys.executable, str(indexer), "scan", "--all"],
+            capture_output=True, text=True, env={**os.environ, "ACERVO": str(root)},
+        )
+        payload["hindsight_scan"] = {
+            "exit_code": proc.returncode,
+            "output": proc.stdout.strip()[-4000:],
+            "stderr": proc.stderr.strip()[-2000:],
+        }
+        if proc.returncode != 0:
+            payload["ok"] = False
+    return payload
+
+
+def command_doctor(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    catalog = load_catalog_module(root)
+    return catalog.doctor(root)
+
+
 def command_export_microverso(args: argparse.Namespace) -> dict[str, Any]:
     return export_microverso(
         acervo_root=args.acervo_root,
@@ -132,6 +177,15 @@ def build_parser() -> argparse.ArgumentParser:
     validate_cmd.add_argument("--path", required=True)
     validate_cmd.set_defaults(handler=command_validate_frontmatter)
 
+    reindex_cmd = sub.add_parser("reindex", help="Reconstrói o catálogo derivado (catalog.sqlite)")
+    reindex_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    reindex_cmd.add_argument("--with-hindsight", action="store_true", help="Também roda o indexer Hindsight (scan --all)")
+    reindex_cmd.set_defaults(handler=command_reindex)
+
+    doctor_cmd = sub.add_parser("doctor", help="Relatório de integridade do Acervo (links, drift, lifecycle)")
+    doctor_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    doctor_cmd.set_defaults(handler=command_doctor)
+
     export_cmd = sub.add_parser("export-microverso", help="Empacota um microverso")
     export_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
     export_cmd.add_argument("--slug", required=True)
@@ -151,7 +205,7 @@ def main() -> int:
         print_json({"ok": False, "error": str(exc)})
         return 1
     print_json(payload)
-    return 0
+    return 0 if payload.get("ok", True) else 1
 
 
 if __name__ == "__main__":

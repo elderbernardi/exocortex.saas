@@ -1,17 +1,19 @@
 ---
-title: "{{DOMAIN_NAME}} — Processos"
-type: knowledge
-description: "Processos e workflows do domínio {{DOMAIN_NAME}}"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Processos'
+type: workflow
+description: Processos e workflows do domínio {{DOMAIN_NAME}}
 class: volátil
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: workflows
 excrtx_type: workflow
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Processos — {{DOMAIN_NAME}}

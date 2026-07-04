@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Log — Exocortex Ops
 description: Registro cronológico de operações no microverso Exocortex Ops. Append-only.
 tags: [log, meta]
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-05T18:08:35Z
 last_accessed_at: 2026-07-01T22:52:31Z
 nature: context

@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Modelo de Apoio Misto entre Microversos
 description: O Estúdio opera em tarefas mistas sem absorver o domínio atendido.
 tags: [mixed-tasks, cross-microverso]
 timestamp: 2026-06-01
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

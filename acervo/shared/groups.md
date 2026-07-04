@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Groups — Aliases de Microversos
 description: Registro canônico único de grupos de microversos para resolução de scope (ALL, DOMAINS, PROJECTS, ROLES, CRIACAO).
 tags: [groups, scope, aliases, microversos]
 timestamp: 2026-06-21
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-21T00:00:00Z
 last_accessed_at: 2026-07-04T00:00:00Z
 nature: knowledge

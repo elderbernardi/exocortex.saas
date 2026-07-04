@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Mapa de Lacunas Abertas do Estúdio
 description: Deixar explícito o que o Estúdio ainda não cobre bem, para evitar que o índice pareça mais maduro do que a prática.
 tags: [knowledge, gaps, backlog, coverage]
 timestamp: 2026-06-14
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

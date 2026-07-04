@@ -1,16 +1,19 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Mapa de Runtime
 description: Mapa operacional do runtime atual do Exocórtex sobre Hermes neste ambiente.
 tags: [runtime, hermes, config, tools]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T18:08:35Z
 last_accessed_at: 2026-06-05T18:08:35Z
 updated: 2026-07-01
 nature: knowledge
 excrtx_type: fact
-sources: [command:hermes-tools-list, command:hermes-memory-status]
+sources: ['command:hermes-tools-list', 'command:hermes-memory-status']
 confidence: high
 created: 2026-06-05
 ---

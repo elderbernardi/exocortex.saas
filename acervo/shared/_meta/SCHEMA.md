@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Wiki Schema — Shared (Barramento Cross-domain)
 description: Ponte de comunicação entre Microversos isolados.
 tags: []
 timestamp: 2026-05-27
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-05-27T04:03:03Z
 last_accessed_at: 2026-05-27T04:03:03Z
+nature: _meta
 ---
 
 # Wiki Schema — Shared (Barramento Cross-domain)

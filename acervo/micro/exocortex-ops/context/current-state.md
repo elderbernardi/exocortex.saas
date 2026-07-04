@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Estado Inicial — Exocortex Ops
 description: 'Este microverso nasce para cobrir uma lacuna do Acervo: faltava um domínio próprio para setup, operação e manutenção ...'
 tags: [ops, current-state, setup]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

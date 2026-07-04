@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: 'Microverso: Exocortex Ops'
 description: 'Type: `domain`'
 tags: []
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-05T18:08:35Z
 last_accessed_at: 2026-06-05T18:08:35Z
+nature: _meta
 ---
 
 # Microverso: Exocortex Ops

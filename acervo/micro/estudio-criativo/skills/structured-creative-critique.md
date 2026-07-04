@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: skill
 title: Skill — Crítica Criativa Estruturada
 description: Quando já existe uma peça, narrativa, draft ou protótipo e o Estúdio precisa decidir a próxima intervenção.
 tags: [skill, critique, quality]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

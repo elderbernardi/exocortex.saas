@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Contrato — Preservação Canônica e Versionamento Integral
 description: O microverso `estudio-criativo` é canônico no Acervo do Exocórtex.
 tags: [contract, canonical, preservation, versioning]
 timestamp: 2026-06-01
 class: perene
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

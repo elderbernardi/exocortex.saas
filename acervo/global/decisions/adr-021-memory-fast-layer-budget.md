@@ -1,22 +1,19 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: ADR-021 — Orçamento e Governança da Memória Rápida
-description: Restringe MEMORY.md e USER.md a bootstrap mínimo para reduzir token fixo
-  e evitar duplicação do Acervo/Hindsight.
-tags:
-- memory
-- token-economy
-- governance
-- bootstrap
-timestamp: '2026-06-21'
+description: Restringe MEMORY.md e USER.md a bootstrap mínimo para reduzir token fixo e evitar duplicação do Acervo/Hindsight.
+tags: [memory, token-economy, governance, bootstrap]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+created_at: 2026-06-21T16:37:51Z
 nature: decisions
 excrtx_type: decision
 confidence: high
-status: accepted
+status: active
+epistemic: decision
 canonical_from: micro/exocortex-dev/decisions/adr-021-memory-fast-layer-budget.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

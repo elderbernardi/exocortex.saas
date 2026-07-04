@@ -1,21 +1,19 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Progresso — Memória Excelente do Exocórtex
-description: 'Status operacional da reforma de memória: Hindsight, AcervoIndex, SOUL
-  e memória rápida.'
-tags:
-- memory
-- progress
-- hindsight
-- acervo
-timestamp: '2026-06-21'
+description: 'Status operacional da reforma de memória: Hindsight, AcervoIndex, SOUL e memória rápida.'
+tags: [memory, progress, hindsight, acervo]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+epistemic: fact
+created_at: 2026-06-21T16:37:51Z
 nature: context
 excrtx_type: context
 confidence: high
 canonical_from: micro/exocortex-dev/context/memory-excellence-progress.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: exocortex-ops
 absorbed_from: micro/exocortex-dev/context/memory-excellence-progress.md
 ---

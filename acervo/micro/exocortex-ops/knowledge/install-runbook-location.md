@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Localização do runbook de instalação (INSTALL.md)
 description: Onde encontrar o INSTALL.md — ele vive no repositório-fonte exocortex.saas e não é copiado para o runtime.
 tags: [install, runbook, agents, source-repo]
 timestamp: 2026-06-22
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-22T00:00:00Z
 last_accessed_at: 2026-06-22T00:00:00Z
 updated: 2026-06-22

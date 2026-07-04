@@ -1,17 +1,13 @@
 ---
-type: knowledge
+schema: acervo/v0.2
+type: contract
 title: Constantes do Lifecycle de Memória
-description: Single source of truth for memory lifecycle thresholds (quarantine,
-  purge, page sizes, fast-layer budgets).
-tags:
-- memory
-- lifecycle
-- quarantine
-- contract
-- constants
-timestamp: '2026-07-04'
+description: Single source of truth for memory lifecycle thresholds (quarantine, purge, page sizes, fast-layer budgets).
+tags: [memory, lifecycle, quarantine, contract, constants]
+timestamp: 2026-07-04
 class: perene
-created_at: '2026-07-04T00:00:00Z'
+status: active
+created_at: 2026-07-04T00:00:00Z
 nature: contracts
 excrtx_type: rule
 confidence: high

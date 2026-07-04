@@ -1,17 +1,19 @@
 ---
-title: "{{DOMAIN_NAME}} — Persona"
-type: context
-description: "Voz, tom e persona do domínio {{DOMAIN_NAME}}"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Persona'
+type: persona
+description: Voz, tom e persona do domínio {{DOMAIN_NAME}}
 class: perene
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: persona
 excrtx_type: profile
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Persona — {{DOMAIN_NAME}}

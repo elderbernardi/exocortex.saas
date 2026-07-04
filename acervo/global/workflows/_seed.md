@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: workflow
 title: Processos Globais
 description: Workflows que se aplicam a TODO contexto, independente do Microverso ativo.
 tags: [workflow-global]
 timestamp: 2026-05-26
 class: perene
+status: active
 created_at: 2026-05-26T00:00:00Z
 last_accessed_at: 2026-05-26T00:00:00Z
 updated: 2026-05-26

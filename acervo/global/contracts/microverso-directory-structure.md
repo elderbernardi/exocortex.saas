@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: contract
 title: Estrutura Canônica de Diretórios de Microverso
 description: Estrutura canônica de diretórios de microverso — 11 natures + 3 infra = 14 diretórios. Contrato normativo.
 tags: [exocortex, microverso, directory-structure, canonical, natures, excrtx-v1]
 timestamp: 2026-06-21
 class: perene
+status: active
 created_at: 2026-06-21T00:00:00Z
 nature: contracts
 excrtx_type: rule

@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: template
 title: Template — Campaign One-Pager
 description: Template — Campaign One-Pager
 tags: [template, campaign]
 timestamp: 2026-06-01
 class: volátil
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

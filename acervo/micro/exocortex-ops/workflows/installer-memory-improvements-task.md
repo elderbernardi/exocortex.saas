@@ -1,23 +1,18 @@
 ---
-type: knowledge
+schema: acervo/v0.2
+type: workflow
 title: Tarefa — Consolidar instalador da memória Exocórtex/Hermes
-description: Tarefa para provisionar, configurar, testar e operacionalizar a reforma
-  de memória no instalador.
-tags:
-- memory
-- installer
-- setup
-- hindsight
-- acervo
-- smoke-test
-timestamp: '2026-06-21'
+description: Tarefa para provisionar, configurar, testar e operacionalizar a reforma de memória no instalador.
+tags: [memory, installer, setup, hindsight, acervo, smoke-test]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T21:13:33Z'
+status: active
+created_at: 2026-06-21T21:13:33Z
 nature: workflows
 excrtx_type: workflow
 confidence: high
 canonical_from: micro/exocortex-dev/workflows/installer-memory-improvements-task.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: exocortex-ops
 absorbed_from: micro/exocortex-dev/workflows/installer-memory-improvements-task.md
 ---

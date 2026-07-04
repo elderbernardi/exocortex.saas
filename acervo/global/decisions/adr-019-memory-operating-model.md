@@ -1,23 +1,19 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: ADR-019 — Modelo Operacional de Memória do Exocórtex
-description: Define Hindsight como memória operacional semântica, Acervo como fonte
-  canônica e memória rápida como bootstrap mínimo.
-tags:
-- memory
-- hindsight
-- acervo
-- architecture
-- token-economy
-timestamp: '2026-06-21'
+description: Define Hindsight como memória operacional semântica, Acervo como fonte canônica e memória rápida como bootstrap mínimo.
+tags: [memory, hindsight, acervo, architecture, token-economy]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+created_at: 2026-06-21T16:37:51Z
 nature: decisions
 excrtx_type: decision
 confidence: high
-status: accepted
+status: active
+epistemic: decision
 canonical_from: micro/exocortex-dev/decisions/adr-019-memory-operating-model.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Limites Operacionais
 description: Pode criar e editar arquivos do Acervo quando o executivo pedir explicitamente e o escopo estiver claro.
 tags: [governance, draft-first, safety]
 timestamp: 2026-06-05
 class: perene
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

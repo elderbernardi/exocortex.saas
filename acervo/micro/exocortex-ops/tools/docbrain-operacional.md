@@ -1,23 +1,19 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: tool
 title: DocBrain Operacional
-description: Instância funcional atual do DocBrain atualizada para o repositório canônico
-  elderbernardi/docbrain.
-tags:
-- docbrain
-- parser
-- intake
-timestamp: '2026-06-05'
+description: Instância funcional atual do DocBrain atualizada para o repositório canônico elderbernardi/docbrain.
+tags: [docbrain, parser, intake]
+timestamp: 2026-06-05
 class: volátil
-created_at: '2026-06-05T00:00:00Z'
-created: '2026-06-05'
-updated: '2026-07-01'
+status: active
+created_at: 2026-06-05T00:00:00Z
+created: 2026-06-05
+updated: 2026-07-01
 nature: tools
 excrtx_type: tool
 confidence: high
-sources:
-- conversation:docbrain-check
-- repo:https://github.com/elderbernardi/docbrain.git
+sources: ['conversation:docbrain-check', 'repo:https://github.com/elderbernardi/docbrain.git']
 ---
 
 # DocBrain operacional

@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Bem-vindo ao Exocórtex.IA
 description: '*"O mundo nunca sofrerá com a falta de maravilhas, mas apenas com a falta de maravilhamento."*'
 tags: []
 timestamp: 2026-06-04
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-04T19:08:16Z
 last_accessed_at: 2026-06-04T19:08:16Z
+nature: knowledge
 ---
 
 # Bem-vindo ao Exocórtex.IA

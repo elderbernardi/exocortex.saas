@@ -1,29 +1,24 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: ADR-023 — Especificação Memória v2 (objetos, tempo, epistemologia, consolidação)
-description: Adota a spec Memória v2 — schema v0.2, episódios, entidades, intenções,
-  conflito como estado, consolidação.
-tags:
-- memory
-- architecture
-- schema
-- v2
-- spec
-timestamp: '2026-07-03'
+description: Adota a spec Memória v2 — schema v0.2, episódios, entidades, intenções, conflito como estado, consolidação.
+tags: [memory, architecture, schema, v2, spec]
+timestamp: 2026-07-03
 class: perene
-created_at: '2026-07-03T21:30:00Z'
+created_at: 2026-07-03T21:30:00Z
 nature: decisions
 confidence: high
-status: proposed
-sources:
-- docs/plans/2026-07-03_memory-v2-spec/README.md
+status: active
+epistemic: decision
+sources: [docs/plans/2026-07-03_memory-v2-spec/README.md]
 ---
 
 # ADR-023 — Especificação Memória v2
 
 ## Status
 
-**Proposed** — aguarda aprovação do executivo. Fase 0 (reparos de drift) pode executar independentemente.
+**Accepted** — aprovada pelo executivo em 2026-07-04 (sessão de execução da spec). Fase 0 executada e verificada em 2026-07-04 (`phase-0-report.md`).
 
 ## Contexto
 
@@ -49,7 +44,7 @@ Positivas: passado e presente distinguíveis pela LLM; memória relacional e pro
 
 ## Critérios de aceite
 
-- [ ] Fase 0: `validate_frontmatter.py --dir acervo` limpo; dirs ausentes criados; `groups` unificado.
+- [x] Fase 0: `validate_frontmatter.py --dir acervo` limpo; dirs ausentes criados; `groups` unificado. (2026-07-04)
 - [ ] Fase 1: migração v0.2 aplicada; catalog reconstrói de arquivos; `acervoctl doctor` limpo.
 - [ ] Fase 3: bateria de perguntas-ouro ≥ alvos de `10-evaluation.md`; contaminação = 0.
 - [ ] Fase 4: sessão significativa vira episódio no dia seguinte; digest semanal entregue.

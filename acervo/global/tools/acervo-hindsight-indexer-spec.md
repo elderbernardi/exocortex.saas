@@ -1,22 +1,18 @@
 ---
-type: knowledge
+schema: acervo/v0.2
+type: tool
 title: Especificação — Acervo Hindsight Indexer
-description: Especificação técnica do indexador que cria ponteiros semânticos do Acervo
-  no Hindsight.
-tags:
-- memory
-- acervo
-- hindsight
-- indexer
-- tooling
-timestamp: '2026-06-21'
+description: Especificação técnica do indexador que cria ponteiros semânticos do Acervo no Hindsight.
+tags: [memory, acervo, hindsight, indexer, tooling]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+created_at: 2026-06-21T16:37:51Z
 nature: tools
 excrtx_type: tool
 confidence: high
 canonical_from: micro/exocortex-dev/tools/acervo-hindsight-indexer-spec.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: Workflow — validação pós-mudança operacional
 description: 1. Rodar health check específico da área alterada.
 tags: [validacao, setup, rollback]
 timestamp: 2026-06-05
 class: volátil
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

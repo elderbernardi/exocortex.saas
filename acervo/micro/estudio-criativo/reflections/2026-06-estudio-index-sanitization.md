@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: reflection
 title: Caso Real — Saneamento do Índice do Estúdio
 description: O microverso já existia como estrutura canônica, mas o índice prometia mais do que a árvore realmente sustentava.
 tags: [reflection, case, receipt, canonization]
 timestamp: 2026-06-14
 class: perene
+status: active
+epistemic: interpretation
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

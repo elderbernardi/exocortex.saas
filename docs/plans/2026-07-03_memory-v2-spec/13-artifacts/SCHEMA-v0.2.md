@@ -1,6 +1,6 @@
 # Acervo Frontmatter Schema v0.2 — Field Reference
 
-> **Status:** Proposed (becomes canonical when ADR-023 is accepted; supersedes `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` v1.0.0).
+> **Status:** **Canonical** (ADR-023 accepted 2026-07-04; supersedes `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` v1.0.0).
 > Rationale and object semantics: `../05-object-model.md`. Still a valid OKF v0.1 superset (`timestamp` emitted at export).
 
 ## Tier 0 — mandatory on every object

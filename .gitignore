@@ -29,3 +29,5 @@ nohup.out
 # AcervoIndex runtime manifest (mutable state, not seed)
 # Keep the dir tracked (.gitkeep/README.md); ignore only the mutable manifests
 acervo/global/tools/state/*.json
+# Derived catalog (Plane 2, rebuildable via `acervoctl reindex`)
+acervo/global/tools/state/catalog.sqlite*

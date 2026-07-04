@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Wiki Schema — Exocórtex Dev
 description: Desenvolvimento do Exocórtex.IA
 tags: []
 timestamp: 2026-06-11
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-11T03:03:32Z
 last_accessed_at: 2026-06-11T03:03:32Z
+nature: _meta
 ---
 
 # Wiki Schema — Exocórtex Dev

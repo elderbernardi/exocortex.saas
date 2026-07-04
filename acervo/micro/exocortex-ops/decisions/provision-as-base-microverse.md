@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: Decisão — promover exocortex-ops a microverso base provisionável
 description: DRAFT. Ainda exige aprovação antes de alterar o setup executável.
 tags: [decision, setup, microverso-base]
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: decision
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

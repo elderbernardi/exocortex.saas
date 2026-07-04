@@ -1,22 +1,18 @@
 ---
-type: knowledge
+schema: acervo/v0.2
+type: contract
 title: Contrato de Roteamento de Memória do Exocórtex
-description: Regras executáveis para escolher entre MEMORY.md, USER.md, Hindsight,
-  Acervo, session_search e skills.
-tags:
-- memory
-- routing
-- contract
-- hindsight
-- acervo
-timestamp: '2026-06-21'
+description: Regras executáveis para escolher entre MEMORY.md, USER.md, Hindsight, Acervo, session_search e skills.
+tags: [memory, routing, contract, hindsight, acervo]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+created_at: 2026-06-21T16:37:51Z
 nature: contracts
 excrtx_type: rule
 confidence: high
 canonical_from: micro/exocortex-dev/contracts/memory-routing-contract.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

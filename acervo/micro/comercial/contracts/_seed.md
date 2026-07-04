@@ -1,13 +1,15 @@
 ---
-title: "{{DOMAIN_NAME}} — Instruções"
-type: knowledge
-description: "Regras, limites e contratos do domínio {{DOMAIN_NAME}}"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Instruções'
+type: contract
+description: Regras, limites e contratos do domínio {{DOMAIN_NAME}}
 class: perene
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: contracts
 excrtx_type: rule
 tags: []
