@@ -12,6 +12,9 @@ Strategies (H2 in 11-hypotheses.md — agentic+lexical vs semantic index):
               pointers), same scope filter applied post-hoc
   hybrid    — union of both; exact-path agreement first, then catalog rank,
               then hindsight rank
+  production— the Phase 3 library (acervo_retrieve.retrieve): routed hybrid
+              retrieval per 07-retrieval-policy, called in-process with each
+              question's scope; abstention == found=False
 
 The catalog is built over a COPY of the fixture acervo inside --workdir so no
 derived state ever lands inside the fixture. The Hindsight bank `eval-fixture`
@@ -307,6 +310,26 @@ class CatalogStrategy:
             if len(out) >= k:
                 break
         return out
+
+
+# ---------------------------------------------------------------- production strategy
+
+class ProductionStrategy:
+    """Phase 3 production path: acervo_retrieve.Retriever over the workdir
+    catalog, one call per question with the question's scope (07 §3)."""
+
+    name = "production"
+
+    def __init__(self, acervo: Path) -> None:
+        from acervo_retrieve import Retriever  # TOOLS already on sys.path
+
+        self.retriever = Retriever(acervo)
+
+    def retrieve(self, q: Question, k: int = TOP_K) -> list[str]:
+        result = self.retriever.retrieve(q.query, scope=q.scope, k=k)
+        if not result["found"]:
+            return []  # explicit abstention ("não há registro no Acervo…")
+        return [item["path"] for item in result["items"]][:k]
 
 
 # ---------------------------------------------------------------- hindsight strategy
@@ -613,7 +636,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--workdir", type=Path,
                         help="Where the fixture copy + catalog.sqlite go (default: report/.workdir)")
     parser.add_argument("--strategies", default="catalog,hindsight,hybrid",
-                        help="Comma-separated subset of: catalog,hindsight,hybrid")
+                        help="Comma-separated subset of: catalog,hindsight,hybrid,production")
     parser.add_argument("--questions", help="Comma-separated question ids (default: all 25)")
     parser.add_argument("--k", type=int, default=TOP_K)
     parser.add_argument("--skip-hindsight-index", action="store_true",
@@ -636,6 +659,8 @@ def main(argv: list[str] | None = None) -> int:
     catalog = CatalogStrategy(acervo, corpus)
     if "catalog" in requested:
         strategies["catalog"] = catalog
+    if "production" in requested:
+        strategies["production"] = ProductionStrategy(acervo)
 
     hs: HindsightEval | None = None
     hindsight_note = None

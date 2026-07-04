@@ -90,19 +90,23 @@ def command_validate_frontmatter(args: argparse.Namespace) -> dict[str, Any]:
     return {"ok": True, "path": str(Path(args.path).expanduser().resolve())}
 
 
-def load_catalog_module(acervo_root: Path):
-    """Load acervo/global/tools/acervo_catalog.py (catalog is a Plane-2 tool that lives inside the Acervo)."""
+def load_tool_module(acervo_root: Path, name: str):
+    """Load a Plane-2 tool from acervo/global/tools (tools live inside the Acervo)."""
     candidates = [
-        acervo_root / "global" / "tools" / "acervo_catalog.py",
-        Path(__file__).resolve().parents[1] / "acervo" / "global" / "tools" / "acervo_catalog.py",
+        acervo_root / "global" / "tools" / f"{name}.py",
+        Path(__file__).resolve().parents[1] / "acervo" / "global" / "tools" / f"{name}.py",
     ]
     for candidate in candidates:
         if candidate.is_file():
-            spec = importlib.util.spec_from_file_location("acervo_catalog", candidate)
+            spec = importlib.util.spec_from_file_location(name, candidate)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             return module
-    raise RuntimeError("acervo_catalog.py não encontrado em global/tools.")
+    raise RuntimeError(f"{name}.py não encontrado em global/tools.")
+
+
+def load_catalog_module(acervo_root: Path):
+    return load_tool_module(acervo_root, "acervo_catalog")
 
 
 def command_reindex(args: argparse.Namespace) -> dict[str, Any]:
@@ -122,6 +126,23 @@ def command_reindex(args: argparse.Namespace) -> dict[str, Any]:
         }
         if proc.returncode != 0:
             payload["ok"] = False
+    return payload
+
+
+def command_retrieve(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    retrieve_mod = load_tool_module(root, "acervo_retrieve")
+    payload = retrieve_mod.retrieve(
+        args.query,
+        args.scope,
+        budget_tokens=args.budget,
+        acervo_root=root,
+        k=args.k,
+        allow_scopes=args.allow_scope,
+        with_hindsight=args.with_hindsight,
+    )
+    # Abstenção não é erro: found=False com ok=True e mensagem explícita (07 §5).
+    payload["ok"] = True
     return payload
 
 
@@ -181,6 +202,20 @@ def build_parser() -> argparse.ArgumentParser:
     reindex_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
     reindex_cmd.add_argument("--with-hindsight", action="store_true", help="Também roda o indexer Hindsight (scan --all)")
     reindex_cmd.set_defaults(handler=command_reindex)
+
+    retrieve_cmd = sub.add_parser("retrieve", help="Recuperação híbrida com empacotamento de contexto (07-retrieval-policy)")
+    retrieve_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    retrieve_cmd.add_argument("--query", required=True, help="Pergunta/tarefa a rotear")
+    retrieve_cmd.add_argument("--scope", required=True, help="Microverso primário (ou 'global')")
+    retrieve_cmd.add_argument("--budget", type=int, default=6000, help="Orçamento de tokens do pacote (default: 6000)")
+    retrieve_cmd.add_argument("--k", type=int, default=5, help="Máximo de arquivos canônicos (default: 5)")
+    retrieve_cmd.add_argument("--allow-scope", action="append", default=[],
+                              help="Escopo extra explícito para consulta cross-microverso (repetível)")
+    retrieve_cmd.add_argument("--with-hindsight", action="store_true",
+                              help="Liga o suplemento semântico opcional (H2: OFF por padrão)")
+    retrieve_cmd.add_argument("--json", action="store_true",
+                              help="Saída JSON (já é o padrão; aceito por compatibilidade de contrato)")
+    retrieve_cmd.set_defaults(handler=command_retrieve)
 
     doctor_cmd = sub.add_parser("doctor", help="Relatório de integridade do Acervo (links, drift, lifecycle)")
     doctor_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
