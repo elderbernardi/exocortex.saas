@@ -4,7 +4,7 @@
 
 1. **Scope before search** (P6): no query runs unscoped.
 2. **Route by query shape, not one mechanism** (MemoryAgentBench lesson): entity / temporal / literal / semantic / procedural queries hit different first surfaces.
-3. **Agentic search is primary at Acervo scale**; the semantic index (Hindsight) supplements for vague/associative queries; embeddings never outrank an exact metadata or lexical hit on names/dates/IDs.
+3. **Agentic search is primary at Acervo scale** (confirmed by H2, 2026-07-04: catalog beats/matches Hindsight at 0% contamination and 2/3 the token cost); the semantic index (Hindsight) supplements for vague/associative queries only, always post-filtered by scope, never over `sensitivity: restricted`; embeddings never outrank an exact metadata or lexical hit on names/dates/IDs.
 4. **Load-the-view beats retrieve-the-chunks** when the scoped set fits budget (a microverso's `context/` + index is often < 10k tokens).
 5. **Pointers before payloads** (ADR-020); read 1–5 canonical files, never "top-20 chunks".
 6. **Pack with epistemic labels and citations; position best-first, runner-up-last** (lost-in-the-middle).

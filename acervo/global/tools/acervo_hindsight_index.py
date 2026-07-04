@@ -133,6 +133,10 @@ def should_skip(acervo: Path, path: Path, fm: dict[str, Any]) -> tuple[bool, str
         return True, "lifecycle-path"
     if fm.get("deprecated") is True or str(fm.get("deprecated", "")).lower() == "true":
         return True, "deprecated"
+    # H2 finding (2026-07-04): AcervoIndex summaries carry content and Hindsight
+    # cannot enforce scope — restricted files must never be indexed there.
+    if str(fm.get("sensitivity", "")).lower() == "restricted":
+        return True, "sensitivity-restricted"
     nature = nature_from_path(acervo, path, fm)
     if nature not in INDEXABLE_NATURES:
         return True, "not-indexable-nature"

@@ -1,0 +1,1455 @@
+{
+  "run_at": "2026-07-04T21:28:04Z",
+  "k": 5,
+  "strategies": {
+    "catalog": {
+      "overall": {
+        "n": 25,
+        "recall": 0.7955,
+        "precision": 0.347,
+        "contamination_rate": 0.0,
+        "abstention_accuracy": 0.3333,
+        "avg_token_cost": 2693
+      },
+      "by_category": {
+        "factual": {
+          "n": 4,
+          "recall": 1.0,
+          "precision": 0.425,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 2137
+        },
+        "decision_rationale": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.2167,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3946
+        },
+        "temporal": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.3444,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 2352
+        },
+        "entity": {
+          "n": 3,
+          "recall": 0.8333,
+          "precision": 0.4833,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3010
+        },
+        "cross_scope_allowed": {
+          "n": 2,
+          "recall": 0.75,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4406
+        },
+        "cross_scope_trap": {
+          "n": 2,
+          "recall": 0.5,
+          "precision": 0.1,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3997
+        },
+        "prospective": {
+          "n": 3,
+          "recall": 0.3333,
+          "precision": 0.3333,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 1887
+        },
+        "continuity": {
+          "n": 1,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4307
+        },
+        "literal": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 1.0,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 711
+        },
+        "absent": {
+          "n": 3,
+          "recall": null,
+          "precision": null,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": 0.3333,
+          "avg_token_cost": 1123
+        }
+      },
+      "questions": [
+        {
+          "id": "G01",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/context/stakeholders.md",
+            "acervo/global/contracts/politica-confidencialidade-precos.md"
+          ],
+          "token_cost": 4024,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G02",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 1331,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G03",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/shared/entities/helena-castro.md"
+          ],
+          "token_cost": 1515,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G04",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md",
+            "acervo/micro/cliente-norte/episodes/2026-03-05-incidente-descarga-porto.md"
+          ],
+          "token_cost": 1678,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G05",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md",
+            "acervo/micro/expansao-sul/intentions/2026-07-20-assinar-contrato-locacao-galpao.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md"
+          ],
+          "token_cost": 3338,
+          "recall": 1.0,
+          "precision": 0.25,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G06",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 4456,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G07",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/contracts/regras-relacionamento-norte.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/context/stakeholders.md"
+          ],
+          "token_cost": 4044,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G08",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md"
+          ],
+          "token_cost": 1969,
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G09",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md"
+          ],
+          "token_cost": 1309,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G10",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/shared/entities/transportadora-veloz.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3778,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G11",
+          "category": "entity",
+          "top": [
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/micro/cliente-norte/knowledge/preferencias-comunicacao-ricardo.md"
+          ],
+          "token_cost": 1618,
+          "recall": 1.0,
+          "precision": 1.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G12",
+          "category": "entity",
+          "top": [
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md",
+            "acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/micro/expansao-sul/knowledge/capacidade-armazem-itajai.md",
+            "acervo/micro/expansao-sul/context/current-state.md"
+          ],
+          "token_cost": 4372,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G13",
+          "category": "entity",
+          "top": [
+            "acervo/micro/operacoes/context/quadro-transportadoras.md",
+            "acervo/shared/entities/transportadora-veloz.md",
+            "acervo/micro/operacoes/workflows/homologacao-transportadora.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3039,
+          "recall": 1.0,
+          "precision": 0.25,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G14",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/knowledge/capacidade-armazem-itajai.md",
+            "acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md",
+            "acervo/shared/entities/helena-castro.md"
+          ],
+          "token_cost": 4456,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G15",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/helena-castro.md"
+          ],
+          "token_cost": 4356,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G16",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/expansao-sul/knowledge/estudo-demanda-preliminar.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/expansao-sul/context/cronograma-marcos.md"
+          ],
+          "token_cost": 3915,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G17",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/global/contracts/politica-confidencialidade-precos.md",
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md"
+          ],
+          "token_cost": 4079,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G18",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md"
+          ],
+          "token_cost": 783,
+          "recall": 1.0,
+          "precision": 1.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G19",
+          "category": "prospective",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G20",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/operacoes/workflows/homologacao-transportadora.md"
+          ],
+          "token_cost": 572,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G21",
+          "category": "continuity",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/expansao-sul/context/current-state.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G22",
+          "category": "literal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md"
+          ],
+          "token_cost": 711,
+          "recall": 1.0,
+          "precision": 1.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G23",
+          "category": "absent",
+          "top": [
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 2541,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        },
+        {
+          "id": "G24",
+          "category": "absent",
+          "top": [],
+          "token_cost": 0,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": true
+        },
+        {
+          "id": "G25",
+          "category": "absent",
+          "top": [
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 827,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        }
+      ]
+    },
+    "hindsight": {
+      "overall": {
+        "n": 25,
+        "recall": 0.8182,
+        "precision": 0.1818,
+        "contamination_rate": 0.08,
+        "abstention_accuracy": 0.0,
+        "avg_token_cost": 4076
+      },
+      "by_category": {
+        "factual": {
+          "n": 4,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.25,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4046
+        },
+        "decision_rationale": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4438
+        },
+        "temporal": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.3333,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3279
+        },
+        "entity": {
+          "n": 3,
+          "recall": 0.8333,
+          "precision": 0.2667,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4152
+        },
+        "cross_scope_allowed": {
+          "n": 2,
+          "recall": 0.5,
+          "precision": 0.1,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4414
+        },
+        "cross_scope_trap": {
+          "n": 2,
+          "recall": 0.5,
+          "precision": 0.1,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4335
+        },
+        "prospective": {
+          "n": 3,
+          "recall": 0.6667,
+          "precision": 0.1333,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4085
+        },
+        "continuity": {
+          "n": 1,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4307
+        },
+        "literal": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4180
+        },
+        "absent": {
+          "n": 3,
+          "recall": null,
+          "precision": null,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": 0.0,
+          "avg_token_cost": 3958
+        }
+      },
+      "questions": [
+        {
+          "id": "G01",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/episodes/2026-06-18-reuniao-revisao-trimestral-norte.md",
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 4476,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G02",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3569,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": true,
+          "abstention_correct": null
+        },
+        {
+          "id": "G03",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md"
+          ],
+          "token_cost": 3883,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G04",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md",
+            "acervo/micro/cliente-norte/knowledge/requisitos-rastreabilidade.md",
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/cliente-norte/knowledge/historico-atrasos-2026.md"
+          ],
+          "token_cost": 4254,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G05",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md",
+            "acervo/micro/expansao-sul/intentions/2026-07-20-assinar-contrato-locacao-galpao.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md"
+          ],
+          "token_cost": 4224,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G06",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/transportadora-veloz.md"
+          ],
+          "token_cost": 4414,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G07",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/episodes/2026-06-18-reuniao-revisao-trimestral-norte.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md",
+            "acervo/micro/cliente-norte/knowledge/requisitos-rastreabilidade.md"
+          ],
+          "token_cost": 4677,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G08",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md"
+          ],
+          "token_cost": 3338,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G09",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md"
+          ],
+          "token_cost": 3187,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": true,
+          "abstention_correct": null
+        },
+        {
+          "id": "G10",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 3312,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G11",
+          "category": "entity",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preferencias-comunicacao-ricardo.md",
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md",
+            "acervo/micro/cliente-norte/knowledge/requisitos-rastreabilidade.md",
+            "acervo/micro/cliente-norte/contracts/regras-relacionamento-norte.md"
+          ],
+          "token_cost": 4066,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G12",
+          "category": "entity",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md",
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md",
+            "acervo/micro/expansao-sul/context/current-state.md"
+          ],
+          "token_cost": 4642,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G13",
+          "category": "entity",
+          "top": [
+            "acervo/shared/entities/transportadora-veloz.md",
+            "acervo/micro/operacoes/workflows/homologacao-transportadora.md",
+            "acervo/micro/operacoes/context/quadro-transportadoras.md",
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3747,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G14",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/helena-castro.md"
+          ],
+          "token_cost": 4471,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G15",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 4356,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G16",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/micro/expansao-sul/knowledge/preco-frete-corredor-sul.md",
+            "acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 4390,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G17",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/global/contracts/politica-confidencialidade-precos.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 4280,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G18",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/episodes/2026-06-18-reuniao-revisao-trimestral-norte.md"
+          ],
+          "token_cost": 4429,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G19",
+          "category": "prospective",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/context/current-state.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G20",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 3519,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G21",
+          "category": "continuity",
+          "top": [
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G22",
+          "category": "literal",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/global/contracts/politica-confidencialidade-precos.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md"
+          ],
+          "token_cost": 4180,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G23",
+          "category": "absent",
+          "top": [
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/shared/entities/transportadora-veloz.md"
+          ],
+          "token_cost": 4334,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        },
+        {
+          "id": "G24",
+          "category": "absent",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md"
+          ],
+          "token_cost": 4007,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        },
+        {
+          "id": "G25",
+          "category": "absent",
+          "top": [
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md"
+          ],
+          "token_cost": 3532,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        }
+      ]
+    },
+    "hybrid": {
+      "overall": {
+        "n": 25,
+        "recall": 0.8409,
+        "precision": 0.1909,
+        "contamination_rate": 0.08,
+        "abstention_accuracy": 0.0,
+        "avg_token_cost": 4027
+      },
+      "by_category": {
+        "factual": {
+          "n": 4,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.25,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3956
+        },
+        "decision_rationale": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4272
+        },
+        "temporal": {
+          "n": 3,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.3333,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3465
+        },
+        "entity": {
+          "n": 3,
+          "recall": 0.8333,
+          "precision": 0.2667,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4062
+        },
+        "cross_scope_allowed": {
+          "n": 2,
+          "recall": 0.75,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4406
+        },
+        "cross_scope_trap": {
+          "n": 2,
+          "recall": 0.5,
+          "precision": 0.1,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 3997
+        },
+        "prospective": {
+          "n": 3,
+          "recall": 0.6667,
+          "precision": 0.1333,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4040
+        },
+        "continuity": {
+          "n": 1,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4307
+        },
+        "literal": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 4180
+        },
+        "absent": {
+          "n": 3,
+          "recall": null,
+          "precision": null,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": 0.0,
+          "avg_token_cost": 4017
+        }
+      },
+      "questions": [
+        {
+          "id": "G01",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/micro/cliente-norte/context/stakeholders.md",
+            "acervo/global/contracts/politica-confidencialidade-precos.md"
+          ],
+          "token_cost": 4024,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G02",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3569,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": true,
+          "abstention_correct": null
+        },
+        {
+          "id": "G03",
+          "category": "factual",
+          "top": [
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md"
+          ],
+          "token_cost": 3883,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G04",
+          "category": "factual",
+          "top": [
+            "acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md",
+            "acervo/micro/cliente-norte/episodes/2026-03-05-incidente-descarga-porto.md",
+            "acervo/micro/cliente-norte/knowledge/requisitos-rastreabilidade.md",
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 4349,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G05",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md",
+            "acervo/micro/expansao-sul/intentions/2026-07-20-assinar-contrato-locacao-galpao.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md",
+            "acervo/shared/entities/paulo-yamada.md"
+          ],
+          "token_cost": 4315,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G06",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 4456,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G07",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md",
+            "acervo/micro/cliente-norte/contracts/regras-relacionamento-norte.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/context/stakeholders.md"
+          ],
+          "token_cost": 4044,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G08",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md"
+          ],
+          "token_cost": 3418,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G09",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 3198,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": true,
+          "abstention_correct": null
+        },
+        {
+          "id": "G10",
+          "category": "temporal",
+          "top": [
+            "acervo/micro/operacoes/context/current-state.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/shared/entities/transportadora-veloz.md",
+            "acervo/shared/entities/norte-mineracao.md"
+          ],
+          "token_cost": 3778,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G11",
+          "category": "entity",
+          "top": [
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/micro/cliente-norte/knowledge/preferencias-comunicacao-ricardo.md",
+            "acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md",
+            "acervo/micro/cliente-norte/knowledge/requisitos-rastreabilidade.md",
+            "acervo/micro/cliente-norte/contracts/regras-relacionamento-norte.md"
+          ],
+          "token_cost": 4066,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G12",
+          "category": "entity",
+          "top": [
+            "acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md",
+            "acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/micro/expansao-sul/knowledge/capacidade-armazem-itajai.md"
+          ],
+          "token_cost": 4372,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G13",
+          "category": "entity",
+          "top": [
+            "acervo/micro/operacoes/context/quadro-transportadoras.md",
+            "acervo/shared/entities/transportadora-veloz.md",
+            "acervo/micro/operacoes/workflows/homologacao-transportadora.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 3747,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G14",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/micro/expansao-sul/knowledge/capacidade-armazem-itajai.md",
+            "acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md"
+          ],
+          "token_cost": 4456,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G15",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/helena-castro.md"
+          ],
+          "token_cost": 4356,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G16",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/expansao-sul/knowledge/estudo-demanda-preliminar.md",
+            "acervo/micro/expansao-sul/context/cronograma-marcos.md"
+          ],
+          "token_cost": 3915,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G17",
+          "category": "cross_scope_trap",
+          "top": [
+            "acervo/global/contracts/politica-confidencialidade-precos.md",
+            "acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md"
+          ],
+          "token_cost": 4079,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G18",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/micro/cliente-norte/knowledge/estrutura-decisao-norte.md",
+            "acervo/micro/cliente-norte/episodes/2026-06-18-reuniao-revisao-trimestral-norte.md"
+          ],
+          "token_cost": 4429,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G19",
+          "category": "prospective",
+          "top": [
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/micro/expansao-sul/context/current-state.md",
+            "acervo/shared/entities/atlantico-logistica.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.0,
+          "precision": 0.0,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G20",
+          "category": "prospective",
+          "top": [
+            "acervo/micro/operacoes/workflows/homologacao-transportadora.md",
+            "acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md",
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md"
+          ],
+          "token_cost": 3383,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G21",
+          "category": "continuity",
+          "top": [
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/expansao-sul/context/current-state.md"
+          ],
+          "token_cost": 4307,
+          "recall": 0.5,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G22",
+          "category": "literal",
+          "top": [
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/global/contracts/politica-confidencialidade-precos.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md"
+          ],
+          "token_cost": 4180,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "G23",
+          "category": "absent",
+          "top": [
+            "acervo/shared/entities/norte-mineracao.md",
+            "acervo/shared/entities/helena-castro.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/shared/entities/ricardo-tavares.md",
+            "acervo/shared/entities/transportadora-veloz.md"
+          ],
+          "token_cost": 4334,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        },
+        {
+          "id": "G24",
+          "category": "absent",
+          "top": [
+            "acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md",
+            "acervo/shared/entities/paulo-yamada.md",
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md",
+            "acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md"
+          ],
+          "token_cost": 4007,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        },
+        {
+          "id": "G25",
+          "category": "absent",
+          "top": [
+            "acervo/shared/entities/atlantico-logistica.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md",
+            "acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md",
+            "acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md",
+            "acervo/micro/operacoes/context/current-state.md"
+          ],
+          "token_cost": 3709,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": false
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "metric": "hybrid recall@5 minus catalog recall@5 (points)",
+    "delta_pts": 4.5,
+    "threshold_pts": 5.0,
+    "decision": "demote Hindsight to optional (hybrid <= catalog + 5pts)"
+  },
+  "notes": [
+    "Abstention floors — catalog: candidate must match >= 2 distinct query terms or 1 rare term (doc-frequency <= 5 fixture files); hindsight: any pointer returned at default recall budget counts (no per-result score is exposed) — abstention correct iff zero pointers survive the scope filter.",
+    "Token cost proxy: total chars of the top-5 files' raw text (packed-context estimate)."
+  ]
+}
