@@ -50,3 +50,15 @@ zero failures in validator/migration/severity tests.
 1. **MEMORY.md re-consolidation** (100% of budget; ADR-021 Fase-3 procedure re-run).
 2. **`git init` no acervo vivo** before any Phase 1 migration touches it.
 3. AcervoIndex re-scan (6 entries vs 198+ indexable; Hindsight is up now, unblocking the never-validated write-hook/reconcile tests).
+
+---
+
+## Addendum — Live-instance actions (2026-07-04, executive-authorized)
+
+The three gated follow-ups were executed with explicit authorization:
+
+1. **Live acervo versioned** — `git init` at `~/exocortex` (391 files, baseline commit `2576cad`; nested docBrain repo and derived `state/*.json` excluded). Rollback point for all future migrations now exists.
+2. **MEMORY.md re-consolidated (ADR-021)** — 2 220 → **574 chars (26%)**. Every removed entry has an explicit destination: 1 decision promoted to the live Acervo (`exocortex-ops/decisions/aposentadoria-exocortex-dev-perfis-comportamentais.md`, validated + logged + committed `12e2d5e`), 6 operational facts retained in Hindsight (recall-verified ×6), 2 durable preferences → USER.md (which also lost a duplicate entry; steady at 74%), rest derivable from `config.yaml`. Backups kept (`*.bak-20260704`).
+3. **AcervoIndex full re-scan** — 6 → **163 entries, 0 errors, 0 orphans**. Found and fixed real index pollution: `SKIP_PARTS` didn't exclude `_retired`/`_template`/`_fixture`/`_inbox`; 16 polluted docs deleted from Hindsight (properly awaited after a first silent-coroutine miss) and from the manifest; indexer patched in installer **and** live (identical copies verified); idempotency re-scan: `indexed: 0, unchanged: 163, errors: 0`. Recall smoke returns ADR-019 via AcervoIndex as designed.
+
+Remaining known-good gaps: Fase 8 evaluation battery (→ spec Phase 6) — now unblocked since Hindsight is up and indexed.
