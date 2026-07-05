@@ -9,8 +9,16 @@ mesmo core.** Qualquer tool futura do MCP deve ter equivalente local nesta CLI.
 
 ## Invocação
 
+Resolva o control plane uma vez para um caminho absoluto (`$CTL`) — cópia embutida no
+acervo primeiro, depois o checkout do installer, depois o scaffold do Hermes-home. Nunca
+use `scripts/acervoctl.py` relativo ao cwd, que não tem home no runtime vivo.
+
 ```bash
-python3 scripts/acervoctl.py <comando> [opções]
+CTL="$ACERVO/global/tools"
+[ -f "$CTL/acervoctl.py" ] || CTL="${EXOCORTEX_INSTALLER:-$HOME/.exocortex-installer}/scripts"
+[ -f "$CTL/acervoctl.py" ] || CTL="${HERMES_HOME:-$HOME/.hermes}/scripts"
+
+python3 "$CTL/acervoctl.py" <comando> [opções]
 ```
 
 - Toda saída é **JSON** (indentado, `ensure_ascii=False`) com campo `ok`.
@@ -22,7 +30,7 @@ python3 scripts/acervoctl.py <comando> [opções]
 ### `list-microversos` — lista microversos disponíveis
 
 ```bash
-python3 scripts/acervoctl.py list-microversos [--acervo-root PATH]
+python3 "$CTL/acervoctl.py" list-microversos [--acervo-root PATH]
 ```
 
 Retorna `{ok, microversos: [...], count}`.
@@ -30,7 +38,7 @@ Retorna `{ok, microversos: [...], count}`.
 ### `search` — busca simples em markdown do Acervo
 
 ```bash
-python3 scripts/acervoctl.py search --query "texto" [--limit 20] [--acervo-root PATH]
+python3 "$CTL/acervoctl.py" search --query "texto" [--limit 20] [--acervo-root PATH]
 ```
 
 Retorna `{ok, query, count, matches}`.
@@ -38,7 +46,7 @@ Retorna `{ok, query, count, matches}`.
 ### `prepare-write` — prepara uma mutação semântica (fase 1 de 2)
 
 ```bash
-python3 scripts/acervoctl.py prepare-write \
+python3 "$CTL/acervoctl.py" prepare-write \
   --microverso <slug> --nature <nature> --title "Título" \
   [--filename nome.md] [--active-microverso <slug>] \
   [--receipt-out receipt.json] [--acervo-root PATH]
@@ -52,7 +60,7 @@ python3 scripts/acervoctl.py prepare-write \
 ### `commit-write` — efetiva uma mutação preparada (fase 2 de 2)
 
 ```bash
-python3 scripts/acervoctl.py commit-write \
+python3 "$CTL/acervoctl.py" commit-write \
   --receipt receipt.json \
   --content-file corpo.md \
   --description "descrição para o log" \
@@ -68,13 +76,13 @@ python3 scripts/acervoctl.py commit-write \
 ### `validate-frontmatter` — valida frontmatter de um arquivo
 
 ```bash
-python3 scripts/acervoctl.py validate-frontmatter --path <arquivo.md>
+python3 "$CTL/acervoctl.py" validate-frontmatter --path <arquivo.md>
 ```
 
 ### `export-microverso` — empacota um microverso
 
 ```bash
-python3 scripts/acervoctl.py export-microverso --slug <slug> --out <dir> [--tar] [--acervo-root PATH]
+python3 "$CTL/acervoctl.py" export-microverso --slug <slug> --out <dir> [--tar] [--acervo-root PATH]
 ```
 
 ## Quando usar (regra da skill)

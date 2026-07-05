@@ -32,7 +32,7 @@ config changed, status moved), that is **supersession** and it is applied by the
 conflict protocol in `excrtx-memory-manager` via:
 
 ```bash
-python3 scripts/acervoctl.py apply-supersede --new <new-file> --old <old-file>
+python3 "$CTL/acervoctl.py" apply-supersede --new <new-file> --old <old-file>
 ```
 
 **Supersession never routes through this skill.** Genuine disputes (both sides have

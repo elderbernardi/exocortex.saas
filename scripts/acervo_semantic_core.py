@@ -25,9 +25,22 @@ from exocortex_runtime_guard import guard_write_path, resolve_acervo_root as run
 from exocortex_runtime_guard import resolve_active_microverso as runtime_resolve_active_microverso
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-FRONTMATTER_VALIDATOR = REPO_ROOT / "scripts" / "validate_frontmatter.py"
-LOG_VALIDATOR = REPO_ROOT / "scripts" / "validate_log.py"
-MICROVERSO_PACKAGE = REPO_ROOT / "acervo" / "global" / "tools" / "microverso_package.py"
+_SELF_DIR = Path(__file__).resolve().parent
+
+
+def _resolve_helper(name: str, repo_rel: str) -> Path:
+    """Locate a helper script whether the control plane runs from the repo `scripts/`
+    dir or is deployed into the Acervo's `global/tools/` (where REPO_ROOT-relative paths
+    would point outside the acervo). Sibling first, then the repo-relative fallback."""
+    for cand in (_SELF_DIR / name, REPO_ROOT / repo_rel):
+        if cand.is_file():
+            return cand
+    return REPO_ROOT / repo_rel
+
+
+FRONTMATTER_VALIDATOR = _resolve_helper("validate_frontmatter.py", "scripts/validate_frontmatter.py")
+LOG_VALIDATOR = _resolve_helper("validate_log.py", "scripts/validate_log.py")
+MICROVERSO_PACKAGE = _resolve_helper("microverso_package.py", "acervo/global/tools/microverso_package.py")
 
 
 def slugify(value: str) -> str:

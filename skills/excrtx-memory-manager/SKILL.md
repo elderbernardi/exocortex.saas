@@ -103,6 +103,14 @@ acervo, breaking isolation.
 # workspace (the live acervo), then the Hermes-home scaffold only as a last resort.
 ACERVO="${ACERVO:-${EXOCORTEX_HOME:-$HOME/exocortex}/acervo}"
 [ -d "$ACERVO" ] || ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
+
+# Control plane (acervoctl): resolve once to an absolute path. Order: the acervo-embedded
+# copy first (self-contained deploy), then the installer checkout, then the Hermes-home
+# scaffold. Always invoke as `python3 "$CTL/acervoctl.py"` — never a cwd-relative
+# `scripts/acervoctl.py`, which has no home in the live runtime layout.
+CTL="$ACERVO/global/tools"
+[ -f "$CTL/acervoctl.py" ] || CTL="${EXOCORTEX_INSTALLER:-$HOME/.exocortex-installer}/scripts"
+[ -f "$CTL/acervoctl.py" ] || CTL="${HERMES_HOME:-$HOME/.hermes}/scripts"
 ```
 
 > Note: `$HERMES_HOME/acervo` is typically an empty scaffold; the real canonical memory
@@ -125,7 +133,7 @@ Full details in `acervo/README.md`.
 There are now three distinct surfaces over the same Acervo authority model:
 
 1. **filesystem** — physical truth, always valid for human/infra/maintenance access;
-2. **`scripts/acervoctl.py`** — official local semantic control plane for `prepare-write`, `commit-write`, validation and export;
+2. **`acervoctl.py`** (resolved via `$CTL`, see *Acervo Location*) — official local semantic control plane for `prepare-write`, `commit-write`, validation and export;
 3. **`scripts/acervo_mcp_server.py`** — official agentic MCP surface, thin over the same core.
 
 Rule:
@@ -148,7 +156,7 @@ Implicações operacionais:
 - Para **agentes**, preferir `prepare/commit` via `acervoctl` (e futuramente MCP) em vez de editar arquivos diretamente quando a operação for semântica: criar entrada canônica, atualizar entrada canônica, validar escopo, exportar microverso.
 - Para **humanos, infraestrutura e manutenção corretiva**, escrita direta em arquivo continua permitida.
 - O MCP do Acervo **não** deve virar editor genérico de arquivos; ele deve expor operações semânticas.
-- O primeiro contrato local verificável é `python3 scripts/acervoctl.py`; qualquer tool futura do MCP deve ter equivalente local nele.
+- O primeiro contrato local verificável é `python3 "$CTL/acervoctl.py"`; qualquer tool futura do MCP deve ter equivalente local nele.
 
 Referência operacional curta: `references/acervo-control-plane-cli.md`.
 
@@ -183,7 +191,7 @@ pending commitments, factual questions), the preferred surface is the retrieval 
 plane — not manual grep:
 
 ```bash
-python3 scripts/acervoctl.py retrieve --query "{task/question}" --scope "{slug|global}" --budget 6000
+python3 "$CTL/acervoctl.py" retrieve --query "{task/question}" --scope "{slug|global}" --budget 6000
 ```
 
 It implements the 07-retrieval-policy contract: routes by query shape (entity / temporal /
@@ -325,7 +333,7 @@ Write content to the Acervo with Domain Filter.
    **New-type write rules (05 §3):** create `episode`/`entity`/`intention` objects via the
    control plane, not ad-hoc file writes:
    ```bash
-   python3 scripts/acervoctl.py new-object --type episode|entity|intention --scope {slug} \
+   python3 "$CTL/acervoctl.py" new-object --type episode|entity|intention --scope {slug} \
      --title "..." [--aliases a,b] [--due YYYY-MM-DD] [--owed-to slug] [--draft] \
      [--source-trust executive|agent|untrusted]
    ```
@@ -352,19 +360,19 @@ Write content to the Acervo with Domain Filter.
 5. **CONFLICT PROTOCOL (MANDATORY before commit — 08 §4; replaces the old deprecate-on-insert hook):**
    Run the conflict check on the candidate file:
    ```bash
-   python3 scripts/acervoctl.py conflict-check --file "$TARGET_PATH"
+   python3 "$CTL/acervoctl.py" conflict-check --file "$TARGET_PATH"
    ```
    It returns JSON verdicts per overlap (`enrich | supersession | overlap` + signals). The
    **dispute-vs-coexist judgment is yours** — the tool surfaces signals; you classify. Apply:
    - **enrich** (same assertion) → NO new file; edit the existing object (add source, raise confidence).
    - **supersession** (old is `volátil` and the new plainly replaces it: price, config, status) →
      ```bash
-     python3 scripts/acervoctl.py apply-supersede --new "$TARGET_PATH" --old "$OLD_PATH"
+     python3 "$CTL/acervoctl.py" apply-supersede --new "$TARGET_PATH" --old "$OLD_PATH"
      ```
      new becomes `active`, old becomes `superseded` + `superseded_by` link, journaled `SUPERSEDED`.
    - **genuine dispute** (both sides have standing sources, OR the target is `perene`/a decision) →
      ```bash
-     python3 scripts/acervoctl.py open-dispute --a "$TARGET_PATH" --b "$OLD_PATH" --title "..." --scope {slug}
+     python3 "$CTL/acervoctl.py" open-dispute --a "$TARGET_PATH" --b "$OLD_PATH" --title "..." --scope {slug}
      ```
      creates a first-class `conflict` object, sets `disputed_by` on both sides, and the dispute
      goes as an item in the maintenance digest — **the executive resolves**, never you.
