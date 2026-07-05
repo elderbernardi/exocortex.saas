@@ -1,8 +1,9 @@
 ---
 name: excrtx-memory-newmicro
-description: Criar novos Microversos no Acervo Cognitivo com estrutura wiki completa
-  (_meta SCHEMA/index/log, raw, _archive, 11 Natures).
-version: 2.0.0
+description: Create new Microversos in the Acervo Cognitivo with the lazy core-6
+  scaffold (_meta, context, knowledge, decisions, episodes, raw); all other nature
+  directories are created on first write, never pre-scaffolded.
+version: 3.0.0
 category: excrtx
 platforms:
 - linux
@@ -28,10 +29,12 @@ metadata:
         - Solicite ao executivo (se ausente): Nome legível, Slug (kebab-case), Type
         (client|project|domain|role) e Description.
 
-        - Copie recursivamente o template ''micro/_template/'' para ''micro/{slug}/''.
+        - Materialize APENAS o core-6: _meta/, context/, knowledge/, decisions/,
+        episodes/ e raw/ (copiando só esse subconjunto de ''micro/_template/'').
+        As demais natures são criadas lazy, no primeiro write.
 
         - Preencha o ''_meta/SCHEMA.md'' (frontmatter OKF) e substitua todos os placeholders
-        ''{{DOMAIN_NAME}}'', ''{{DOMAIN_DESCRIPTION}}'' e ''{{CREATED_DATE}}'' em todos os arquivos;
+        ''{{DOMAIN_NAME}}'', ''{{DOMAIN_DESCRIPTION}}'' e ''{{CREATED_DATE}}'' nos arquivos copiados;
         preencha as ''description'' vazias dos _seed.md e valide com validate_frontmatter.
 
         - Registre o novo microverso em ''shared/groups.md'' no alias correspondente
@@ -47,7 +50,23 @@ metadata:
 # Create New Microverso
 
 Provisions a new operational domain in the executive's Acervo Cognitivo.
-Generates a complete wiki structure compatible with `excrtx-memory-manager`.
+Generates the **lazy core-6 scaffold** (memory-v2, 06 §4 — P9: structure follows
+content, never precedes it) compatible with `excrtx-memory-manager`:
+
+```
+micro/{slug}/
+├── _meta/       # SCHEMA.md, index.md, log.md
+├── context/     # current-state head
+├── knowledge/
+├── decisions/
+├── episodes/
+└── raw/         # immutable evidence
+```
+
+Every other nature directory (`entities/`, `intentions/`, `workflows/`,
+`contracts/`, `reflections/`, `persona/`, `prompts/`, `templates/`, `tools/`,
+`skills/`, `_archive/`) is created **lazily by `excrtx-memory-manager` on the
+first write** to it — never pre-scaffolded here.
 
 ## When to Use
 
@@ -84,35 +103,45 @@ Ask the executive (if not already specified):
 | **Type** | `client\|project\|domain\|role` | `project` |
 | **Description** | One-sentence scope | "Lifecycle management for Produto Alpha" |
 
-### 3. Copy Template
+### 3. Materialize the Core-6 (from the template subset)
+
+Copy **only** the core-6 subset from the template — do NOT copy the full tree:
 
 ```bash
-cp -r $EXOCORTEX_HOME/acervo/micro/_template/. $EXOCORTEX_HOME/acervo/micro/{slug}/
+SRC=$EXOCORTEX_HOME/acervo/micro/_template
+DST=$EXOCORTEX_HOME/acervo/micro/{slug}
+mkdir -p "$DST"
+for d in _meta context knowledge decisions raw; do
+  cp -r "$SRC/$d" "$DST/$d"
+done
+mkdir -p "$DST/episodes"   # new nature (memory-v2); template may not ship it yet
 ```
 
-The template ships **14 diretórios** conforme o contrato canônico
-(`global/contracts/microverso-directory-structure.md`):
-11 natures (`context/`, `knowledge/`, `contracts/`, `prompts/`, `persona/`,
-`workflows/`, `skills/`, `tools/`, `templates/`, `decisions/`, `reflections/`)
-— cada uma com `_seed.md` — mais 3 diretórios de infraestrutura:
-`_meta/` (`SCHEMA.md`, `index.md`, `log.md`), `raw/` e `_archive/`.
+**`_template` compatibility note:** the template still ships the full **14
+diretórios** of the pre-v2 contract (`global/contracts/microverso-directory-structure.md`)
+— 11 natures with `_seed.md` plus `_meta/`, `raw/`, `_archive/`. It remains the
+canonical source of the per-nature `_seed.md` files: when `excrtx-memory-manager`
+lazily creates a nature directory on first write, it may copy that nature's
+`_seed.md` from `_template/`. This skill just no longer materializes the non-core
+directories upfront (memory-v2, 06 §4). If `episodes/` is absent from the template,
+create it empty as above.
 
 ### 4. Fill `_meta/SCHEMA.md` and `microverso.yaml`
 
-`SCHEMA.md` lives in `$EXOCORTEX_HOME/acervo/micro/{slug}/_meta/SCHEMA.md` and carries the
-**OKF v0.1 superset** frontmatter (see `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md`),
-not the legacy `domain/slug/type/created` block:
+`SCHEMA.md` lives in `$EXOCORTEX_HOME/acervo/micro/{slug}/_meta/SCHEMA.md` and carries
+**Schema v0.2** frontmatter (canonical:
+`docs/plans/2026-07-03_memory-v2-spec/13-artifacts/SCHEMA-v0.2.md`, ADR-023):
 
 ```yaml
 ---
+schema: acervo/v0.2
 type: context
 title: {name} — Schema
 description: {one-line scope}
 tags: [{slug}, schema]
-timestamp: {YYYY-MM-DD}
-class: perene
 created_at: {YYYY-MM-DD}T00:00:00Z
-nature: context
+class: perene
+status: active
 ---
 ```
 
@@ -147,7 +176,7 @@ Append the first entry to `_meta/log.md` per the log convention (single `# Log` 
 `## YYYY-MM-DD` heading, single-line bullet):
 ```
 ## {YYYY-MM-DD}
-- CREATED: micro/{slug}/ (perene) — Microverso {name} created ({type}, 11 natures)
+- CREATED: micro/{slug}/ (perene) — Microverso {name} created ({type}, core-6 scaffold, lazy natures)
 ```
 
 ### 7. Verify the Scaffold (gate — do NOT skip)
@@ -188,16 +217,16 @@ If the executive is available, collect:
 5. **Incomplete SCHEMA.md:** All 5 fields (domain, slug, type, description, created) are required. Partial SCHEMA breaks `excrtx-memory-manager` lookups.
 6. **Hardcoded path:** Use `$EXOCORTEX_HOME/acervo/micro/{slug}/` (resolved from env), not `~/.hermes/acervo/micro/`.
 7. **Missing template:** If `_template/` doesn't exist, `cp -r` fails silently with an empty directory. Always verify prerequisite (step 1).
+8. **Pre-scaffolding beyond the core-6:** Copying the full `_template/` tree recreates the pre-v2 behavior — 8+ empty nature directories nobody writes to (P9 violation: structure preceding content). Materialize only `_meta/`, `context/`, `knowledge/`, `decisions/`, `episodes/`, `raw/`; `excrtx-memory-manager` creates the rest lazily on first write.
 
 ## Verification
 
 - [ ] Directory `$EXOCORTEX_HOME/acervo/micro/{slug}/` exists
 - [ ] `_meta/SCHEMA.md` has complete OKF frontmatter; `microverso.yaml` set (slug, name, type, description, created)
-- [ ] `_meta/index.md` catalogs all 11 Natures
+- [ ] `_meta/index.md` catalogs the core-6 (and notes that other natures are created lazily)
 - [ ] `_meta/log.md` has the creation entry (log-convention format)
-- [ ] raw/ and _archive/ exist (empty)
-- [ ] 11 Nature directories present, each with `_seed.md`: context, knowledge, contracts, prompts, persona, workflows, skills, tools, templates, decisions, reflections
-- [ ] Every `_seed.md` has a non-empty `description`
+- [ ] Core-6 directories present — `_meta/`, `context/`, `knowledge/`, `decisions/`, `episodes/`, `raw/` — and NOTHING else pre-scaffolded (no empty non-core nature dirs, no `_archive/`)
+- [ ] Every copied `_seed.md` has a non-empty `description`
 - [ ] No residual placeholders: `grep -rE '\{\{[A-Z_]+\}\}' micro/{slug}/` returns empty
 - [ ] **Validator gate passes:** `validate_frontmatter.py --dir micro/{slug}/` exits 0 (all PASS)
 - [ ] context/_seed.md has at least the current scenario filled

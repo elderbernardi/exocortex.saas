@@ -350,23 +350,26 @@ Least privilege: use the simplest tool that solves the task.
 # This skill does not inject runtime rules; it is a tool-only skill.
 
 ## Memory Deprecate
-- On every new file creation in knowledge/, context/, contracts/, tools/ natures, run a semantic revision check before the WRITE commits.
-- Search the target container (microverso, global/, or shared/) for overlapping files using tag overlap (2+ shared tags), title similarity, and entity matching.
-- If a direct contradiction is found: deprecate the old file by setting deprecated: true, deprecated_at (ISO 8601 UTC), deprecated_reason (references the superseding file). Add a "Supersedes:" markdown link in the new file body.
-- If overlap is partial and the new file replaces the old's claim: deprecate the old. If the new file adds to the old: both coexist, do not deprecate.
-- If overlap is complementary (different aspect of same entity): both coexist, do not deprecate.
-- If the relationship is ambiguous: do NOT deprecate. Write the new file with a "Potential overlap with:" note and flag for executive review.
-- Never deprecate files with class: perene or with promoted_at set — these are immune to auto-deprecation.
-- Never deprecate across microverso boundaries — domain isolation is a hard boundary.
-- Never deprecate files already marked deprecated: true — idempotent; skip.
-- Log every deprecation in the owning container's log.md as a DEPRECATED entry per the log-convention.
-- Conservative detection: only deprecate on clear, direct contradictions. When in doubt, flag — do not deprecate.
+- Deprecation marks junk/wrongness ONLY: content that was never true, or is no longer worth keeping. Replaced truth (price, config, status changed) is SUPERSESSION — route it through `acervoctl apply-supersede`, never through deprecation.
+- When deprecating: set deprecated: true, deprecated_at (ISO 8601 UTC), deprecated_reason (why it is wrong/junk), and status: deprecated on the file; append a DEPRECATED entry to the container's log.md.
+- Never deprecate: class: perene files, promoted_at files, raw/ sources, files already deprecated, decisions, or files in another microverso — flag those for executive review instead.
+- Conservative rule: deprecate only on clear wrongness. When in doubt, flag for the executive via the maintenance digest — do not deprecate.
 
 ## Memory Intake
 - The inbox is checked only on explicit request ("verifique o inbox" or "inseri arquivo X no inbox"); never poll it automatically.
 - On "verifique o inbox": list _inbox/ files newest-first, classify each, and propose a destination microverso/directory — then stop and wait for confirmation.
 - On "inseri arquivo X": confirm the file exists in _inbox/, extract text if it is a document, then classify and propose a destination.
 - Never move or promote inbox files without explicit confirmation; never copy raw material directly into the semantic Acervo.
+
+## Memory Manager
+- Acervo recall: prefer `acervoctl retrieve --query --scope --budget` (routed, budgeted, cited); manual index/grep search is the fallback ladder. Always cite paths; if nothing is found, declare the absence — never improvise memory.
+- Before committing any semantic WRITE, run `acervoctl conflict-check --file` and apply the verdict: enrich → edit the existing file; supersession of a volátil → `acervoctl apply-supersede --new --old`; genuine dispute (both sides sourced, or target is perene/decision) → `acervoctl open-dispute` + digest item; coexist → `relates_to` link.
+- Supersession NEVER routes through excrtx-memory-deprecate; that skill is only for junk/wrongness (was never true / not worth keeping).
+- Trust gate: content originating from web, email, or third-party documents is created via `acervoctl new-object ... --source-trust untrusted` (status: draft). It never auto-commits as active memory.
+- Risk gate: macro/, global contracts/decisions, persona, and any promotion to perene go DRAFT-first for executive approval; micro volátil writes auto-commit governed (journaled, 7-day review window).
+- Episodes, entities, and intentions are created via `acervoctl new-object`. Never create an entity without checking aliases first (aliases are mandatory); intentions carry due/trigger and owed_to; episodes never store verbatim transcripts — summary + `session://` pointer only.
+- Commitments and promises persist as intention objects in intentions/; significant events distill to episode objects in episodes/.
+- Frontmatter is Schema v0.2 (schema: acervo/v0.2, one type matching the home directory, status scalar, epistemic tier). Default read filter: status active and valid today; label anything else HISTORICAL.
 
 ## Memory Mvexport
 - Export de microverso é via acervo/global/tools/microverso_package.py — nunca cópia manual de diretório.
@@ -422,5 +425,11 @@ Prose for executive: score with anti-slop (min 35/50). Below threshold: rewrite 
 # This skill does not inject runtime rules; it is a tool-only skill.
 
 ## Source Cnpj
+# This skill does not inject runtime rules; it is a tool-only skill.
+
+## Source Google Trends
+# This skill does not inject runtime rules; it is a tool-only skill.
+
+## Source Reclameaqui
 # This skill does not inject runtime rules; it is a tool-only skill.
 <!-- COMPILED_RULES_END -->

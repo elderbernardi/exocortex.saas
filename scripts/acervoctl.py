@@ -16,9 +16,13 @@ from pathlib import Path
 from typing import Any
 
 from acervo_semantic_core import (
+    apply_supersede,
     commit_write,
+    conflict_check,
     export_microverso,
     list_microversos,
+    new_object,
+    open_dispute,
     prepare_write,
     resolve_acervo_root,
     search_acervo,
@@ -152,6 +156,60 @@ def command_doctor(args: argparse.Namespace) -> dict[str, Any]:
     return catalog.doctor(root)
 
 
+def command_conflict_check(args: argparse.Namespace) -> dict[str, Any]:
+    text = sys.stdin.read() if args.stdin else None
+    return conflict_check(
+        acervo_root=args.acervo_root,
+        candidate_path=None if args.stdin else args.file,
+        candidate_text=text,
+        scope=args.scope,
+    )
+
+
+def command_apply_supersede(args: argparse.Namespace) -> dict[str, Any]:
+    return apply_supersede(
+        acervo_root=args.acervo_root, new_path=args.new, old_path=args.old
+    )
+
+
+def command_open_dispute(args: argparse.Namespace) -> dict[str, Any]:
+    return open_dispute(
+        acervo_root=args.acervo_root,
+        a_path=args.a,
+        b_path=args.b,
+        title=args.title,
+        scope=args.scope,
+    )
+
+
+def command_new_object(args: argparse.Namespace) -> dict[str, Any]:
+    body = None
+    if args.body_file:
+        body = Path(args.body_file).expanduser().read_text(encoding="utf-8")
+    return new_object(
+        acervo_root=args.acervo_root,
+        type_=args.type,
+        scope=args.scope,
+        title=args.title,
+        description=args.description,
+        aliases=_split_csv(args.aliases),
+        due=args.due,
+        trigger=args.trigger,
+        owed_to=args.owed_to,
+        tags=_split_csv(args.tags),
+        entities=_split_csv(args.entities),
+        body=body,
+        draft=args.draft,
+        source_trust=args.source_trust,
+    )
+
+
+def _split_csv(value: str | None) -> list[str] | None:
+    if not value:
+        return None
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 def command_export_microverso(args: argparse.Namespace) -> dict[str, Any]:
     return export_microverso(
         acervo_root=args.acervo_root,
@@ -227,6 +285,47 @@ def build_parser() -> argparse.ArgumentParser:
     export_cmd.add_argument("--out", required=True)
     export_cmd.add_argument("--tar", action="store_true")
     export_cmd.set_defaults(handler=command_export_microverso)
+
+    # ── Write pipeline: conflict protocol + new-object (08-write-policy) ──────
+    cc_cmd = sub.add_parser("conflict-check", help="Detecta overlap determinístico de um candidato (08 §4)")
+    cc_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    cc_cmd.add_argument("--file", help="Caminho do candidato .md")
+    cc_cmd.add_argument("--stdin", action="store_true", help="Ler frontmatter+corpo do candidato via stdin")
+    cc_cmd.add_argument("--scope", help="Microverso ou 'global' (derivado do path se ausente)")
+    cc_cmd.set_defaults(handler=command_conflict_check)
+
+    sup_cmd = sub.add_parser("apply-supersede", help="Pareamento atômico de supersessão (08 §3, verbo 2)")
+    sup_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    sup_cmd.add_argument("--new", required=True, help="Arquivo novo (fica active)")
+    sup_cmd.add_argument("--old", required=True, help="Arquivo antigo (vira superseded)")
+    sup_cmd.set_defaults(handler=command_apply_supersede)
+
+    disp_cmd = sub.add_parser("open-dispute", help="Cria objeto conflict e estampa disputed_by (08 §4)")
+    disp_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    disp_cmd.add_argument("--a", required=True, help="Arquivo do lado A")
+    disp_cmd.add_argument("--b", required=True, help="Arquivo do lado B")
+    disp_cmd.add_argument("--title", required=True, help="Título da disputa")
+    disp_cmd.add_argument("--scope", required=True, help="Escopo do objeto conflict (micro slug ou 'global')")
+    disp_cmd.set_defaults(handler=command_open_dispute)
+
+    no_cmd = sub.add_parser("new-object", help="Scaffold v0.2 de episode/entity/intention (05 §3)")
+    no_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    no_cmd.add_argument("--type", required=True, choices=["episode", "entity", "intention"])
+    no_cmd.add_argument("--scope", required=True, help="Microverso ou 'global'/'shared'")
+    no_cmd.add_argument("--title", required=True)
+    no_cmd.add_argument("--description")
+    no_cmd.add_argument("--aliases", help="Lista separada por vírgula (entity: obrigatório)")
+    no_cmd.add_argument("--due", help="intention: data ISO YYYY-MM-DD")
+    no_cmd.add_argument("--trigger", help="intention: condição de gatilho")
+    no_cmd.add_argument("--owed-to", dest="owed_to", help="intention: slug da entidade credora")
+    no_cmd.add_argument("--tags", help="Lista separada por vírgula")
+    no_cmd.add_argument("--entities", help="Lista separada por vírgula (slugs)")
+    no_cmd.add_argument("--body-file", dest="body_file", help="Arquivo com o corpo markdown")
+    no_cmd.add_argument("--draft", action="store_true", help="Força status: draft")
+    no_cmd.add_argument("--source-trust", dest="source_trust", default="agent",
+                        choices=["executive", "agent", "untrusted"],
+                        help="untrusted força draft (trust gate, 08 §2)")
+    no_cmd.set_defaults(handler=command_new_object)
 
     return parser
 

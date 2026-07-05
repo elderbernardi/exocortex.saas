@@ -9,14 +9,20 @@ scope:
   tasks: []
   artifacts: []
 
-objective: "Listar itens no inbox (raw/) com >7 dias sem promoção. Classificar cada item como: promover para knowledge/context, mover para _archive, ou manter no inbox com justificativa. Recomendar ação ao executivo — nunca mover autonomamente."
+objective: "Triar itens de _inbox/ (e raw/ com >7 dias sem promoção) conforme 08 §1: resolver escopo (sem escopo após 1 pergunta → permanece no inbox com nota); classificar a confiança da fonte (trust gate: web/email/documentos de terceiros → sempre untrusted); extrair candidatos — fatos→knowledge, compromissos→intention, decisões→decision, eventos→episode, pessoas/orgs→entity (após checar aliases) — via `acervoctl new-object --draft` com Tier 0+1 completos e sources apontando o item original. PROPOR, nunca commitar/mover autonomamente: cada candidato nasce status: draft e entra como item no digest de manutenção; o commit (draft → active, original → raw/ do escopo) só ocorre após aprovação explícita do executivo. Junk → recomendar descarte com 1 linha no journal."
 triggers:
   - "hermes cron: 0 7 * * 1"
   - "pedido explícito do executivo"
 outputs:
-  - "Lista classificada de itens do inbox com recomendação de ação"
+  - "Drafts propostos via acervoctl new-object --draft (status: draft, um por candidato extraído)"
+  - "Itens no digest de manutenção: 1 linha + 1 pergunta por draft/descarte aguardando aprovação"
+  - "Journal: 1 linha por descarte recomendado (auditabilidade sem storage)"
 
 permissions:
+  # false = nenhuma promoção/movimentação autônoma de memória ativa.
+  # O canal permitido de proposta é a criação de objetos status: draft
+  # (acervoctl new-object --draft) + item no digest; o commit-on-approval
+  # acontece na sessão com o executivo, nunca nesta rotina (08 §§1-2).
   can_modify_acervo: false
   can_create_reports: true
   can_publish: false
@@ -25,4 +31,4 @@ permissions:
 state_path: state.json
 log_path: log.md
 created_at: "2026-06-15"
-updated_at: "2026-06-15"
+updated_at: "2026-07-05"

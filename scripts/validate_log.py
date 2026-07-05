@@ -6,7 +6,8 @@ Enforces §1–§3 of ``docs/plans/2026-06-19_acervo-lifecycle-okf/log-conventio
   §1  Format — single ``# Log`` H1, ``## YYYY-MM-DD`` date headings (chronological
       ascending), single-line top-level bullets, no free text.
   §2  Entry types — the seven typed bullets (CREATED/UPDATED/DEPRECATED/PROMOTED/
-      QUARANTINED/PURGED/RESTORED) and their exact formats.
+      QUARANTINED/PURGED/RESTORED) and their exact formats, plus the two
+      memory-v2 write-pipeline events (SUPERSEDED/DISPUTED — 08-write-policy §4).
   §3  Location — logs live under ``micro/``, ``global/``, ``shared/`` (``_meta/``-first);
       ``macro/`` must NOT have a log.
 
@@ -45,6 +46,9 @@ ENTRY_RES = {
     "QUARANTINED": re.compile(r"^QUARANTINED: \S.* — .+$"),
     "PURGED": re.compile(r"^PURGED: \S.* — quarantine expired \(30 days\)$"),
     "RESTORED": re.compile(r"^RESTORED: \S.* — restored from quarantine by executive$"),
+    # memory-v2 conflict protocol (docs/plans/2026-07-03_memory-v2-spec/08-write-policy.md §4)
+    "SUPERSEDED": re.compile(r"^SUPERSEDED: \S.* — superseded by \S.*$"),
+    "DISPUTED": re.compile(r"^DISPUTED: \S.* — disputed by \S.*$"),
 }
 ENTRY_KEYWORDS = tuple(ENTRY_RES.keys())
 
@@ -149,7 +153,7 @@ def validate_log(path):
                     if not ENTRY_RES[keyword].match(payload):
                         issues.append(("L-021", "ERROR", f"{keyword} entry does not match its §2 format: {payload!r}"))
                 else:
-                    issues.append(("L-021", "ERROR", f"bullet is not one of the 7 §2 entry types: {payload!r}"))
+                    issues.append(("L-021", "ERROR", f"bullet is not one of the {len(ENTRY_KEYWORDS)} §2 entry types: {payload!r}"))
             continue
 
         if SUBBULLET_RE.match(ln):
