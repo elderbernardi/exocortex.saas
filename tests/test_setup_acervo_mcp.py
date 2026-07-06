@@ -17,6 +17,11 @@ SERVER_SCRIPT = REPO / "scripts" / "acervo_mcp_server.py"
 class SetupAcervoMcpTest(unittest.TestCase):
     def _base_env(self, hermes_home: Path, exocortex_home: Path, acervo_root: Path) -> dict[str, str]:
         env = os.environ.copy()
+        # Neutralize any ambient BASH_ENV (e.g. a dev shell that auto-loads a
+        # ~/.env.local into every subshell). It would re-export the real
+        # HERMES_HOME over our isolated one after the step starts, silently
+        # redirecting the step's config write to the real ~/.hermes.
+        env["BASH_ENV"] = ""
         env["HERMES_HOME"] = str(hermes_home)
         env["EXOCORTEX_HOME"] = str(exocortex_home)
         env["ACERVO"] = str(acervo_root)

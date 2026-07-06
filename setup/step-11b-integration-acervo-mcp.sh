@@ -42,7 +42,21 @@ EOF
 }
 
 _acervo_mcp_exists() {
-  hermes mcp list 2>/dev/null | grep -Eq '^[[:space:]]*acervo[[:space:]]'
+  # Check the target config file directly. The `hermes mcp` CLI always reads the
+  # default ~/.hermes and ignores $HERMES_HOME, so it cannot answer this for a
+  # custom/isolated home (and using it would clobber the real config).
+  local cfg="$HERMES_HOME/config.yaml"
+  [ -f "$cfg" ] || return 1
+  python3 - "$cfg" <<'PY'
+import sys
+from pathlib import Path
+
+import yaml
+
+cfg = yaml.safe_load(Path(sys.argv[1]).read_text(encoding="utf-8")) or {}
+servers = cfg.get("mcp_servers")
+sys.exit(0 if isinstance(servers, dict) and "acervo" in servers else 1)
+PY
 }
 
 _acervo_patch_config() {
@@ -130,9 +144,19 @@ configure_acervo_mcp() {
     return 0
   fi
 
+  # The `hermes mcp` CLI operates on the default ~/.hermes and ignores $HERMES_HOME.
+  # Only touch it when provisioning that real home; for a custom/isolated HERMES_HOME
+  # (custom install, tests) write the config file directly so we never clobber the
+  # real config with the wrong ACERVO.
+  local _cli_home _use_cli=0
+  _cli_home="$(readlink -f "${HOME}/.hermes" 2>/dev/null || echo "${HOME}/.hermes")"
+  if [ "$(readlink -f "$HERMES_HOME" 2>/dev/null || echo "$HERMES_HOME")" = "$_cli_home" ]; then
+    _use_cli=1
+  fi
+
   if _acervo_mcp_exists; then
     log "MCP server 'acervo' já configurado — reconciliando config"
-  else
+  elif [ "$_use_cli" = 1 ]; then
     local add_log="$_log_dir/step-11b_mcp_add_${_ts}.log"
     if printf 'y\n' | hermes mcp add acervo \
       --command "$python_bin" \
@@ -153,7 +177,15 @@ configure_acervo_mcp() {
   fi
 
   local health_log="$_log_dir/step-11b_health_${_ts}.log"
-  if hermes mcp test acervo >"$health_log" 2>&1; then
+  local _healthy=0
+  if [ "$_use_cli" = 1 ]; then
+    if hermes mcp test acervo >"$health_log" 2>&1; then _healthy=1; fi
+  else
+    # The CLI cannot target a non-default home; the local self-test above is the
+    # health proof for a custom/isolated HERMES_HOME.
+    _healthy=1
+  fi
+  if [ "$_healthy" = 1 ]; then
     log "MCP server 'acervo' registrado e saudável"
     rm -f "$HERMES_HOME/reminders/acervo-mcp.md"
   else
