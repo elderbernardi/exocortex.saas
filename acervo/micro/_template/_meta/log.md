@@ -9,12 +9,7 @@ created_at: "{{CREATED_DATE}}T00:00:00Z"
 nature: context
 ---
 
-# {{DOMAIN_NAME}} — Log
-
-> Registro cronológico de operações neste Microverso. Append-only.
-> Format: `## YYYY-MM-DD` seguido de bullets `- CREATED:`/`- UPDATED:`/`- ARCHIVED:`.
-> Actions: create, update, ingest, archive, lint, promote.
-> Rotacionar quando exceder 500 entradas: renomear para log-YYYY.md.
+# Log — {{DOMAIN_NAME}}
 
 ## {{CREATED_DATE}}
 - CREATED: micro/{{DOMAIN_SLUG}}/ (perene) — microverso inicializado a partir de `_template/`.
