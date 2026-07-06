@@ -1,7 +1,8 @@
 # Prompt de Continuação — Exocórtex Memória v2
 
 > Cole o bloco abaixo como primeira mensagem de uma sessão nova. É autossuficiente.
-> Última atualização: 2026-07-06 (Phase 2 live rollout concluído; finding #2 resolvido; tudo pushado).
+> Última atualização: 2026-07-06 (Phase 2 live rollout concluído; findings #1 E #2 resolvidos;
+> logs legados migrados ao formato estrito no installer E no vivo; installer commitado, não pushado).
 
 ---
 
@@ -55,21 +56,21 @@ ESTADO ATUAL (2026-07-06):
   em cópia isolada. MCP `acervo` vivo saudável (ACERVO=/home/ubuntu/exocortex/acervo).
 - Finding #2 (teste clobberava o config real): RESOLVIDO 2026-07-06 (commit 1e105be) — ver
   armadilha de ambiente acima. 75 testes passam, config real intacto.
+- Finding #1 (escrita viva bloqueada por log legado): RESOLVIDO 2026-07-06 via OPÇÃO A (migrar).
+  `scripts/migrate_log_v2.py` (idempotente) migra `_meta/log.md` legado → formato estrito:
+  normaliza H1 p/ `# Log[ — nome]`, dropa blockquotes, colapsa headings legados a `## YYYY-MM-DD`
+  (funde dias de mesma data), converte cada entrada não-estrita a UM `UPDATED: <container>/ — ...`
+  preservando ação+prosa no tail; bullets já-estritos passam verbatim; pula EXCLUDED_DIRS.
+  Installer: commit ad4c9bc (6 logs ativos PASS + `_template` corrigido + 13 testes).
+  Vivo: commit 4ef6698 (9 logs ativos migrados, `_template` vivo corrigido), backup tag
+  `pre-finding1-log-migration`. Prova end-to-end: `new-object` em `global/` → ok:true (episódio
+  registrando a migração); doctor + reindex ok:true. NENHUM finding aberto.
 
-FINDING AINDA ABERTO (decisão do executivo):
-- #1 ESCRITA VIVA EM `global/` BLOQUEADA: `new-object` valida o `_meta/log.md` INTEIRO do escopo
-  via `validate_log.py`; os logs vivos são legado free-text (falham L-003/L-010/L-020). Reads
-  funcionam; escrever em `global/` (ou qualquer escopo) exige migrar o log daquele escopo ao
-  formato estrito primeiro. DECISÃO: migrar os logs vivos OU relaxar o gate p/ logs legados.
-
-PRÓXIMO PASSO RECOMENDADO (nesta ordem):
-1. FINDING #1: decidir com o usuário — migrador de `_meta/log.md` legado → formato estrito
-   (append-only, eventos CREATED/UPDATED/... com campos L-003/L-010/L-020), OU um modo
-   "lenient" no validate_log p/ logs pré-v2. Sem isso, WRITE vivo em escopos com log legado falha.
-2. PHASE 4 (loop de consolidação): distilação diária de episódios + refresh de entidades +
+SEM FINDINGS ABERTOS. PRÓXIMO PASSO RECOMENDADO (nesta ordem):
+1. PHASE 4 (loop de consolidação): distilação diária de episódios + refresh de entidades +
    varredura de intenções + auditoria de dedup; digest semanal com disputas abertas.
    Construível sobre os verbos da Phase 2. Ver 04-architecture.md §4 e 08-write-policy.md §6.
-3. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
+2. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
    goldens + run_eval.py). Falta o gate de CI e a regra de regressão (>10pts bloqueia).
 
 COMO VERIFICAR O ESTADO (rode no installer):
@@ -110,6 +111,8 @@ tem este mesmo estado (e a armadilha do BASH_ENV).
 
 ## Resumo dos commits (installer `main`, mais recente primeiro)
 
+- `ad4c9bc` fix(phase2): migra logs legados _meta/log.md → formato estrito (finding #1) + fix _template
+- `5526778` docs(memory): Phase 2 live-rollout report + prompt de continuação
 - `1e105be` fix(phase2): step-11b + teste não clobberam mais o ~/.hermes real (finding #2)
 - `dc05630` fix(phase2): control plane resolvível + deployável no runtime vivo
 - `1169f9e` docs(memory): prompt de continuação (versão anterior)
