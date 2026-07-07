@@ -78,6 +78,7 @@ skills:
 
   # ── Assessment: análise técnica ──────────────────────────────────────
   - excrtx-assess-repofit
+  - excrtx-assess-interactive-audit
 
   # ── Quality Automation ───────────────────────────────────────────────
   - excrtx-quality-gepa

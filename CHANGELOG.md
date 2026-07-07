@@ -6,6 +6,9 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ## [Unreleased]
 
+### Added
+- Canonical `excrtx-assess-interactive-audit` skill: owner-in-the-loop audit protocol with personas, evidence capture, issue backlog, GO/NO-GO report, and bundle/catalog wiring.
+
 ## [1.1.1] — 2026-06-30
 
 Post-GA fixes from a real-environment validation (CI first run + a real first
