@@ -13,7 +13,7 @@ nature: knowledge
 # Groups — Aliases de Microversos
 
 > Fonte: listagem automática de `acervo/micro/` (exclui `_template/`).
-> Atualizado: 2026-06-21. 7 microversos ativos.
+> Atualizado: 2026-07-07. 9 microversos ativos.
 
 ## ALL
 Resolvido automaticamente via `ls -1 $ACERVO/micro/ | grep -v '^_'`.
@@ -24,12 +24,14 @@ Domínios transversais de conhecimento e operação:
 - estudio-criativo
 - excrtx
 - exocortex-ops
+- estudio-editorial
 
 ## PROJECTS
 Projetos com escopo, prazo e entregáveis definidos:
 - exocortex-dev
 - comercial
 - sales-ai
+- projeto-d
 
 ## ROLES
 Microversos que representam papéis ou contextos institucionais do executivo:

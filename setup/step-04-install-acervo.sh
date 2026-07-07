@@ -15,10 +15,29 @@ copy_acervo_seed() {
     rsync -a \
       --exclude '__pycache__' \
       --exclude 'micro/exocortex-ops/***' \
+      --exclude 'micro/estudio-editorial/***' \
       --exclude 'global/_meta/microversos.yaml' \
       "$ACERVO_SRC/" "$ACERVO/"
   else
     warn "rsync não encontrado; cópia genérica do Acervo pulada para evitar overwrite acidental"
+  fi
+}
+
+provision_estudio_editorial_seed() {
+  local editorial_src="$ACERVO_SRC/micro/estudio-editorial"
+  local editorial_dst="$ACERVO/micro/estudio-editorial"
+
+  mkdir -p "$editorial_dst"/{context,knowledge,contracts,prompts,skills,workflows,tools,templates,decisions,reflections,persona,_meta,raw,_archive}
+
+  if [ -d "$editorial_src" ]; then
+    if command -v rsync >/dev/null 2>&1; then
+      rsync -a --ignore-existing --exclude '__pycache__' "$editorial_src/" "$editorial_dst/"
+      log "Microverso base estudio-editorial instalado/preservado"
+    else
+      warn "rsync não encontrado; estudio-editorial seed não copiado para evitar overwrite acidental"
+    fi
+  else
+    warn "Microverso base estudio-editorial source não encontrado: $editorial_src"
   fi
 }
 
@@ -61,6 +80,7 @@ else
   if [ -d "$ACERVO_SRC" ]; then
     copy_acervo_seed
     provision_exocortex_ops_seed
+    provision_estudio_editorial_seed
     provision_microversos_registry
     log "Acervo: $(find "$ACERVO" -type f 2>/dev/null | wc -l) arquivos"
   else

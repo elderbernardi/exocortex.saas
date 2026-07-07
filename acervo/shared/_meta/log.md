@@ -19,3 +19,6 @@ last_accessed_at: 2026-05-27T04:03:03Z
 - Added SCHEMA.md, index.md, log.md
 - Created groups.md with built-in aliases (ALL, CLIENTS, PROJECTS)
 - Created cross-refs/ directory
+
+## [2026-07-07] create | Cross-ref Estúdio Editorial ↔ Estúdio Criativo
+- CREATED: shared/cross-refs/estudio-editorial--estudio-criativo.md (volátil) — Fronteira operacional editorial/criativo.

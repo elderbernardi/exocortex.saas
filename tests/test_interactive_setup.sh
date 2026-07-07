@@ -209,6 +209,40 @@ if should_run "T06"; then
   fi
 fi
 
+
+# =============================================================================
+# T06B: step-04 provisiona estudio-editorial sem sobrescrever evolução local
+# =============================================================================
+
+if should_run "T06B"; then
+  echo -e "${BOLD}T06B: step-04 provisiona estudio-editorial de forma idempotente${NC}"
+  test_dir=$(mktemp -d)
+  test_home="$test_dir/home"
+  test_hermes="$test_dir/hermes"
+  test_exocortex="$test_dir/exocortex"
+  test_acervo="$test_exocortex/acervo"
+  mkdir -p "$test_home" "$test_hermes" "$test_exocortex"
+
+  output=$(env -i PATH="$PATH" HOME="$test_home" HERMES_HOME="$test_hermes" EXOCORTEX_HOME="$test_exocortex" ACERVO="$test_acervo" bash "$REPO_ROOT/setup/step-04-install-acervo.sh" 2>&1)
+  editorial_dir="$test_acervo/micro/estudio-editorial"
+
+  if [ ! -f "$editorial_dir/microverso.yaml" ] ||      [ ! -f "$editorial_dir/_meta/SCHEMA.md" ] ||      [ ! -f "$editorial_dir/_meta/index.md" ] ||      [ ! -f "$editorial_dir/_meta/log.md" ]; then
+    fail_test "T06B" "artefatos mínimos ausentes em estudio-editorial após step-04: $output"
+  else
+    sentinel="LOCAL_SENTINEL_$(date +%s)"
+    printf '%s
+' "$sentinel" > "$editorial_dir/context/current-state.md"
+    output2=$(env -i PATH="$PATH" HOME="$test_home" HERMES_HOME="$test_hermes" EXOCORTEX_HOME="$test_exocortex" ACERVO="$test_acervo" bash "$REPO_ROOT/setup/step-04-install-acervo.sh" 2>&1)
+    if grep -q "$sentinel" "$editorial_dir/context/current-state.md"; then
+      pass "T06B: estudio-editorial instalado e preservado em segunda execução"
+    else
+      fail_test "T06B" "step-04 sobrescreveu arquivo local do estudio-editorial: $output2"
+    fi
+  fi
+
+  rm -rf "$test_dir"
+fi
+
 # =============================================================================
 # T07: common.sh parse --yes flag corretamente
 # =============================================================================

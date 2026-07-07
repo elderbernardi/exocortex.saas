@@ -1,0 +1,41 @@
+# microverso.yaml — manifesto de um microverso empacotado
+apiVersion: excrtx/v1
+kind: Microverso
+metadata:
+  name: estudio-editorial
+  version: 0.1.0
+  description: "Centro canônico para editoração de trabalhos escritos e artefatos de comunicação elaborada."
+  author: exocortex-team
+  tags: [editorial, editoração, livros, manuais, reportagem, canon, voz-autoral, autonovel]
+
+requires:
+  skills:
+    - excrtx-quality-antislop
+    - excrtx-behavior-canvas
+    - excrtx-produce-artifacts
+  python_packages: []
+  node_packages: []
+  mcps: []
+
+external_references:
+  - name: NousResearch/autonovel
+    url: https://hermesatlas.com/projects/NousResearch/autonovel
+    github: https://github.com/NousResearch/autonovel
+    status: source-canonized-not-runtime-installed
+
+tree:
+  context/: "Estado corrente, escopo e fronteiras do Estúdio Editorial"
+  knowledge/: "Método editorial, pipeline autonovel, canon textual e referências"
+  contracts/: "Regras de autoria, publicação, canon e fronteira com outros microversos"
+  workflows/: "Fluxos para livros, manuais, reportagens e revisão editorial"
+  skills/: "Capacidades editoriais locais e adaptações de skills externas"
+  tools/: "Mapeamento de ferramentas, scripts e dependências externas"
+  templates/: "Briefings, matrizes editoriais, pautas e estruturas de obra"
+  persona/: "Personas editoriais: editor-chefe, editor literário, copydesk, fact-checker"
+  prompts/: "Prompts reutilizáveis de intake, revisão, canon e edição"
+  decisions/: "Decisões canônicas do microverso"
+  reflections/: "Aprendizados e pós-projeto editorial"
+  raw/: "Fontes brutas imutáveis"
+  _meta/: "Schema, índice e log"
+
+hooks: {}
