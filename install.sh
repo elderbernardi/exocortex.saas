@@ -495,8 +495,25 @@ NEEDS_DOWNLOAD=true
 if [ -d "$INSTALLER_DIR/.git" ]; then
   CURRENT_VERSION=$(cat "$VERSION_FILE" 2>/dev/null || echo "unknown")
   if [ "$CURRENT_VERSION" = "$INSTALL_VERSION" ]; then
-    info "Versão $INSTALL_VERSION já baixada. Re-executando setup..."
+    info "Versão $INSTALL_VERSION já baixada. Verificando atualizações remotas..."
     NEEDS_DOWNLOAD=false
+
+    if run_command_with_context "Fetch do instalador" "Falha ao buscar atualizações do repositório Exocórtex. Vou seguir com a cópia local existente." git -C "$INSTALLER_DIR" fetch --tags --prune origin; then
+      if git -C "$INSTALLER_DIR" show-ref --verify --quiet "refs/remotes/origin/$INSTALL_VERSION"; then
+        LOCAL_HEAD=$(git -C "$INSTALLER_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+        REMOTE_HEAD=$(git -C "$INSTALLER_DIR" rev-parse --short "origin/$INSTALL_VERSION" 2>/dev/null || echo "unknown")
+
+        if [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ]; then
+          log "Instalador já está em origin/$INSTALL_VERSION ($LOCAL_HEAD)"
+        else
+          info "Atualizando instalador por fast-forward: $LOCAL_HEAD → $REMOTE_HEAD"
+          run_command_with_context "Fast-forward do instalador" "O checkout local do instalador divergiu de origin/$INSTALL_VERSION. Revise alterações locais em $INSTALLER_DIR antes de atualizar." git -C "$INSTALLER_DIR" merge --ff-only "origin/$INSTALL_VERSION"
+          log "Instalador atualizado para origin/$INSTALL_VERSION"
+        fi
+      else
+        info "Versão $INSTALL_VERSION não é branch remota rastreável; reexecutando setup local."
+      fi
+    fi
   else
     info "Atualizando de $CURRENT_VERSION para $INSTALL_VERSION..."
     rm -rf "$INSTALLER_DIR"

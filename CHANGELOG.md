@@ -8,6 +8,10 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 
 ### Added
 - Canonical `excrtx-assess-interactive-audit` skill: owner-in-the-loop audit protocol with personas, evidence capture, issue backlog, GO/NO-GO report, and bundle/catalog wiring.
+- Bootstrap regression test for `VERSION=main` ensuring cached installer checkouts fast-forward to `origin/main` before running setup.
+
+### Fixed
+- `install.sh` now treats branch-like versions such as `main` as moving refs: it fetches `origin`, fast-forwards safely when possible, and only reuses the local installer when already current or when the requested version is not a remote branch.
 
 ## [1.1.1] — 2026-06-30
 
