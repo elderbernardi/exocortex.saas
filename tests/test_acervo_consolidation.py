@@ -144,6 +144,26 @@ def test_intentions_excluded_from_stale_volatile(acervo: Path) -> None:
     assert any(it["path"].endswith("antiga.md") for it in payload["buckets"]["intentions_due"])
 
 
+def test_dedup_ignores_resolved_and_macro(acervo: Path) -> None:
+    base = acervo / "micro" / "operacoes" / "knowledge"
+    # Canonical active + a superseded twin (same title) → NOT a dedup candidate.
+    (base / "canonico.md").write_text(_v02("knowledge", "Registro X", "canônico", cls="perene"), encoding="utf-8")
+    (base / "antigo.md").write_text(
+        _v02("knowledge", "Registro X", "antigo", "superseded_by: micro/operacoes/knowledge/canonico.md\n",
+             status="superseded", cls="perene"),
+        encoding="utf-8",
+    )
+    # macro identity files with a case-variant title collision → excluded.
+    (acervo / "macro").mkdir(exist_ok=True)
+    (acervo / "macro" / "SOUL.md").write_text(_v02("persona", "soul", "constituição", cls="perene"), encoding="utf-8")
+    (acervo / "macro" / "soul.md").write_text(_v02("persona", "soul", "template executivo", cls="perene"), encoding="utf-8")
+    acervo_catalog.build_catalog(acervo)
+    payload = acervo_consolidation.scan(acervo, today="2026-07-08")
+    for it in payload["buckets"]["duplicate_titles"]:
+        assert "antigo.md" not in " ".join(it["paths"]), it
+        assert "macro/" not in " ".join(it["paths"]), it
+
+
 def test_render_digest_governance(acervo: Path) -> None:
     base = acervo / "micro" / "operacoes"
     (base / "knowledge" / "disputa.md").write_text(

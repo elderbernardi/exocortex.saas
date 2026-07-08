@@ -169,7 +169,13 @@ def scan(
         title = (row.get("title") or fm.get("title") or "").strip()
         micro = row.get("microverso")
 
-        if title:
+        deprecated = fm.get("deprecated") is True or str(fm.get("deprecated", "")).lower() == "true"
+        # Dedup audit: only active/draft files count, and never macro/ — the identity
+        # layer is git-governed (structural filenames like SOUL.md/soul.md legitimately
+        # coexist), not memory-lifecycle managed. A superseded/deprecated file is already
+        # resolved and must not re-surface as a duplicate.
+        dedup_eligible = status in ACTIVE_LIKE and not deprecated and not rel.startswith("macro/")
+        if title and dedup_eligible:
             key = (micro, title.casefold())
             previous = title_seen.get(key)
             if previous and previous != rel:
