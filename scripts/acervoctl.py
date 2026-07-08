@@ -156,6 +156,20 @@ def command_doctor(args: argparse.Namespace) -> dict[str, Any]:
     return catalog.doctor(root)
 
 
+def command_consolidation_scan(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    consolidation = load_tool_module(root, "acervo_consolidation")
+    payload = consolidation.scan(
+        root,
+        today=args.today,
+        stale_days=args.stale_days,
+        upcoming_days=args.upcoming_days,
+    )
+    if args.format == "markdown":
+        payload["markdown"] = consolidation.render_markdown(payload)
+    return payload
+
+
 def command_conflict_check(args: argparse.Namespace) -> dict[str, Any]:
     text = sys.stdin.read() if args.stdin else None
     return conflict_check(
@@ -278,6 +292,14 @@ def build_parser() -> argparse.ArgumentParser:
     doctor_cmd = sub.add_parser("doctor", help="Relatório de integridade do Acervo (links, drift, lifecycle)")
     doctor_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
     doctor_cmd.set_defaults(handler=command_doctor)
+
+    cons_cmd = sub.add_parser("consolidation-scan", help="Varredura read-only da fila de consolidação/lifecycle v2 (Phase 4)")
+    cons_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    cons_cmd.add_argument("--today", help="Data de corte YYYY-MM-DD")
+    cons_cmd.add_argument("--stale-days", type=int, default=90, help="Dias sem acesso para sinalizar volátil stale")
+    cons_cmd.add_argument("--upcoming-days", type=int, default=7, help="Janela de intenções próximas")
+    cons_cmd.add_argument("--format", choices=["json", "markdown"], default="json", help="Inclui markdown renderizado quando solicitado")
+    cons_cmd.set_defaults(handler=command_consolidation_scan)
 
     export_cmd = sub.add_parser("export-microverso", help="Empacota um microverso")
     export_cmd.add_argument("--acervo-root", help="Raiz do Acervo")

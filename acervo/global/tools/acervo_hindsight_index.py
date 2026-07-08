@@ -31,7 +31,7 @@ INDEXABLE_NATURES = {
     "tools",
     "workflows",
 }
-SKIP_PARTS = {"raw", "_archive", ".quarantine", "__pycache__", "state", "_retired", "_template", "_fixture", "_inbox", "_ops_snapshots"}
+SKIP_PARTS = {"raw", "_archive", ".quarantine", "__pycache__", "state", "_retired", "_template", "_fixture", "_inbox", "_ops_snapshots", "_backup"}
 DEFAULT_STATE_REL = "global/tools/state/acervo_hindsight_index.json"
 MAX_SUMMARY_CHARS = 1000
 
