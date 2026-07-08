@@ -21,6 +21,7 @@ from acervo_semantic_core import (
     conflict_check,
     export_microverso,
     list_microversos,
+    mark_intention,
     new_object,
     open_dispute,
     prepare_write,
@@ -220,6 +221,59 @@ def command_new_object(args: argparse.Namespace) -> dict[str, Any]:
     )
 
 
+def command_mark_intention(args: argparse.Namespace) -> dict[str, Any]:
+    return mark_intention(
+        acervo_root=args.acervo_root,
+        path=args.path,
+        state=args.state,
+        reason=args.reason,
+        today=args.today,
+    )
+
+
+def command_sweep_intentions(args: argparse.Namespace) -> dict[str, Any]:
+    """Daily prospective-memory sweep (08 §6): auto-expire overdue active
+    intentions through the governed verb. Read-only by default; --apply writes.
+    done/dropped need agent/executive judgment and are never auto-applied."""
+    root = resolve_acervo_root(args.acervo_root)
+    consolidation = load_tool_module(root, "acervo_consolidation")
+    scan = consolidation.scan(root, today=args.today)
+    as_of = scan["as_of"]
+    overdue = [it for it in scan["buckets"]["intentions_due"] if it.get("days_overdue")]
+    result: dict[str, Any] = {
+        "ok": True,
+        "operation": "sweep_intentions",
+        "as_of": as_of,
+        "applied": bool(args.apply),
+        "candidates": len(overdue),
+        "expired": [],
+        "skipped": [],
+    }
+    for it in overdue:
+        entry = {
+            "path": it["path"],
+            "title": it.get("title"),
+            "due": it.get("due"),
+            "days_overdue": it.get("days_overdue"),
+        }
+        if not args.apply:
+            result["expired"].append({**entry, "would_expire": True})
+            continue
+        try:
+            outcome = mark_intention(
+                acervo_root=root,
+                path=root / it["path"],
+                state="expired",
+                reason=f"varredura automática: vencida em {it.get('due')}, sem resolução até {as_of}",
+                today=as_of,
+            )
+            result["expired"].append({**entry, "unchanged": outcome.get("unchanged", False)})
+        except Exception as exc:  # governed write refused — surface, don't abort the batch
+            result["ok"] = False
+            result["skipped"].append({**entry, "error": str(exc)})
+    return result
+
+
 def _split_csv(value: str | None) -> list[str] | None:
     if not value:
         return None
@@ -350,6 +404,20 @@ def build_parser() -> argparse.ArgumentParser:
                         choices=["executive", "agent", "untrusted"],
                         help="untrusted força draft (trust gate, 08 §2)")
     no_cmd.set_defaults(handler=command_new_object)
+
+    mi_cmd = sub.add_parser("mark-intention", help="Encerra uma intenção: active/draft → done|dropped|expired (05 §3)")
+    mi_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    mi_cmd.add_argument("--path", required=True, help="Caminho do arquivo da intenção")
+    mi_cmd.add_argument("--state", required=True, choices=["done", "dropped", "expired"])
+    mi_cmd.add_argument("--reason", required=True, help="Por que a intenção encerrou (uma linha)")
+    mi_cmd.add_argument("--today", help="Data de resolução YYYY-MM-DD (default: hoje UTC)")
+    mi_cmd.set_defaults(handler=command_mark_intention)
+
+    sweep_cmd = sub.add_parser("sweep-intentions", help="Varredura de expiração de intenções vencidas (08 §6). Read-only sem --apply")
+    sweep_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    sweep_cmd.add_argument("--today", help="Data de corte YYYY-MM-DD (default: hoje UTC)")
+    sweep_cmd.add_argument("--apply", action="store_true", help="Efetiva a expiração (sem isso, apenas relata)")
+    sweep_cmd.set_defaults(handler=command_sweep_intentions)
 
     return parser
 

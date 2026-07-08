@@ -188,6 +188,11 @@ V2_ALLOWED_TYPES = frozenset({
 V2_ALLOWED_STATUS = frozenset({
     "draft", "active", "superseded", "deprecated", "quarantined", "archived",
 })
+# Prospective-memory terminal states — valid only for type: intention
+# (05-object-model §3: active → done|dropped|expired; done intentions archive,
+# never delete). Kept out of the shared enum so a knowledge/decision file can
+# never claim a nonsensical "done" status.
+V2_INTENTION_TERMINAL_STATUS = frozenset({"done", "dropped", "expired"})
 V2_ALLOWED_EPISTEMIC = frozenset({
     "fact", "observation", "interpretation", "hypothesis",
     "decision", "preference", "rule", "intention",
@@ -703,12 +708,16 @@ def _check_v2_tier0(data, issues):
             issues.append(("V2-016", "ERROR",
                            f"'class' must be 'perene' or 'volátil', got {repr(cls)}"))
 
-    # status — scalar lifecycle state (v0.2 delta ②)
+    # status — scalar lifecycle state (v0.2 delta ②). Intentions add three
+    # terminal states (done|dropped|expired) on top of the shared enum.
     if "status" in data:
         status = data["status"]
-        if not isinstance(status, str) or status not in V2_ALLOWED_STATUS:
+        allowed_status = V2_ALLOWED_STATUS
+        if data.get("type") == "intention":
+            allowed_status = V2_ALLOWED_STATUS | V2_INTENTION_TERMINAL_STATUS
+        if not isinstance(status, str) or status not in allowed_status:
             issues.append(("V2-017", "ERROR",
-                           f"'status' must be one of {sorted(V2_ALLOWED_STATUS)}, "
+                           f"'status' must be one of {sorted(allowed_status)}, "
                            f"got {repr(status)}"))
 
     # timestamp — optional in v0.2 (derived at OKF export). If present it must

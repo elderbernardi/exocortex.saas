@@ -901,6 +901,107 @@ def apply_supersede(
     }
 
 
+# ------------------------------------------------------------- mark-intention
+
+INTENTION_TERMINAL_STATES = {"done", "dropped", "expired"}
+
+
+def mark_intention(
+    *,
+    acervo_root: str | Path | None = None,
+    path: str | Path,
+    state: str,
+    reason: str,
+    today: str | date | None = None,
+) -> dict[str, Any]:
+    """Governed terminal transition of one intention (05-object-model §3):
+    active/draft → done|dropped|expired. Atomic: frontmatter (status +
+    resolved_at + resolution) and one UPDATED log entry land together or not at
+    all. Intentions are never deleted — a resolved intention is relationship
+    history (08 §6 'never'). Idempotent: an already-terminal intention is a
+    no-op so the daily sweep can re-run safely."""
+    if state not in INTENTION_TERMINAL_STATES:
+        raise RuntimeError(
+            f"state inválido: {state!r} (intention encerra em: "
+            f"{', '.join(sorted(INTENTION_TERMINAL_STATES))})."
+        )
+    reason = " ".join((reason or "").split())
+    if not reason:
+        raise RuntimeError("Recusado: reason é obrigatório (por que a intenção encerrou).")
+    if today is None:
+        resolved_at = now_utc().strftime("%Y-%m-%d")
+    else:
+        resolved_at = str(today)[:10]
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", resolved_at):
+            raise RuntimeError(f"today deve ser YYYY-MM-DD, recebido: {today!r}")
+
+    root = resolve_acervo_root(acervo_root)
+    abs_path = Path(path).expanduser().resolve()
+    if not abs_path.is_file():
+        raise RuntimeError(f"Arquivo não encontrado: {abs_path}")
+    rel = _rel_inside(root, abs_path)
+
+    fm, _body, text = read_object(abs_path)
+    if fm.get("type") != "intention":
+        raise RuntimeError(
+            f"Recusado: {rel} não é uma intenção (type: {fm.get('type')!r}). "
+            f"mark-intention só encerra memória prospectiva."
+        )
+    current = fm.get("status")
+    if current in INTENTION_TERMINAL_STATES:
+        return {
+            "ok": True,
+            "operation": "mark_intention",
+            "path": rel,
+            "state": current,
+            "unchanged": True,
+        }
+    if current not in ("active", "draft"):
+        raise RuntimeError(
+            f"Recusado: {rel} tem status {current!r}; só intenções active/draft encerram."
+        )
+
+    new_text = fm_set_scalar(text, "status", state)
+    new_text = fm_set_scalar(new_text, "resolved_at", resolved_at)
+    new_text = fm_set_scalar(new_text, "resolution", _yaml_scalar(reason))
+
+    container = container_of(root, rel)
+    batch = _AtomicBatch()
+    meta_dir_existed = (container / "_meta").exists()
+    try:
+        batch.snapshot(abs_path)
+        meta = ensure_container_meta(container)
+        batch.snapshot(meta["log_path"])
+        abs_path.write_text(new_text, encoding="utf-8")
+        validate_entry(abs_path)
+        append_log(
+            meta["log_path"],
+            relative_output=rel,
+            ts=now_utc(),
+            entry_type="UPDATED",
+            description=f"intention {state} ({reason})",
+        )
+        validate_log(meta["log_path"])
+    except Exception:
+        batch.rollback()
+        if not meta_dir_existed:
+            for name in ("index.md", "log.md"):
+                (container / "_meta" / name).unlink(missing_ok=True)
+        raise
+
+    upserts = catalog_upsert(root, abs_path)
+    return {
+        "ok": True,
+        "operation": "mark_intention",
+        "path": rel,
+        "state": state,
+        "resolved_at": resolved_at,
+        "reason": reason,
+        "log_path": str(meta["log_path"]),
+        "catalog": upserts,
+    }
+
+
 # ---------------------------------------------------------------- open-dispute
 
 
