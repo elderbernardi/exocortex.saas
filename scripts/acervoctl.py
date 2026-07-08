@@ -19,12 +19,14 @@ from acervo_semantic_core import (
     apply_supersede,
     commit_write,
     conflict_check,
+    distill_episode,
     export_microverso,
     list_microversos,
     mark_intention,
     new_object,
     open_dispute,
     prepare_write,
+    refresh_entity,
     resolve_acervo_root,
     search_acervo,
     slugify,
@@ -231,6 +233,35 @@ def command_mark_intention(args: argparse.Namespace) -> dict[str, Any]:
     )
 
 
+def command_distill_episode(args: argparse.Namespace) -> dict[str, Any]:
+    summary = args.summary
+    if args.summary_file:
+        summary = Path(args.summary_file).expanduser().read_text(encoding="utf-8")
+    return distill_episode(
+        acervo_root=args.acervo_root,
+        scope=args.scope,
+        title=args.title,
+        summary=summary,
+        signals=_split_csv(args.signals),
+        participants=_split_csv(args.participants),
+        decisions=args.decision,
+        open_loops=args.open_loop,
+        session_ref=args.session_ref,
+        tags=_split_csv(args.tags),
+        source_trust=args.source_trust,
+    )
+
+
+def command_refresh_entity(args: argparse.Namespace) -> dict[str, Any]:
+    return refresh_entity(
+        acervo_root=args.acervo_root,
+        path=args.path,
+        note=args.note,
+        date=args.date,
+        add_aliases=_split_csv(args.add_aliases),
+    )
+
+
 def command_sweep_intentions(args: argparse.Namespace) -> dict[str, Any]:
     """Daily prospective-memory sweep (08 §6): auto-expire overdue active
     intentions through the governed verb. Read-only by default; --apply writes.
@@ -412,6 +443,31 @@ def build_parser() -> argparse.ArgumentParser:
     mi_cmd.add_argument("--reason", required=True, help="Por que a intenção encerrou (uma linha)")
     mi_cmd.add_argument("--today", help="Data de resolução YYYY-MM-DD (default: hoje UTC)")
     mi_cmd.set_defaults(handler=command_mark_intention)
+
+    de_cmd = sub.add_parser("distill-episode", help="Distila uma sessão significativa em episódio; exige gate H9 (04 §4.1)")
+    de_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    de_cmd.add_argument("--scope", required=True, help="Microverso ou 'global'")
+    de_cmd.add_argument("--title", required=True)
+    de_cmd.add_argument("--summary", help="Resumo do que a sessão produziu")
+    de_cmd.add_argument("--summary-file", dest="summary_file", help="Arquivo com o resumo (alternativa a --summary)")
+    de_cmd.add_argument("--signals", required=True,
+                        help="Sinais de significância H9 (vírgula): decision,commitment,artifact,executive_flag")
+    de_cmd.add_argument("--participants", help="Slugs de entidades participantes (vírgula)")
+    de_cmd.add_argument("--decision", action="append", help="Decisão extraída (repetível)")
+    de_cmd.add_argument("--open-loop", dest="open_loop", action="append", help="Loop aberto (repetível)")
+    de_cmd.add_argument("--session-ref", dest="session_ref", help="Ponteiro session:// da transcrição")
+    de_cmd.add_argument("--tags", help="Lista separada por vírgula")
+    de_cmd.add_argument("--source-trust", dest="source_trust", default="agent",
+                        choices=["executive", "agent", "untrusted"])
+    de_cmd.set_defaults(handler=command_distill_episode)
+
+    re_cmd = sub.add_parser("refresh-entity", help="Acumula uma menção em página de entidade: interação + last_interaction + aliases (04 §4.3)")
+    re_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    re_cmd.add_argument("--path", required=True, help="Caminho do arquivo da entidade")
+    re_cmd.add_argument("--note", required=True, help="O que foi a interação (uma linha)")
+    re_cmd.add_argument("--date", help="Data da interação YYYY-MM-DD (default: hoje UTC)")
+    re_cmd.add_argument("--add-aliases", dest="add_aliases", help="Novos aliases (separados por vírgula)")
+    re_cmd.set_defaults(handler=command_refresh_entity)
 
     sweep_cmd = sub.add_parser("sweep-intentions", help="Varredura de expiração de intenções vencidas (08 §6). Read-only sem --apply")
     sweep_cmd.add_argument("--acervo-root", help="Raiz do Acervo")

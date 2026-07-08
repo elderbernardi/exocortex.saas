@@ -1002,6 +1002,120 @@ def mark_intention(
     }
 
 
+# -------------------------------------------------------------- refresh-entity
+
+ENTITY_INTERACTIONS_HEADING = "## Interações"
+
+
+def _append_to_body_section(text: str, heading_prefix: str, bullet: str) -> str:
+    """Append `bullet` inside the first body section whose heading starts with
+    `heading_prefix` (append-only journal); create the section at EOF if absent.
+    No-op if the identical bullet already lives in that section."""
+    lines = text.split("\n")
+    fm_end = 0
+    if lines and lines[0].strip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                fm_end = i + 1
+                break
+    start = None
+    for i in range(fm_end, len(lines)):
+        if lines[i].startswith(heading_prefix):
+            start = i
+            break
+    if start is None:
+        return text.rstrip("\n") + "\n\n" + f"{heading_prefix}      <!-- append-only -->" + "\n" + bullet + "\n"
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        if lines[j].startswith("## "):
+            end = j
+            break
+    if bullet in lines[start:end]:
+        return text
+    insert_at = start + 1
+    for k in range(start + 1, end):
+        if lines[k].strip():
+            insert_at = k + 1
+    lines.insert(insert_at, bullet)
+    return "\n".join(lines)
+
+
+def refresh_entity(
+    *,
+    acervo_root: str | Path | None = None,
+    path: str | Path,
+    note: str,
+    date: str | None = None,
+    add_aliases: list[str] | None = None,
+    today: str | date | None = None,
+) -> dict[str, Any]:
+    """Accrue a mention to an entity page (04 §4.3): append a dated line to the
+    append-only interaction log, stamp last_interaction, optionally add aliases.
+    Governed atomic write; the Perfil section is never touched here (a profile
+    rewrite is a separate deliberate edit). Entities are living documents (05 §3)."""
+    note = " ".join((note or "").split())
+    if not note:
+        raise RuntimeError("Recusado: note é obrigatório (o que foi a interação).")
+    when = str(date or today or "")[:10] or now_utc().strftime("%Y-%m-%d")
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", when):
+        raise RuntimeError(f"date deve ser YYYY-MM-DD, recebido: {date or today!r}")
+
+    root = resolve_acervo_root(acervo_root)
+    abs_path = Path(path).expanduser().resolve()
+    if not abs_path.is_file():
+        raise RuntimeError(f"Arquivo não encontrado: {abs_path}")
+    rel = _rel_inside(root, abs_path)
+
+    fm, _body, text = read_object(abs_path)
+    if fm.get("type") != "entity":
+        raise RuntimeError(
+            f"Recusado: {rel} não é uma entidade (type: {fm.get('type')!r}). "
+            f"refresh-entity só acumula em páginas de entidade."
+        )
+
+    new_text = fm_set_scalar(text, "last_interaction", when)
+    for alias in (add_aliases or []):
+        alias = alias.strip()
+        if alias:
+            new_text = fm_append_list(new_text, "aliases", _yaml_scalar(alias))
+    new_text = _append_to_body_section(new_text, ENTITY_INTERACTIONS_HEADING, f"- {when} — {note}")
+
+    require_no_secrets(new_text, where=f"refresh_entity:{rel}")
+
+    container = container_of(root, rel)
+    batch = _AtomicBatch()
+    meta_dir_existed = (container / "_meta").exists()
+    try:
+        batch.snapshot(abs_path)
+        meta = ensure_container_meta(container)
+        batch.snapshot(meta["log_path"])
+        abs_path.write_text(new_text, encoding="utf-8")
+        validate_entry(abs_path)
+        append_log(
+            meta["log_path"], relative_output=rel, ts=now_utc(),
+            entry_type="UPDATED", description=f"entity refresh ({note[:80]})",
+        )
+        validate_log(meta["log_path"])
+    except Exception:
+        batch.rollback()
+        if not meta_dir_existed:
+            for name in ("index.md", "log.md"):
+                (container / "_meta" / name).unlink(missing_ok=True)
+        raise
+
+    upserts = catalog_upsert(root, abs_path)
+    return {
+        "ok": True,
+        "operation": "refresh_entity",
+        "path": rel,
+        "last_interaction": when,
+        "note": note,
+        "aliases_added": [a.strip() for a in (add_aliases or []) if a.strip()],
+        "log_path": str(meta["log_path"]),
+        "catalog": upserts,
+    }
+
+
 # ---------------------------------------------------------------- open-dispute
 
 
@@ -1377,3 +1491,73 @@ def new_object(
         "catalog": upserts,
         "hindsight": hindsight,
     }
+
+
+# ------------------------------------------------------------- distill-episode
+
+EPISODE_SIGNIFICANCE_SIGNALS = ("decision", "commitment", "artifact", "executive_flag")
+
+
+def significance_gate(signals: list[str] | None) -> dict[str, Any]:
+    """H9 significance gate (07 §3): a session becomes an episode only when at
+    least one of decision|commitment|artifact|executive_flag is present. Pure
+    predicate — returns {passed, signals, unknown}, no side effects."""
+    seen = [s.strip() for s in (signals or []) if s and s.strip()]
+    known = [s for s in seen if s in EPISODE_SIGNIFICANCE_SIGNALS]
+    unknown = [s for s in seen if s not in EPISODE_SIGNIFICANCE_SIGNALS]
+    return {"passed": bool(known), "signals": known, "unknown": unknown}
+
+
+def distill_episode(
+    *,
+    acervo_root: str | Path | None = None,
+    scope: str,
+    title: str,
+    summary: str,
+    signals: list[str] | None,
+    participants: list[str] | None = None,
+    decisions: list[str] | None = None,
+    open_loops: list[str] | None = None,
+    session_ref: str | None = None,
+    tags: list[str] | None = None,
+    source_trust: str = "agent",
+) -> dict[str, Any]:
+    """Distill a significant session into an episode (04 §4.1) through the
+    governed new_object pipeline: summary, participants (→ entities), decisions,
+    open loops, session:// pointer. Refuses when the H9 significance gate is not
+    met — an unremarkable session is not memory (07 §3)."""
+    gate = significance_gate(signals)
+    if gate["unknown"]:
+        raise RuntimeError(
+            f"signal desconhecido: {', '.join(gate['unknown'])} "
+            f"(válidos: {', '.join(EPISODE_SIGNIFICANCE_SIGNALS)})."
+        )
+    if not gate["passed"]:
+        raise RuntimeError(
+            "Recusado: gate de significância H9 não atingido — episódio exige ao "
+            "menos um sinal (decision|commitment|artifact|executive_flag). Sessão "
+            "sem decisão/compromisso/artefato/flag não vira memória (07 §3)."
+        )
+    summary = summary.strip() if summary else ""
+    if not summary:
+        raise RuntimeError("Recusado: summary é obrigatório (o que a sessão produziu).")
+
+    decisions = [d.strip() for d in (decisions or []) if d and d.strip()]
+    open_loops = [o.strip() for o in (open_loops or []) if o and o.strip()]
+    lines = [summary, "", f"_Sinais de significância: {', '.join(gate['signals'])}._"]
+    if decisions:
+        lines += ["", "## Decisões"] + [f"- {d}" for d in decisions]
+    if open_loops:
+        lines += ["", "## Loops abertos"] + [f"- {o}" for o in open_loops]
+    if session_ref:
+        lines += ["", "## Sessão", f"- {session_ref}"]
+    body = "\n".join(lines) + "\n"
+
+    out = new_object(
+        acervo_root=acervo_root, type_="episode", scope=scope, title=title,
+        description=" ".join(summary.split()), tags=tags, entities=participants,
+        body=body, source_trust=source_trust,
+    )
+    out["operation"] = "distill_episode"
+    out["significance"] = gate["signals"]
+    return out
