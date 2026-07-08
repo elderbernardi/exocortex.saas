@@ -93,6 +93,43 @@ def _rows(acervo: Path) -> list[dict[str, Any]]:
     return acervo_catalog.query_catalog(acervo, limit=100_000)
 
 
+def _load_retrieval_history(root: Path, as_of: date) -> tuple[dict[str, date], int | None]:
+    """Read the H12 retrieval journal → ({rel: last_retrieved_date}, span_days).
+
+    span_days = age of the earliest logged event (None if the journal is absent
+    or empty). Use-decay needs history that actually spans the decay window —
+    otherwise a freshly-started journal would flag every object as 'never
+    retrieved' (cold-start flood)."""
+    journal = root / "global" / "tools" / "state" / "retrieval-journal.jsonl"
+    last: dict[str, date] = {}
+    earliest: date | None = None
+    if not journal.is_file():
+        return last, None
+    try:
+        lines = journal.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return last, None
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            ev = json.loads(line)
+        except ValueError:
+            continue
+        ev_date = parse_date(ev.get("ts"))
+        if ev_date is None:
+            continue
+        if earliest is None or ev_date < earliest:
+            earliest = ev_date
+        for rel in ev.get("paths") or []:
+            prev = last.get(rel)
+            if prev is None or ev_date > prev:
+                last[rel] = ev_date
+    span = (as_of - earliest).days if earliest is not None else None
+    return last, span
+
+
 def _scan_quarantine(root: Path, as_of: date) -> list[dict[str, Any]]:
     """Quarantine purge notices, read directly from `.quarantine/` (a SKIP_PARTS
     dir the catalog never indexes). The notice repeats until acknowledged (09 §3)."""
@@ -130,6 +167,7 @@ def scan(
     today: date | str | None = None,
     stale_days: int = 90,
     upcoming_days: int = 7,
+    use_decay_days: int = 180,
 ) -> dict[str, Any]:
     """Return a read-only Phase-4 consolidation queue.
 
@@ -155,8 +193,13 @@ def scan(
         "open_disputes": [],
         "review_due": [],
         "stale_volatile": [],
+        "use_decay": [],
         "drafts": [],
     }
+
+    # H12 use-decay: replace pure time-decay with "never retrieved in N days".
+    last_retrieved, journal_span = _load_retrieval_history(root, as_of)
+    use_decay_ready = journal_span is not None and journal_span >= use_decay_days
 
     title_seen: dict[tuple[str | None, str], str] = {}
     duplicate_titles: list[dict[str, Any]] = []
@@ -226,6 +269,25 @@ def scan(
                 buckets["stale_volatile"].append(
                     _compact_item(row, fm, reason=f"volatile object inactive >{stale_days}d", last_seen=last_accessed.isoformat(), days_inactive=age)
                 )
+            # Use-decay (H12): a volatile object older than the window that has
+            # never — or not recently — been *retrieved* is a demotion candidate,
+            # even if its last_accessed_at looks fresh. Guarded on journal history
+            # so a cold-started journal doesn't flag everything.
+            if use_decay_ready:
+                created = parse_date(fm.get("created_at"))
+                obj_age = _days_between(created, as_of)
+                if obj_age is not None and obj_age > use_decay_days:
+                    last_ret = last_retrieved.get(rel)
+                    ret_age = _days_between(last_ret, as_of)
+                    if last_ret is None or (ret_age is not None and ret_age > use_decay_days):
+                        buckets["use_decay"].append(
+                            _compact_item(
+                                row, fm,
+                                reason=f"volatile never/again retrieved in >{use_decay_days}d (use-decay, H12)",
+                                last_retrieved=last_ret.isoformat() if last_ret else None,
+                                days_since_retrieval=ret_age,
+                            )
+                        )
 
     buckets["purge_notices"] = _scan_quarantine(root, as_of)
     buckets["duplicate_titles"] = duplicate_titles
@@ -237,6 +299,16 @@ def scan(
         "as_of": as_of.isoformat(),
         "stale_days": stale_days,
         "upcoming_days": upcoming_days,
+        "use_decay_days": use_decay_days,
+        "use_decay_eval": {
+            "evaluated": use_decay_ready,
+            "journal_span_days": journal_span,
+            "threshold_days": use_decay_days,
+            "reason": None if use_decay_ready else (
+                "no retrieval journal yet" if journal_span is None
+                else f"journal spans only {journal_span}d (< {use_decay_days}d) — insufficient history"
+            ),
+        },
         "counts": counts,
         "buckets": {name: sorted(items, key=lambda it: (it.get("microverso") or "", it.get("path") or "")) for name, items in buckets.items()},
         "next_actions": [
@@ -244,6 +316,7 @@ def scan(
             "Resolve open disputes in the weekly maintenance digest; executive decides genuine disputes.",
             "Sweep due intentions: mark done/dropped/expired only through governed write verbs.",
             "Review stale volatile objects before syndic quarantine; perene/macro/raw remain immune.",
+            "Use-decay candidates are a syndic demotion signal (H12); they only appear once the retrieval journal spans the window.",
         ],
     }
 
@@ -320,6 +393,10 @@ def render_digest(payload: dict[str, Any]) -> str:
     if dups:
         body.extend(["## Dedup (advisory — sem ação humana obrigatória)", "",
                      f"- {dups} título(s) duplicado(s) para auditoria do agente", ""])
+    decay = payload["counts"].get("use_decay", 0)
+    if decay:
+        body.extend(["## Use-decay (advisory — sinal p/ o síndico, H12)", "",
+                     f"- {decay} objeto(s) volátil(eis) sem uso há muito tempo (candidatos a rebaixamento)", ""])
 
     header = [
         "# Digest semanal de manutenção",
@@ -340,13 +417,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--today", help="Data de corte YYYY-MM-DD")
     parser.add_argument("--stale-days", type=int, default=90)
     parser.add_argument("--upcoming-days", type=int, default=7)
+    parser.add_argument("--use-decay-days", type=int, default=180)
     parser.add_argument("--format", choices=["json", "markdown", "digest"], default="json")
     sub = parser.add_subparsers(dest="cmd")
     sub.add_parser("scan")
     args = parser.parse_args(argv)
 
     acervo = acervo_catalog.resolve_acervo_root(args.acervo)
-    payload = scan(acervo, today=args.today, stale_days=args.stale_days, upcoming_days=args.upcoming_days)
+    payload = scan(acervo, today=args.today, stale_days=args.stale_days,
+                   upcoming_days=args.upcoming_days, use_decay_days=args.use_decay_days)
     if args.format == "markdown":
         print(render_markdown(payload), end="")
     elif args.format == "digest":

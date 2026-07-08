@@ -31,3 +31,5 @@ nohup.out
 acervo/global/tools/state/*.json
 # Derived catalog (Plane 2, rebuildable via `acervoctl reindex`)
 acervo/global/tools/state/catalog.sqlite*
+# Retrieval journal (Plane 2 observability, H12 use-decay substrate — append-only, disposable)
+acervo/global/tools/state/*.jsonl

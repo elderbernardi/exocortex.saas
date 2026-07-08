@@ -167,6 +167,7 @@ def command_consolidation_scan(args: argparse.Namespace) -> dict[str, Any]:
         today=args.today,
         stale_days=args.stale_days,
         upcoming_days=args.upcoming_days,
+        use_decay_days=args.use_decay_days,
     )
     if args.format == "markdown":
         payload["markdown"] = consolidation.render_markdown(payload)
@@ -385,6 +386,7 @@ def build_parser() -> argparse.ArgumentParser:
     cons_cmd.add_argument("--today", help="Data de corte YYYY-MM-DD")
     cons_cmd.add_argument("--stale-days", type=int, default=90, help="Dias sem acesso para sinalizar volátil stale")
     cons_cmd.add_argument("--upcoming-days", type=int, default=7, help="Janela de intenções próximas")
+    cons_cmd.add_argument("--use-decay-days", type=int, default=180, help="Dias sem retrieval para sinal use-decay (H12)")
     cons_cmd.add_argument("--format", choices=["json", "markdown", "digest"], default="json", help="Inclui markdown/digest renderizado quando solicitado")
     cons_cmd.set_defaults(handler=command_consolidation_scan)
 

@@ -38,7 +38,7 @@ import re
 import sqlite3
 import sys
 import unicodedata
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +47,32 @@ if str(_TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(_TOOLS_DIR))
 
 from acervo_catalog import catalog_path, resolve_acervo_root  # noqa: E402
+
+
+def retrieval_journal_path(acervo_root: str | Path | None = None) -> Path:
+    """Location of the H12 use-decay journal — Plane-2 observability, disposable
+    like the catalog (lives beside catalog.sqlite under global/tools/state/)."""
+    return resolve_acervo_root(acervo_root) / "global" / "tools" / "state" / "retrieval-journal.jsonl"
+
+
+def _journal_retrieval(acervo_root: Path, result: dict[str, Any]) -> None:
+    """Best-effort append of one retrieval event (07 §5 observability, H12
+    usefulness loop). Never fatal — a read must not fail because logging did."""
+    try:
+        event = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "scope": result.get("scope"),
+            "route": result.get("route"),
+            "found": bool(result.get("found")),
+            "query": (result.get("query") or "")[:200],
+            "paths": [it["path"] for it in result.get("items", []) if it.get("path")],
+        }
+        journal = retrieval_journal_path(acervo_root)
+        journal.parent.mkdir(parents=True, exist_ok=True)
+        with journal.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(event, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
 from acervo_hindsight_index import split_frontmatter  # noqa: E402
 
 ROUTES = (
@@ -630,6 +656,7 @@ class Retriever:
                 "message": f"não há registro no Acervo sobre: {query}",
                 "view": [], "items": [], "citations": [], "total_tokens": 0,
             })
+            _journal_retrieval(self.acervo, result)
             return result
 
         items = [self._make_item(rel, scored[rel], source[rel], "result") for rel in ranked]
@@ -649,6 +676,7 @@ class Retriever:
             "citations": [f"Acervo: {it['path']}" for it in packed if it["role"] == "result"],
             "total_tokens": total,
         })
+        _journal_retrieval(self.acervo, result)
         return result
 
 
