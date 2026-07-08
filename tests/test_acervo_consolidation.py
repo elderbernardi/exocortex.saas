@@ -112,6 +112,67 @@ def test_backup_dirs_excluded_from_dedup(acervo: Path) -> None:
         assert not any("_backup" in p for p in item.get("paths", [])), item
 
 
+def test_purge_notices_from_quarantine(acervo: Path) -> None:
+    q = acervo / ".quarantine" / "micro" / "operacoes" / "knowledge"
+    q.mkdir(parents=True, exist_ok=True)
+    (q / "quarentenada.md").write_text(
+        _v02("knowledge", "Nota em quarentena", "expira em breve",
+             "quarantine_expires_at: 2026-07-10\nquarantine_reason: inativa 95d\n"),
+        encoding="utf-8",
+    )
+    # A doc without quarantine frontmatter under .quarantine/ must NOT be a notice.
+    (q / "README.md").write_text("# leia-me\n", encoding="utf-8")
+    payload = acervo_consolidation.scan(acervo, today="2026-07-08")
+    notices = payload["buckets"]["purge_notices"]
+    assert len(notices) == 1
+    assert notices[0]["path"].endswith("quarentenada.md")
+    assert notices[0]["days_left"] == 2
+
+
+def test_intentions_excluded_from_stale_volatile(acervo: Path) -> None:
+    # An old volatile intention belongs in the intentions sweep, not dormancy.
+    base = acervo / "micro" / "operacoes" / "intentions"
+    base.mkdir(exist_ok=True)
+    (base / "antiga.md").write_text(
+        _v02("intention", "Intenção antiga", "due passado",
+             "due: 2026-01-05\nlast_accessed_at: 2026-01-01T00:00:00Z\n"),
+        encoding="utf-8",
+    )
+    acervo_catalog.build_catalog(acervo)
+    payload = acervo_consolidation.scan(acervo, today="2026-07-08", stale_days=90)
+    assert not any(it["path"].endswith("antiga.md") for it in payload["buckets"]["stale_volatile"])
+    assert any(it["path"].endswith("antiga.md") for it in payload["buckets"]["intentions_due"])
+
+
+def test_render_digest_governance(acervo: Path) -> None:
+    base = acervo / "micro" / "operacoes"
+    (base / "knowledge" / "disputa.md").write_text(
+        _v02("conflict", "Disputa X", "dois valores", cls="perene"), encoding="utf-8",
+    )
+    (base / "knowledge" / "rascunho.md").write_text(
+        _v02("knowledge", "Rascunho Y", "pendente", status="draft"), encoding="utf-8",
+    )
+    acervo_catalog.build_catalog(acervo)
+    payload = acervo_consolidation.scan(acervo, today="2026-07-08")
+    digest = acervo_consolidation.render_digest(payload)
+    assert "Digest semanal de manutenção" in digest
+    assert "Disputas abertas" in digest and "Qual vale?" in digest
+    assert "Drafts pendentes" in digest and "Aprovar?" in digest
+    assert "item(ns) pedindo sua decisão" in digest
+
+
+def test_render_digest_empty(tmp_path: Path) -> None:
+    root = tmp_path / "acervo"
+    shutil.copytree(FIXTURE, root)
+    acervo_catalog.build_catalog(root)
+    payload = acervo_consolidation.scan(root, today="2026-07-08")
+    # The fixture alone may carry review/stale items; force an empty payload shape.
+    empty = {"as_of": "2026-07-08", "counts": {k: 0 for k in payload["counts"]},
+             "buckets": {k: [] for k in payload["buckets"]}}
+    digest = acervo_consolidation.render_digest(empty)
+    assert "Nada requer sua governança" in digest
+
+
 def test_acervoctl_consolidation_scan(acervo: Path) -> None:
     proc = subprocess.run(
         [sys.executable, str(ACERVOCTL), "consolidation-scan", "--acervo-root", str(acervo), "--today", "2026-07-04"],

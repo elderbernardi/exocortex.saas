@@ -167,6 +167,8 @@ def command_consolidation_scan(args: argparse.Namespace) -> dict[str, Any]:
     )
     if args.format == "markdown":
         payload["markdown"] = consolidation.render_markdown(payload)
+    elif args.format == "digest":
+        payload["digest"] = consolidation.render_digest(payload)
     return payload
 
 
@@ -298,7 +300,7 @@ def build_parser() -> argparse.ArgumentParser:
     cons_cmd.add_argument("--today", help="Data de corte YYYY-MM-DD")
     cons_cmd.add_argument("--stale-days", type=int, default=90, help="Dias sem acesso para sinalizar volátil stale")
     cons_cmd.add_argument("--upcoming-days", type=int, default=7, help="Janela de intenções próximas")
-    cons_cmd.add_argument("--format", choices=["json", "markdown"], default="json", help="Inclui markdown renderizado quando solicitado")
+    cons_cmd.add_argument("--format", choices=["json", "markdown", "digest"], default="json", help="Inclui markdown/digest renderizado quando solicitado")
     cons_cmd.set_defaults(handler=command_consolidation_scan)
 
     export_cmd = sub.add_parser("export-microverso", help="Empacota um microverso")

@@ -93,6 +93,37 @@ def _rows(acervo: Path) -> list[dict[str, Any]]:
     return acervo_catalog.query_catalog(acervo, limit=100_000)
 
 
+def _scan_quarantine(root: Path, as_of: date) -> list[dict[str, Any]]:
+    """Quarantine purge notices, read directly from `.quarantine/` (a SKIP_PARTS
+    dir the catalog never indexes). The notice repeats until acknowledged (09 §3)."""
+    qdir = root / ".quarantine"
+    notices: list[dict[str, Any]] = []
+    if not qdir.is_dir():
+        return notices
+    for path in sorted(qdir.rglob("*.md")):
+        if path.name in ("log.md", "index.md", "README.md"):
+            continue
+        try:
+            fm, _body = read_frontmatter(root, str(path.relative_to(root)))
+        except OSError:
+            continue
+        # Only genuinely quarantined files carry quarantine frontmatter; skip
+        # docs/scaffolding that merely live under .quarantine/.
+        if not (fm.get("quarantine_expires_at") or fm.get("quarantined_at")):
+            continue
+        expires = parse_date(fm.get("quarantine_expires_at"))
+        notices.append({
+            "path": str(path.relative_to(root)),
+            "title": fm.get("title") or path.stem,
+            "type": fm.get("type"),
+            "quarantine_reason": fm.get("quarantine_reason"),
+            "expires_at": expires.isoformat() if expires else None,
+            "days_left": (expires - as_of).days if expires else None,
+            "reason": "quarantine purge notice — restore or let it purge",
+        })
+    return notices
+
+
 def scan(
     acervo: str | Path,
     *,
@@ -108,6 +139,7 @@ def scan(
     - review_due: review_after expiries;
     - stale_volatile: use-decay candidates for syndic review;
     - drafts: trust/risk-gated items awaiting approval;
+    - purge_notices: quarantined files pending purge (restore-or-purge);
     - duplicate_titles: dedup audit candidates (advisory).
     """
     root = Path(acervo).expanduser().resolve()
@@ -179,7 +211,9 @@ def scan(
             )
 
         cls = row.get("class") or fm.get("class")
-        if cls == "volátil" and status == "active":
+        # Use-decay applies to knowledge/context-like volatile objects; intentions
+        # (due-swept) and conflicts (disputed) have their own governed lifecycles.
+        if cls == "volátil" and status == "active" and obj_type not in ("intention", "conflict"):
             last_accessed = parse_date(fm.get("last_accessed_at")) or parse_date(fm.get("updated")) or parse_date(fm.get("created_at"))
             age = _days_between(last_accessed, as_of)
             if last_accessed is not None and age is not None and age > stale_days:
@@ -187,6 +221,7 @@ def scan(
                     _compact_item(row, fm, reason=f"volatile object inactive >{stale_days}d", last_seen=last_accessed.isoformat(), days_inactive=age)
                 )
 
+    buckets["purge_notices"] = _scan_quarantine(root, as_of)
     buckets["duplicate_titles"] = duplicate_titles
     counts = {name: len(items) for name, items in buckets.items()}
     return {
@@ -240,13 +275,66 @@ def render_markdown(payload: dict[str, Any]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_digest(payload: dict[str, Any]) -> str:
+    """Weekly maintenance digest (09 §3): the one place the human governs. Each
+    governable item is one line + one question. Read-only; degrades gracefully."""
+    b = payload["buckets"]
+    sections: list[tuple[str, str, Any]] = [
+        ("open_disputes", "Disputas abertas — qual versão vale?",
+         lambda it: f"**Qual vale?** (A / B / manter ambos)"),
+        ("drafts", "Drafts pendentes — aprovar ou rejeitar?",
+         lambda it: f"**Aprovar?** (aprovar / rejeitar)"),
+        ("review_due", "Revisão de decisões (review_after venceu) — ainda vale?",
+         lambda it: f"**Ainda verdadeiro?** (sim / atualizar / arquivar)"),
+        ("stale_volatile", "Dormência (volátil inativo) — confirmar quarentena?",
+         lambda it: f"({it.get('days_inactive')}d inativo) · **Quarentenar?** (sim / manter)"),
+        ("purge_notices", "Avisos de purga — restaurar antes de expirar?",
+         lambda it: (f"({'VENCIDO' if (it.get('days_left') is not None and it['days_left'] < 0) else (str(it.get('days_left')) + 'd restantes' if it.get('days_left') is not None else 'sem data')}) · "
+                     "**Restaurar?** (restaurar / deixar purgar)")),
+    ]
+    body: list[str] = []
+    asked = 0
+    for name, heading, question in sections:
+        items = b.get(name) or []
+        if not items:
+            continue
+        body.extend([f"## {heading}", ""])
+        for it in items:
+            asked += 1
+            title = it.get("title") or it.get("path")
+            body.append(f"- `{it.get('path')}` — {title} · {question(it)}")
+        body.append("")
+
+    du = payload["counts"].get("intentions_due", 0)
+    up = payload["counts"].get("intentions_upcoming", 0)
+    if du or up:
+        body.extend(["## Intenções (informativo — varridas pelo sweep governado)", "",
+                     f"- {du} vencida(s)/hoje · {up} próxima(s)", ""])
+    dups = payload["counts"].get("duplicate_titles", 0)
+    if dups:
+        body.extend(["## Dedup (advisory — sem ação humana obrigatória)", "",
+                     f"- {dups} título(s) duplicado(s) para auditoria do agente", ""])
+
+    header = [
+        "# Digest semanal de manutenção",
+        "",
+        f"- Data de corte: `{payload['as_of']}`",
+        f"- **{asked} item(ns) pedindo sua decisão.** Alvo: < 5 min.",
+        "- Ignorar é seguro: nada é commitado ou purgado em silêncio; o aviso repete até você agir.",
+        "",
+    ]
+    if asked == 0:
+        body = ["_Nada requer sua governança esta semana._ ✅", ""]
+    return "\n".join(header + body).rstrip() + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read-only Phase-4 consolidation scan for the Acervo")
     parser.add_argument("--acervo", help="Acervo root (default: resolver do catálogo)")
     parser.add_argument("--today", help="Data de corte YYYY-MM-DD")
     parser.add_argument("--stale-days", type=int, default=90)
     parser.add_argument("--upcoming-days", type=int, default=7)
-    parser.add_argument("--format", choices=["json", "markdown"], default="json")
+    parser.add_argument("--format", choices=["json", "markdown", "digest"], default="json")
     sub = parser.add_subparsers(dest="cmd")
     sub.add_parser("scan")
     args = parser.parse_args(argv)
@@ -255,6 +343,8 @@ def main(argv: list[str] | None = None) -> int:
     payload = scan(acervo, today=args.today, stale_days=args.stale_days, upcoming_days=args.upcoming_days)
     if args.format == "markdown":
         print(render_markdown(payload), end="")
+    elif args.format == "digest":
+        print(render_digest(payload), end="")
     else:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0 if payload.get("ok") else 1
