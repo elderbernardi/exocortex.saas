@@ -1,8 +1,10 @@
 # Prompt de Continuação — Exocórtex Memória v2
 
 > Cole o bloco abaixo como primeira mensagem de uma sessão nova. É autossuficiente.
-> Última atualização: 2026-07-06 (Phase 2 live rollout concluído; findings #1 E #2 resolvidos;
-> logs legados migrados ao formato estrito no installer E no vivo; installer commitado, não pushado).
+> Última atualização: 2026-07-08 (findings #1/#2 resolvidos; Phase 4 READ-SIDE feito e deployado no
+> vivo — scan + digest semanal 09§3; durabilidade do finding #1 endurecida nas skills; 5 candidatos
+> de dedup resolvidos no vivo. Installer origin/main=c71ec03 (pushado); acervo vivo=7bbfba1.
+> Próximo: Phase 4 WRITE-SIDE — writes de background, risco médio).
 
 ---
 
@@ -66,10 +68,31 @@ ESTADO ATUAL (2026-07-06):
   `pre-finding1-log-migration`. Prova end-to-end: `new-object` em `global/` → ok:true (episódio
   registrando a migração); doctor + reindex ok:true. NENHUM finding aberto.
 
+- PHASE 4 READ-SIDE: FEITO e DEPLOYADO NO VIVO (2026-07-08). `acervo/global/tools/acervo_consolidation.py`:
+  `scan()` monta a fila lifecycle-v2 (intentions_due/upcoming, open_disputes, review_due,
+  stale_volatile, drafts, purge_notices, duplicate_titles) a partir do frontmatter + catálogo;
+  `render_digest()` = digest semanal de manutenção (09 §3), 1 linha + 1 pergunta por item,
+  degrada gracioso. CLI: `acervoctl consolidation-scan --format json|markdown|digest`. Rotina
+  `rtn_weekly_pending_decisions.yaml` retargetada p/ o digest (sindico, cron dom 8h, read-only).
+  Fixes junto: `_backup` add ao SKIP_PARTS do indexador (backups vazavam p/ catálogo/índice/dedup);
+  dedup ignora superseded/deprecated e `macro/`; intenções/conflitos fora de stale_volatile.
+  Installer commits 8b07e43+4712bfa+c71ec03; vivo commit 2c91e1c (deploy) + tag pre-phase4-consolidation-deploy.
+  9 testes em test_acervo_consolidation.py. Digest vivo hoje = 0 itens (limpo).
+- DURABILIDADE DO FINDING #1 (2026-07-08): o agente vivo prependeu log no topo (quebrou L-011);
+  causa-raiz = skills sem regra de placement + exemplos legados. Corrigido `excrtx-memory-manager`
+  (passo 6: heading estrito, append no FIM/ascendente, preferir control plane) + `excrtx-produce-oficios`;
+  installer commit 2e41bd3, memory-manager redeployada no vivo. REGRA: log à mão vai no FIM sob a data
+  estrita; o caminho seguro é `acervoctl` (append+valida). Log vivo do exocortex-ops corrigido (7e621c8).
+- DEDUP VIVO RESOLVIDO (2026-07-08, vivo 7bbfba1, tag pre-dedup-resolution): 4 pares EN/PT órfãos em
+  exocortex-ops → PT superseded pelo EN canônico (`apply-supersede`); `macro/SOUL.md`vs`soul.md` era
+  falso-positivo (arquivos distintos), intacto. Re-scan dedup=0.
+
 SEM FINDINGS ABERTOS. PRÓXIMO PASSO RECOMENDADO (nesta ordem):
-1. PHASE 4 (loop de consolidação): distilação diária de episódios + refresh de entidades +
-   varredura de intenções + auditoria de dedup; digest semanal com disputas abertas.
-   Construível sobre os verbos da Phase 2. Ver 04-architecture.md §4 e 08-write-policy.md §6.
+1. PHASE 4 WRITE-SIDE (risco médio — writes de background; começar no installer com testes, deploy
+   vivo com autorização): distilação diária de episódios (gate de significância H9), refresh de
+   entidades, sweep de intenções (marcar done/dropped/expired via verbos governados), syndic ganha
+   passos de consolidação + sinal use-decay (H12 logging), entrega do digest via Telegram (draft-first).
+   Ver 04-architecture.md §4 e 08-write-policy.md §6. Construir sobre o read-side já pronto.
 2. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
    goldens + run_eval.py). Falta o gate de CI e a regra de regressão (>10pts bloqueia).
 
@@ -77,9 +100,14 @@ COMO VERIFICAR O ESTADO (rode no installer):
   cd /home/ubuntu/.exocortex-installer && git log --oneline -8 && git status -sb
   python3 -m pytest tests/test_acervo_write.py tests/test_acervo_retrieve.py \
     tests/test_acervo_catalog.py tests/test_run_eval.py tests/test_validate_frontmatter_v2.py \
-    tests/test_migrate_frontmatter_v2.py tests/test_setup_acervo_mcp.py -q   # ~135 passed
+    tests/test_migrate_frontmatter_v2.py tests/test_setup_acervo_mcp.py \
+    tests/test_migrate_log_v2.py tests/test_acervo_consolidation.py -q   # ~155 passed
   ACERVO=$PWD/acervo python3 scripts/acervoctl.py doctor    # ok:true
   ACERVO=/home/ubuntu/exocortex/acervo python3 scripts/acervoctl.py doctor  # vivo, ok:true
+  # Phase 4 read-side (read-only) — deve dar digest limpo / dedup=0 no vivo:
+  PYTHONPATH=scripts python3 scripts/acervoctl.py consolidation-scan \
+    --acervo-root /home/ubuntu/exocortex/acervo --today <hoje> --format digest
+  python3 scripts/validate_log.py --dir /home/ubuntu/exocortex/acervo  # 9 ativos PASS
   python3 -c "import yaml;print(yaml.safe_load(open('$HOME/.hermes/config.yaml'))['mcp_servers']['acervo']['env']['ACERVO'])"
     # deve imprimir /home/ubuntu/exocortex/acervo (se for /tmp/..., reaplique o fix)
 
@@ -88,7 +116,17 @@ APRENDIZADOS OPERACIONAIS (evitam retrabalho):
 - hindsight_client: `documents.delete_document` é CORROTINA (precisa asyncio.run); retain/recall
   são síncronos. Bank de produção é `exocortex`; em avaliação use bank DEDICADO (`eval-fixture`).
 - Excludes canônicos vivem em SKIP_PARTS do indexador (acervo_hindsight_index.py); o catálogo
-  herda. Inclui _retired,_template,_fixture,_inbox,_ops_snapshots,state,raw,_archive,.quarantine.
+  herda (CATALOG_SKIP = SKIP_PARTS|{_artifacts}). Inclui _retired,_template,_fixture,_inbox,
+  _ops_snapshots,state,raw,_archive,.quarantine,_backup. Mudança de SKIP_PARTS só afeta o catálogo/
+  scan após `reindex` (o scan lê o catalog.sqlite existente, não reconstrói sozinho).
+- `load_tool_module` do acervoctl faz FALLBACK p/ os tools do installer quando o acervo-alvo não
+  tem o módulo — rodar verbo contra o vivo usa CÓDIGO do installer mas lê DADOS (catalog) do vivo.
+  P/ propagar mudança de tool ao vivo de verdade: copiar o .py p/ `<vivo>/global/tools/` + reindex.
+- LOG À MÃO vai SEMPRE no FIM sob a data estrita `## YYYY-MM-DD` (ascendente, append-only). Prepender
+  no topo quebra L-011 e trava o próximo write no escopo. Caminho seguro = `acervoctl` (append+valida).
+- Dedup do consolidation-scan: resolver par EN-canônico/PT-órfão com `acervoctl apply-supersede
+  --new <canônico> --old <órfão>` (PT vira superseded, histórico preservado). `macro/` é excluído
+  do dedup (identity layer git-governado; SOUL.md vs soul.md coexistem legitimamente).
 - `_ops_snapshots/` no vivo é congelado — NUNCA migrar; `git checkout` reverte se migrar por engano.
 - catalog build = função `build_catalog(root)` (não `build`).
 - `$?` depois de pipe captura o exit do último comando do pipe (ex: tail) — redirecione p/ arquivo.
@@ -111,9 +149,16 @@ tem este mesmo estado (e a armadilha do BASH_ENV).
 
 ## Resumo dos commits (installer `main`, mais recente primeiro)
 
+- `c71ec03` fix(phase4): dedup ignora superseded/deprecated + macro
+- `2e41bd3` fix(skills): guia de placement estrito de log (durabilidade finding #1)
+- `4712bfa` feat(phase4): digest semanal de manutenção + purge notices (09 §3)
+- `8b07e43` feat(phase4): consolidation scan read-only + exclui _backup do índice
+- `d84690b` docs(memory): marca finding #1 resolvido no prompt de continuação
 - `ad4c9bc` fix(phase2): migra logs legados _meta/log.md → formato estrito (finding #1) + fix _template
 - `5526778` docs(memory): Phase 2 live-rollout report + prompt de continuação
 - `1e105be` fix(phase2): step-11b + teste não clobberam mais o ~/.hermes real (finding #2)
+  (acervo vivo, repo próprio: `7bbfba1` dedup resolvido ← `2c91e1c` deploy phase4 ← `7e621c8` ops
+   maintenance ← `4ef6698` migração de logs finding #1)
 - `dc05630` fix(phase2): control plane resolvível + deployável no runtime vivo
 - `1169f9e` docs(memory): prompt de continuação (versão anterior)
 - `ec7a9b5` Phase 2 — write pipeline + skills v3
