@@ -384,6 +384,8 @@ Write content to the Acervo with Domain Filter.
    - Write to global/ → `global/_meta/log.md` (or `global/log.md`)
    - Write to shared/ → `shared/_meta/log.md` (or `shared/log.md`)
    - Entry format (per `log-convention.md`): `- CREATED: {relative-path} ({class}) — {one-line description}`
+   - **Placement (log-convention §1.2/§4 — the whole log is validated on every write):** the date heading is a strict `## YYYY-MM-DD` (ISO date only — no brackets, no ` | action | subject` suffix). Find or create today's heading and append the bullet **at the BOTTOM** — chronological ascending, newest at the bottom. **Never prepend at the top, never reorder or edit existing lines.** Prepending breaks ascending order (validator L-011) and makes the next write to that scope fail.
+   - **Prefer the control plane:** `acervoctl new-object` and the conflict verbs append the log entry, place it correctly, and validate the whole file automatically. Only hand-edit `log.md` for events that have no verb (e.g. an archive/status change), and then follow the placement rule above.
 
 7. **Update index.md** if new page created.
 
@@ -445,9 +447,9 @@ Convert Nature from file to directory when it exceeds ~150 lines.
 
    e. Update `micro/{slug}/index.md` (point to directory)
 
-   f. Log in `micro/{slug}/log.md`:
+   f. Log in `micro/{slug}/log.md` (strict format, appended at the bottom under today's `## YYYY-MM-DD` heading):
       ```
-      ## [YYYY-MM-DD] promote | {nature} file → directory ({N} pages)
+      - UPDATED: {nature}/ — promoted from single file to directory ({N} pages)
       ```
 
 3. **Wiki page split:** If an individual page > ~200 lines, split into 2+.
@@ -595,7 +597,7 @@ is not deleted. Procedure:
 1. Move wiki page to `_archive/{nature}/` (or `_archive/` at scope root)
 2. Remove from `index.md`
 3. Replace wikilinks `[[page]]` with plain text + "(archived)"
-4. Log in `log.md`: `## [YYYY-MM-DD] archive | {page} (reason: {reason})`
+4. Log in `log.md` (strict format, appended at the bottom under today's `## YYYY-MM-DD` heading): `- UPDATED: {relative-path} — archived: {reason}`
 5. **raw/ remains intact** — sources are immutable
 
 ---
