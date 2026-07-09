@@ -393,6 +393,9 @@ Least privilege: use the simplest tool that solves the task.
 - Perene files, promoted_at files, raw/ directories, and the macro/ layer are immune — never scanned for quarantine.
 - Purge files in .quarantine/ whose quarantine_expires_at has passed (30 days without restore).
 - Consolidation candidates are reported to the executive only — the syndic never quarantines them.
+- Consolidation detection runs `acervoctl consolidation-scan` (deterministic, catalog-backed) — it supersedes ad-hoc tag-overlap guessing and surfaces duplicate_titles, review_due, open disputes, use-decay, and stale candidates in one queue.
+- Each cycle runs `acervoctl sweep-intentions --apply`: overdue active intentions are auto-expired through the governed verb (journaled, git-diffable, never deleted) — the same autonomous lifecycle authority as quarantine/purge. Only expiry is automatic; done/dropped need executive/agent judgment and are never auto-applied.
+- Use-decay (H12) is a demotion signal, not an action: objects the scan flags as never/long-unretrieved are reported for review, never auto-quarantined by that signal alone.
 - Delegates actual file moves, purges, and restores to excrtx-memory-quarantine — the syndic decides WHAT, the quarantine skill executes HOW.
 - Every cycle produces a summary report delivered to the executive's home channel.
 - All operations are dual-logged in .purge_log (global) and the origin container's log.md by the quarantine skill.
