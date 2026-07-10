@@ -41,13 +41,37 @@ Enquanto o MCP não voltar:
 EOF
 }
 
+_resolve_acervo_mcp_python() {
+  # Hermes may prepend a lean runtime to PATH. That interpreter is valid for
+  # the agent itself but may not carry FastMCP, so the first `python3` is not
+  # necessarily able to host the Acervo server. Probe every PATH candidate and
+  # return the first runtime that satisfies the server's import contract.
+  local candidate candidate_dir candidate_name
+  while IFS= read -r candidate; do
+    [ -n "$candidate" ] || continue
+    if [[ "$candidate" != /* ]]; then
+      candidate_dir="${candidate%/*}"
+      candidate_name="${candidate##*/}"
+      [ "$candidate_dir" != "$candidate" ] || candidate_dir="."
+      candidate_dir="$(cd -- "$candidate_dir" 2>/dev/null && pwd -P)" || continue
+      candidate="$candidate_dir/$candidate_name"
+    fi
+    if "$candidate" -c 'import fastmcp, yaml' >/dev/null 2>&1; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done < <(type -aP python3 2>/dev/null | awk '!seen[$0]++')
+  return 1
+}
+
 _acervo_mcp_exists() {
+  local python_bin="$1"
   # Check the target config file directly. The `hermes mcp` CLI always reads the
   # default ~/.hermes and ignores $HERMES_HOME, so it cannot answer this for a
   # custom/isolated home (and using it would clobber the real config).
   local cfg="$HERMES_HOME/config.yaml"
   [ -f "$cfg" ] || return 1
-  python3 - "$cfg" <<'PY'
+  "$python_bin" - "$cfg" <<'PY'
 import sys
 from pathlib import Path
 
@@ -62,7 +86,7 @@ PY
 _acervo_patch_config() {
   local python_bin="$1"
   local server_script="$2"
-  HERMES_CONFIG="$HERMES_HOME/config.yaml" python3 - "$python_bin" "$server_script" "$ACERVO" "$EXOCORTEX_HOME" "$HERMES_HOME" <<'PY'
+  HERMES_CONFIG="$HERMES_HOME/config.yaml" "$python_bin" - "$python_bin" "$server_script" "$ACERVO" "$EXOCORTEX_HOME" "$HERMES_HOME" <<'PY'
 import os
 import sys
 from pathlib import Path
@@ -107,12 +131,6 @@ configure_acervo_mcp() {
     return 0
   fi
 
-  if ! command -v python3 >/dev/null 2>&1; then
-    warn "python3 não encontrado; pulando Acervo MCP"
-    _acervo_mcp_reminder "python3 ausente no PATH"
-    return 0
-  fi
-
   local server_script="$SCRIPT_DIR/scripts/acervo_mcp_server.py"
   if [ ! -f "$server_script" ]; then
     warn "Servidor MCP do Acervo ausente: $server_script"
@@ -121,7 +139,11 @@ configure_acervo_mcp() {
   fi
 
   local python_bin
-  python_bin="$(command -v python3)"
+  if ! python_bin="$(_resolve_acervo_mcp_python)"; then
+    warn "nenhum python3 com fastmcp + yaml disponível; pulando Acervo MCP"
+    _acervo_mcp_reminder "runtime Python compatível com fastmcp + yaml ausente no PATH"
+    return 0
+  fi
 
   # Durable log dir — falls back to /tmp with a warning if HERMES_HOME is unset.
   local _log_dir
@@ -154,7 +176,7 @@ configure_acervo_mcp() {
     _use_cli=1
   fi
 
-  if _acervo_mcp_exists; then
+  if _acervo_mcp_exists "$python_bin"; then
     log "MCP server 'acervo' já configurado — reconciliando config"
   elif [ "$_use_cli" = 1 ]; then
     local add_log="$_log_dir/step-11b_mcp_add_${_ts}.log"
