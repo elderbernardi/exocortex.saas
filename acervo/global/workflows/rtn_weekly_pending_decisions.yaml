@@ -1,5 +1,5 @@
 routine_id: rtn_weekly_pending_decisions
-name: "Revisão semanal de decisões pendentes"
+name: "Digest semanal de manutenção"
 vector: manutencao
 status: active
 persona: sindico
@@ -9,13 +9,13 @@ scope:
   tasks: []
   artifacts: []
 
-objective: "Revisar decisões pendentes (status: pending) em todos os microversos. Identificar decisões sem atualização há >7 dias. Listar cards do kanban sem próximo passo definido."
+objective: "Montar e entregar o digest semanal de manutenção (memory-v2 09 §3 / Phase 4) — o único ponto de governança humana. Mecanismo (read-only): `acervoctl consolidation-scan --format digest` sobre o Acervo, extraindo o campo `digest`. Cada item governável vira 1 linha + 1 pergunta, alvo < 5 min: disputas abertas (A/B/manter ambos), drafts pendentes (aprovar/rejeitar), decisões com `review_after` vencido (ainda vale?), dormância de voláteis (confirmar quarentena), avisos de purga (restaurar antes de expirar). Intenções vencidas e títulos duplicados entram como resumo informativo/advisory. Degrada graciosamente: se vazio, reporta 'nada requer sua governança'; se ignorado, nada é commitado ou purgado em silêncio — o aviso repete até ser reconhecido. NÃO commita, move nem purga nada; apenas monta o digest. Aprovações (draft→active, disputa resolvida, quarentena/restauração) acontecem na sessão com o executivo via verbos governados."
 triggers:
   - "hermes cron: 0 8 * * 0"
   - "pedido explícito do executivo"
 outputs:
-  - "Relatório de pendências no formato padronizado"
-  - "Alerta via send_message se decisão crítica encontrada"
+  - "Digest de manutenção (markdown) montado via `acervoctl consolidation-scan --format digest`"
+  - "Entrega ao executivo pelo canal configurado (send_message) — ação externa, requer o fluxo draft-first"
 
 permissions:
   can_modify_acervo: false
@@ -26,4 +26,4 @@ permissions:
 state_path: state.json
 log_path: log.md
 created_at: "2026-06-15"
-updated_at: "2026-06-15"
+updated_at: "2026-07-08"

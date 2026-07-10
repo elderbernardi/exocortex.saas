@@ -213,7 +213,7 @@ hermes cron resume maintenance-weekly
 
 | Rotina ID | Persona | Objetivo |
 |---|---|---|
-| `rtn_weekly_pending_decisions` | síndico | Revisar decisões pendentes em todos os microversos |
+| `rtn_weekly_pending_decisions` | síndico | Montar e entregar o digest semanal de manutenção (09 §3) via `acervoctl consolidation-scan --format digest` — o único ponto de governança humana |
 | `rtn_artifact_quality_audit` | auditor | Verificar artefatos sem receipt/hash válido |
 | `rtn_inbox_triage` | arquivista | Promover ou arquivar itens antigos do inbox |
 | `rtn_ready_artifact_publication` | operador | Identificar artefatos prontos para publicação |
