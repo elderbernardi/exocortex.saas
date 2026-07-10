@@ -1,10 +1,10 @@
 # Prompt de Continuação — Exocórtex Memória v2
 
 > Cole o bloco abaixo como primeira mensagem de uma sessão nova. É autossuficiente.
-> Última atualização: 2026-07-08 (findings #1/#2 resolvidos; Phase 4 READ-SIDE feito e deployado no
-> vivo — scan + digest semanal 09§3; durabilidade do finding #1 endurecida nas skills; 5 candidatos
-> de dedup resolvidos no vivo. Installer origin/main=c71ec03 (pushado); acervo vivo=7bbfba1.
-> Próximo: Phase 4 WRITE-SIDE — writes de background, risco médio).
+> Última atualização: 2026-07-10 (**PHASE 4 COMPLETA** — read-side + write-side 5/5 + entrega do
+> digest, tudo PUSHADO e DEPLOYADO NO VIVO. Installer origin/main=1c4e87e; acervo vivo=aabd5b5
+> (backup tag pre-phase4-writeside-deploy @ 7bbfba1). Entrega Telegram provada end-to-end (msg 272);
+> gateway reiniciado (SOUL syndic ativo). Próximo: Phase 6 — gate de avaliação em CI).
 
 ---
 
@@ -24,7 +24,10 @@ LEIA PRIMEIRO, nesta ordem:
 
 DOIS REPOSITÓRIOS / DUAS SUPERFÍCIES:
 - INSTALLER (fonte canônica de código/schema/skills): /home/ubuntu/.exocortex-installer
-  git remote elderbernardi/exocortex.saas, branch main. TUDO commitado e PUSHADO (HEAD 1e105be).
+  git remote elderbernardi/exocortex.saas, branch main. TUDO commitado e PUSHADO (origin/main=1c4e87e).
+  ATENÇÃO: o ref local `origin/main` desatualiza silenciosamente — confira sempre com
+  `git ls-remote origin -h refs/heads/main`. E o CLASSIFICADOR bloqueia push na main com autorização
+  genérica ("prossiga"); precisa autorização explícita do usuário à AÇÃO de push.
 - INSTÂNCIA VIVA (dados + runtime reais do executivo Gabriel Bonavigo):
   /home/ubuntu/exocortex/acervo (repo git próprio, local, sem remote) e ~/.hermes.
 
@@ -43,7 +46,7 @@ ARMADILHA DE AMBIENTE (crítica, custou uma sessão inteira):
   vazam p/ o config real. Para isolar: `env -i` ou zere `BASH_ENV` no env do subprocess.
   Depois de editar `~/.hermes/config.yaml`, SEMPRE reconfira o campo `env.ACERVO`.
 
-ESTADO ATUAL (2026-07-06):
+ESTADO ATUAL (2026-07-10 — PHASE 4 FECHADA):
 - Fase 0 (reparos de drift + baseline): COMPLETA. Vivo: MEMORY.md 26%, AcervoIndex 163 entradas.
 - Bateria de memória de junho (Fase 8 do plano antigo): 10/10, plano memory-excellence ENCERRADO.
 - Fase 1 (schema v0.2 + catalog.sqlite + validador v2 + migrador + fixture): COMPLETA.
@@ -87,26 +90,56 @@ ESTADO ATUAL (2026-07-06):
   exocortex-ops → PT superseded pelo EN canônico (`apply-supersede`); `macro/SOUL.md`vs`soul.md` era
   falso-positivo (arquivos distintos), intacto. Re-scan dedup=0.
 
-SEM FINDINGS ABERTOS. PRÓXIMO PASSO RECOMENDADO (nesta ordem):
-1. PHASE 4 WRITE-SIDE (risco médio — writes de background; começar no installer com testes, deploy
-   vivo com autorização): distilação diária de episódios (gate de significância H9), refresh de
-   entidades, sweep de intenções (marcar done/dropped/expired via verbos governados), syndic ganha
-   passos de consolidação + sinal use-decay (H12 logging), entrega do digest via Telegram (draft-first).
-   Ver 04-architecture.md §4 e 08-write-policy.md §6. Construir sobre o read-side já pronto.
-2. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
+- PHASE 4 WRITE-SIDE COMPLETA (2026-07-10) + PUSHADA + DEPLOYADA NO VIVO. Cinco verbos/mecanismos
+  governados (atômico → validate → journal → catalog upsert; reversível via git), 34 testes novos
+  (suíte memória 143 passed). Commits installer: a41e306 (sweep intenções) → d32b832 (refresh
+  entidades + distill episódios/H9) → accb1f1 (use-decay H12) → c8b740c (syndic wiring) → 1c4e87e
+  (paridade da rotina do digest). Todos em origin/main.
+  - `acervoctl mark-intention` (active/draft → done|dropped|expired) + `sweep-intentions [--apply]`
+    (auto-expira só vencidas; dry-run read-only). Fix de schema: validador V2-017 type-aware aceita
+    terminais de intenção só p/ type:intention.
+  - `acervoctl refresh-entity` (acumula menção: linha datada no `## Interações` append-only +
+    last_interaction + aliases; Perfil intocado). `acervoctl distill-episode --signals` (gate H9:
+    decision|commitment|artifact|executive_flag; recusa sessão insignificante).
+  - Use-decay H12: `acervo_retrieve.py` loga cada retrieval em `global/tools/state/retrieval-journal.jsonl`
+    (Plane-2 descartável, gitignored); `consolidation-scan` ganhou bucket `use_decay` (guarda anti
+    cold-start: `use_decay_eval` reporta span/reason). `--use-decay-days` (default 180).
+  - `excrtx-memory-syndic` v1.1.0: Step 6 "Consolidation Pass" = 6a detecção via consolidation-scan
+    (supersede heurística de tag) + 6b `sweep-intentions --apply` (write governado). use-decay=sinal
+    de rebaixamento, nunca gatilho de quarentena. 3 compiled_rules → SOUL recompilado.
+  - Entrega do digest: rotina `rtn_weekly_pending_decisions.yaml` = "Digest semanal de manutenção"
+    (monta via `consolidation-scan --format digest`, entrega via send_message; cron dom 8h). PROVADA
+    end-to-end no vivo: `hermes send --to telegram:607181850 --file <digest>` → success, msg 272.
+  - DEPLOY VIVO (acervo aabd5b5, backup tag pre-phase4-writeside-deploy @ 7bbfba1): copiados os 5 .py
+    (acervo_consolidation/acervo_retrieve/acervoctl/acervo_semantic_core/validate_frontmatter) p/
+    `global/tools`; `*.jsonl` add ao .gitignore vivo; skill memory-syndic v1.1.0 → `~/.hermes/skills/excrtx/`;
+    3 regras injetadas em `~/.hermes/SOUL.md`; reindex+doctor limpos; gateway reiniciado (config ACERVO
+    reconferido intacto). **Trabalho do agente vivo deixado 100% intocado** (só stagei meus arquivos).
+
+SEM FINDINGS ABERTOS. PHASE 4 (todas as camadas) FECHADA. PRÓXIMO PASSO RECOMENDADO:
+1. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
    goldens + run_eval.py). Falta o gate de CI e a regra de regressão (>10pts bloqueia).
+2. Resíduos opcionais do Phase 4: verificar que a rodada semanal do cron entrega o digest sozinha
+   (o envio manual já foi provado); Phase 5 (grafo) só se H4 disparar; Phase 7 (interface humana v2).
 
 COMO VERIFICAR O ESTADO (rode no installer):
   cd /home/ubuntu/.exocortex-installer && git log --oneline -8 && git status -sb
   python3 -m pytest tests/test_acervo_write.py tests/test_acervo_retrieve.py \
     tests/test_acervo_catalog.py tests/test_run_eval.py tests/test_validate_frontmatter_v2.py \
     tests/test_migrate_frontmatter_v2.py tests/test_setup_acervo_mcp.py \
-    tests/test_migrate_log_v2.py tests/test_acervo_consolidation.py -q   # ~155 passed
+    tests/test_migrate_log_v2.py tests/test_acervo_consolidation.py \
+    tests/test_intention_sweep.py tests/test_entity_episode.py tests/test_use_decay.py -q  # 143 passed
   ACERVO=$PWD/acervo python3 scripts/acervoctl.py doctor    # ok:true
   ACERVO=/home/ubuntu/exocortex/acervo python3 scripts/acervoctl.py doctor  # vivo, ok:true
   # Phase 4 read-side (read-only) — deve dar digest limpo / dedup=0 no vivo:
   PYTHONPATH=scripts python3 scripts/acervoctl.py consolidation-scan \
     --acervo-root /home/ubuntu/exocortex/acervo --today <hoje> --format digest
+  # Phase 4 write-side (read-only): sweep dry-run + bucket use_decay presente
+  python3 scripts/acervoctl.py sweep-intentions --acervo-root /home/ubuntu/exocortex/acervo --today <hoje>
+  python3 scripts/acervoctl.py consolidation-scan --acervo-root /home/ubuntu/exocortex/acervo \
+    --today <hoje> | python3 -c "import sys,json;d=json.load(sys.stdin);print('use_decay' in d['buckets'], d['use_decay_eval'])"
+  # Entrega do digest (envia mensagem REAL ao executivo — só com autorização):
+  #   hermes send --to telegram:607181850 --subject "[Manutenção]" --file <digest-body.md>
   python3 scripts/validate_log.py --dir /home/ubuntu/exocortex/acervo  # 9 ativos PASS
   python3 -c "import yaml;print(yaml.safe_load(open('$HOME/.hermes/config.yaml'))['mcp_servers']['acervo']['env']['ACERVO'])"
     # deve imprimir /home/ubuntu/exocortex/acervo (se for /tmp/..., reaplique o fix)
@@ -149,6 +182,13 @@ tem este mesmo estado (e a armadilha do BASH_ENV).
 
 ## Resumo dos commits (installer `main`, mais recente primeiro)
 
+- `1c4e87e` fix(phase4): paridade da rotina do digest (entrega Telegram) installer↔vivo
+- `c8b740c` feat(phase4): syndic ganha a consolidation pass (skill wiring + SOUL)
+- `accb1f1` feat(phase4): H12 use-decay — journal de retrieval + bucket use_decay
+- `d32b832` feat(phase4): refresh de entidades + distilação de episódios (04 §4)
+- `a41e306` feat(phase4): sweep de intenções — write-side governado (08 §6)
+- `a281235` docs(memory): refresh do prompt de continuação (read-side + dedup)
+   (acervo vivo, repo próprio: `aabd5b5` deploy write-side ← `7bbfba1` dedup ← `2c91e1c` deploy read-side)
 - `c71ec03` fix(phase4): dedup ignora superseded/deprecated + macro
 - `2e41bd3` fix(skills): guia de placement estrito de log (durabilidade finding #1)
 - `4712bfa` feat(phase4): digest semanal de manutenção + purge notices (09 §3)
