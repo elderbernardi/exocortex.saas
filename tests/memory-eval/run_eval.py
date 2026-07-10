@@ -88,6 +88,25 @@ RARE_DF_MAX = 5  # a query term is "rare" if it appears in <= 5 fixture files
 MIN_DISTINCT_TERMS = 2  # non-rare floor: at least 2 distinct term hits
 H2_THRESHOLD_PTS = 5.0  # hybrid must beat catalog recall by > +5pts
 
+# --- CI regression gate (10-evaluation.md §4) --------------------------------
+# The gate runs the CATALOG strategy only: deterministic, offline (no Hindsight
+# container, no LLM), so it is safe to block a merge on. Each overall metric is
+# compared to a committed baseline; a drop of more than REGRESSION_PTS points in
+# the "good" direction blocks the change (the spec's "any metric dropping > 10
+# points blocks" rule). Contamination carries an extra HARD ceiling: the planted
+# cross-scope traps must never leak, so any non-zero rate fails outright.
+BASELINE_PATH = EVAL_DIR / "baseline.json"
+REGRESSION_PTS = 10.0
+GATE_STRATEGY = "catalog"
+# (metric, direction, hard_max) — direction is which way is "better";
+# hard_max (or None) is an absolute ceiling checked independently of the baseline.
+GATE_METRICS = (
+    ("recall", "higher", None),
+    ("precision", "higher", None),
+    ("abstention_accuracy", "higher", None),
+    ("contamination_rate", "lower", 0.0),
+)
+
 CATEGORIES = (
     "factual", "decision_rationale", "temporal", "entity", "cross_scope_allowed",
     "cross_scope_trap", "prospective", "continuity", "literal", "absent",
@@ -629,6 +648,110 @@ def render_markdown(results: dict[str, Any], notes: list[str]) -> str:
     return "\n".join(lines)
 
 
+# ---------------------------------------------------------------- gate
+
+def gate_overall(acervo: Path, corpus: Corpus, questions: list[Question], k: int = TOP_K) -> dict[str, Any]:
+    """Deterministic catalog-only metrics used by the CI regression gate."""
+    strategy = CatalogStrategy(acervo, corpus)
+    results = run_eval(questions, {GATE_STRATEGY: strategy}, corpus, k=k)
+    return results["strategies"][GATE_STRATEGY]["overall"]
+
+
+def compare_to_baseline(current: dict[str, Any], baseline: dict[str, Any]) -> list[dict[str, Any]]:
+    """Score current metrics against a baseline (10-evaluation.md §4).
+
+    Returns one row per gate metric with the delta in points and a verdict.
+    A row is a violation iff `blocked` is True (regression past REGRESSION_PTS
+    in the good direction, or a hard-ceiling breach)."""
+    base_metrics = baseline.get("metrics", {})
+    rows: list[dict[str, Any]] = []
+    for name, direction, hard_max in GATE_METRICS:
+        cur = current.get(name)
+        base = base_metrics.get(name)
+        row: dict[str, Any] = {
+            "metric": name, "baseline": base, "current": cur,
+            "delta_pts": None, "blocked": False, "reason": "ok",
+        }
+        if cur is None or base is None:
+            row["blocked"] = cur is None
+            row["reason"] = "missing metric" if cur is None else "no baseline (advisory)"
+            rows.append(row)
+            continue
+        row["delta_pts"] = round((cur - base) * 100, 1)
+        if hard_max is not None and cur > hard_max + 1e-9:
+            row["blocked"] = True
+            row["reason"] = f"hard ceiling {hard_max:.0%} breached"
+        elif direction == "higher" and (base - cur) * 100 > REGRESSION_PTS:
+            row["blocked"] = True
+            row["reason"] = f"regressed {(base - cur) * 100:.1f}pts (> {REGRESSION_PTS:.0f})"
+        elif direction == "lower" and (cur - base) * 100 > REGRESSION_PTS:
+            row["blocked"] = True
+            row["reason"] = f"worsened {(cur - base) * 100:.1f}pts (> {REGRESSION_PTS:.0f})"
+        rows.append(row)
+    return rows
+
+
+def build_baseline(current: dict[str, Any], k: int) -> dict[str, Any]:
+    return {
+        "strategy": GATE_STRATEGY,
+        "k": k,
+        "captured_at": utc_now(),
+        "regression_pts": REGRESSION_PTS,
+        "note": (
+            "Deterministic catalog-only metrics for the CI regression gate "
+            "(10-evaluation.md §4). Regenerate with `run_eval.py --update-baseline` "
+            "after an INTENTIONAL, reviewed improvement."
+        ),
+        "metrics": {name: current.get(name) for name, _dir, _hm in GATE_METRICS},
+    }
+
+
+def render_gate(rows: list[dict[str, Any]]) -> str:
+    def _p(v: float | None) -> str:
+        return "—" if v is None else f"{v * 100:.1f}%"
+
+    lines = [
+        "Metric               | baseline | current  | Δpts   | verdict",
+        "---------------------+----------+----------+--------+--------",
+    ]
+    for r in rows:
+        d = "—" if r["delta_pts"] is None else f"{r['delta_pts']:+.1f}"
+        verdict = "BLOCK" if r["blocked"] else "ok"
+        lines.append(
+            f"{r['metric']:<20} | {_p(r['baseline']):>8} | {_p(r['current']):>8} | "
+            f"{d:>6} | {verdict}  {r['reason'] if r['blocked'] else ''}".rstrip()
+        )
+    return "\n".join(lines)
+
+
+def run_gate(acervo: Path, corpus: Corpus, questions: list[Question], k: int,
+             update: bool) -> int:
+    current = gate_overall(acervo, corpus, questions, k=k)
+    if update:
+        baseline = build_baseline(current, k)
+        BASELINE_PATH.write_text(
+            json.dumps(baseline, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"baseline written: {BASELINE_PATH}", file=sys.stderr)
+        print(json.dumps(baseline, ensure_ascii=False, indent=2))
+        return 0
+    if not BASELINE_PATH.exists():
+        print(f"ERROR: no baseline at {BASELINE_PATH} — run --update-baseline first.",
+              file=sys.stderr)
+        return 2
+    baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+    rows = compare_to_baseline(current, baseline)
+    print(render_gate(rows), file=sys.stderr)
+    blocked = [r for r in rows if r["blocked"]]
+    print(json.dumps({"blocked": bool(blocked), "rows": rows}, ensure_ascii=False, indent=2))
+    if blocked:
+        names = ", ".join(r["metric"] for r in blocked)
+        print(f"::error::memory-eval gate FAILED — regression in: {names}", file=sys.stderr)
+        return 1
+    print("memory-eval gate PASSED — no metric regressed beyond threshold.", file=sys.stderr)
+    return 0
+
+
 # ---------------------------------------------------------------- CLI
 
 def main(argv: list[str] | None = None) -> int:
@@ -642,6 +765,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-hindsight-index", action="store_true",
                         help="Reuse the existing eval-fixture bank instead of refreshing it")
     parser.add_argument("--no-report", action="store_true", help="Print JSON only")
+    parser.add_argument("--gate", action="store_true",
+                        help="CI regression gate: catalog-only, compare to baseline.json, "
+                             "exit 1 if any metric regresses past the threshold (10-evaluation §4)")
+    parser.add_argument("--update-baseline", action="store_true",
+                        help="Recapture the catalog baseline into baseline.json (use after a "
+                             "reviewed, intentional improvement) and exit")
     args = parser.parse_args(argv)
 
     workdir = (args.workdir or REPORT_DIR / ".workdir").resolve()
@@ -653,6 +782,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.questions:
         wanted = {x.strip() for x in args.questions.split(",")}
         questions = [q for q in questions if q.id in wanted]
+
+    if args.gate or args.update_baseline:
+        return run_gate(acervo, corpus, questions, k=args.k, update=args.update_baseline)
 
     requested = [s.strip() for s in args.strategies.split(",") if s.strip()]
     strategies: dict[str, Any] = {}

@@ -5,6 +5,7 @@ Catalog strategy only — Hindsight is deliberately skipped in unit tests.
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -68,3 +69,70 @@ def test_query_helpers(run_eval_mod) -> None:
     assert m.query_date("Qual era a taxa em março de 2026?") == "2026-03-15"
     assert m.query_date("taxa vigente hoje") is not None
     assert m.query_date("Qual é o preço do frete?") is None
+
+
+# --- CI regression gate (10-evaluation.md §4) --------------------------------
+
+BASELINE_METRICS = {
+    "recall": 0.80, "precision": 0.35,
+    "abstention_accuracy": 0.33, "contamination_rate": 0.0,
+}
+
+
+def _baseline(**overrides):
+    metrics = {**BASELINE_METRICS, **overrides}
+    return {"strategy": "catalog", "metrics": metrics}
+
+
+def test_gate_passes_when_unchanged(run_eval_mod) -> None:
+    m = run_eval_mod
+    rows = m.compare_to_baseline(dict(BASELINE_METRICS), _baseline())
+    assert not any(r["blocked"] for r in rows)
+
+
+def test_gate_passes_on_improvement(run_eval_mod) -> None:
+    m = run_eval_mod
+    # recall up, precision up — improvements never block
+    current = {**BASELINE_METRICS, "recall": 0.95, "precision": 0.60}
+    rows = m.compare_to_baseline(current, _baseline())
+    assert not any(r["blocked"] for r in rows)
+
+
+def test_gate_tolerates_small_regression(run_eval_mod) -> None:
+    m = run_eval_mod
+    # 8-point recall drop is under the 10-point threshold → allowed
+    current = {**BASELINE_METRICS, "recall": 0.72}
+    rows = m.compare_to_baseline(current, _baseline())
+    assert not any(r["blocked"] for r in rows)
+
+
+def test_gate_blocks_recall_regression(run_eval_mod) -> None:
+    m = run_eval_mod
+    # 15-point recall drop → blocks
+    current = {**BASELINE_METRICS, "recall": 0.65}
+    rows = m.compare_to_baseline(current, _baseline())
+    recall = next(r for r in rows if r["metric"] == "recall")
+    assert recall["blocked"] is True
+    assert recall["delta_pts"] == -15.0
+
+
+def test_gate_blocks_any_contamination(run_eval_mod) -> None:
+    m = run_eval_mod
+    # contamination has a HARD ceiling of 0 — even a tiny leak blocks,
+    # independent of the 10-point regression threshold
+    current = {**BASELINE_METRICS, "contamination_rate": 0.04}
+    rows = m.compare_to_baseline(current, _baseline())
+    cont = next(r for r in rows if r["metric"] == "contamination_rate")
+    assert cont["blocked"] is True
+
+
+def test_gate_end_to_end_against_committed_baseline(run_eval_mod, tmp_path) -> None:
+    m = run_eval_mod
+    acervo = m.build_workdir_catalog(tmp_path)
+    corpus = m.Corpus(acervo)
+    questions = m.load_questions()
+    current = m.gate_overall(acervo, corpus, questions)
+    baseline = json.loads(m.BASELINE_PATH.read_text(encoding="utf-8"))
+    rows = m.compare_to_baseline(current, baseline)
+    # the committed baseline must match today's deterministic catalog run
+    assert not any(r["blocked"] for r in rows), m.render_gate(rows)

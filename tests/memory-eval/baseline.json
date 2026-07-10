@@ -1,0 +1,13 @@
+{
+  "strategy": "catalog",
+  "k": 5,
+  "captured_at": "2026-07-10T20:10:50Z",
+  "regression_pts": 10.0,
+  "note": "Deterministic catalog-only metrics for the CI regression gate (10-evaluation.md §4). Regenerate with `run_eval.py --update-baseline` after an INTENTIONAL, reviewed improvement.",
+  "metrics": {
+    "recall": 0.7955,
+    "precision": 0.347,
+    "abstention_accuracy": 0.3333,
+    "contamination_rate": 0.0
+  }
+}
