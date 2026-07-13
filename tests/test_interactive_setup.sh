@@ -17,6 +17,11 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+ORIGINAL_HOME="${HOME:-}"
+ORIGINAL_HERMES_HOME="${HERMES_HOME:-}"
+ORIGINAL_EXOCORTEX_HOME="${EXOCORTEX_HOME:-}"
+ORIGINAL_ACERVO="${ACERVO:-}"
+ORIGINAL_ENV_LOCAL_FILE="${ENV_LOCAL_FILE:-}"
 
 # ─── Colors ──────────────────────────────────────────────────────────────────
 
@@ -69,6 +74,11 @@ setup_test_env() {
 cleanup_test_env() {
   local test_dir="$1"
   rm -rf "$test_dir"
+  if [ -n "$ORIGINAL_HOME" ]; then export HOME="$ORIGINAL_HOME"; else unset HOME; fi
+  if [ -n "$ORIGINAL_HERMES_HOME" ]; then export HERMES_HOME="$ORIGINAL_HERMES_HOME"; else unset HERMES_HOME; fi
+  if [ -n "$ORIGINAL_EXOCORTEX_HOME" ]; then export EXOCORTEX_HOME="$ORIGINAL_EXOCORTEX_HOME"; else unset EXOCORTEX_HOME; fi
+  if [ -n "$ORIGINAL_ACERVO" ]; then export ACERVO="$ORIGINAL_ACERVO"; else unset ACERVO; fi
+  if [ -n "$ORIGINAL_ENV_LOCAL_FILE" ]; then export ENV_LOCAL_FILE="$ORIGINAL_ENV_LOCAL_FILE"; else unset ENV_LOCAL_FILE; fi
 }
 
 # ─── Parse args ──────────────────────────────────────────────────────────────
@@ -438,6 +448,8 @@ if should_run "T14"; then
   output=$(bash -c "
     export HERMES_HOME='$t14_hermes'
     export EXOCORTEX_HOME='$t14_exo'
+    export ACERVO='$t14_exo/acervo'
+    export ENV_LOCAL_FILE='$t14_dir/.env.local'
     export HOME='$t14_dir/home'
     mkdir -p \"\$HOME\"
     cd '$REPO_ROOT'
@@ -610,7 +622,8 @@ if should_run "T21"; then
     input_file="$test_dir/setup-cancel.input"
     printf '\n\n' > "$input_file"
 
-    if script -e -q -c "cd '$REPO_ROOT' && bash setup.sh" /dev/null < "$input_file" > "$output_file" 2>&1; then
+    if env HERMES_HOME="$test_dir/hermes" EXOCORTEX_HOME="$test_dir/exocortex" ACERVO="$test_dir/exocortex/acervo" ENV_LOCAL_FILE="$test_dir/.env.local" HOME="$test_dir/home" \
+      script -e -q -c "cd '$REPO_ROOT' && bash setup.sh" /dev/null < "$input_file" > "$output_file" 2>&1; then
       exit_code=0
     else
       exit_code=$?
@@ -644,11 +657,13 @@ if should_run "T22"; then
     output_file="$test_dir/install-cancel.log"
     input_file="$test_dir/install-cancel.input"
     mkdir -p "$home_dir"
-    cp -a "$REPO_ROOT" "$installer_dir"
+    git clone --local --quiet "$REPO_ROOT" "$installer_dir"
+    rm -f "$installer_dir/.env.local"
     echo "main" > "$installer_dir/.exocortex-version"
     printf '\n\n' > "$input_file"
 
-    if env HOME="$home_dir" EXOCORTEX_INSTALLER_DIR="$installer_dir" VERSION="main" \
+    if env -u HERMES_HOME -u EXOCORTEX_HOME -u ACERVO -u ENV_LOCAL_FILE \
+      HOME="$home_dir" EXOCORTEX_INSTALLER_DIR="$installer_dir" VERSION="main" \
       script -e -q -c "bash '$REPO_ROOT/install.sh'" /dev/null < "$input_file" > "$output_file" 2>&1; then
       exit_code=0
     else
@@ -661,7 +676,8 @@ if should_run "T22"; then
       && [ ! -d "$home_dir/.hermes/skills/excrtx" ]; then
       pass "T22: install.sh respeita cancelamento do setup"
     else
-      fail_test "T22" "exit=$exit_code; ver $output_file"
+      fail_test "T22" "exit=$exit_code; interrupted=$(grep -q "Instalação interrompida antes do provisionamento completo" "$output_file" && echo yes || echo no); success_banner=$(grep -q "Exocórtex.IA instalado com sucesso" "$output_file" && echo yes || echo no); skills_dir=$([ -d "$home_dir/.hermes/skills/excrtx" ] && echo yes || echo no); ver $output_file"
+      tail -30 "$output_file" | sed 's/^/    T22> /'
     fi
 
     cleanup_test_env "$test_dir"
@@ -770,10 +786,14 @@ if should_run "T27"; then
   test_dir=$(mktemp -d)
   home_dir="$test_dir/home"
   installer_dir="$test_dir/.exocortex-installer"
+  repo_export="$test_dir/repo-export"
   mkdir -p "$home_dir"
+  git clone --local --quiet "$REPO_ROOT" "$repo_export"
+  rm -f "$repo_export/.env.local"
 
-  output=$(env HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
-    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$REPO_ROOT" VERSION="main" \
+  output=$(env -u ENV_LOCAL_FILE \
+    HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" ACERVO="$home_dir/exocortex/acervo" \
+    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$repo_export" VERSION="main" \
     OPENROUTER_API_KEY='test-openrouter-key' \
     bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1 || true)
 
@@ -781,7 +801,8 @@ if should_run "T27"; then
     && ! echo "$output" | grep -q "/dev/tty"; then
     pass "T27: install.sh roda headless com --yes"
   else
-    fail_test "T27" "instalação headless não produziu a saída esperada"
+    fail_test "T27" "instalação headless não produziu a saída esperada; init_msg=$(echo "$output" | grep -q "Modo --init-only: configuração salva em .env.local" && echo yes || echo no); dev_tty=$(echo "$output" | grep -q "/dev/tty" && echo yes || echo no)"
+    printf '%s\n' "$output" | tail -30 | sed 's/^/    T27> /'
   fi
 
   cleanup_test_env "$test_dir"
@@ -878,7 +899,7 @@ if should_run "T30"; then
     input_file="$test_dir/setup-default-mode.input"
     printf '\n\n' > "$input_file"
 
-    if env HOME="$test_dir/home" HERMES_HOME="$test_dir/hermes" EXOCORTEX_HOME="$test_dir/exocortex" \
+    if env HOME="$test_dir/home" HERMES_HOME="$test_dir/hermes" EXOCORTEX_HOME="$test_dir/exocortex" ACERVO="$test_dir/exocortex/acervo" ENV_LOCAL_FILE="$test_dir/.env.local" \
       script -e -q -c "cd '$REPO_ROOT' && bash setup.sh --skip-env-check" /dev/null < "$input_file" > "$output_file" 2>&1; then
       exit_code=0
     else
@@ -956,6 +977,8 @@ if should_run "T33"; then
   output=$(bash -c "
     export HERMES_HOME='$test_dir/hermes'
     export EXOCORTEX_HOME='$test_dir/exocortex'
+    export ACERVO='$test_dir/exocortex/acervo'
+    export ENV_LOCAL_FILE='$test_dir/.env.local'
     export HOME='$test_dir/home'
     cd '$REPO_ROOT'
     bash setup.sh --skip-env-check < /dev/null 2>&1
