@@ -273,14 +273,17 @@ Read content of any Nature in any layer.
 5. **If not found:** Declare honestly:
    "I don't have this information in the Acervo. Shall I search externally?"
 
-6. **Update `last_accessed_at`:** After a successful read of any Acervo file with frontmatter, update the `last_accessed_at` field in the file's YAML frontmatter to the current UTC datetime (`YYYY-MM-DDTHH:MM:SSZ`). This is a frontmatter-only update — do NOT log it in `log.md` (per log-convention §2.2, `last_accessed_at` updates are not logged). Skip this step for files without frontmatter (e.g. `macro/` identity files, `raw/` sources) or for `_index.md` catalog reads.
+6. **Reads are physically read-only:** Never update `last_accessed_at` while answering,
+   briefing, or building a posture. Phase 7 read surfaces must not dirty canonical
+   Markdown. Retrieval/usefulness telemetry is recorded in the disposable
+   `global/tools/state/retrieval-journal.jsonl` (H12), not in Plane 1 files.
 
 ### Verification
 
 - [ ] Presented information exists in the Acervo (never fabricate)
 - [ ] Source cited in response
 - [ ] Data with old `last_accessed_at` (or old `updated`) flagged as potentially outdated
-- [ ] `last_accessed_at` updated on every read of a frontmatter-bearing file
+- [ ] No canonical file changed as a side effect of READ
 
 ---
 

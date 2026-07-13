@@ -22,6 +22,8 @@ def test_memory_manager_routes_decision_research_and_temporal_phrases() -> None:
     assert "o que acreditávamos" in text
     assert "HISTORICAL" in text
     assert "o executivo decide" in text
+    assert "Reads are physically read-only" in text
+    assert "No canonical file changed as a side effect of READ" in text
 
 
 def test_executive_guide_covers_trust_contract() -> None:
