@@ -1,0 +1,39 @@
+# microverso.yaml — manifesto do microverso (excrtx/v1)
+# Ref: global/contracts/microverso-package-spec.md
+
+apiVersion: excrtx/v1
+kind: Microverso
+metadata:
+  name: "projeto-d"
+  version: 0.1.0
+  description: "Desenvolvimento do Projeto D"
+  author: "elder"
+  tags: ["projeto-d", "project"]
+
+requires:
+  skills: []
+  python_packages: []
+  node_packages: []
+  mcps: []
+  env: []
+  system: [git, python3]
+
+compat:
+  exocortex_version: ">=0.4"
+  hermes_version: ">=0.4"
+  platforms: [linux]
+
+tree:
+  context/: "Situação atual, prioridades e stakeholders de Projeto D"
+  knowledge/: "Fatos, métricas e referências de Projeto D"
+  contracts/: "Regras condicionais e contratos de Projeto D"
+  prompts/: "Prompts reutilizáveis de Projeto D"
+  persona/: "Voz, tom e estilo de Projeto D"
+  workflows/: "SOPs e processos de Projeto D"
+  skills/: "Capacidades encapsuladas de Projeto D"
+  tools/: "Ferramentas e integrações de Projeto D"
+  templates/: "Modelos reutilizáveis de Projeto D"
+  decisions/: "Decisões arquiteturais (ADR) de Projeto D"
+  reflections/: "Lições aprendidas de Projeto D"
+  raw/: "Fontes brutas (imutáveis)"
+  _archive/: "Conteúdo supersedido"
