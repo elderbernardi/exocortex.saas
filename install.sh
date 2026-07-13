@@ -433,7 +433,7 @@ show_env_preflight
 
 show_stage "4/7" "Instalando ou validando Hermes"
 if command -v hermes >/dev/null 2>&1; then
-  HERMES_VERSION=$(hermes --version 2>/dev/null | head -1)
+  HERMES_VERSION=$(hermes --version 2>/dev/null | sed -n '1p')
   log "Hermes já instalado: $HERMES_VERSION"
   info "Binário detectado em: $(command -v hermes)"
 else
@@ -449,7 +449,7 @@ else
     info "Validando 'hermes' no PATH após o bootstrap..."
 
     if command -v hermes >/dev/null 2>&1; then
-      HERMES_VERSION=$(hermes --version 2>/dev/null | head -1)
+      HERMES_VERSION=$(hermes --version 2>/dev/null | sed -n '1p')
       log "Hermes instalado: $HERMES_VERSION"
     else
       fail "Hermes instalado mas 'hermes' não encontrado no PATH.
@@ -574,7 +574,7 @@ echo ''
 echo -e "  ${BOLD}${GREEN}✅ Exocórtex.IA instalado com sucesso!${NC}"
 echo ''
 echo -e "  Versão:    ${CYAN}$INSTALL_VERSION${NC}"
-echo -e "  Hermes:    ${CYAN}$(hermes --version 2>/dev/null | head -1 || echo 'ver PATH')${NC}"
+echo -e "  Hermes:    ${CYAN}$(hermes --version 2>/dev/null | sed -n '1p' || echo 'ver PATH')${NC}"
 echo -e "  Skills:    ${CYAN}$(find "$HERMES_HOME/skills/excrtx" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')${NC}"
 echo -e "  Runtime:   ${CYAN}$HERMES_HOME${NC}"
 echo -e "  Workspace: ${CYAN}$EXOCORTEX_HOME${NC}"
