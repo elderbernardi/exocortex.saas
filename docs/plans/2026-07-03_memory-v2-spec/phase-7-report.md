@@ -1,6 +1,6 @@
 # Phase 7 — Execution Report (Advanced Human/Agent Interface)
 
-> **Executed:** 2026-07-13 · **Status:** complete in installer; live deployment pending explicit approval
+> **Executed:** 2026-07-13 · **Status:** complete and deployed live
 
 ## Delivered
 
@@ -44,10 +44,39 @@
 | Temporal Telegram phrasing | memory-manager routes natural phrase to temporal retrieval; live chat test pending deployment |
 | Executive one-page guide | `docs/guides/como-funciona-sua-memoria.md` |
 
-## Deployment boundary
+## Live deployment receipt
 
-Installer implementation is complete. Live deployment requires copying
-`acervo_interface.py` and the updated `acervoctl.py` into the live Acervo,
-deploying briefing v2 and memory-manager v3.1, recompiling SOUL rules, restarting
-the user gateway, and running the golden conversational scenarios through
-`hermes chat -q`. That operation is intentionally excluded from this commit.
+- Backup tag: `pre-phase7-live-deploy` at the pre-rollout live Acervo commit.
+- Runtime rollback copies: `/tmp/phase7-live-backup-20260713/` (`SOUL.md` + both skills).
+- Live Acervo commit: `771f7e2` (`acervo_interface.py` + updated `acervoctl.py` only).
+- Skills deployed:
+  - `excrtx-behavior-briefing` v2.0.0;
+  - `excrtx-memory-manager` v3.1.0.
+- SOUL recompiled from 20 live behavioral-rule sections.
+- MCP Acervo root reconfirmed as `/home/ubuntu/exocortex/acervo`.
+- Catalog rebuilt: 222 objects, 20 links, zero parse errors; doctor `ok:true`, zero errors.
+- User gateway restarted and active.
+
+### Real-agent conversational acceptance
+
+All scenarios ran through `hermes chat -q` against the live runtime:
+
+1. **Briefing:** used the Phase 7 canonical command, reported no pending items,
+   explicitly marked calendar `not_configured`, and cited the context head.
+2. **Decision posture:** produced options, trade-offs, questions, and an ADR
+   skeleton without deciding for the executive; cited contracts/decisions.
+3. **Research posture:** surfaced tensions and open questions without premature
+   closure; cited canonical global paths.
+4. **Temporal query:** used `as_of=2026-06-15`, explained that no retrieved item
+   carried a `HISTORICAL` banner, and cited the June memory ADRs/contracts.
+
+### Read-only regression found and fixed
+
+The first research scenario exposed a legacy memory-manager rule that updated
+`last_accessed_at` during READ. All test-induced timestamp/newline mutations were
+restored byte-for-byte. Installer commit `353dc32` replaces that behavior with
+disposable H12 retrieval-journal telemetry. The corrected skill was redeployed,
+SOUL recompiled, and the research scenario rerun without canonical mutations.
+
+Pre-existing dirty Acervo work remained untouched. The only deployment-side
+derived change is `global/tools/state/catalog.sqlite` from the required reindex.
