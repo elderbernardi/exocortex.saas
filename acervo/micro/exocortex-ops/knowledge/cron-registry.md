@@ -40,7 +40,7 @@ created: 2026-06-05
 
 | Campo | Valor |
 |---|---|
-| job_id | Atribuído na ativação (`hermes cron list`) |
+| job_id | `f0289a5c897e` |
 | schedule | `0 5 1 * *` (dia 1, 05:00 GMT-3) |
 | script | `bash scripts/run-memory-live-eval.sh "$ACERVO" "$EXOCORTEX_MEMORY_EVAL_QUESTIONS"` |
 | profile/workdir | perfil default, workdir = repo do installer |
@@ -52,7 +52,7 @@ created: 2026-06-05
 
 | Campo | Valor |
 |---|---|
-| job_id | Atribuído na ativação (`hermes cron list`) |
+| job_id | `e127f4a26b2e` |
 | schedule | `15 5 1 * *` (dia 1, 05:15 GMT-3) |
 | script | `python3 scripts/report_memory_learning_loops.py --acervo-root "$ACERVO" --format markdown --window-days 30` |
 | profile/workdir | perfil default, workdir = repo do installer |

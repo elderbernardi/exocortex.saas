@@ -1,6 +1,6 @@
 # Phase 6 — Execution Report (Evaluation & Self-improvement)
 
-> **Executed:** 2026-07-10–13 · **Status:** complete in installer; live monthly jobs activated separately after commit
+> **Executed:** 2026-07-10–13 · **Status:** complete and activated
 
 ## Delivered
 
@@ -51,3 +51,11 @@ Evidence files:
 1. **Phase 6 is complete.** Evaluation now blocks measurable retrieval regressions in CI and has a monthly live path.
 2. **Phase 5 remains cut.** Reopen only if a future live multi-hop battery drops below H4's 70% trigger.
 3. **Next development milestone: Phase 7.** Briefing v2, decision/research postures, temporal conversational queries, and the executive one-page guide.
+
+## Live activation receipt (2026-07-13)
+
+- Pre-activation scheduler snapshot: `/tmp/hermes-crons-pre-phase6-20260713.txt`.
+- `memory-eval-live-monthly`: job `f0289a5c897e`, active, `0 5 1 * *`, next run `2026-08-01T05:00:00Z`.
+- `memory-learning-loops-monthly`: job `e127f4a26b2e`, active, `15 5 1 * *`, next run `2026-08-01T05:15:00Z`.
+- Both jobs use workdir `/home/ubuntu/.exocortex-installer` and deliver locally.
+- Rollback: `hermes cron delete <job_id>`; no live Acervo file was changed during activation.
