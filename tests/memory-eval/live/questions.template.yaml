@@ -1,0 +1,67 @@
+# Copie este arquivo para questions.local.yaml e substitua os placeholders.
+# Cada path deve ser relativo ao root do Acervo real.
+questions:
+  - id: L01
+    category: factual
+    scope: exocortex-ops
+    query: "<pergunta factual real do seu acervo>"
+    expected_paths: [micro/exocortex-ops/knowledge/<arquivo-real>.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["<trecho esperado>"]
+    expects_abstention: false
+
+  - id: L02
+    category: decision_rationale
+    scope: exocortex-ops
+    query: "<qual decisão explica X e por quê?>"
+    expected_paths:
+      - micro/exocortex-ops/decisions/<decisao-real>.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["<alternativa rejeitada ou racional>"]
+    expects_abstention: false
+
+  - id: L03
+    category: temporal
+    scope: exocortex-ops
+    query: "<como estava isso em março de 2026?>"
+    expected_paths:
+      - micro/exocortex-ops/knowledge/<arquivo-com-validade>.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["<valor da janela temporal correta>"]
+    expects_abstention: false
+
+  - id: L04
+    category: entity
+    scope: exocortex-ops
+    query: "<quem é / quem fez / quem aprovou ...?>"
+    expected_paths:
+      - shared/entities/<entidade-real>.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["<nome esperado>"]
+    expects_abstention: false
+
+  - id: L05
+    category: cross_scope_allowed
+    scope: exocortex-ops
+    query: "<pergunta que exige ponte permitida entre microversos>"
+    expected_paths:
+      - micro/<micro-a>/knowledge/<arquivo-a>.md
+      - global/decisions/<arquivo-global>.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["<síntese esperada>"]
+    expects_abstention: false
+
+  - id: L06
+    category: absent
+    scope: exocortex-ops
+    query: "<pergunta que o acervo não deveria saber responder>"
+    expected_paths: []
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: []
+    expects_abstention: true

@@ -38,3 +38,6 @@ acervo/global/tools/state/*.jsonl
 # on every run (deterministic, disposable). Never commit derived eval state.
 # (Dated report/h2-*.md|json files stay committable — they ARE the metric history.)
 tests/memory-eval/report/.workdir/
+
+# Private live-eval question set for the real acervo
+tests/memory-eval/live/questions.local.yaml

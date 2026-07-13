@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -61,6 +62,60 @@ def test_scope_filter_blocks_cross_scope(run_eval_mod, tmp_path: Path) -> None:
     m = run_eval_mod
     assert m.allowed_prefixes("cliente-norte") == ("micro/cliente-norte/", "shared/", "global/")
     assert m.allowed_prefixes("global") == ("global/", "shared/")
+
+
+def test_build_workdir_acervo_accepts_custom_source(run_eval_mod, tmp_path: Path) -> None:
+    m = run_eval_mod
+    source = tmp_path / "live-acervo"
+    shutil.copytree(m.FIXTURE_ACERVO, source)
+    workdir = tmp_path / "workdir"
+
+    copied = m.build_workdir_acervo(source, workdir)
+
+    assert copied == workdir / "acervo"
+    assert (copied / "global/tools/state/catalog.sqlite").exists()
+    # source root stays untouched — no derived state is written back into the live tree
+    assert not (source / "global/tools").exists()
+
+
+def test_score_question_reads_custom_corpus_not_fixture(run_eval_mod, tmp_path: Path) -> None:
+    m = run_eval_mod
+    source = tmp_path / "live-acervo"
+    shutil.copytree(m.FIXTURE_ACERVO, source)
+    live_doc = source / "micro" / "live-scope" / "knowledge" / "live-only.md"
+    live_doc.parent.mkdir(parents=True, exist_ok=True)
+    live_doc.write_text(
+        "---\n"
+        "schema: acervo/v0.2\n"
+        "type: knowledge\n"
+        "title: Live only retrieval target\n"
+        "description: unique live-only retrieval document\n"
+        "class: volátil\n"
+        "status: active\n"
+        "epistemic: fact\n"
+        "created_at: 2026-07-12T00:00:00Z\n"
+        "---\n\n"
+        "Purple narwhal ledger for live evaluation only.\n",
+        encoding="utf-8",
+    )
+    acervo = m.build_workdir_acervo(source, tmp_path / "workdir-live")
+    corpus = m.Corpus(acervo)
+    q = m.Question(
+        id="LIV01",
+        category="factual",
+        scope="live-scope",
+        query="purple narwhal ledger",
+        expected_paths=["acervo/micro/live-scope/knowledge/live-only.md"],
+        forbidden_paths=[],
+        forbidden_content=[],
+        expected_answer_fragments=["narwhal"],
+        expects_abstention=False,
+    )
+
+    results = m.run_eval([q], {"catalog": m.CatalogStrategy(acervo, corpus)}, corpus)
+    row = results["strategies"]["catalog"]["questions"][0]
+    assert row["top"][0] == "acervo/micro/live-scope/knowledge/live-only.md"
+    assert row["recall"] == 1.0
 
 
 def test_query_helpers(run_eval_mod) -> None:
@@ -136,3 +191,31 @@ def test_gate_end_to_end_against_committed_baseline(run_eval_mod, tmp_path) -> N
     rows = m.compare_to_baseline(current, baseline)
     # the committed baseline must match today's deterministic catalog run
     assert not any(r["blocked"] for r in rows), m.render_gate(rows)
+
+
+def test_custom_report_identity_defaults(run_eval_mod, tmp_path: Path) -> None:
+    m = run_eval_mod
+    custom_questions = tmp_path / "questions.local.yaml"
+    custom_questions.write_text(m.GOLDEN.read_text(encoding="utf-8"), encoding="utf-8")
+    custom_acervo = tmp_path / "live-acervo"
+    shutil.copytree(m.FIXTURE_ACERVO, custom_acervo)
+
+    assert m.default_report_prefix(m.FIXTURE_ACERVO, m.GOLDEN) == "h2"
+    assert m.default_report_prefix(custom_acervo, custom_questions) == "questions-local"
+    assert m.default_report_title(custom_acervo, custom_questions, "2026-07-12").startswith("Memory eval —")
+
+
+def test_gate_rejects_custom_inputs(run_eval_mod, tmp_path: Path) -> None:
+    m = run_eval_mod
+    custom_questions = tmp_path / "questions.local.yaml"
+    custom_questions.write_text(m.GOLDEN.read_text(encoding="utf-8"), encoding="utf-8")
+    custom_acervo = tmp_path / "live-acervo"
+    shutil.copytree(m.FIXTURE_ACERVO, custom_acervo)
+
+    rc = m.main([
+        "--gate",
+        "--acervo-root", str(custom_acervo),
+        "--questions-file", str(custom_questions),
+    ])
+
+    assert rc == 2

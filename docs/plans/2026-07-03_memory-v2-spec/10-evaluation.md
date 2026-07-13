@@ -13,8 +13,15 @@ tests/memory-eval/
                      # planted cross-scope traps, superseded chains
   golden/questions.yaml   # per-question: query, expected paths, forbidden paths,
                           # expected answer fragments, category
-  run_eval.py        # drives hermes chat -q / acervoctl retrieve; scores; JSON report
+  live/questions.template.yaml  # private live battery scaffold (copy to questions.local.yaml)
+  run_eval.py        # retrieval scorer over a copied acervo (fixture by default;
+                     # custom --acervo-root + --questions-file for live runs)
   report/            # dated results — the metric history IS acervo knowledge
+scripts/run-memory-live-eval.sh # monthly live runner wrapper (catalog+production)
+scripts/file_memory_eval_knowledge.py # materializa o report JSON como knowledge em
+                                      # micro/exocortex-ops/knowledge/ no acervo alvo
+scripts/report_memory_learning_loops.py # reporta H7 auto-commit audit + H12 use-decay
+                                        # em JSON/markdown para o cron mensal
 ```
 
 Fixture planting is the trick that makes contamination measurable: e.g. client-alfa's price in `micro/alfa/`, client-beta's in `micro/beta/`, question asked in beta-scope must cite beta's file and **must not** contain alfa's number.

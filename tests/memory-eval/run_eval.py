@@ -16,10 +16,10 @@ Strategies (H2 in 11-hypotheses.md — agentic+lexical vs semantic index):
               retrieval per 07-retrieval-policy, called in-process with each
               question's scope; abstention == found=False
 
-The catalog is built over a COPY of the fixture acervo inside --workdir so no
-derived state ever lands inside the fixture. The Hindsight bank `eval-fixture`
-is dropped and re-created on --reindex-hindsight; the production bank
-`exocortex` is never written.
+The source acervo is copied into --workdir and scored there, so no derived state
+(catalog.sqlite, temporary Hindsight bank contents) lands inside the source tree.
+By default the source is the synthetic fixture; pass --acervo-root plus
+--questions-file for the live monthly run against a private golden set.
 
 Abstention floors (operationalization):
   catalog   — a candidate is above the relevance floor iff it matches >= 2
@@ -202,6 +202,7 @@ def allowed_prefixes(scope: str) -> tuple[str, ...]:
 class Doc:
     rel: str            # acervo-root-relative, e.g. micro/operacoes/knowledge/x.md
     searchable: str     # folded title + description + body
+    raw_text: str       # source text from the copied acervo under evaluation
     chars: int          # raw file size in chars (token-cost proxy)
 
 
@@ -212,14 +213,14 @@ class Corpus:
         self.docs: dict[str, Doc] = {}
         for path in sorted(acervo.rglob("*.md")):
             rel = path.relative_to(acervo).as_posix()
-            if rel.startswith("global/tools/"):
-                continue  # derived state in the workdir copy
+            if rel.startswith("global/tools/state/"):
+                continue  # derived runtime state in the workdir copy
             text = path.read_text(encoding="utf-8", errors="replace")
             fm, body = split_frontmatter(text)
             searchable = fold(
                 " ".join(str(x) for x in (fm.get("title", ""), fm.get("description", ""), body))
             )
-            self.docs[rel] = Doc(rel=rel, searchable=searchable, chars=len(text))
+            self.docs[rel] = Doc(rel=rel, searchable=searchable, raw_text=text, chars=len(text))
 
     def matched_terms(self, rel: str, terms: list[str]) -> list[str]:
         doc = self.docs.get(rel)
@@ -242,14 +243,22 @@ class Corpus:
 
 # ---------------------------------------------------------------- catalog strategy
 
-def build_workdir_catalog(workdir: Path) -> Path:
-    """Copy fixture acervo into workdir and build catalog.sqlite over the copy."""
+def build_workdir_acervo(source_acervo: Path, workdir: Path) -> Path:
+    """Copy any source acervo into workdir and build catalog.sqlite over the copy."""
+    source_acervo = source_acervo.resolve()
+    if not source_acervo.exists():
+        raise FileNotFoundError(f"acervo root not found: {source_acervo}")
     acervo = workdir / "acervo"
     if acervo.exists():
         shutil.rmtree(acervo)
-    shutil.copytree(FIXTURE_ACERVO, acervo)
+    shutil.copytree(source_acervo, acervo)
     build_catalog(acervo)
     return acervo
+
+
+def build_workdir_catalog(workdir: Path) -> Path:
+    """Backward-compatible helper: copy the fixture acervo into workdir."""
+    return build_workdir_acervo(FIXTURE_ACERVO, workdir)
 
 
 class CatalogStrategy:
@@ -502,11 +511,8 @@ def rel_to_fixture(rel: str) -> str:
 
 def score_question(q: Question, top: list[str], corpus: Corpus) -> dict[str, Any]:
     fixture_paths = [rel_to_fixture(p) for p in top]
-    packed_text = "".join(
-        (FIXTURE_ACERVO / p).read_text(encoding="utf-8", errors="replace")
-        for p in top
-    )
-    token_cost = sum(corpus.docs[p].chars for p in top)
+    packed_text = "".join(corpus.docs[p].raw_text for p in top if p in corpus.docs)
+    token_cost = sum(corpus.docs[p].chars for p in top if p in corpus.docs)
 
     row: dict[str, Any] = {
         "id": q.id,
@@ -593,15 +599,8 @@ def _fmt(value: float | None, pct: bool = True) -> str:
     return f"{value * 100:.1f}%" if pct else f"{value:,.0f}"
 
 
-def render_markdown(results: dict[str, Any], notes: list[str]) -> str:
-    lines = [
-        f"# H2 — Agentic search vs semantic index (run {results['run_at']})",
-        "",
-        "Retrieval-only scorer over the synthetic fixture "
-        "(`tests/memory-eval/fixture/`, 25 golden questions, top-k="
-        f"{results['k']}). No LLM answers; measures which FILES surface.",
-        "",
-    ]
+def render_markdown(results: dict[str, Any], notes: list[str], *, title: str, intro: str) -> str:
+    lines = [f"# {title}", "", intro, ""]
     for note in notes:
         lines.append(f"> {note}")
     lines += [
@@ -646,6 +645,36 @@ def render_markdown(results: dict[str, Any], notes: list[str]) -> str:
         ]
     lines.append("")
     return "\n".join(lines)
+
+
+def _slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "eval"
+
+
+def default_report_prefix(source_acervo: Path, questions_file: Path) -> str:
+    if source_acervo.resolve() == FIXTURE_ACERVO.resolve() and questions_file.resolve() == GOLDEN.resolve():
+        return "h2"
+    return _slug(questions_file.stem)
+
+
+def default_report_title(source_acervo: Path, questions_file: Path, run_at: str) -> str:
+    if source_acervo.resolve() == FIXTURE_ACERVO.resolve() and questions_file.resolve() == GOLDEN.resolve():
+        return f"H2 — Agentic search vs semantic index (run {run_at})"
+    return f"Memory eval — {questions_file.stem} (run {run_at})"
+
+
+def default_report_intro(source_acervo: Path, questions_file: Path, question_count: int, k: int) -> str:
+    if source_acervo.resolve() == FIXTURE_ACERVO.resolve() and questions_file.resolve() == GOLDEN.resolve():
+        return (
+            "Retrieval-only scorer over the synthetic fixture "
+            f"(`{FIXTURE_ACERVO.relative_to(REPO).as_posix()}`, {question_count} golden questions, top-k={k}). "
+            "No LLM answers; measures which FILES surface."
+        )
+    return (
+        "Retrieval-only scorer over an isolated COPY of the chosen acervo "
+        f"(`{source_acervo}`) using `{questions_file}` ({question_count} questions, top-k={k}). "
+        "No live acervo files are mutated; the workdir copy gets the derived catalog.sqlite."
+    )
 
 
 # ---------------------------------------------------------------- gate
@@ -755,30 +784,49 @@ def run_gate(acervo: Path, corpus: Corpus, questions: list[Question], k: int,
 # ---------------------------------------------------------------- CLI
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Retrieval-eval harness (H2)")
+    parser = argparse.ArgumentParser(description="Retrieval-eval harness (H2 + live memory-v2 runs)")
     parser.add_argument("--workdir", type=Path,
-                        help="Where the fixture copy + catalog.sqlite go (default: report/.workdir)")
+                        help="Where the copied acervo + catalog.sqlite go (default: report/.workdir)")
+    parser.add_argument("--acervo-root", type=Path, default=FIXTURE_ACERVO,
+                        help="Source acervo to evaluate (default: synthetic fixture)")
+    parser.add_argument("--questions-file", type=Path, default=GOLDEN,
+                        help="YAML file with the golden/live questions (default: fixture goldens)")
+    parser.add_argument("--report-prefix",
+                        help="Report filename prefix under tests/memory-eval/report/ (default: auto: h2 or questions stem)")
+    parser.add_argument("--report-title",
+                        help="Optional markdown title override for the saved .md report")
     parser.add_argument("--strategies", default="catalog,hindsight,hybrid",
                         help="Comma-separated subset of: catalog,hindsight,hybrid,production")
-    parser.add_argument("--questions", help="Comma-separated question ids (default: all 25)")
+    parser.add_argument("--questions", help="Comma-separated question ids (default: all questions in the YAML file)")
     parser.add_argument("--k", type=int, default=TOP_K)
     parser.add_argument("--skip-hindsight-index", action="store_true",
                         help="Reuse the existing eval-fixture bank instead of refreshing it")
     parser.add_argument("--no-report", action="store_true", help="Print JSON only")
     parser.add_argument("--gate", action="store_true",
-                        help="CI regression gate: catalog-only, compare to baseline.json, "
-                             "exit 1 if any metric regresses past the threshold (10-evaluation §4)")
+                        help="CI regression gate: fixture catalog-only vs baseline.json; exit 1 if any metric regresses past the threshold (10-evaluation §4)")
     parser.add_argument("--update-baseline", action="store_true",
-                        help="Recapture the catalog baseline into baseline.json (use after a "
-                             "reviewed, intentional improvement) and exit")
+                        help="Recapture the fixture catalog baseline into baseline.json (use after a reviewed, intentional improvement) and exit")
     args = parser.parse_args(argv)
 
     workdir = (args.workdir or REPORT_DIR / ".workdir").resolve()
     workdir.mkdir(parents=True, exist_ok=True)
-    acervo = build_workdir_catalog(workdir)
+
+    source_acervo = args.acervo_root.resolve()
+    questions_file = args.questions_file.resolve()
+    using_fixture_defaults = (
+        source_acervo == FIXTURE_ACERVO.resolve() and questions_file == GOLDEN.resolve()
+    )
+    if (args.gate or args.update_baseline) and not using_fixture_defaults:
+        print(
+            "ERROR: --gate/--update-baseline are fixture-only. Omit --acervo-root and --questions-file.",
+            file=sys.stderr,
+        )
+        return 2
+
+    acervo = build_workdir_acervo(source_acervo, workdir)
     corpus = Corpus(acervo)
 
-    questions = load_questions()
+    questions = load_questions(questions_file)
     if args.questions:
         wanted = {x.strip() for x in args.questions.split(",")}
         questions = [q for q in questions if q.id in wanted]
@@ -828,17 +876,29 @@ def main(argv: list[str] | None = None) -> int:
     ]
     if hindsight_note:
         notes.append(hindsight_note)
+    if not using_fixture_defaults:
+        notes.append(
+            "Custom acervo/questions mode: the source acervo was copied into the workdir before scoring, "
+            "so the live tree stays untouched."
+        )
     results["notes"] = notes
+
+    report_prefix = args.report_prefix or default_report_prefix(source_acervo, questions_file)
+    report_title = args.report_title or default_report_title(source_acervo, questions_file, results["run_at"])
+    report_intro = default_report_intro(source_acervo, questions_file, len(questions), args.k)
 
     if not args.no_report:
         REPORT_DIR.mkdir(parents=True, exist_ok=True)
         stamp = date.today().isoformat()
-        json_path = REPORT_DIR / f"h2-{stamp}.json"
-        md_path = REPORT_DIR / f"h2-{stamp}.md"
+        json_path = REPORT_DIR / f"{report_prefix}-{stamp}.json"
+        md_path = REPORT_DIR / f"{report_prefix}-{stamp}.md"
         json_path.write_text(
             json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
-        md_path.write_text(render_markdown(results, notes), encoding="utf-8")
+        md_path.write_text(
+            render_markdown(results, notes, title=report_title, intro=report_intro),
+            encoding="utf-8",
+        )
         print(f"report: {md_path}", file=sys.stderr)
 
     print(json.dumps(

@@ -1,0 +1,412 @@
+{
+  "run_at": "2026-07-12T21:18:03Z",
+  "k": 5,
+  "strategies": {
+    "catalog": {
+      "overall": {
+        "n": 10,
+        "recall": 1.0,
+        "precision": 0.3037,
+        "contamination_rate": 0.0,
+        "abstention_accuracy": 1.0,
+        "avg_token_cost": 14841
+      },
+      "by_category": {
+        "factual": {
+          "n": 5,
+          "recall": 1.0,
+          "precision": 0.2867,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 15455
+        },
+        "decision_rationale": {
+          "n": 2,
+          "recall": 1.0,
+          "precision": 0.35,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 10600
+        },
+        "cross_scope_allowed": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 35397
+        },
+        "continuity": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 14538
+        },
+        "absent": {
+          "n": 1,
+          "recall": null,
+          "precision": null,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": 1.0,
+          "avg_token_cost": 0
+        }
+      },
+      "questions": [
+        {
+          "id": "L01",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/context/current-state.md",
+            "acervo/micro/exocortex-ops/knowledge/runtime-map.md",
+            "acervo/micro/exocortex-ops/knowledge/install-runbook-location.md",
+            "acervo/micro/exocortex-ops/workflows/conexao-cdp-via-playwright-workflow-reproduzivel.md",
+            "acervo/micro/exocortex-ops/knowledge/integration-registry.md"
+          ],
+          "token_cost": 10186,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L02",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/install-runbook-location.md",
+            "acervo/global/contracts/microverso-package-spec.md",
+            "acervo/micro/exocortex-ops/workflows/conexao-cdp-via-playwright-workflow-reproduzivel.md",
+            "acervo/global/reflections/memory-architecture-brainstorm-2026-06-21.md",
+            "acervo/micro/exocortex-ops/_meta/index.md"
+          ],
+          "token_cost": 14609,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L03",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/integration-registry.md",
+            "acervo/micro/exocortex-ops/workflows/plano-rotina-diaria-de-atualizacao-de-skills-e-tools-canonicas.md",
+            "acervo/micro/exocortex-ops/knowledge/version-matrix.md",
+            "acervo/micro/exocortex-ops/knowledge/runtime-map.md",
+            "acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md"
+          ],
+          "token_cost": 15719,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L04",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/exocortex-ops/decisions/create-exocortex-ops.md",
+            "acervo/micro/exocortex-ops/decisions/provision-as-base-microverse.md",
+            "acervo/micro/exocortex-ops/_meta/drafts/setup-provision-exocortex-ops-2026-06-05.md",
+            "acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md",
+            "acervo/micro/exocortex-ops/_meta/provision-manifest.md"
+          ],
+          "token_cost": 14517,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L05",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/global/decisions/adr-023-memory-v2-spec.md",
+            "acervo/global/contracts/memory-routing-contract.md"
+          ],
+          "token_cost": 6683,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L06",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/cron-registry.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-progress.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-handoff-log.md"
+          ],
+          "token_cost": 21572,
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L07",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/micro/exocortex-ops/workflows/memory-excellence-execution-plan.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-progress.md",
+            "acervo/global/decisions/adr-023-memory-v2-spec.md",
+            "acervo/global/tools/acervo-hindsight-indexer-spec.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-handoff-log.md"
+          ],
+          "token_cost": 35397,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L08",
+          "category": "continuity",
+          "top": [
+            "acervo/micro/estudio-criativo/knowledge/open-gaps-map.md",
+            "acervo/micro/estudio-criativo/context/current-state.md",
+            "acervo/micro/estudio-criativo/reflections/2026-06-estudio-product-boundary.md",
+            "acervo/micro/estudio-criativo/knowledge/format-selection-by-product-stage.md",
+            "acervo/micro/estudio-criativo/reflections/2026-06-estudio-current-state-log-bootstrap.md"
+          ],
+          "token_cost": 14538,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L09",
+          "category": "factual",
+          "top": [
+            "acervo/micro/mercado-produtos-concorrencia/knowledge/saif-mackerduz-dossie-canonico-de-inteligencia-competitiva.md",
+            "acervo/micro/mercado-produtos-concorrencia/_meta/index.md"
+          ],
+          "token_cost": 15187,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L10",
+          "category": "absent",
+          "top": [],
+          "token_cost": 0,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": true
+        }
+      ]
+    },
+    "production": {
+      "overall": {
+        "n": 10,
+        "recall": 1.0,
+        "precision": 0.2852,
+        "contamination_rate": 0.0,
+        "abstention_accuracy": 1.0,
+        "avg_token_cost": 18626
+      },
+      "by_category": {
+        "factual": {
+          "n": 5,
+          "recall": 1.0,
+          "precision": 0.2533,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 20830
+        },
+        "decision_rationale": {
+          "n": 2,
+          "recall": 1.0,
+          "precision": 0.35,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 13922
+        },
+        "cross_scope_allowed": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 35397
+        },
+        "continuity": {
+          "n": 1,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": null,
+          "avg_token_cost": 18876
+        },
+        "absent": {
+          "n": 1,
+          "recall": null,
+          "precision": null,
+          "contamination_rate": 0.0,
+          "abstention_accuracy": 1.0,
+          "avg_token_cost": 0
+        }
+      },
+      "questions": [
+        {
+          "id": "L01",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md",
+            "acervo/micro/exocortex-ops/workflows/memory-excellence-execution-plan.md",
+            "acervo/micro/exocortex-ops/workflows/plano-rotina-diaria-de-atualizacao-de-skills-e-tools-canonicas.md",
+            "acervo/micro/exocortex-ops/knowledge/install-runbook-location.md",
+            "acervo/micro/exocortex-ops/context/current-state.md"
+          ],
+          "token_cost": 22678,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L02",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/install-runbook-location.md",
+            "acervo/global/contracts/microverso-package-spec.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-progress.md",
+            "acervo/micro/exocortex-ops/decisions/provision-as-base-microverse.md",
+            "acervo/micro/exocortex-ops/workflows/plano-rotina-diaria-de-atualizacao-de-skills-e-tools-canonicas.md"
+          ],
+          "token_cost": 23400,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L03",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/integration-registry.md",
+            "acervo/micro/exocortex-ops/_meta/snapshots/2026-06-05-1442-before-base-provisioning.md",
+            "acervo/micro/exocortex-ops/knowledge/runtime-map.md",
+            "acervo/micro/exocortex-ops/knowledge/version-matrix.md",
+            "acervo/micro/exocortex-ops/workflows/plano-rotina-diaria-de-atualizacao-de-skills-e-tools-canonicas.md"
+          ],
+          "token_cost": 15719,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L04",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/micro/exocortex-ops/decisions/create-exocortex-ops.md",
+            "acervo/micro/exocortex-ops/decisions/aposentadoria-exocortex-dev-perfis-comportamentais.md",
+            "acervo/global/knowledge/WELCOME.md",
+            "acervo/micro/exocortex-ops/_meta/drafts/setup-provision-exocortex-ops-2026-06-05.md",
+            "acervo/micro/exocortex-ops/decisions/provision-as-base-microverse.md"
+          ],
+          "token_cost": 21160,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L05",
+          "category": "decision_rationale",
+          "top": [
+            "acervo/global/decisions/adr-023-memory-v2-spec.md",
+            "acervo/global/contracts/memory-routing-contract.md"
+          ],
+          "token_cost": 6683,
+          "recall": 1.0,
+          "precision": 0.5,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L06",
+          "category": "factual",
+          "top": [
+            "acervo/micro/exocortex-ops/knowledge/cron-registry.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-progress.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-handoff-log.md"
+          ],
+          "token_cost": 21572,
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L07",
+          "category": "cross_scope_allowed",
+          "top": [
+            "acervo/micro/exocortex-ops/workflows/memory-excellence-execution-plan.md",
+            "acervo/global/decisions/adr-023-memory-v2-spec.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-handoff-log.md",
+            "acervo/global/tools/acervo-hindsight-indexer-spec.md",
+            "acervo/micro/exocortex-ops/context/memory-excellence-progress.md"
+          ],
+          "token_cost": 35397,
+          "recall": 1.0,
+          "precision": 0.4,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L08",
+          "category": "continuity",
+          "top": [
+            "acervo/micro/estudio-criativo/knowledge/open-gaps-map.md",
+            "acervo/micro/estudio-criativo/knowledge/format-selection-by-product-stage.md",
+            "acervo/micro/estudio-criativo/knowledge/narrative-and-positioning.md",
+            "acervo/micro/estudio-criativo/_meta/index.md",
+            "acervo/micro/estudio-criativo/context/current-state.md"
+          ],
+          "token_cost": 18876,
+          "recall": 1.0,
+          "precision": 0.2,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L09",
+          "category": "factual",
+          "top": [
+            "acervo/micro/mercado-produtos-concorrencia/knowledge/saif-mackerduz-dossie-canonico-de-inteligencia-competitiva.md",
+            "acervo/global/contracts/microverso-directory-structure.md",
+            "acervo/micro/mercado-produtos-concorrencia/_meta/index.md"
+          ],
+          "token_cost": 20779,
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "contaminated": false,
+          "abstention_correct": null
+        },
+        {
+          "id": "L10",
+          "category": "absent",
+          "top": [],
+          "token_cost": 0,
+          "recall": null,
+          "precision": null,
+          "contaminated": false,
+          "abstention_correct": true
+        }
+      ]
+    }
+  },
+  "notes": [
+    "Abstention floors — catalog: candidate must match >= 2 distinct query terms or 1 rare term (doc-frequency <= 5 fixture files); hindsight: any pointer returned at default recall budget counts (no per-result score is exposed) — abstention correct iff zero pointers survive the scope filter.",
+    "Token cost proxy: total chars of the top-5 files' raw text (packed-context estimate).",
+    "Custom acervo/questions mode: the source acervo was copied into the workdir before scoring, so the live tree stays untouched."
+  ]
+}

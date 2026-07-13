@@ -36,6 +36,30 @@ created: 2026-06-05
 | approval | Reforma Memory Excellence (Fases 6–7); ver `workflows/memory-excellence-execution-plan.md` |
 | rollback | `hermes cron delete acervo-index-reconcile` (ou pausar via `hermes cron`); a indexação é idempotente e não-destrutiva |
 
+### memory-eval-live-monthly (Phase 6)
+
+| Campo | Valor |
+|---|---|
+| job_id | Atribuído na ativação (`hermes cron list`) |
+| schedule | `0 5 1 * *` (dia 1, 05:00 GMT-3) |
+| script | `bash scripts/run-memory-live-eval.sh "$ACERVO" "$EXOCORTEX_MEMORY_EVAL_QUESTIONS"` |
+| profile/workdir | perfil default, workdir = repo do installer |
+| side effects | Gera report `tests/memory-eval/report/live-*.{json,md}`; fora do fixture, materializa knowledge canônico no Acervo alvo via `file_memory_eval_knowledge.py`; envia resumo ao home channel. |
+| approval | Reforma memory-v2 — Phase 6 live eval |
+| rollback | `hermes cron delete memory-eval-live-monthly` |
+
+### memory-learning-loops-monthly (Phase 6 — H7/H12)
+
+| Campo | Valor |
+|---|---|
+| job_id | Atribuído na ativação (`hermes cron list`) |
+| schedule | `15 5 1 * *` (dia 1, 05:15 GMT-3) |
+| script | `python3 scripts/report_memory_learning_loops.py --acervo-root "$ACERVO" --format markdown --window-days 30` |
+| profile/workdir | perfil default, workdir = repo do installer |
+| side effects | Leitura do Acervo + `consolidation-scan`; sem mutações canônicas. Entrega resumo de H7 (ratio de correções pós auto-commit) e H12 (use-decay) ao home channel. |
+| approval | Reforma memory-v2 — Phase 6 learning loop reporting |
+| rollback | `hermes cron delete memory-learning-loops-monthly` |
+
 ## Regra
 
 Todo cron recorrente deve registrar:

@@ -1,10 +1,10 @@
 # Prompt de Continuação — Exocórtex Memória v2
 
 > Cole o bloco abaixo como primeira mensagem de uma sessão nova. É autossuficiente.
-> Última atualização: 2026-07-10 (**PHASE 4 COMPLETA** — read-side + write-side 5/5 + entrega do
-> digest, tudo PUSHADO e DEPLOYADO NO VIVO. Installer origin/main=1c4e87e; acervo vivo=aabd5b5
-> (backup tag pre-phase4-writeside-deploy @ 7bbfba1). Entrega Telegram provada end-to-end (msg 272);
-> gateway reiniciado (SOUL syndic ativo). Próximo: Phase 6 — gate de avaliação em CI).
+> Última atualização: 2026-07-13 (**PHASE 6 COMPLETA NO INSTALLER** — gate CI, live eval mensal,
+> filing canônico e reporting H7/H12 implementados e testados). Live canonical: 10 perguntas,
+> catalog+production com 100% recall, 100% abstention e 0% contaminação. H4 não disparou;
+> Phase 5 segue cortada. Próximo desenvolvimento: Phase 7 — interface humana/agente avançada.
 
 ---
 
@@ -116,11 +116,13 @@ ESTADO ATUAL (2026-07-10 — PHASE 4 FECHADA):
     3 regras injetadas em `~/.hermes/SOUL.md`; reindex+doctor limpos; gateway reiniciado (config ACERVO
     reconferido intacto). **Trabalho do agente vivo deixado 100% intocado** (só stagei meus arquivos).
 
-SEM FINDINGS ABERTOS. PHASE 4 (todas as camadas) FECHADA. PRÓXIMO PASSO RECOMENDADO:
-1. PHASE 6 (harness de avaliação em CI): já existe tests/memory-eval/ (fixture 44 obj + 25
-   goldens + run_eval.py). Falta o gate de CI e a regra de regressão (>10pts bloqueia).
-2. Resíduos opcionais do Phase 4: verificar que a rodada semanal do cron entrega o digest sozinha
-   (o envio manual já foi provado); Phase 5 (grafo) só se H4 disparar; Phase 7 (interface humana v2).
+SEM FINDINGS ABERTOS. PHASES 4 E 6 FECHADAS. PRÓXIMO PASSO RECOMENDADO:
+1. PHASE 7 (interface humana/agente): briefing v2, modos decisão/pesquisa, consultas temporais no
+   Telegram e guia executivo de uma página.
+2. Phase 5 continua condicional e NÃO foi justificada: H4 mediu 100% de recall multi-hop na rota
+   production e 83,3% no fallback lexical, ambos acima do gatilho de 70%.
+3. Operação contínua: acompanhar os crons mensais `memory-eval-live-monthly` e
+   `memory-learning-loops-monthly`; qualquer queda >10 pontos ou contaminação >0 bloqueia mudança.
 
 COMO VERIFICAR O ESTADO (rode no installer):
   cd /home/ubuntu/.exocortex-installer && git log --oneline -8 && git status -sb
