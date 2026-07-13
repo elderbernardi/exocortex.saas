@@ -3,7 +3,7 @@ name: excrtx-memory-manager
 description: Unified Acervo Cognitivo skill. Reads, writes, searches, and manages knowledge across the 4 layers (macro/global/micro/shared)
   with context isolation, Schema v0.2 frontmatter, the 14-type object catalog (episodes/entities/intentions), trust/risk
   commit gates, the write-time conflict protocol, and acervoctl-first retrieval.
-version: 3.0.0
+version: 3.1.0
 category: excrtx
 platforms:
 - linux
@@ -62,6 +62,7 @@ compiled_rules: |
   - Episodes, entities, and intentions are created via `acervoctl new-object`. Never create an entity without checking aliases first (aliases are mandatory); intentions carry due/trigger and owed_to; episodes never store verbatim transcripts — summary + `session://` pointer only.
   - Commitments and promises persist as intention objects in intentions/; significant events distill to episode objects in episodes/.
   - Frontmatter is Schema v0.2 (schema: acervo/v0.2, one type matching the home directory, status scalar, epistemic tier). Default read filter: status active and valid today; label anything else HISTORICAL.
+  - Human-interface routing: "briefing" → `acervoctl briefing`; "modo decisão sobre X" → `acervoctl posture --mode decision`; "modo pesquisa sobre X" → `acervoctl posture --mode research`; temporal questions stay on `acervoctl retrieve` and must preserve HISTORICAL labels.
 ---
 # Acervo Manager
 
@@ -209,6 +210,34 @@ Rules on top of the packed result:
   headers must be preserved in the answer, not silently dropped.
 - **Fallback:** if `acervoctl retrieve` is unavailable or errors, fall back to the manual
   ladder in [Operation: SEARCH](#operation-search) (same priority order as before).
+
+---
+
+## Operation: HUMAN INTERFACE (Phase 7)
+
+Natural executive phrases map to deterministic, read-only control-plane verbs:
+
+```bash
+# Morning briefing v2 (all active scopes, ≤4k tokens)
+python3 "$CTL/acervoctl.py" briefing --acervo-root "$ACERVO" --mode detailed
+
+# Decision posture: contracts, decisions, disputes, entities, intentions
+python3 "$CTL/acervoctl.py" posture --acervo-root "$ACERVO" \
+  --mode decision --scope "{slug}" --query "{topic}"
+
+# Research posture: reflections, tensions, conflicts, alternatives, evidence gaps
+python3 "$CTL/acervoctl.py" posture --acervo-root "$ACERVO" \
+  --mode research --scope "{slug}" --query "{topic}"
+
+# Temporal question: existing retrieval route, with HISTORICAL labels intact
+python3 "$CTL/acervoctl.py" retrieve --acervo-root "$ACERVO" \
+  --scope "{slug}" --query "o que acreditávamos sobre {topic} em março de 2026?"
+```
+
+The decision posture proposes options and an ADR skeleton; it never decides for
+the executive: **o executivo decide**. The research posture retrieves tensions and open questions; it
+must not flatten them into a premature conclusion. Every claim keeps an Acervo
+path citation. Empty packs trigger explicit abstention.
 
 ---
 

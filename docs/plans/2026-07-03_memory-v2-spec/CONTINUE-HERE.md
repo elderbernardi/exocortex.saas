@@ -1,10 +1,10 @@
 # Prompt de Continuação — Exocórtex Memória v2
 
 > Cole o bloco abaixo como primeira mensagem de uma sessão nova. É autossuficiente.
-> Última atualização: 2026-07-13 (**PHASE 6 COMPLETA NO INSTALLER** — gate CI, live eval mensal,
-> filing canônico e reporting H7/H12 implementados e testados). Live canonical: 10 perguntas,
-> catalog+production com 100% recall, 100% abstention e 0% contaminação. H4 não disparou;
-> Phase 5 segue cortada. Próximo desenvolvimento: Phase 7 — interface humana/agente avançada.
+> Última atualização: 2026-07-13 (**PHASE 7 COMPLETA NO INSTALLER** — briefing v2, posturas decisão/
+> pesquisa, roteamento temporal e guia executivo implementados; 170 testes e gate de contaminação
+> limpos). Phase 5 segue cortada. Próximo: rollout controlado da Phase 7 no vivo + cenários
+> conversacionais `hermes chat -q`, somente com autorização explícita.
 
 ---
 
@@ -116,9 +116,10 @@ ESTADO ATUAL (2026-07-10 — PHASE 4 FECHADA):
     3 regras injetadas em `~/.hermes/SOUL.md`; reindex+doctor limpos; gateway reiniciado (config ACERVO
     reconferido intacto). **Trabalho do agente vivo deixado 100% intocado** (só stagei meus arquivos).
 
-SEM FINDINGS ABERTOS. PHASES 4 E 6 FECHADAS. PRÓXIMO PASSO RECOMENDADO:
-1. PHASE 7 (interface humana/agente): briefing v2, modos decisão/pesquisa, consultas temporais no
-   Telegram e guia executivo de uma página.
+SEM FINDINGS ABERTOS. PHASES 4, 6 E 7 FECHADAS NO INSTALLER. PRÓXIMO PASSO RECOMENDADO:
+1. Rollout controlado da Phase 7 no vivo: backup tag, deploy de `acervo_interface.py` +
+   `acervoctl.py`, skills briefing v2/memory-manager v3.1, recompilar SOUL, reiniciar gateway e
+   testar briefing/modos decisão-pesquisa/consulta temporal via `hermes chat -q`.
 2. Phase 5 continua condicional e NÃO foi justificada: H4 mediu 100% de recall multi-hop na rota
    production e 83,3% no fallback lexical, ambos acima do gatilho de 70%.
 3. Operação contínua: acompanhar os crons mensais `memory-eval-live-monthly` e

@@ -153,6 +153,25 @@ def command_retrieve(args: argparse.Namespace) -> dict[str, Any]:
     return payload
 
 
+def command_briefing(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    interface = load_tool_module(root, "acervo_interface")
+    return interface.briefing(
+        root, today=args.today, scopes=args.scope, compact=args.mode == "compact",
+        budget_tokens=args.budget, since_hours=args.since_hours,
+        calendar_file=args.calendar_file,
+    )
+
+
+def command_posture(args: argparse.Namespace) -> dict[str, Any]:
+    root = resolve_acervo_root(args.acervo_root)
+    interface = load_tool_module(root, "acervo_interface")
+    return interface.posture(
+        root, mode=args.mode, query=args.query, scope=args.scope,
+        allow_scopes=args.allow_scope, budget_tokens=args.budget, k=args.k,
+    )
+
+
 def command_doctor(args: argparse.Namespace) -> dict[str, Any]:
     root = resolve_acervo_root(args.acervo_root)
     catalog = load_catalog_module(root)
@@ -376,6 +395,26 @@ def build_parser() -> argparse.ArgumentParser:
     retrieve_cmd.add_argument("--json", action="store_true",
                               help="Saída JSON (já é o padrão; aceito por compatibilidade de contrato)")
     retrieve_cmd.set_defaults(handler=command_retrieve)
+
+    briefing_cmd = sub.add_parser("briefing", help="Briefing v2: intenções, disputas, episódios, drafts, contexto e agenda")
+    briefing_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    briefing_cmd.add_argument("--scope", action="append", help="Limita a um microverso (repetível; default: todos)")
+    briefing_cmd.add_argument("--mode", choices=["compact", "detailed"], default="detailed")
+    briefing_cmd.add_argument("--today", help="Data de corte YYYY-MM-DD")
+    briefing_cmd.add_argument("--since-hours", type=int, default=24, help="Janela de episódios recentes")
+    briefing_cmd.add_argument("--budget", type=int, default=4000, help="Orçamento máximo em tokens estimados")
+    briefing_cmd.add_argument("--calendar-file", help="JSON opcional com eventos do dia")
+    briefing_cmd.set_defaults(handler=command_briefing)
+
+    posture_cmd = sub.add_parser("posture", help="Pacote tipado para modo decisão ou modo pesquisa")
+    posture_cmd.add_argument("--acervo-root", help="Raiz do Acervo")
+    posture_cmd.add_argument("--mode", choices=["decision", "research"], required=True)
+    posture_cmd.add_argument("--query", required=True)
+    posture_cmd.add_argument("--scope", required=True)
+    posture_cmd.add_argument("--allow-scope", action="append", default=[])
+    posture_cmd.add_argument("--budget", type=int, default=12000)
+    posture_cmd.add_argument("--k", type=int, default=8)
+    posture_cmd.set_defaults(handler=command_posture)
 
     doctor_cmd = sub.add_parser("doctor", help="Relatório de integridade do Acervo (links, drift, lifecycle)")
     doctor_cmd.add_argument("--acervo-root", help="Raiz do Acervo")

@@ -2,7 +2,7 @@
 name: excrtx-behavior-briefing
 description: Morning Briefing cross-microverso. Consolidates pending information, queued approvals, recent insights, and the
   day's agenda across multiple domains.
-version: 1.0.0
+version: 2.0.0
 category: excrtx
 platforms:
 - linux
@@ -34,10 +34,10 @@ metadata:
       remediation_tip: 'FALHA: Briefing fabricado. A skill exige consulta a fontes reais antes de sintetizar. Leia: ''$ACERVO/macro/MEMORY.md''
         para decisões, ''kanban list'' para pendências, e logs recentes para status. Se não encontrar dados, diga ''Não há
         registros de pendências no acervo atual'' em vez de inventar.'
-compiled_rules: 'Briefing matinal cruza todos os microversos. Coleta: drafts pendentes, insights recentes, agenda do dia,
-  ações bloqueadas.
+compiled_rules: 'Briefing v2 cruza todos os microversos via `acervoctl briefing`. Coleta: intenções vencidas/próximas,
+  disputas, drafts, episódios das últimas 24h, context heads e agenda quando integrada.
 
-  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
+  Formato: acionável, citado, direto ao ponto, ≤4k tokens. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
 
   Trigger: "briefing", "bom dia", "o que tem pra hoje", ou início de sessão.'
 ---
@@ -58,15 +58,27 @@ Ativar quando:
 
 ### 1. Coleta Cross-Microverso
 
+Use primeiro a superfície determinística:
+
+```bash
+python3 "$CTL/acervoctl.py" briefing --acervo-root "$ACERVO" --mode detailed
+```
+
+Para "briefing rápido", use `--mode compact`. Para um domínio, adicione
+`--scope {slug}`. Se existir uma exportação JSON de agenda, passe
+`--calendar-file {path}`; se não existir, preserve `calendar_status:not_configured`
+e não invente eventos.
+
 Varrer TODOS os microversos ativos (respeitando scope) e coletar:
 
 | Fonte | O que buscar |
 |---|---|
-| `log.md` de cada micro | Últimas entradas (24h) |
+| `intentions/` | Vencidas primeiro; depois próximas por `due` |
+| Objetos `conflict` | Disputas abertas que exigem decisão |
 | Drafts pendentes | Ações que aguardam aprovação do executivo |
-| `reflections/` de cada micro | Insights recentes não revisados |
-| `workflows/` global | Deadlines ou milestones próximos |
-| `shared/cross-refs/` | Referências cruzadas recentes entre microversos |
+| `episodes/` | Episódios significativos das últimas 24h |
+| `context/current-state.md` | Cabeça dos domínios ativos |
+| Agenda JSON opcional | Eventos reais do dia; ausência fica explícita |
 
 ### 2. Estrutura do Briefing
 
@@ -85,8 +97,8 @@ Varrer TODOS os microversos ativos (respeitando scope) e coletar:
 ### {Microverso 2}
 - {resumo}
 
-## 💡 Insights
-- [{microverso}] {insight ou reflexão recente que merece atenção}
+## 🕘 Últimas 24h
+- [{microverso}] {episódio significativo com path}
 
 ## 📅 Agenda
 - {eventos do dia — quando Calendar integrado}
@@ -113,7 +125,8 @@ Ordenar itens por:
 ## Pitfalls
 
 - **Empty acervo panic**: Se o acervo estiver vazio (executivo novo), dizer: "Acervo vazio — execute o onboarding para começar". Don't fabricate content.
-- **Fabricated items**: Não inventar itens. Se um microverso não tem atividade recente, dizer: "Sem atividade recente".
+- **Fabricated items**: Não inventar itens. Cada item do briefing deve vir do payload e manter seu path canônico.
+- **Calendar fiction**: `calendar_status:not_configured|missing` significa agenda indisponível, nunca agenda vazia confirmada.
 - **Slop in briefings**: O briefing aplica `excrtx-quality-antislop` — zero frases de enchimento, direto ao ponto.
 - **Compact mode overflow**: Não incluir microversos sem itens relevantes no briefing compacto. Stay within 10 lines.
 - **Cross-microverso blind spots**: Alertar sobre conflitos cross-microverso quando detectados. Don't ignore interactions between domains.
