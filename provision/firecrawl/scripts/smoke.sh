@@ -31,6 +31,24 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 FC_DIR="${EXOCORTEX_FIRECRAWL_DIR:-$HERMES_HOME/firecrawl}"
 FC_BASE_URL="${FIRECRAWL_BASE_URL:-http://127.0.0.1:3002}"
 
+_docker_status() {
+  local name="$1"
+  if docker inspect --format '{{.State.Status}}' "$name" 2>/dev/null; then
+    return 0
+  fi
+  if command -v sg >/dev/null 2>&1 && getent group docker >/dev/null 2>&1; then
+    if sg docker -c "docker inspect --format '{{.State.Status}}' '$name'" 2>/dev/null; then
+      return 0
+    fi
+  fi
+  if command -v sudo >/dev/null 2>&1; then
+    if sudo -n docker inspect --format '{{.State.Status}}' "$name" 2>/dev/null; then
+      return 0
+    fi
+  fi
+  return 1
+}
+
 info "Smoke test — Firecrawl"
 info "  FC_DIR:   $FC_DIR"
 info "  Base URL: $FC_BASE_URL"
@@ -45,7 +63,7 @@ log "docker-compose.yml presente"
 
 # ── Critical: API container running ─────────────────────────────────────────
 if command -v docker >/dev/null 2>&1; then
-  _container_status="$(docker inspect --format '{{.State.Status}}' exocortex-firecrawl-api 2>/dev/null || echo "missing")"
+  _container_status="$(_docker_status exocortex-firecrawl-api 2>/dev/null | tr -d '\r\n' || echo "missing")"
   case "$_container_status" in
     running)
       log "Container exocortex-firecrawl-api: running"

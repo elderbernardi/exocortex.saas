@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: template
 title: Template — Matriz de Seleção de Formato
 description: 'nome:'
 tags: [template, format, matrix]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

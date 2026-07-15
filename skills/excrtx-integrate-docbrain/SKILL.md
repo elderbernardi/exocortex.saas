@@ -23,7 +23,7 @@ metadata:
     calibration:
     - feature_id: EX-27
       calibration_prompt: 'Você integra a engine DocBrain para ingestão de PDFs e bases legadas. Valida engine local, reproduz
-        instalação em novas instâncias. Repo: github.com/ProjetoBB/docBrainBB.git.'
+        instalação em novas instâncias. Repo: github.com/elderbernardi/docbrain.git.'
       test_prompt: Preciso processar um lote de 20 PDFs de contratos antigos para alimentar o acervo. O DocBrain está instalado?
       acceptance_criteria: '1. O agente verifica se o DocBrain está instalado e funcional (testa o path e o runtime)
 
@@ -33,7 +33,7 @@ metadata:
 
         4. Alerta sobre necessidade do papel auxiliar (EXOCORTEX_AUX_*), que gera o .env do DocBrain (DOCBRAIN_LLM_API_KEY)'
       remediation_tip: 'FALHA: DocBrain assumido como disponível sem verificação. Verifique: ''test -d ${EXOCORTEX_DOCBRAIN_DIR:-$EXOCORTEX_HOME/tools/docbrain}''
-        e ''node --version''. Se não instalado, oriente: ''git clone github.com/ProjetoBB/docBrainBB.git && npm install &&
+        e ''node --version''. Se não instalado, oriente: ''git clone github.com/elderbernardi/docbrain.git && npm install &&
         npm run build''. A chave LLM do DocBrain vem do papel auxiliar (EXOCORTEX_AUX_*), que herda o papel default quando vazio.'
 ---
 # DocBrain CLI API
@@ -45,7 +45,7 @@ DocBrain is the local document parser engine for Exocortex intake workflows. Her
 The repository is:
 
 ```bash
-https://github.com/ProjetoBB/docBrainBB.git
+https://github.com/elderbernardi/docbrain.git
 ```
 
 ## When to Use
@@ -185,16 +185,20 @@ were available; consume the `parse.create` envelope directly.
 
 Clone and configure DocBrain during setup:
 
+If the target path exists but is not a real git checkout yet (for example, a leftover directory containing only `.env`), preserve the `.env`, remove the stub directory, then clone the repository and restore the `.env`. When migrating from an older path convention, keep a compatibility symlink from `EXOCORTEX_HOME/docBrain` to `EXOCORTEX_HOME/tools/docbrain` if existing automation still references the legacy location.
+
+See also `references/repo-migration-elderbernardi.md` for the verified migration pattern used when the canonical repository changed.
+
 ```bash
 DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-${EXOCORTEX_HOME:-$HOME/exocortex}/tools/docbrain}"
 mkdir -p "$(dirname "$DOCBRAIN_DIR")"
 
 if [ ! -d "$DOCBRAIN_DIR/.git" ]; then
-  git clone https://github.com/ProjetoBB/docBrainBB.git "$DOCBRAIN_DIR"
+  git clone https://github.com/elderbernardi/docbrain.git "$DOCBRAIN_DIR"
 fi
 
 cd "$DOCBRAIN_DIR"
-git pull --ff-only origin main
+git pull --ff-only origin master
 npm install
 npm run build
 ```
@@ -226,12 +230,12 @@ node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('/tmp/docbra
 
 ## Files to Read
 
-Canonical docs in the DocBrain repository:
+Canonical files in the DocBrain repository:
 
-- `docs/HERMES-INTEGRATION.md`
-- `docs/CLI-API-CONTRACT.md`
-- `docs/EXOCORTEX-INSTALLATION.md`
-- `plans/DOCBRAIN-INTAKE-ENGINE-REPORT.md`
+- `README.md`
+- `HARNESS.md`
+- `schema.md`
+- `plans/ARCHITECTURE.md`
 
 Skill reference:
 
@@ -255,6 +259,8 @@ The setup microverso is the reproducibility source for future Exocortex installs
 3. Do not request `raw_text` by default; it can make responses large.
 4. Do not use `ingest` for machine automation; use `api parse create`.
 5. Keep `reprocess-policy=skip` as default to avoid repeated LLM/parser cost.
+6. Do not assume the existing target directory is a valid checkout just because the path exists. A stray `.env`-only stub must be preserved and then replaced with a fresh clone.
+7. After a repository migration, validate both the canonical path and any legacy compatibility symlink with `api health` so old callers do not silently point to stale code.
 
 ## Verification Checklist
 

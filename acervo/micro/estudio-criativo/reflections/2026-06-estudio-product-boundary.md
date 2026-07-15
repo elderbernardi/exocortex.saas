@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: reflection
 title: Caso Real — Fronteira Operacional com Produto
 description: O Estúdio já operava como capacidade transversal, mas ainda faltava uma fronteira explícita com Produto. Sem esse con...
 tags: [reflection, case, receipt, boundary, product]
 timestamp: 2026-06-14
 class: perene
+status: active
+epistemic: interpretation
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

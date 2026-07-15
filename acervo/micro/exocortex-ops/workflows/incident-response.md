@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: Workflow — resposta a incidente operacional
 description: 'SEV0: segredo exposto, ação externa sem aprovação, perda de Acervo, alteração indevida em outro profile.'
 tags: [incident, sev, seguranca, rollback]
 timestamp: 2026-06-05
 class: volátil
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

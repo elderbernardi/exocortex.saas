@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: prompt
 title: Prompt — Crítica Criativa
 description: Use antes de entregar artefato criativo substantivo.
 tags: [prompt, critique]
 timestamp: 2026-06-01
 class: volátil
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

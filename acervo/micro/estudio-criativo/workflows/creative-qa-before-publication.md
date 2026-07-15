@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: Workflow — Creative QA Antes de Publicação
 description: Evitar que o Estúdio publique peça correta no acabamento e errada na direção.
 tags: [workflow, qa, publication]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

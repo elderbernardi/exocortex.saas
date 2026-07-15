@@ -83,7 +83,9 @@ python3 scripts/validate_frontmatter.py <path>
 python3 scripts/migrate_frontmatter.py <path>
 ```
 
-The schema is documented in `docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md` (canonical reference) and `docs/plans/2026-06-19_acervo-lifecycle-okf/schema-spec.md` (detailed spec with migration derivation rules). Decision: ADR-013.
+The **canonical schema is v0.2**: `docs/plans/2026-07-03_memory-v2-spec/13-artifacts/SCHEMA-v0.2.md` (ADR-023, accepted 2026-07-04; the acervo is fully migrated — `scripts/migrate_frontmatter_v2.py`). The v1 reference (`docs/plans/2026-06-19_acervo-lifecycle-okf/SCHEMA.md`, ADR-013) remains for pre-v0.2 files and migration derivation rules.
+
+The full memory-v2 design (episodes/entities/intentions, conflict-as-state, catalog.sqlite via `acervoctl reindex`/`doctor`, consolidation loop) is specified in `docs/plans/2026-07-03_memory-v2-spec/`.
 
 ### Skill Quality Audits
 

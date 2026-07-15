@@ -1,13 +1,16 @@
 ---
-title: "{{DOMAIN_NAME}} — Decisões"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Decisões'
 type: decision
-description: "Decisões arquiteturais do domínio {{DOMAIN_NAME}} (formato ADR)"
+description: Decisões arquiteturais do domínio {{DOMAIN_NAME}} (formato ADR)
 class: perene
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+epistemic: decision
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: decisions
 excrtx_type: fact
 tags: []

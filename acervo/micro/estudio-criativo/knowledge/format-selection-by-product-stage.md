@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Escolha de Formato por Estágio do Produto
 description: Ajudar o Estúdio a escolher o artefato certo para o momento certo. Formato errado cria trabalho bonito e inútil.
 tags: [knowledge, format, product-stage, delivery]
 timestamp: 2026-06-14
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

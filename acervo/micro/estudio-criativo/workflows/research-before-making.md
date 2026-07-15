@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: Workflow — Pesquisar Antes de Fazer
 description: Evitar criação genérica e acelerar repertório antes da produção.
 tags: [workflow, research]
 timestamp: 2026-06-01
 class: volátil
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

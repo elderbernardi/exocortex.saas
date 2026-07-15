@@ -47,6 +47,7 @@ create_cron_if_missing() {
 }
 
 CRON_FAILURES=0
+LIVE_MEMORY_EVAL_QUESTIONS="${EXOCORTEX_MEMORY_EVAL_QUESTIONS:-$SCRIPT_DIR/tests/memory-eval/live/questions.local.yaml}"
 
 # O 'maintenance-weekly' cobre o ciclo do síndico (scan → quarentena → purge) +
 # manutenção geral, anexando as skills via --skill (mais confiável que apenas
@@ -72,6 +73,18 @@ create_cron_if_missing "publication-check" "30 4 * * *" \
 
 create_cron_if_missing "acervo-index-reconcile" "0 5 * * *" \
   "Execute a reconciliação diária do AcervoIndex (ADR-020). Persona: síndico. Rode 'python \"\$ACERVO/global/tools/acervo_hindsight_index.py\" scan --all' e depois 'report'. Entregue ao home channel um relatório compacto com: novos indexados, alterados, órfãos (orphaned_manifest_entries), ignorados por lifecycle e erros. NÃO apague entradas Hindsight nesta versão — apenas reporte órfãos."
+
+if [ -f "$LIVE_MEMORY_EVAL_QUESTIONS" ]; then
+  create_cron_if_missing "memory-eval-live-monthly" "0 5 1 * *" \
+    "Execute a avaliação LIVE mensal da memória v2 a partir deste workdir do installer. Primeiro rode: bash scripts/run-memory-live-eval.sh \"\$ACERVO\" \"$LIVE_MEMORY_EVAL_QUESTIONS\". Depois leia o relatório markdown mais recente em tests/memory-eval/report/live-*.md e entregue um resumo compacto com: veredito, métricas overall de catalog e production (recall, precision, abstention, contamination), blockers se houver e caminho do relatório. Se o script falhar, reporte o blocker verbatim em até 4 linhas." \
+    --workdir "$SCRIPT_DIR"
+else
+  log "Cron live de memory-eval não criado — arquivo de perguntas ausente: $LIVE_MEMORY_EVAL_QUESTIONS"
+fi
+
+create_cron_if_missing "memory-learning-loops-monthly" "15 5 1 * *" \
+  "Execute o reporting mensal dos loops de aprendizado da memória v2 (H7 + H12) a partir deste workdir do installer. Rode: python3 scripts/report_memory_learning_loops.py --acervo-root \"\$ACERVO\" --format markdown --window-days 30. Entregue o markdown produzido, preservando: janela auditada, candidate_count/corrected_count/corrected_ratio/verdict do H7 e candidate_count/reason do H12. Se o script falhar, reporte o blocker verbatim em até 4 linhas." \
+  --workdir "$SCRIPT_DIR"
 
 if [ "$CRON_FAILURES" -eq 0 ]; then
   log "Cron jobs de manutenção configurados (03h–05h)."

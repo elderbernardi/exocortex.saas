@@ -1013,6 +1013,69 @@ if should_run "T34"; then
 fi
 
 # =============================================================================
+# T35: install.sh atualiza VERSION=main por fast-forward
+# =============================================================================
+
+if should_run "T35"; then
+  echo -e "${BOLD}T35: install.sh atualiza branch móvel por fast-forward${NC}"
+  test_dir=$(mktemp -d)
+  home_dir="$test_dir/home"
+  upstream_dir="$test_dir/upstream"
+  installer_dir="$test_dir/.exocortex-installer"
+  bin_dir="$test_dir/bin"
+  mkdir -p "$home_dir" "$bin_dir"
+
+  cat > "$bin_dir/hermes" <<'EOF'
+#!/usr/bin/env bash
+if [ "${1:-}" = "--version" ]; then
+  echo "2026.4.8"
+fi
+exit 0
+EOF
+  chmod +x "$bin_dir/hermes"
+
+  git init -b main "$upstream_dir" >/dev/null 2>&1
+  git -C "$upstream_dir" config user.email "test@example.com"
+  git -C "$upstream_dir" config user.name "Test User"
+  cat > "$upstream_dir/setup.sh" <<'EOF'
+#!/usr/bin/env bash
+echo "SETUP_VERSION=old"
+EOF
+  chmod +x "$upstream_dir/setup.sh"
+  git -C "$upstream_dir" add setup.sh
+  git -C "$upstream_dir" commit -m "initial setup" >/dev/null 2>&1
+
+  git clone "$upstream_dir" "$installer_dir" >/dev/null 2>&1
+  echo "main" > "$installer_dir/.exocortex-version"
+
+  cat > "$upstream_dir/setup.sh" <<'EOF'
+#!/usr/bin/env bash
+echo "SETUP_VERSION=new"
+EOF
+  chmod +x "$upstream_dir/setup.sh"
+  git -C "$upstream_dir" add setup.sh
+  git -C "$upstream_dir" commit -m "update setup" >/dev/null 2>&1
+
+  output=$(env PATH="$bin_dir:/usr/bin:/bin:/usr/local/bin:/usr/local/sbin" \
+    HOME="$home_dir" HERMES_HOME="$home_dir/.hermes" EXOCORTEX_HOME="$home_dir/exocortex" \
+    EXOCORTEX_INSTALLER_DIR="$installer_dir" EXOCORTEX_REPO_URL="$upstream_dir" VERSION="main" \
+    bash "$REPO_ROOT/install.sh" --yes --init-only --skip-env-check 2>&1 || true)
+
+  installer_head=$(git -C "$installer_dir" rev-parse HEAD 2>/dev/null || true)
+  upstream_head=$(git -C "$upstream_dir" rev-parse HEAD 2>/dev/null || true)
+
+  if echo "$output" | grep -q "Atualizando instalador por fast-forward" \
+    && echo "$output" | grep -q "SETUP_VERSION=new" \
+    && [ "$installer_head" = "$upstream_head" ]; then
+    pass "T35: VERSION=main busca origin/main e roda setup atualizado"
+  else
+    fail_test "T35" "fast-forward não aplicado; saída: $output"
+  fi
+
+  cleanup_test_env "$test_dir"
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 

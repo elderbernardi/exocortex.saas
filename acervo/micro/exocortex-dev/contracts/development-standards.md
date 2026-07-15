@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Exocortex.IA Development & Quality Standards
 description: This document establishes the official coding conventions, skill design specifications, and automated verification ru...
 tags: [dev, exocortex, standards, skill, qa]
 timestamp: 2026-06-11
 class: perene
+status: active
 created_at: 2026-06-11T00:00:00Z
 last_accessed_at: 2026-06-11T00:00:00Z
 updated: 2026-06-11

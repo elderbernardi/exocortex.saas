@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: Workflow — Prototipar um Artefato de Validação
 description: Sair de hipótese abstrata para forma tangível sem que o custo de produção mate a velocidade de aprendizado.
 tags: [workflow, validation, prototype]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

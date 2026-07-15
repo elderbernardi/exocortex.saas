@@ -26,10 +26,10 @@ See [IDENTITY.md](../.harness/subprojects/exocortex/IDENTITY.md) for complete su
 This subproject contains **Hermes Agent runtime configuration files**. The following files define the agent's identity, behavior, and skill set and follow Hermes-specific conventions:
 
 - `SOUL_SEED.md` — Agent identity and behavioral contract
-- `FEATURES.md` — 46-feature catalog (EX-01 to EX-58)
+- `FEATURES.md` — 47-feature catalog (EX-01 to EX-59)
 - `BACKLOG_TEMPLATE.md` — Deferred integrations backlog
 - `acervo/` — Acervo seed (synced from ~/exocortex/acervo)
-- `skills/` — 50 skill directories (excrtx-* naming; 52 total incl. last30days + assessment-question-authoring)
+- `skills/` — 56 skill directories (excrtx-* naming; 58 total incl. last30days + assessment-question-authoring)
 - `profiles/` — Hermes profiles (manut)
 - `skill-bundles/` — Bundle definitions
 - `install.sh` / `setup.sh` — Automated provisioning scripts

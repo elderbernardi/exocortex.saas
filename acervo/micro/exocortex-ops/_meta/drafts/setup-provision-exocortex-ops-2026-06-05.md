@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: DRAFT — provisionar exocortex-ops no setup executável
 description: Não aplicado. Aguardando aprovação explícita do executivo.
 tags: [draft, setup, provisionamento, patch]
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

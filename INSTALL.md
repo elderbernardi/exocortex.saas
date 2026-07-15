@@ -249,9 +249,9 @@ test -d "$ACERVO/_tasks" && echo "✓ _tasks" || echo "✗ _tasks"
 
 ---
 
-## Step 03 — Instalar Skills (57 skills no total)
+## Step 03 — Instalar Skills (58 skills no total)
 
-**Objetivo**: Copiar as 57 skills do repositório para o runtime do Hermes: 43 skills `excrtx-*` com ID EX-catalogado formal + 15 skills de suporte/auxiliares (incluindo `last30days`, `assessment-question-authoring` e outras skills transversais), totalizando ~57 diretórios de skill.
+**Objetivo**: Copiar as 58 skills do repositório para o runtime do Hermes: 44 entradas com ID EX-catalogado formal e o conjunto de skills de suporte/auxiliares (incluindo `last30days`, `assessment-question-authoring` e outras skills transversais).
 
 ### Execução
 
@@ -267,8 +267,8 @@ done
 ### Verificação
 ```bash
 INSTALLED=$(find "$SKILLS_DST" -mindepth 1 -maxdepth 1 -type d | wc -l)
-echo "Skills instaladas: $INSTALLED (esperado: ≥ 57 skills no total)"
-test "$INSTALLED" -ge 57 && echo "✓ OK" || echo "⚠ pode estar incompleto"
+echo "Skills instaladas: $INSTALLED (esperado: ≥ 58 skills no total)"
+test "$INSTALLED" -ge 58 && echo "✓ OK" || echo "⚠ pode estar incompleto"
 ```
 
 ---
@@ -666,7 +666,7 @@ bash "$SCRIPT_DIR/setup/step-13-final-verification.sh"
 
 ### Critérios de Sucesso (o script verifica tudo automaticamente)
 
-1. **≥ 57 skills** instaladas em `$SKILLS_DST` (43 EX-ID catalogadas + 15 de suporte)
+1. **≥ 58 skills** instaladas em `$SKILLS_DST` (44 EX-ID catalogadas + skills de suporte)
 2. **4 camadas** do Acervo presentes (macro, global, micro, shared)
 3. **5 diretórios operacionais** v0.4 (_tasks, _routines, _automations, _inbox, _artifacts)
 4. **Microverso exocortex-ops** com todos os arquivos esperados

@@ -1,17 +1,20 @@
 ---
-title: "{{DOMAIN_NAME}} — Contexto"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Contexto'
 type: context
-description: "Situação, estado e prioridades atuais de {{DOMAIN_NAME}}"
+description: Situação, estado e prioridades atuais de {{DOMAIN_NAME}}
 class: volátil
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+epistemic: fact
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: context
 excrtx_type: context
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Contexto — {{DOMAIN_NAME}}

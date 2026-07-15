@@ -1,22 +1,19 @@
 ---
+schema: acervo/v0.2
 type: reflection
 title: Reflexão — Memória operacional, Acervo e Hindsight
-description: Síntese do brainstorm que levou à arquitetura de Hindsight como índice
-  semântico e Acervo como fonte canônica.
-tags:
-- memory
-- reflection
-- hindsight
-- acervo
-- architecture
-timestamp: '2026-06-21'
+description: Síntese do brainstorm que levou à arquitetura de Hindsight como índice semântico e Acervo como fonte canônica.
+tags: [memory, reflection, hindsight, acervo, architecture]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+epistemic: interpretation
+created_at: 2026-06-21T16:37:51Z
 nature: reflections
 excrtx_type: lesson
 confidence: high
 canonical_from: micro/exocortex-dev/reflections/memory-architecture-brainstorm-2026-06-21.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

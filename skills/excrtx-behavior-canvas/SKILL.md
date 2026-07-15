@@ -76,7 +76,7 @@ Para cada input complexo, extrair internamente:
 | Campo | Pergunta | Exemplo |
 |---|---|---|
 | `macroverso.status` | O Macroverso está resolvido, parcial ou placeholder? | `resolved` / `partial` / `placeholder` / `missing` |
-| `macroverso.sources` | Em que arquivos o Macroverso foi lido? | `["acervo/macro/soul.md"]` |
+| `macroverso.sources` | Em que arquivos o Macroverso foi lido? | `["acervo/macro/SOUL.md"]` |
 | `macroverso.constraints` | Que valores, tom ou limites afetam esta tarefa? | `["draft-first", "tom direto"]` |
 | `focus` | O que o executivo quer resolver? | "Renegociar contrato com Cliente Alfa" |
 | `intent_type` | explorar, decidir, produzir, revisar, manter, publicar, outro? | "produzir" |

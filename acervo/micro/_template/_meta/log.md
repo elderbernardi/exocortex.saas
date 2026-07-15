@@ -9,15 +9,9 @@ created_at: "{{CREATED_DATE}}T00:00:00Z"
 nature: context
 ---
 
-# {{DOMAIN_NAME}} — Log
+# Log — {{DOMAIN_NAME}}
 
-> Registro cronológico de operações neste Microverso. Append-only.
-> Format: `## [YYYY-MM-DD] action | subject`
-> Actions: create, update, ingest, archive, lint, promote
-> Rotacionar quando exceder 500 entradas: renomear para log-YYYY.md
-
-## [{{CREATED_DATE}}] create | Microverso initialized
-- Created from _template/ by exocortex-new-microverso
-- 14 diretórios inicializados (11 natures + 3 de infraestrutura)
-- Onboarding: pending
-- [2026-06-01T21:06:19-03:00] Contrato local de identidade Exocórtex sobre Hermes aplicado em `contracts/exocortex-hermes-identity.md`.
+## {{CREATED_DATE}}
+- CREATED: micro/{{DOMAIN_SLUG}}/ (perene) — microverso inicializado a partir de `_template/`.
+- CREATED: micro/{{DOMAIN_SLUG}}/_meta/ (perene) — estrutura canônica de metadados criada.
+- UPDATED: micro/{{DOMAIN_SLUG}}/contracts/exocortex-hermes-identity.md (perene) — contrato local de identidade Exocórtex sobre Hermes aplicado.

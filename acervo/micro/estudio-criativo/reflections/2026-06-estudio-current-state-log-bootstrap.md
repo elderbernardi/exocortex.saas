@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: reflection
 title: Caso Real — Bootstrap de Estado Corrente e Log
 description: Depois do saneamento estrutural, o Estúdio já tinha fundação suficiente para existir, mas ainda não comunicava o que ...
 tags: [reflection, case, receipt, operations]
 timestamp: 2026-06-14
 class: perene
+status: active
+epistemic: interpretation
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

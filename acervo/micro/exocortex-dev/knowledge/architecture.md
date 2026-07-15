@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Exocortex.IA System Architecture
 description: This document describes the core architecture of the Exocortex.IA cognitive extension system, its components, integra...
 tags: [dev, exocortex, architecture, harness]
 timestamp: 2026-06-11
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-11T00:00:00Z
 last_accessed_at: 2026-06-11T00:00:00Z
 updated: 2026-06-11

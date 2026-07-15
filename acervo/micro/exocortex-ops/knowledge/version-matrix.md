@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Matriz de versões operacionais
 description: '| Componente | Versão/estado observado | Comando/fonte | Última verificação |'
 tags: [versions, hermes, runtime]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

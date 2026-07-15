@@ -267,13 +267,16 @@ bash -c "
   export HERMES_HOME='$T04_DIR/hermes_home'
   export EXOCORTEX_HOME='$T04_DIR/exocortex'
   export ACERVO='$T04_DIR/exocortex/acervo'
+  export EXOCORTEX_MEMORY_EVAL_QUESTIONS='$T04_DIR/questions.local.yaml'
   mkdir -p \"\$HERMES_HOME\" \"\$EXOCORTEX_HOME\" \"\$ACERVO\"
+  : > \"\$EXOCORTEX_MEMORY_EVAL_QUESTIONS\"
   log()  { :; }
   warn() { :; }
   info() { :; }
   # Run step-17 body twice by sourcing the guard + cron calls directly
   run_step17() {
     CRON_FAILURES=0
+    LIVE_MEMORY_EVAL_QUESTIONS=\"\${EXOCORTEX_MEMORY_EVAL_QUESTIONS:-$REPO_ROOT/tests/memory-eval/live/questions.local.yaml}\"
     $_GUARD_FN
     # Acervo Syndic legacy guard
     if hermes cron list 2>/dev/null | grep -qF 'Acervo Syndic'; then
@@ -285,6 +288,10 @@ bash -c "
     create_cron_if_missing 'artifact-audit'         '0 4 1,15 * *' 'prompt'
     create_cron_if_missing 'publication-check'      '30 4 * * *'   'prompt'
     create_cron_if_missing 'acervo-index-reconcile' '0 5 * * *'    'prompt'
+    if [ -f \"\$LIVE_MEMORY_EVAL_QUESTIONS\" ]; then
+      create_cron_if_missing 'memory-eval-live-monthly' '0 5 1 * *' 'prompt' --workdir '$REPO_ROOT'
+    fi
+    create_cron_if_missing 'memory-learning-loops-monthly' '15 5 1 * *' 'prompt' --workdir '$REPO_ROOT'
   }
   run_step17
   run_step17
@@ -292,7 +299,7 @@ bash -c "
 
 # Check for duplicates
 dup_found=0
-for cron_name in "maintenance-weekly" "inbox-triage" "artifact-audit" "publication-check" "acervo-index-reconcile"; do
+for cron_name in "maintenance-weekly" "inbox-triage" "artifact-audit" "publication-check" "acervo-index-reconcile" "memory-eval-live-monthly" "memory-learning-loops-monthly"; do
   count=$(grep -cxF "$cron_name" "$T04_REG" 2>/dev/null || true)
   if [ "${count:-0}" -gt 1 ]; then
     dup_found=1

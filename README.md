@@ -56,9 +56,9 @@ The Exocortex is strictly forbidden from claiming that a system action (e.g., cl
 
 ---
 
-## 🧩 The Skills Catalog — 57 Skills, 7 Categories
+## 🧩 The Skills Catalog — 58 Skills, 7 Categories
 
-This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. **57 skills total**: 43 formally cataloged (each with a dogfood EX-ID test scenario) + 15 supporting/auxiliary skills. They are organized into 7 functional categories. See [FEATURES.md](FEATURES.md) for the full per-skill catalog with dependencies, usage, and test scenarios.
+This repository (`exocortex.saas`) packages the custom features and skills deployed on top of the **Hermes Agent** runtime. **58 skills total**: 44 formally cataloged (each with a dogfood EX-ID test scenario) + 15 supporting/auxiliary skills. They are organized into 7 functional categories. See [FEATURES.md](FEATURES.md) for the full per-skill catalog with dependencies, usage, and test scenarios.
 
 ```mermaid
 graph TD
@@ -110,6 +110,7 @@ graph TD
 - **`excrtx-onboard-interview` (EX-02)**: Conducts the structured 5-block interview to build the `SOUL.md` profile.
 - **`excrtx-assess-selftest` (EX-03)**: Self-test validator. Audits system state and prints a `N/5` checkpoint score.
 - **`excrtx-assess-repofit` (EX-04)**: Evaluates external repositories, identifying architectural fits and delta gaps.
+- **`excrtx-assess-interactive-audit` (EX-59)**: Runs owner-in-the-loop audits of real artifacts with personas, evidence capture, issue backlog, and GO/NO-GO verdict.
 
 ### 2. Behavior & Governance
 
@@ -326,7 +327,7 @@ The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SH
 - **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
 - **`step-01`**: Provision Hindsight database container if `EXOCORTEX_ENABLE_HINDSIGHT=1` is provided.
 - **`step-02`**: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.
-- **`step-03` to `step-05`**: Copies and installs all 57 skills (43 EX-ID cataloged + 15 supporting), bundles, and execution profiles (`default` and `manut`).
+- **`step-03` to `step-05`**: Copies and installs all 58 skills (44 EX-ID cataloged + 15 supporting), bundles, and execution profiles (`default` and `manut`).
 - **`step-06` (Hardening)**:
   - Applies a search paging patch to `google_api.py`.
   - Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
@@ -574,7 +575,7 @@ This is the General Availability release of Exocórtex.IA. Key changes from v1.0
   - Cron creation is idempotent: `create_cron_if_missing` prevents duplicate síndico entries.
   - `persist-env` now correctly persists the `CONTEXT7` toggle.
 - **4 optional services promoted to first-class GA:** Context7, Hindsight, Hermes WebUI, and Firecrawl each have dedicated provisioning scripts, health checks, smoke tests, and documentation. Tiered Firecrawl support: self-host → existing server → degrade gracefully.
-- **Catalog truth-up:** FEATURES.md, README.md, CHANGELOG.md, and INSTALL.md now reflect the canonical counts: 57 skills (43 EX-IDs + 15 supporting), 7 functional categories, and the 4 first-class optional services. Supporting Skills and Serviços Opcionais sections added to FEATURES.md.
+- **Catalog truth-up:** FEATURES.md, README.md, CHANGELOG.md, and INSTALL.md now reflect the canonical counts: 58 skills (44 EX-IDs plus supporting/auxiliary coverage), 7 functional categories, and the 4 first-class optional services. Supporting Skills and Serviços Opcionais sections added to FEATURES.md.
 
 See [CHANGELOG.md](CHANGELOG.md) for the detailed change log.
 

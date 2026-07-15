@@ -2,6 +2,7 @@
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -17,6 +18,11 @@ SERVER_SCRIPT = REPO / "scripts" / "acervo_mcp_server.py"
 class SetupAcervoMcpTest(unittest.TestCase):
     def _base_env(self, hermes_home: Path, exocortex_home: Path, acervo_root: Path) -> dict[str, str]:
         env = os.environ.copy()
+        # Neutralize any ambient BASH_ENV (e.g. a dev shell that auto-loads a
+        # ~/.env.local into every subshell). It would re-export the real
+        # HERMES_HOME over our isolated one after the step starts, silently
+        # redirecting the step's config write to the real ~/.hermes.
+        env["BASH_ENV"] = ""
         env["HERMES_HOME"] = str(hermes_home)
         env["EXOCORTEX_HOME"] = str(exocortex_home)
         env["ACERVO"] = str(acervo_root)
@@ -34,6 +40,27 @@ class SetupAcervoMcpTest(unittest.TestCase):
 
             env = self._base_env(hermes_home, exocortex_home, acervo_root)
 
+            # Reproduce the production failure deterministically: Hermes may
+            # prepend its lean runtime to PATH, where python3 exists but cannot
+            # import FastMCP.  A compatible Python remains later on PATH and the
+            # setup must discover it instead of trusting the first executable.
+            incompatible_bin = isolated / "incompatible-bin"
+            compatible_bin = isolated / "compatible-bin"
+            incompatible_bin.mkdir()
+            compatible_bin.mkdir()
+            incompatible_python = incompatible_bin / "python3"
+            incompatible_python.write_text(
+                "#!/bin/sh\necho 'incompatible python selected' >&2\nexit 97\n",
+                encoding="utf-8",
+            )
+            incompatible_python.chmod(0o755)
+            compatible_python = compatible_bin / "python3"
+            compatible_python.symlink_to(Path(sys.executable).resolve())
+            relative_compatible_bin = os.path.relpath(compatible_bin, REPO)
+            env["PATH"] = os.pathsep.join(
+                [str(incompatible_bin), relative_compatible_bin, env["PATH"]]
+            )
+
             first = subprocess.run(
                 ["bash", str(STEP)],
                 cwd=str(REPO),
@@ -49,7 +76,7 @@ class SetupAcervoMcpTest(unittest.TestCase):
             self.assertTrue(config_path.exists())
             cfg = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
             acervo_cfg = cfg["mcp_servers"]["acervo"]
-            self.assertEqual(acervo_cfg["command"], shutil.which("python3"))
+            self.assertEqual(acervo_cfg["command"], str(compatible_python))
             self.assertEqual(acervo_cfg["args"], [str(SERVER_SCRIPT)])
             self.assertEqual(acervo_cfg["env"]["ACERVO"], str(acervo_root))
             self.assertEqual(acervo_cfg["env"]["EXOCORTEX_HOME"], str(exocortex_home))
@@ -66,6 +93,15 @@ class SetupAcervoMcpTest(unittest.TestCase):
             )
             self.assertEqual(health.returncode, 0, health.stdout + "\n" + health.stderr)
 
+            # A pre-existing Acervo entry is not trusted blindly. Even though
+            # `_acervo_mcp_exists` detects it, the step must reconcile a stale
+            # runtime on every execution.
+            cfg["mcp_servers"]["acervo"]["command"] = str(isolated / "missing-python")
+            config_path.write_text(
+                yaml.safe_dump(cfg, sort_keys=False, allow_unicode=True),
+                encoding="utf-8",
+            )
+
             second = subprocess.run(
                 ["bash", str(STEP)],
                 cwd=str(REPO),
@@ -79,6 +115,7 @@ class SetupAcervoMcpTest(unittest.TestCase):
 
             cfg_after = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
             self.assertIn("acervo", cfg_after.get("mcp_servers", {}))
+            self.assertEqual(cfg_after["mcp_servers"]["acervo"]["command"], str(compatible_python))
             self.assertEqual(cfg_after["mcp_servers"]["acervo"]["args"], [str(SERVER_SCRIPT)])
 
     def test_setup_and_final_verification_wire_acervo_mcp(self):

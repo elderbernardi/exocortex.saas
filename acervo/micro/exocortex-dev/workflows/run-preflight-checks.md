@@ -1,12 +1,15 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: workflow
 title: 'SOP-002: Running Preflight Checks and Validation'
 description: This Standard Operating Procedure (SOP) describes how to execute the automated quality validation suites before commi...
 tags: []
 timestamp: 2026-06-11
 class: volátil
+status: active
 created_at: 2026-06-11T03:03:32Z
 last_accessed_at: 2026-06-11T03:03:32Z
+nature: workflows
 ---
 
 # SOP-002: Running Preflight Checks and Validation

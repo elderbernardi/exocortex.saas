@@ -76,16 +76,14 @@ def parse_personalization_profile():
         profile["limites"] = extract_section("Limites Pessoais")
     else:
         # Fallback to separate files if SOUL.md is missing
+        # (identity lives only in SOUL.md — the lowercase macro/soul.md duplicate was removed)
         val_file = ACERVO / "macro" / "valores.md"
         est_file = ACERVO / "macro" / "estilo.md"
-        s_file = ACERVO / "macro" / "soul.md"
 
         if val_file.is_file():
             profile["valores"] = val_file.read_text(encoding="utf-8").strip()
         if est_file.is_file():
             profile["tom"] = est_file.read_text(encoding="utf-8").strip()
-        if s_file.is_file():
-            profile["identidade"] = s_file.read_text(encoding="utf-8").strip()
 
     return profile
 

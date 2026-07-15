@@ -1,23 +1,19 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: ADR-020 — Hindsight como Índice Semântico do Acervo
-description: 'Define o AcervoIndex: Hindsight armazena ponteiros semânticos para arquivos
-  canônicos do Acervo, não cópias integrais.'
-tags:
-- memory
-- hindsight
-- acervo
-- semantic-index
-- retrieval
-timestamp: '2026-06-21'
+description: 'Define o AcervoIndex: Hindsight armazena ponteiros semânticos para arquivos canônicos do Acervo, não cópias integrais.'
+tags: [memory, hindsight, acervo, semantic-index, retrieval]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+created_at: 2026-06-21T16:37:51Z
 nature: decisions
 excrtx_type: decision
 confidence: high
-status: accepted
+status: active
+epistemic: decision
 canonical_from: micro/exocortex-dev/decisions/adr-020-acervo-hindsight-index.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: global
 ---
 

@@ -349,7 +349,7 @@ com "macro é especial"), ou (b) **adicionar frontmatter OKF** aos arquivos macr
 #### F-060 RESOLVIDO — macro NÃO deve ter frontmatter (carga verbatim) · decisão (a)
 **Pergunta do executivo:** "o frontmatter de macro entra como contexto literal? se sim, não deve ter."
 **Resposta confirmada:** SIM. A rotina de boot do `excrtx-memory-manager` carrega `macro/*` **verbatim**
-(`cat "$ACERVO/macro/soul.md"` etc.), sem stripping de frontmatter → qualquer frontmatter vira ruído literal
+(`cat "$ACERVO/macro/SOUL.md"` etc. — à época `soul.md` minúsculo, unificado em `SOUL.md` em 2026-07), sem stripping de frontmatter → qualquer frontmatter vira ruído literal
 na constituição/identidade do agente. **Evidência de design:** `migrate_frontmatter.py` já tem
 `EXCLUDED_DIRS = {macro, raw, _archive, _inbox, _artifacts, _template, .quarantine}` — o time **intencionalmente**
 isenta macro. **Ação:** adicionado `macro` aos excludes do `validate_frontmatter.py` (paridade com a migração).

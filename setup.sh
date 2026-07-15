@@ -243,6 +243,21 @@ source "$SETUP_DIR/setup/step-01-hindsight.sh"
 source "$SETUP_DIR/setup/step-02-create-structure.sh"
 source "$SETUP_DIR/setup/step-03-install-skills.sh"
 source "$SETUP_DIR/setup/step-04-install-acervo.sh"
+
+# Deploy the semantic control plane into the Acervo so the skills' control-plane ladder
+# resolves `$ACERVO/global/tools/acervoctl.py` (rung 1) in the live runtime — the agent
+# never runs from the installer checkout, so a cwd-relative `scripts/acervoctl.py` fails.
+info "Deploying semantic control plane into Acervo global/tools..."
+if [ -d "$ACERVO/global/tools" ]; then
+  for _ctl in acervoctl.py acervo_semantic_core.py exocortex_runtime_guard.py \
+              validate_frontmatter.py validate_log.py; do
+    cp "$SETUP_DIR/scripts/$_ctl" "$ACERVO/global/tools/$_ctl" 2>&1 \
+      || warn "control plane deploy: $_ctl failed"
+  done
+else
+  warn "Acervo global/tools ausente — control plane não deployado"
+fi
+
 source "$SETUP_DIR/setup/step-05-install-profiles.sh"
 
 # Compile behavioral rules into SOUL_SEED.md

@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Estado Inicial — Exocortex Ops
 description: 'Este microverso nasce para cobrir uma lacuna do Acervo: faltava um domínio próprio para setup, operação e manutenção ...'
 tags: [ops, current-state, setup]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05
@@ -23,10 +26,10 @@ Este microverso nasce para cobrir uma lacuna do Acervo: faltava um domínio pró
 
 - O Exocórtex roda sobre Hermes Agent.
 - O perfil ativo reportado na sessão é `default`.
-- O acervo local existe em `/home/elder/.hermes/acervo`.
+- O acervo local resolve para `/home/ubuntu/exocortex/acervo`, com alias compatível em `/home/ubuntu/.hermes/acervo`.
 - Antes da criação deste microverso, havia apenas um microverso operacional: `estudio-criativo`.
 - Hindsight estava instalado como plugin, mas não ativo como provider externo de memória.
-- DocBrain funcional foi encontrado em `/home/elder/exocortex/tools/docbrain`; havia drift em relação ao path mencionado na skill.
+- DocBrain funcional está em `/home/ubuntu/exocortex/tools/docbrain`, com compatibilidade em `/home/ubuntu/exocortex/docBrain`.
 - NotebookLM estava disponível como MCP server.
 
 ## Limite

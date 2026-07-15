@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: prompt
 title: Prompt — Ops Healthcheck
 description: Execute um diagnóstico operacional do Exocórtex. Verifique SOUL/Macroverso, Acervo, microversos, skills essenciais, t...
 tags: [prompt, healthcheck, ops]
 timestamp: 2026-06-05
 class: volátil
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: Decisão — Criar Estúdio Criativo
 description: Criar o microverso `estudio-criativo` como domínio transversal do Exocórtex.
 tags: [decision, creation]
 timestamp: 2026-06-01
 class: perene
+status: active
+epistemic: decision
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

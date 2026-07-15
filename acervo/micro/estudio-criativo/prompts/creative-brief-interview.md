@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: prompt
 title: Prompt — Entrevista de Briefing Criativo
 description: Use quando a demanda criativa ainda não tem contexto suficiente.
 tags: [prompt, briefing]
 timestamp: 2026-06-01
 class: volátil
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

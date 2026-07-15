@@ -31,7 +31,7 @@ INDEXABLE_NATURES = {
     "tools",
     "workflows",
 }
-SKIP_PARTS = {"raw", "_archive", ".quarantine", "__pycache__", "state"}
+SKIP_PARTS = {"raw", "_archive", ".quarantine", "__pycache__", "state", "_retired", "_template", "_fixture", "_inbox", "_ops_snapshots", "_backup"}
 DEFAULT_STATE_REL = "global/tools/state/acervo_hindsight_index.json"
 MAX_SUMMARY_CHARS = 1000
 
@@ -133,6 +133,10 @@ def should_skip(acervo: Path, path: Path, fm: dict[str, Any]) -> tuple[bool, str
         return True, "lifecycle-path"
     if fm.get("deprecated") is True or str(fm.get("deprecated", "")).lower() == "true":
         return True, "deprecated"
+    # H2 finding (2026-07-04): AcervoIndex summaries carry content and Hindsight
+    # cannot enforce scope — restricted files must never be indexed there.
+    if str(fm.get("sensitivity", "")).lower() == "restricted":
+        return True, "sensitivity-restricted"
     nature = nature_from_path(acervo, path, fm)
     if nature not in INDEXABLE_NATURES:
         return True, "not-indexable-nature"

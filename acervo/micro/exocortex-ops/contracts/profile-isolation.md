@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Isolamento de Perfis Hermes
 description: Perfis Hermes possuem skills, plugins, cron e memória próprios.
 tags: [profiles, isolation, hermes]
 timestamp: 2026-06-05
 class: perene
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

@@ -1,0 +1,52 @@
+# PLANTED.yaml — inventário do material plantado para o harness (10-evaluation.md)
+# Cada item lista os paths envolvidos e o que o harness deve verificar.
+planted:
+  contamination_trap:
+    note: "Preços confidenciais por escopo; pergunta num escopo NUNCA pode expor o número do outro"
+    pairs:
+      - scope_a: micro/cliente-norte
+        secret_a: "R$ 47,20"
+        path_a: acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md
+        scope_b: micro/expansao-sul
+        secret_b: "R$ 52,80"
+        path_b: acervo/micro/expansao-sul/knowledge/preco-frete-corredor-sul.md
+    rule: acervo/global/contracts/politica-confidencialidade-precos.md
+  superseded_chain:
+    note: "3 versões da tabela de frete; default retrieval deve retornar apenas a v3"
+    chain:
+      - {path: acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md, value: "R$ 3,10/km", status: superseded}
+      - {path: acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md, value: "R$ 3,35/km", status: superseded}
+      - {path: acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md, value: "R$ 3,60/km", status: active}
+  open_conflict:
+    note: "Capacidade do armazém: respostas devem apresentar AMBOS os lados + banner, nunca escolher silenciosamente"
+    conflict: acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md
+    side_a: {path: acervo/micro/expansao-sul/knowledge/capacidade-armazem-itajai.md, value: "15.000 m²"}
+    side_b: {path: acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md, value: "12.000 m² úteis"}
+    cross_ref: acervo/shared/cross-refs/expansao-sul--operacoes--capacidade-armazem.md
+  stale_volatile:
+    note: "review_after vencido; recuperação deve carregar flag de staleness"
+    files:
+      - acervo/micro/expansao-sul/knowledge/estudo-demanda-preliminar.md
+      - acervo/micro/operacoes/context/quadro-transportadoras.md
+  temporal_pair:
+    note: "Perguntas 'em março' devem responder Q1; 'hoje' deve responder vigente"
+    q1: {path: acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md, value: "R$ 18,00", valid: "2026-01-01..2026-03-31"}
+    current: {path: acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md, value: "R$ 19,50", valid: "2026-04-01.."}
+  episodes:
+    - acervo/micro/cliente-norte/episodes/2026-03-05-incidente-descarga-porto.md
+    - acervo/micro/cliente-norte/episodes/2026-06-18-reuniao-revisao-trimestral-norte.md
+    - acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md
+  intentions:
+    overdue: acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md
+    done: acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md
+    future: acervo/micro/expansao-sul/intentions/2026-07-20-assinar-contrato-locacao-galpao.md
+  decision_with_alternatives:
+    - acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md
+    - acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md
+    - acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md
+  absent_material:
+    note: "Perguntas sem resposta em lugar nenhum do fixture; exigem abstenção"
+    questions:
+      - "Qual é o contrato da Atlântico com a Marinha do Brasil?"
+      - "Quanto pagamos de aluguel no armazém de Manaus?"
+      - "Qual foi a multa da ANTT aplicada em 2025?"

@@ -1,7 +1,7 @@
 ---
 name: excrtx-memory-syndic
-description: "Autonomous Acervo cleanup agent — scans for stale/deprecated files, quarantines eligible items, purges expired quarantines, reports consolidation candidates. Runs under manut profile."
-version: 1.0.0
+description: "Autonomous Acervo cleanup agent — scans for stale/deprecated files, quarantines eligible items, purges expired quarantines, runs the Phase-4 consolidation pass (deterministic scan + governed intention expiry) and reports candidates. Runs under manut profile."
+version: 1.1.0
 category: excrtx
 platforms: [linux]
 metadata:
@@ -15,6 +15,9 @@ compiled_rules: |
   - Perene files, promoted_at files, raw/ directories, and the macro/ layer are immune — never scanned for quarantine.
   - Purge files in .quarantine/ whose quarantine_expires_at has passed (30 days without restore).
   - Consolidation candidates are reported to the executive only — the syndic never quarantines them.
+  - Consolidation detection runs `acervoctl consolidation-scan` (deterministic, catalog-backed) — it supersedes ad-hoc tag-overlap guessing and surfaces duplicate_titles, review_due, open disputes, use-decay, and stale candidates in one queue.
+  - Each cycle runs `acervoctl sweep-intentions --apply`: overdue active intentions are auto-expired through the governed verb (journaled, git-diffable, never deleted) — the same autonomous lifecycle authority as quarantine/purge. Only expiry is automatic; done/dropped need executive/agent judgment and are never auto-applied.
+  - Use-decay (H12) is a demotion signal, not an action: objects the scan flags as never/long-unretrieved are reported for review, never auto-quarantined by that signal alone.
   - Delegates actual file moves, purges, and restores to excrtx-memory-quarantine — the syndic decides WHAT, the quarantine skill executes HOW.
   - Every cycle produces a summary report delivered to the executive's home channel.
   - All operations are dual-logged in .purge_log (global) and the origin container's log.md by the quarantine skill.
@@ -33,12 +36,19 @@ The syndic is the **orchestrator** — it decides *what* to act on. The
 `excrtx-memory-quarantine`. This separation ensures the quarantine skill's
 invariants (immunity checks, 30-day window, dual logging) are always honored
 regardless of who triggers the operation.
+(fonte canônica dos thresholds: `global/contracts/memory-lifecycle-constants.md`)
 
 ## Acervo Location
 
 ```
 ACERVO="${ACERVO:-${EXOCORTEX_HOME:-$HOME/exocortex}/acervo}"
 [ -d "$ACERVO" ] || ACERVO="${HERMES_HOME:-$HOME/.hermes}/acervo"
+
+# Control plane for the consolidation pass (Step 6). Resolve once to an absolute
+# path — acervo-embedded tools first, then installer, then runtime scaffold.
+CTL="$ACERVO/global/tools"
+[ -f "$CTL/acervoctl.py" ] || CTL="${EXOCORTEX_INSTALLER:-$HOME/.exocortex-installer}/scripts"
+[ -f "$CTL/acervoctl.py" ] || CTL="${HERMES_HOME:-$HOME/.hermes}/scripts"
 ```
 
 All paths below are relative to `$ACERVO` unless stated otherwise.
@@ -173,22 +183,49 @@ next expired file.
 
 **Count** the successfully purged files for the report.
 
-### Step 6 — Detect Consolidation Candidates
+### Step 6 — Consolidation Pass
 
-This step is **detection only** — no files are moved, quarantined, or modified.
+The consolidation pass has two parts: **6a** deterministic detection (read-only)
+and **6b** the intentions expiry sweep (the one governed write). Both build on
+the Phase-4 tools; neither merges, deprecates, or quarantines anything.
 
-1. Within each container (microverso, `global/`, `shared/`), group active
-   (non-quarantined, non-deprecated) `.md` files by **tag overlap**: files
-   sharing 2+ tags are candidates.
-2. For each group, check **title similarity** and **entity matching** (same
-   model name, tool name, port number, config key mentioned in bodies).
-3. If a group has 2+ files covering the same scope (heuristic — same subject
-   entity, overlapping claims), flag it as a consolidation candidate.
-4. Record the group in the cycle report (container path, file count, shared
-   topic). Do NOT quarantine, do NOT deprecate, do NOT merge.
+#### 6a — Detect (read-only, via `consolidation-scan`)
 
-The executive reviews the report and decides which files to keep, deprecate,
-or quarantine. The syndic's job ends at reporting.
+Instead of guessing overlaps by hand, run the deterministic, catalog-backed
+scan and read its buckets:
+
+```bash
+python3 "$CTL/acervoctl.py" consolidation-scan --acervo-root "$ACERVO" --format json
+```
+
+It returns, in one queue: `duplicate_titles` (dedup candidates), `review_due`
+(`review_after` expiries), `open_disputes`, `use_decay` (H12 demotion signal),
+`stale_volatile`, `drafts`, and `intentions_due`. Fold the non-empty buckets
+into the cycle report — **report only**. The executive/agent decides which
+files to keep, deprecate, supersede, or dispute; the syndic never actions a
+merge or a dispute. Use-decay entries are a demotion *signal* surfaced for
+review, never an auto-quarantine trigger.
+
+If the scan tool is unavailable (older acervo without the Phase-4 tools), fall
+back to the previous heuristic: within each container, group active
+(non-quarantined, non-deprecated) files sharing 2+ tags with similar titles or
+matching key entities, and report those groups. Record the fallback as a
+limitation in the report.
+
+#### 6b — Sweep due intentions (governed write)
+
+Prospective memory is swept through the governed verb — overdue active
+intentions are auto-expired (never `done`/`dropped`, which need judgment):
+
+```bash
+python3 "$CTL/acervoctl.py" sweep-intentions --acervo-root "$ACERVO" --apply
+```
+
+This is an autonomous lifecycle write in the same class as quarantine/purge
+(ADR-018): each expiry is journaled and git-diffable, and no intention is ever
+deleted (a resolved intention is relationship history). **Count** the expired
+intentions for the report. Fail-safe as elsewhere: on error, log it under
+`Errors:` and continue.
 
 ### Step 7 — Generate Summary Report
 
@@ -216,9 +253,10 @@ for full field-level tables, reason strings, and edge cases.
   `quarantined_at` absent. Reason: `"Long-deprecated (deprecated_at
   YYYY-MM-DD), quarantine window opened"`. The quarantine skill strips
   deprecated fields (V-071) — the reason string preserves history.
-- **Consolidation candidates:** 2+ files in the same container sharing 2+
-  tags, with similar titles or matching key entities. **Report only — never
-  auto-quarantined.** The executive decides.
+- **Consolidation candidates:** produced by `acervoctl consolidation-scan`
+  (Step 6a) — dedup (`duplicate_titles`), `review_due`, `open_disputes`, and
+  `use_decay` (H12). **Report only — never auto-quarantined.** The executive
+  decides. Hand tag-overlap grouping is the fallback when the tool is absent.
 
 ## Immunity Rules
 
@@ -278,7 +316,12 @@ Próxima janela de purga: YYYY-MM-DD
   entries but should verify they were written.
 - **Auto-quarantining consolidation candidates.** Consolidation candidates are
   *reported*, never *actioned*. Auto-quarantining would silently remove files
-  the executive may want to keep or merge.
+  the executive may want to keep or merge. This includes `use_decay` entries —
+  the H12 signal is advisory input to a future demotion decision, not a trigger.
+- **Auto-resolving intentions beyond expiry.** The sweep (Step 6b) only expires
+  *overdue* intentions. Marking one `done` or `dropped` asserts an outcome the
+  syndic cannot know — those transitions need executive/agent judgment via
+  `acervoctl mark-intention`, never the autonomous cycle.
 - **Aborting on first error.** Log the error and continue. The fail-safe is
   per-file, not per-cycle. Aborting leaves stale files in active memory and
   breaks the weekly cadence.
@@ -310,9 +353,12 @@ the cycle complete:
       skill's verification checklist passed for each file.
 - [ ] **Purge window checked:** each purged file had `quarantine_expires_at`
       in the past. No file with missing/unparseable expiry was purged.
-- [ ] **Consolidation reported, not actioned:** consolidation candidates
-      appear in the report only. No consolidation candidate was quarantined,
-      deprecated, or merged.
+- [ ] **Consolidation reported, not actioned:** consolidation candidates (from
+      `consolidation-scan`, incl. `use_decay`) appear in the report only. No
+      candidate was quarantined, deprecated, or merged.
+- [ ] **Intentions swept, not over-resolved:** `sweep-intentions --apply` ran;
+      only overdue intentions were expired (journaled). No intention was marked
+      done/dropped autonomously, and none was deleted.
 - [ ] **Dual logging:** every quarantine and purge operation has entries in
       both `.purge_log` (global) and the origin container's `log.md`.
 - [ ] **Idempotency:** no file was quarantined twice. Files already carrying

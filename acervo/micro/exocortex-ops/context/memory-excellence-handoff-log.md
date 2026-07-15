@@ -1,21 +1,19 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Handoff Log — Reforma de Memória do Exocórtex
-description: Registro entre tarefas para agentes menores executarem a reforma de memória
-  sem perda de contexto.
-tags:
-- memory
-- handoff
-- agents
-- progress
-timestamp: '2026-06-21'
+description: Registro entre tarefas para agentes menores executarem a reforma de memória sem perda de contexto.
+tags: [memory, handoff, agents, progress]
+timestamp: 2026-06-21
 class: perene
-created_at: '2026-06-21T16:37:51Z'
+status: active
+epistemic: fact
+created_at: 2026-06-21T16:37:51Z
 nature: context
 excrtx_type: context
 confidence: high
 canonical_from: micro/exocortex-dev/context/memory-excellence-handoff-log.md
-promoted_at: '2026-06-21T21:50:00Z'
+promoted_at: 2026-06-21T21:50:00Z
 scope_slug: exocortex-ops
 absorbed_from: micro/exocortex-dev/context/memory-excellence-handoff-log.md
 ---

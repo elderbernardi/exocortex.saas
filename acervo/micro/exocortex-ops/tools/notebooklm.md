@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: tool
 title: NotebookLM MCP
 description: O MCP server `notebooklm` aparece configurado com tools habilitadas.
 tags: [notebooklm, mcp, research]
 timestamp: 2026-06-05
 class: volátil
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

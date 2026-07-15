@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: persona
 title: Persona — Art Director
 description: Cuida de direção visual, composição, identidade, hierarquia, ritmo, contraste e qualidade estética.
 tags: [persona, art-director]
 timestamp: 2026-06-01
 class: perene
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

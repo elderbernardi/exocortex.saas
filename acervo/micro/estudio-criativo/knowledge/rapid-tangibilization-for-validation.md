@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Tangibilização Rápida para Validação
 description: Transformar uma hipótese ainda abstrata em algo que outra pessoa consiga ver, ler, sentir ou reagir.
 tags: [knowledge, validation, prototype, tangibilization]
 timestamp: 2026-06-14
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

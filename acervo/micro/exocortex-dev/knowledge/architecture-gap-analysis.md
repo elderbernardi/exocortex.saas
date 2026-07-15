@@ -1,16 +1,20 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Exocórtex Architecture Gap Analysis vs. Competitors
 description: Exocórtex's core differentiator is its **cognitive architecture** — governing *how* an AI agent thinks, classifies, a...
 tags: []
 timestamp: 2026-06-18
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-18T00:00:00Z
 last_accessed_at: 2026-06-18T00:00:00Z
 updated: 2026-06-18
 category: knowledge
 source: Competitive analysis based on Mem0, Zep AI, Letta/MemGPT, MemOS, Obsidian+AI, Claude Projects, Notion AI, CrewAI
 created: 2026-06-18
+nature: knowledge
 ---
 
 # Exocórtex Architecture Gap Analysis vs. Competitors

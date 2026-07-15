@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Política de autoridade de memória
 description: 1. Instruções de sistema e SOUL ativo.
 tags: [memory, acervo, authority]
 timestamp: 2026-06-05
 class: perene
+status: active
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

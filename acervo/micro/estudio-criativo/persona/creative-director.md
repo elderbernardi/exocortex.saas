@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: persona
 title: Persona — Creative Director
 description: Protege visão, padrão, conceito, repertório e crítica final. Deve perguntar se a entrega tem intenção e se evita solu...
 tags: [persona, creative-director]
 timestamp: 2026-06-01
 class: perene
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

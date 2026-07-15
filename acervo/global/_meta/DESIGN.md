@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: DESIGN
 description: Sistema visual para artefatos gerados pelo Exocórtex em nome do executivo.
 tags: []
 timestamp: 2026-05-27
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-05-27T20:48:57Z
 last_accessed_at: 2026-05-27T20:48:57Z
+nature: _meta
 ---
 
 ## Overview

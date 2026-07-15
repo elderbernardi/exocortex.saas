@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: 'ADR: DocBrain não é público — referências em superfícies públicas são vazamento'
 description: '**Data:** 2026-06-17'
 tags: []
 timestamp: 2026-06-19
 class: perene
+status: active
+epistemic: decision
 created_at: 2026-06-19T22:34:48Z
 last_accessed_at: 2026-06-19T22:34:48Z
+nature: decisions
 ---
 
 # ADR: DocBrain não é público — referências em superfícies públicas são vazamento

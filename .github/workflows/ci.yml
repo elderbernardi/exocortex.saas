@@ -97,7 +97,37 @@ jobs:
         run: python3 scripts/dogfood_validate_catalog.py
 
   # ---------------------------------------------------------------------------
-  # Job 3: bash-tests
+  # Job 3: memory-eval-gate
+  # Deterministic, offline regression gate for the memory-v2 retrieval quality
+  # (docs/plans/2026-07-03_memory-v2-spec/10-evaluation.md §4). Runs the CATALOG
+  # strategy only — no Hindsight container, no LLM — over the 25 golden questions
+  # and compares recall/precision/abstention/contamination to the committed
+  # tests/memory-eval/baseline.json. Any metric dropping > 10 points (or any
+  # contamination at all) fails the job. Regenerate the baseline deliberately
+  # with `python3 tests/memory-eval/run_eval.py --update-baseline`.
+  # ---------------------------------------------------------------------------
+  memory-eval-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Run memory-eval regression gate (catalog-only, offline)
+        run: python3 tests/memory-eval/run_eval.py --gate
+
+  # ---------------------------------------------------------------------------
+  # Job 4: bash-tests
   # Run each standalone bash test; any failure fails the job.
   # ---------------------------------------------------------------------------
   bash-tests:

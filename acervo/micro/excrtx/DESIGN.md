@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: DESIGN
 description: Identidade visual canônica do Exocórtex.IA — derivada da logo principal, refinada manualmente.
 tags: []
 timestamp: 2026-06-15
 class: perene
+status: active
+epistemic: fact
 created_at: 2026-06-15T20:35:46Z
 last_accessed_at: 2026-06-15T20:35:46Z
 version: alpha

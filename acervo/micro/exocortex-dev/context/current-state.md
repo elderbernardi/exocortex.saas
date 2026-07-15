@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Cenário Atual — Exocórtex Dev
 description: O microverso de desenvolvimento está totalmente ativo. A base de conhecimento de desenvolvimento do Exocórtex foi cri...
 tags: [dev, exocortex, context]
 timestamp: 2026-06-08
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-08T00:00:00Z
 last_accessed_at: 2026-06-08T00:00:00Z
 updated: 2026-06-11

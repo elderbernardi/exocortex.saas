@@ -1,10 +1,12 @@
 ---
-type: artifact
+schema: acervo/v0.2
+type: skill
 title: Skill — Hipótese em Artefato de Validação
 description: Quando Produto ou outro microverso já tem hipótese suficiente e precisa que o Estúdio a torne tangível para leitura e...
 tags: [skill, validation, prototype]
 timestamp: 2026-06-14
 class: volátil
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

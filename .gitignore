@@ -27,4 +27,17 @@ nohup.out
 
 
 # AcervoIndex runtime manifest (mutable state, not seed)
-acervo/global/tools/state/
+# Keep the dir tracked (.gitkeep/README.md); ignore only the mutable manifests
+acervo/global/tools/state/*.json
+# Derived catalog (Plane 2, rebuildable via `acervoctl reindex`)
+acervo/global/tools/state/catalog.sqlite*
+# Retrieval journal (Plane 2 observability, H12 use-decay substrate — append-only, disposable)
+acervo/global/tools/state/*.jsonl
+
+# memory-eval scratch: the harness rebuilds a fixture copy + catalog.sqlite here
+# on every run (deterministic, disposable). Never commit derived eval state.
+# (Dated report/h2-*.md|json files stay committable — they ARE the metric history.)
+tests/memory-eval/report/.workdir/
+
+# Private live-eval question set for the real acervo
+tests/memory-eval/live/questions.local.yaml

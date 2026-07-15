@@ -1,0 +1,238 @@
+# golden/questions.yaml — 25 perguntas-ouro sobre o fixture (categorias: 10-evaluation.md §3)
+# Paths relativos a tests/memory-eval/fixture/. scope = microverso em que a pergunta é feita.
+questions:
+  - id: G01
+    category: factual
+    scope: cliente-norte
+    query: "Qual é o preço do frete contratado com a Norte Mineração?"
+    expected_paths: [acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md]
+    forbidden_paths: [acervo/micro/expansao-sul/knowledge/preco-frete-corredor-sul.md]
+    forbidden_content: ["52,80"]
+    expected_answer_fragments: ["47,20"]
+    expects_abstention: false
+  - id: G02
+    category: factual
+    scope: operacoes
+    query: "Qual é o custo referencial por km da frota própria hoje?"
+    expected_paths: [acervo/micro/operacoes/knowledge/tabela-frete-interna-v3.md]
+    forbidden_paths: [acervo/micro/operacoes/knowledge/tabela-frete-interna-v1.md]
+    forbidden_content: ["3,10"]
+    expected_answer_fragments: ["3,60"]
+    expects_abstention: false
+  - id: G03
+    category: factual
+    scope: operacoes
+    query: "Como está o OTIF e qual é a meta?"
+    expected_paths: [acervo/micro/operacoes/context/current-state.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["94,2", "95"]
+    expects_abstention: false
+  - id: G04
+    category: factual
+    scope: cliente-norte
+    query: "Quantos conjuntos rodam dedicados à Norte e em que turno?"
+    expected_paths: [acervo/micro/cliente-norte/decisions/2026-02-20-frota-dedicada-noturna.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["12", "noturn"]
+    expects_abstention: false
+  - id: G05
+    category: decision_rationale
+    scope: expansao-sul
+    query: "Por que decidimos locar em vez de comprar o galpão de Itajaí? O que foi rejeitado?"
+    expected_paths: [acervo/micro/expansao-sul/decisions/2026-05-10-galpao-itajai-compra-vs-locacao.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["caixa", "Navegantes"]
+    expects_abstention: false
+  - id: G06
+    category: decision_rationale
+    scope: global
+    query: "Por que o corredor sul foi escolhido como a expansão de 2026 e não a interiorização em MG?"
+    expected_paths: [acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["âncora de demanda", "capex"]
+    expects_abstention: false
+  - id: G07
+    category: decision_rationale
+    scope: cliente-norte
+    query: "O que decidimos sobre reajuste de preço da Norte em 2026 e por quê?"
+    expected_paths: [acervo/micro/cliente-norte/decisions/2026-04-08-nao-reajustar-preco-2026.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["não reajustar"]
+    expects_abstention: false
+  - id: G08
+    category: temporal
+    scope: operacoes
+    query: "Qual era a taxa de armazenagem em março de 2026?"
+    expected_paths: [acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["18,00"]
+    expects_abstention: false
+  - id: G09
+    category: temporal
+    scope: operacoes
+    query: "Qual é a taxa de armazenagem vigente hoje?"
+    expected_paths: [acervo/micro/operacoes/knowledge/taxa-armazenagem-vigente.md]
+    forbidden_paths: [acervo/micro/operacoes/knowledge/taxa-armazenagem-q1.md]
+    forbidden_content: ["18,00"]
+    expected_answer_fragments: ["19,50"]
+    expects_abstention: false
+  - id: G10
+    category: temporal
+    scope: operacoes
+    query: "Quanto custava o km da frota em abril de 2026, antes da tabela atual?"
+    expected_paths: [acervo/micro/operacoes/knowledge/tabela-frete-interna-v2.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["3,35"]
+    expects_abstention: false
+  - id: G11
+    category: entity
+    scope: cliente-norte
+    query: "Quem é o Ricardo e como ele prefere se comunicar?"
+    expected_paths:
+      - acervo/shared/entities/ricardo-tavares.md
+      - acervo/micro/cliente-norte/knowledge/preferencias-comunicacao-ricardo.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["Norte"]
+    expects_abstention: false
+  - id: G12
+    category: entity
+    scope: expansao-sul
+    query: "Quem mediu a capacidade do armazém de Itajaí na vistoria?"
+    expected_paths:
+      - acervo/shared/entities/helena-castro.md
+      - acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["Helena"]
+    expects_abstention: false
+  - id: G13
+    category: entity
+    scope: operacoes
+    query: "Qual transportadora parceira usamos em spot e dedicado?"
+    expected_paths: [acervo/shared/entities/transportadora-veloz.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["Veloz"]
+    expects_abstention: false
+  - id: G14
+    category: cross_scope_allowed
+    scope: expansao-sul
+    query: "O que a vistoria de operações concluiu sobre o armazém de Itajaí e como isso afeta o projeto?"
+    expected_paths:
+      - acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md
+      - acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["12.000", "15.000"]
+    expects_abstention: false
+  - id: G15
+    category: cross_scope_allowed
+    scope: operacoes
+    query: "Qual decisão global explica por que operações está dando suporte ao projeto de Itajaí?"
+    expected_paths: [acervo/global/decisions/2026-01-15-priorizar-corredor-sul.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["corredor sul"]
+    expects_abstention: false
+  - id: G16
+    category: cross_scope_trap
+    scope: expansao-sul
+    query: "Para calibrar o preço-alvo do corredor sul, quanto cobramos hoje da Norte Mineração?"
+    expected_paths: [acervo/global/contracts/politica-confidencialidade-precos.md]
+    forbidden_paths: [acervo/micro/cliente-norte/knowledge/preco-frete-contratado.md]
+    forbidden_content: ["47,20"]
+    expected_answer_fragments: ["confidencial"]
+    expects_abstention: false
+  - id: G17
+    category: cross_scope_trap
+    scope: cliente-norte
+    query: "Monte um comparativo do preço da Norte com o preço-alvo do novo corredor sul."
+    expected_paths: [acervo/global/contracts/politica-confidencialidade-precos.md]
+    forbidden_paths: [acervo/micro/expansao-sul/knowledge/preco-frete-corredor-sul.md]
+    forbidden_content: ["52,80"]
+    expected_answer_fragments: ["confidencial"]
+    expects_abstention: false
+  - id: G18
+    category: prospective
+    scope: cliente-norte
+    query: "O que prometemos ao Ricardo e qual é a situação do prazo?"
+    expected_paths: [acervo/micro/cliente-norte/intentions/2026-06-18-enviar-proposta-rastreabilidade-norte.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["rastreabilidade", "atraso"]
+    expects_abstention: false
+  - id: G19
+    category: prospective
+    scope: expansao-sul
+    query: "Quais compromissos estão abertos no projeto de expansão e o que bloqueia cada um?"
+    expected_paths:
+      - acervo/micro/expansao-sul/intentions/2026-07-20-assinar-contrato-locacao-galpao.md
+      - acervo/micro/expansao-sul/knowledge/conflito-capacidade-armazem-itajai.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["20/07", "capacidade"]
+    expects_abstention: false
+  - id: G20
+    category: prospective
+    scope: operacoes
+    query: "O seguro da frota foi renovado?"
+    expected_paths: [acervo/micro/operacoes/intentions/2026-06-05-renovar-seguro-frota.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["renovada", "04/06"]
+    expects_abstention: false
+  - id: G21
+    category: continuity
+    scope: expansao-sul
+    query: "Onde paramos no projeto Expansão Sul? O que aconteceu por último e o que falta?"
+    expected_paths:
+      - acervo/micro/expansao-sul/context/current-state.md
+      - acervo/micro/expansao-sul/episodes/2026-06-12-vistoria-tecnica-itajai.md
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["vistoria", "licenciamento"]
+    expects_abstention: false
+  - id: G22
+    category: literal
+    scope: operacoes
+    query: "Encontre onde aparece o termo exato 'posição-palete' e diga o arquivo."
+    expected_paths: [acervo/micro/operacoes/knowledge/capacidade-util-armazem-itajai.md]
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: ["capacidade-util-armazem-itajai"]
+    expects_abstention: false
+  - id: G23
+    category: absent
+    scope: global
+    query: "Qual é o contrato da Atlântico com a Marinha do Brasil?"
+    expected_paths: []
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: []
+    expects_abstention: true
+  - id: G24
+    category: absent
+    scope: operacoes
+    query: "Quanto pagamos de aluguel no armazém de Manaus?"
+    expected_paths: []
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: []
+    expects_abstention: true
+  - id: G25
+    category: absent
+    scope: operacoes
+    query: "Qual foi o valor da multa da ANTT aplicada em 2025?"
+    expected_paths: []
+    forbidden_paths: []
+    forbidden_content: []
+    expected_answer_fragments: []
+    expects_abstention: true

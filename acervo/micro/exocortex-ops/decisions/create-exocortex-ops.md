@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: Criar Microverso Exocortex Ops
 description: O acervo possuía estrutura macro/global/shared e o microverso `estudio-criativo`, mas não havia um domínio próprio pa...
 tags: [microverso, ops, setup, canonical]
 timestamp: 2026-06-05
 class: perene
+status: active
+epistemic: decision
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-05T00:00:00Z
 updated: 2026-06-05

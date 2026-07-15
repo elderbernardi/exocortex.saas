@@ -1,12 +1,16 @@
 ---
+schema: acervo/v0.2
 type: context
 title: Cenário Atual — Comercial
 description: Aguardando coleta de estado com o executivo.
 tags: []
 timestamp: 2026-06-09
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-09T02:45:00Z
 last_accessed_at: 2026-06-09T02:45:00Z
+nature: context
 ---
 
 # Cenário Atual — Comercial

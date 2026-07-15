@@ -1,10 +1,12 @@
 ---
-type: context
+schema: acervo/v0.2
+type: contract
 title: Estrutura Canônica de Diretórios de Microverso
 description: Estrutura canônica de diretórios de microverso — 11 natures + 3 infra = 14 diretórios. Contrato normativo.
 tags: [exocortex, microverso, directory-structure, canonical, natures, excrtx-v1]
 timestamp: 2026-06-21
 class: perene
+status: active
 created_at: 2026-06-21T00:00:00Z
 nature: contracts
 excrtx_type: rule
@@ -21,10 +23,20 @@ sources: [issue-89, issue-87, issue-88, MV-PACK-2]
 
 Todo microverso no Acervo Cognitivo segue **uma única** estrutura de diretórios.
 Não há variação por tipo (`client`, `project`, `domain`, `role`), maturidade ou
-tamanho. A estrutura é a mesma para o `_template/` e para todos os microversos
-instanciados.
+tamanho. A estrutura canônica (`_template/`) enumera **todos** os diretórios
+possíveis; ela é o *vocabulário*, não uma exigência de materialização.
 
-## Árvore canônica (14 diretórios)
+> **Criação preguiçosa (ADR-023 / P9, atualizado 2026-07-05).** Um microverso
+> novo materializa apenas o **core-6** — `_meta/`, `context/`, `knowledge/`,
+> `decisions/`, `episodes/`, `raw/`. Os demais diretórios de nature são criados
+> **na primeira escrita** que precisa deles (via `excrtx-memory-manager` /
+> `acervoctl new-object`). Diretórios vazios pré-scaffoldados são ruído
+> (viés de "gaveta de tranqueiras") e ficam proibidos. O `_template/` continua
+> listando todos os diretórios como fonte dos `_seed.md` usados na criação
+> preguiçosa. A v0.2 acrescenta as natures `episodes/`, `entities/` e
+> `intentions/` ao vocabulário abaixo.
+
+## Árvore canônica (vocabulário — materialização preguiçosa)
 
 ```
 {slug}/

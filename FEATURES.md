@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais. **57 skills no total** (43 EX-IDs formalmente catalogados, cada um com cenário de teste dogfood, + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
+Organizadas em 7 categorias funcionais. **58 skills no total** (44 EX-IDs formalmente catalogados, cada um com cenário de teste dogfood, + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
 
 ---
 
@@ -136,7 +136,7 @@ Organizadas em 7 categorias funcionais. **57 skills no total** (43 EX-IDs formal
 | Campo                      | Detalhe                                                                                                                                                                                                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Funcionalidade**         | Fluxo de boas-vindas para novos usuários. Detecta acervo vazio e exibe `WELCOME.md`. Inicia entrevista estruturada em 6 blocos (Identidade, Comunicação, Domínios, Contexto de Negócio, Preferências Operacionais, Integrações) que gera o `SOUL.md` personalizado — o Macroverso — incluindo um bloco parseável `{industry, companies, competitors}` para skills de pesquisa. |
-| **Como usar**              | Na primeira sessão interativa, digitar: "vamos começar o onboarding". Ativado automaticamente quando `macro/soul.md` está pendente.                                                                                                                           |
+| **Como usar**              | Na primeira sessão interativa, digitar: "vamos começar o onboarding". Ativado automaticamente quando `macro/SOUL.md` está pendente.                                                                                                                           |
 | **Instalação**             | `setup.sh` copia de `skills/excrtx-onboard-welcome/` para `$HERMES_HOME/skills/exocortex/excrtx-onboard-welcome/`.                                                                                                                                            |
 | **Dependências de Skills** | Nenhuma                                                                                                                                                                                                                                                       |
 | **Dependências de Tools**  | Nenhuma                                                                                                                                                                                                                                                       |
@@ -170,6 +170,16 @@ Organizadas em 7 categorias funcionais. **57 skills no total** (43 EX-IDs formal
 | **Instalação**             | `setup.sh` copia skill.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | **Dependências de Skills** | `excrtx-govern-draftfirst`, `excrtx-memory-manager`                                                                                                                                                                                                                                                                                                                                                                      |
 | **Dependências de Tools**  | `git`, acesso ao repositório alvo, `pytest`/`mypy` (para validação runtime)                                                                                                                                                                                                                                                                                                                                              |
+
+#### EX-59. Interactive Audit (`excrtx-assess-interactive-audit`)
+
+| Campo                      | Detalhe                                                                                                                                                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Funcionalidade**         | Auditoria moderada de artefatos reais sob condições próximas de produção. Cria contrato de auditoria, coordenação em arquivos, personas de driver/observer, evidências por finding, backlog `ISSUES.md` e veredito GO/NO-GO.                 |
+| **Como usar**              | Pedir: "audite este artefato", "rode GO/NO-GO", "avalie a skill X em modo só leitura". Exige alvo, política de credenciais e autorização de mutação antes de tocar o artefato.                                                           |
+| **Instalação**             | `setup.sh` copia skill; bundle `exocortex-alpha` carrega junto do bloco Assessment.                                                                                                                                                          |
+| **Dependências de Skills** | `excrtx-quality-skilljudge`, `excrtx-quality-gate`, `excrtx-govern-draftfirst`, `excrtx-govern-tools`, `excrtx-memory-manager`, `excrtx-integrate-browser`                                                                                   |
+| **Dependências de Tools**  | Variável por alvo: leitura/escrita local, browser, terminal, git ou APIs somente quando autorizadas.                                                                                                                                          |
 
 ---
 

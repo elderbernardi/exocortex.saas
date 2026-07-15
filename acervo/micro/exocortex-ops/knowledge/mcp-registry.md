@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Registro de MCPs
 description: '| Nome | Transporte | Tools | Status | Auth | Health check | Modo degradado |'
 tags: [mcp, notebooklm, acervo, integrations]
 timestamp: 2026-06-05
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-05T00:00:00Z
 last_accessed_at: 2026-06-28T00:00:00Z
 updated: 2026-06-28

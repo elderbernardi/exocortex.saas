@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Corpus de Referências do Estúdio
 description: 1. James Webb Young — A Technique for Producing Ideas
 tags: [knowledge, corpus, references]
 timestamp: 2026-06-01
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

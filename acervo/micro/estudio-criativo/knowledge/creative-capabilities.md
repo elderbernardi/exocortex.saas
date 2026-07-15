@@ -1,10 +1,13 @@
 ---
+schema: acervo/v0.2
 type: knowledge
 title: Capacidades Criativas do Estúdio
 description: O Estúdio organiza sua atuação em capacidades, não em cargos fixos.
 tags: [knowledge, capabilities]
 timestamp: 2026-06-01
 class: volátil
+status: active
+epistemic: fact
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

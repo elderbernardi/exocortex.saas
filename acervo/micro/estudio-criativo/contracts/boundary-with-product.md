@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Fronteira Operacional entre Estúdio e Produto
 description: Produto decide **o que vale existir**.
 tags: [contract, boundary, product]
 timestamp: 2026-06-14
 class: perene
+status: active
 created_at: 2026-06-14T00:00:00Z
 last_accessed_at: 2026-06-14T00:00:00Z
 updated: 2026-06-14

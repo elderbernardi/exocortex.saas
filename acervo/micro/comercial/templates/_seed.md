@@ -1,16 +1,18 @@
 ---
-title: "{{DOMAIN_NAME}} — Templates"
-type: knowledge
-description: "Templates reutilizáveis do domínio {{DOMAIN_NAME}}"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Templates'
+type: template
+description: Templates reutilizáveis do domínio {{DOMAIN_NAME}}
 class: volátil
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: templates
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Templates — {{DOMAIN_NAME}}

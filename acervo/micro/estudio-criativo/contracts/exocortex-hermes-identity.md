@@ -1,10 +1,12 @@
 ---
-type: decision
+schema: acervo/v0.2
+type: contract
 title: Contrato local de identidade Exocórtex sobre Hermes
 description: Este microverso opera dentro do Exocórtex.IA rodando sobre o Hermes Agent.
 tags: [exocortex, hermes, identity, runtime]
 timestamp: 2026-06-01
 class: perene
+status: active
 created_at: 2026-06-01T00:00:00Z
 last_accessed_at: 2026-06-01T00:00:00Z
 updated: 2026-06-01

@@ -1,17 +1,20 @@
 ---
-title: "{{DOMAIN_NAME}} — Reflexões"
+schema: acervo/v0.2
+title: '{{DOMAIN_NAME}} — Reflexões'
 type: reflection
-description: "Lições e reflexões do domínio {{DOMAIN_NAME}}"
+description: Lições e reflexões do domínio {{DOMAIN_NAME}}
 class: volátil
-timestamp: "2026-06-22"
-created_at: "2026-06-22T03:22:17Z"
-last_accessed_at: "2026-06-22T03:22:17Z"
-created: "{{CREATED_DATE}}"
-updated: "{{CREATED_DATE}}"
+status: active
+epistemic: interpretation
+timestamp: 2026-06-22
+created_at: 2026-06-22T03:22:17Z
+last_accessed_at: 2026-06-22T03:22:17Z
+created: '{{CREATED_DATE}}'
+updated: '{{CREATED_DATE}}'
 nature: reflections
 excrtx_type: lesson
 tags: []
-confidence: medium
+confidence: likely
 ---
 
 # Reflexões — {{DOMAIN_NAME}}

@@ -32,6 +32,7 @@ compiled_rules: |
 # Acervo Memory Quarantine
 
 Implements the three-phase quarantine lifecycle from **ADR-015** (`SCAN → QUARANTINE → PURGE`) plus the executive-initiated **RESTORE**. No Acervo file is ever deleted directly — every removal passes through a 30-day quarantine window first.
+(fonte canônica dos thresholds: `global/contracts/memory-lifecycle-constants.md`)
 
 This skill is the *mechanics* layer. It does not decide *what* to quarantine (that is the syndic's scan, ADR-018) — it executes the move, purge, and restore operations correctly once a candidate is identified.
 

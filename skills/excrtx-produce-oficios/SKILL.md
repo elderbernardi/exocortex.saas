@@ -138,9 +138,9 @@ Especificação completa do schema: `references/template-spec.md`
 
 ## Log no acervo
 
-Após gerar um ofício, logar no `micro/gabinete/log.md`:
+Após gerar um ofício, logar no `_meta/log.md` do escopo dono (formato estrito, append no fim sob a heading `## YYYY-MM-DD` do dia):
 ```
-## [YYYY-MM-DD] oficio | OFÍCIO Nº {numero}/{ano} — {assunto resumido}
+- CREATED: {caminho-relativo-do-oficio} (volátil) — OFÍCIO Nº {numero}/{ano} — {assunto resumido}
 ```
 
 ## Verification

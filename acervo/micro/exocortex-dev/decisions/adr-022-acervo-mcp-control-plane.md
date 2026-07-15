@@ -1,21 +1,17 @@
 ---
+schema: acervo/v0.2
 type: decision
 title: ADR-022 — Acervo MCP Control Plane
 description: Filesystem é verdade física; core semântico local governa mutações agentic do Acervo via CLI e MCP.
-tags:
-- acervo
-- mcp
-- cli
-- control-plane
-- architecture
-- microversos
-timestamp: '2026-06-28'
+tags: [acervo, mcp, cli, control-plane, architecture, microversos]
+timestamp: 2026-06-28
 class: perene
-created_at: '2026-06-28T18:13:31Z'
+created_at: 2026-06-28T18:13:31Z
 nature: decisions
 excrtx_type: decision
 confidence: high
-status: accepted
+status: active
+epistemic: decision
 scope_slug: exocortex-dev
 ---
 
