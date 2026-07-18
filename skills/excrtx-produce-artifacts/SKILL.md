@@ -2,7 +2,7 @@
 name: excrtx-produce-artifacts
 description: Create, organize, export, and publish final Exocórtex artifacts in the user's workspace, maintaining reproducibility
   in the Acervo.
-version: 1.0.1
+version: 1.1.0
 category: excrtx
 platforms:
 - linux
@@ -25,6 +25,8 @@ metadata:
     - google-workspace
     - excrtx-govern-draftfirst
     - excrtx-quality-antislop
+    - excrtx-quality-designsys
+    - excrtx-quality-taste
     calibration:
     - feature_id: EX-22
       calibration_prompt: Você cria, organiza e publica artefatos finais. Mantém reprodutibilidade em $ACERVO/_artifacts/items/
@@ -46,7 +48,17 @@ metadata:
 
 Use this skill when the user asks for creation, organization, export, or delivery of final artifacts: documents, PDFs, HTML, spreadsheets, images, slides, ZIP packages, or reports.
 
-Also use when the user asks to design, replicate, or audit the artifact publishing harness in another Exocórtex-Hermes.
+## When to Use
+
+Activate when:
+
+- producing or organizing a deliverable for human consumption;
+- converting editable source into verified exports;
+- packaging multiple dependent files with manifests, hashes and receipts;
+- publishing or delivering an approved artifact through Drive, Telegram or another governed surface;
+- replicating or auditing the artifact publishing harness in another Exocórtex-Hermes.
+
+**Don't use for:** raw inbox intake, semantic knowledge pages without a deliverable, or versionable code whose primary destination is GitHub.
 
 Before executing, load when applicable:
 
@@ -123,7 +135,11 @@ Accepted exceptions:
 - Received PDFs: original PDF as source, text extraction in `source/`.
 - Live collaborative documents: Drive as external source; Acervo stores link and manifest.
 
-## Standard Procedure
+For data-heavy executive dashboards, preserve a raw snapshot, normalize it with a deterministic builder, generate one self-contained HTML export, and run desktop/mobile browser probes before `ready`. Use `references/self-contained-analytical-html-dashboard.md` for the package architecture, data-semantics gates, offline delivery rules, and reproducible QA pattern.
+
+For a book cover with back, spine and front, preserve editable source, raw brand evidence, redesigned/generated assets, a local DESIGN.md, combined and individual PDFs, front/spread contact sheets, renderer receipts and print assumptions. Use `references/full-wrap-editorial-artifact.md`.
+
+## Procedure
 
 1. Classify the artifact: document, spreadsheet, image, presentation, HTML, ZIP, report, or code.
 2. If it's versionable code, use GitHub as primary destination. If for human consumption, use Drive.
@@ -198,7 +214,13 @@ Minimum receipt fields:
 
 ## Telegram Delivery Pattern
 
-When the current surface is Telegram and the artifact is a visual board, HTML prototype, deck preview, or multi-file deliverable, create a ZIP export even if the primary deliverable is a single file. Register the ZIP in `manifest.json`, deliver it with `MEDIA:/absolute/path/to/file.zip`, and include the local path to the primary export. See `references/telegram-zip-visual-artifacts.md`.
+When the current surface is Telegram and the artifact is a visual board, HTML prototype, deck preview, or multi-file deliverable, create a ZIP export even if the primary deliverable is a single file. Avoid checksum recursion: put a delivery manifest inside the ZIP without a ZIP self-record, then compute the archive hash and register it only in the canonical `manifest.json` at the artifact root. Deliver the ZIP with `MEDIA:/absolute/path/to/file.zip` and include the primary export for direct inspection. See `references/telegram-zip-visual-artifacts.md`.
+
+## Editorial full-wrap packages
+
+Treat front, spine and fourth cover as one interdependent artifact. Keep concept labels outside printable artwork, calculate any provisional spine from explicit page-count and paper-caliper assumptions, and never mark the package print-ready before the printer template, final pagination, paper, binding, ISBN/barcode and author approval are resolved.
+
+The minimum review package contains editable source, DESIGN.md, original and generated brand assets, one combined PDF, individual concept PDFs, front and spread contact sheets, editorial evaluation, empty renderer stderr, hashes and a verified ZIP. Build details and manifest fields: `references/full-wrap-editorial-artifact.md`.
 
 ## Initial Provider: Local Google Drive
 
@@ -268,6 +290,30 @@ exocortex/ensino/2026/<disciplina>/<artifact-slug>/
 
 The goal is to preserve adjacency, reduce orphan files, and make later moves safer.
 
+## Multi-channel campaign packages
+
+When the deliverable is an admissions, enrollment, public-service, or other multi-channel campaign, treat it as an **interdependent artifact program**, not as a flat set of posts.
+
+Before producing pieces, resolve:
+
+- campaign dates and phases;
+- audience segments and relative priority;
+- geographic scope;
+- owned, earned, partner, and paid channels;
+- budget and production capacity;
+- approver and approval SLA;
+- explicit owner of each operational surface, especially site/hot site/landing page;
+- brand, accessibility, image-rights, legal, and electoral-period constraints;
+- confirmed facts versus unpublished facts that require placeholders.
+
+An explicit ownership correction from the user is canonical. Update the plan, artifact register, task waves, and open-decision list immediately; do not keep asking who owns a surface after ownership has been assigned. Separate surface ownership from second-person factual review.
+
+Structure execution in waves: governance/source of truth → intelligence/brief → campaign system → base artifacts → distribution network → launch readiness → launch/correction → choice/proof → objections/recovery → final conversion. Every wave needs inputs, tasks, named artifacts, owners, due dates, exit gates, and dependencies.
+
+A campaign artifact may move from DRAFT only when it has an official source or explicit placeholder, compliant brand use, documented asset rights, editable source, version, factual review, approval, and publication traceability. Deadline pressure never converts an unverified DRAFT into a legitimate artifact.
+
+For the full wave model, artifact register, source-of-truth pattern, role split, low-budget media rule, and public-sector/electoral gate, read [`references/public-education-enrollment-campaign-waves.md`](references/public-education-enrollment-campaign-waves.md).
+
 ## Draft-First
 
 Private upload to the user's own Drive counts as personal delivery when the user requested the artifact.
@@ -301,10 +347,10 @@ This pattern separates two action classes: private upload to the user's own Driv
 
 Session detail: `references/session-2026-06-01-nugai-html-drive-email.md`.
 
-## GitHub vs Drive
+## Artifact track and supporting skills
 
 When the request is for an institutional, office, printing, or final delivery artifact from Exocórtex:
-- Prioritize skills from the `exocortex` domain before resorting to generic or other-domain workflows.
+- Prioritize skills from the `excrtx` domain before resorting to generic or other-domain workflows.
 - Use skills from other domains only as specific technical support, not as the main track.
 - If there's institutional prose, also apply `excrtx-quality-antislop` and the local writing rule without gender-neutral language.
 - If the artifact is for print, generate at least HTML and PDF; create a ZIP of the complete package when this improves transport, review, or reuse.
@@ -358,6 +404,8 @@ Record the failure in `receipt.google_drive.failed.json` and mark `manifest.stat
 - [ ] Hash, MIME, and size recorded in manifest.
 - [ ] Quality Gate applied before `ready`.
 - [ ] Persona evaluation recorded in `evaluations/` when Canvas/manifest requires it.
+- [ ] Full-wrap editorial packages record spine/bleed assumptions and remain DRAFT until printer and author gates pass.
+- [ ] Book-cover packages include combined/individual PDFs plus front and spread contact sheets.
 - [ ] If artifact is `ready`/approved, ask executive if they want to publish, except when they already explicitly requested publication in the same turn.
 - [ ] Private upload done to configured Drive, with explicit parent.
 - [ ] Receipt written to `receipts/receipt.google_drive.json` with `drive_file_id`, `webViewLink`, `folder_id`, SHA-256, and size.
@@ -378,7 +426,7 @@ Supporting details:
 - `references/telegram-zip-visual-artifacts.md` — ZIP delivery pattern on Telegram for visual/HTML artifacts with manifest.
 - `references/frontend-slides-artifact-track.md` — package, Drive, and Draft-First policy for premium HTML presentations generated by `excrtx-produce-slides`.
 - `references/marp-frontend-slides-artifact-tracks.md` — policy for combining Marp as slide production line and Frontend Slides as premium visual artifact renderer.
-- `references/remote-draft-editing-sync.md` — pattern for human draft editing when Hermes/Exocórtex runs on remote server: Google Docs/Drive as editable surface per artifact, `sync.json`, versioned import, diff, and explicit promotion of accepted revision.
+- `references/full-wrap-editorial-artifact.md` — reproducible back/spine/front package, provisional geometry, contact sheets and print-readiness gate.
 
 Every replicable implementation must contain:
 
@@ -396,13 +444,3 @@ Every replicable implementation must contain:
 - `references/replication-checklist.md` — portability checklist for another Exocórtex-Hermes.
 - `references/pdd-v2-doc-alignment.md` — documentary alignment between PDD v2, provisioner, and microverso.
 - `templates/manifest-template.md` — annotated `manifest.json` template.
-
-## When to Use
-
-Activate when working with this skill's domain. See procedure for details.
-
-**Don't use for:** Unrelated domains or when a more specialized skill exists.
-
-## Procedure
-
-Follow the steps and rules defined in this skill's body sections above.

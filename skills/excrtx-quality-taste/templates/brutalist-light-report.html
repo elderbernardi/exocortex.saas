@@ -1,0 +1,465 @@
+<![CDATA[<!DOCTYPE html>
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  BRUTALIST-LIGHT REPORT TEMPLATE — excrtx-quality-taste
+
+  Variant of brutalist-report.html adapted for the WebUI light theme.
+  Use when generating reports that will be viewed inside the Hermes
+  WebUI, Telegram, or any light-background context where the standard
+  dark brutalist template would be unreadable.
+
+  Copy this file, then:
+  1. Resolve design tokens via excrtx-quality-designsys (RESOLVE operation)
+     → use WebUI light tokens: --bg #FEFCF7, --surface #F3EEE3, etc.
+  2. Replace :root tokens with resolved cascade values
+  3. Fill in report content (KPIs, sections, tables)
+  4. Run hex audit (see bottom of file) — zero hardcoded hex outside :root
+
+  Token source for light theme:
+    hermes-webui/static/style.css :root (light mode)
+    Canonicalized in references/webui-light-theme-tokens.md
+    under excrtx-quality-designsys
+
+  Proven pattern:
+    - dossie-girando-sol-2026-06-25 (25/jun/2026)
+      exports/dossie-girando-sol-2026-06-25.html
+
+  Do NOT use the dark estudio-criativo tokens from the standard
+  brutalist template — those are midnight-blue, not light-adapted.
+  ═══════════════════════════════════════════════════════════════════
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- Report Title --></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKEN BLOCK ═══
+   Replace these with resolved cascade tokens.
+   Source: hermes-webui/static/style.css :root (light mode)
+   ═══════════════════ */
+:root {
+  /* Base — WebUI light theme */
+  --color-bg: #FEFCF7;
+  --color-surface: #F3EEE3;
+  --color-text: #1A1610;
+  --color-accent: #B8860B;
+  --color-border: #E0D8C8;
+  --color-success: #3D8B40;
+  --color-danger: #C62828;
+  --color-warning: #E68A00;
+  --color-info: #0288A8;
+
+  /* Derived */
+  --color-text-bright: #0D0B08;
+  --color-text-dim: #8B8478;
+  --color-text-inverse: #FEFCF7;
+  --color-surface-raised: #EDE7D8;
+  --color-surface-accent: rgba(184, 134, 11, 0.08);
+  --color-border-strong: rgba(184, 134, 11, 0.35);
+  --color-danger-bg: rgba(198, 40, 40, 0.06);
+  --color-success-bg: rgba(61, 139, 64, 0.08);
+  --color-warning-bg: rgba(230, 138, 0, 0.08);
+  --color-info-bg: rgba(2, 136, 168, 0.07);
+
+  /* Typography — WebUI system stack */
+  --font-heading: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+  --font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+
+  /* Spacing — 8px unit */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 64px;
+  --radius: 3px;
+}
+
+/* ── RESET ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  padding: var(--sp-5) var(--sp-4);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+.report-header {
+  border-bottom: 3px solid var(--color-accent);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.report-header h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 2.2rem;
+  letter-spacing: -0.025em;
+  color: var(--color-text-bright);
+  line-height: 1.15;
+}
+.report-header .subtitle {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  margin-top: var(--sp-1);
+}
+.report-header .meta {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+}
+.report-header .meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.report-header .meta span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+  border-radius: 50%;
+}
+
+/* ── KPI STRIP ──────────────────────────────────────── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: var(--sp-5);
+}
+.kpi {
+  background: var(--color-surface);
+  padding: var(--sp-3) var(--sp-2);
+}
+.kpi .value {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.kpi .label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--color-text-dim);
+  margin-top: var(--sp-1);
+}
+.kpi .sublabel {
+  font-size: 11px;
+  color: var(--color-text);
+  margin-top: 2px;
+}
+
+/* ── SUMMARY ────────────────────────────────────────── */
+.summary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+.summary h2 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  margin-bottom: var(--sp-2);
+}
+.summary p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text);
+}
+
+/* ── SECTION ────────────────────────────────────────── */
+.section { margin-bottom: var(--sp-5); }
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+.section-title .num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.04em;
+}
+.section-title h2 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text-bright);
+}
+.section-title .badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 10px;
+  border-radius: var(--radius);
+}
+
+/* ── MODULE ─────────────────────────────────────────── */
+.module {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+.module h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-bright);
+  margin-bottom: var(--sp-1);
+}
+.module p { font-size: 14px; margin-bottom: var(--sp-1); }
+.module ul { padding-left: var(--sp-3); font-size: 14px; }
+.module ul li { margin-bottom: 4px; }
+
+/* ── TABLES ─────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: var(--sp-2) 0;
+}
+th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  border-bottom: 2px solid var(--color-border-strong);
+  padding: var(--sp-1) var(--sp-2);
+  white-space: nowrap;
+}
+td {
+  padding: 10px var(--sp-2);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+td:first-child {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+tr:hover td { background: var(--color-surface-accent); }
+
+/* ── STATUS CHIPS ───────────────────────────────────── */
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 10px;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.chip-ok { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(61, 139, 64, 0.30); }
+.chip-warn { background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid rgba(230, 138, 0, 0.30); }
+.chip-crit { background: var(--color-danger-bg); color: var(--color-danger); border: 1px solid rgba(198, 40, 40, 0.30); }
+.chip-info { background: var(--color-info-bg); color: var(--color-info); border: 1px solid rgba(2, 136, 168, 0.30); }
+
+/* ── ALERT ──────────────────────────────────────────── */
+.alert {
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: var(--sp-3);
+}
+.alert.warn { border: 1px solid rgba(230, 138, 0, 0.35); }
+.alert.info { border: 1px solid rgba(2, 136, 168, 0.30); }
+.alert .header {
+  padding: var(--sp-1) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+}
+.alert.warn .header { background: var(--color-warning-bg); color: var(--color-warning); }
+.alert.info .header { background: var(--color-info-bg); color: var(--color-info); }
+.alert .body { padding: var(--sp-2) var(--sp-3); font-size: 13px; }
+
+/* ── METRICS GRID ──────────────────────────────────── */
+.metricas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.metricas .cell {
+  background: var(--color-surface);
+  padding: var(--sp-2) var(--sp-3);
+}
+.metricas .cell .v {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+.metricas .cell .l {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-dim);
+  margin-top: 4px;
+}
+
+/* ── SOURCE LIST ────────────────────────────────────── */
+.source-list {
+  list-style: none;
+  padding: 0;
+}
+.source-list li {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--sp-2);
+}
+.source-list li .src-tag {
+  color: var(--color-accent);
+  font-weight: 500;
+  min-width: 100px;
+}
+
+/* ── FOOTER ─────────────────────────────────────────── */
+.report-footer {
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+/* ── PRINT ──────────────────────────────────────────── */
+@media print {
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    padding: 20px;
+  }
+  .kpi, .module, .summary, .metricas .cell {
+    background: #f9f9f9 !important;
+    border-color: #ccc !important;
+  }
+  .kpi .value { color: #111 !important; }
+  .report-header h1, .section-title h2, .module h3 { color: #111 !important; }
+  .report-header { border-bottom-color: #111 !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="report-header">
+  <h1><!-- Report Title --></h1>
+  <div class="subtitle"><!-- Subtitle / classification --></div>
+  <div class="meta">
+    <span><!-- meta item 1 --></span>
+    <span><!-- meta item 2 --></span>
+    <span><!-- meta item 3 --></span>
+  </div>
+</header>
+
+<!-- ═══ KPI STRIP (4-8 metrics) ═══ -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="value"><!-- N --></div>
+    <div class="label"><!-- Label --></div>
+  </div>
+  <!-- repeat .kpi as needed -->
+</div>
+
+<!-- ═══ SUMMARY ═══ -->
+<div class="summary">
+  <h2><!-- Summary label --></h2>
+  <p><!-- summary text --></p>
+</div>
+
+<!-- ═══ SECTIONS ═══ -->
+<section class="section">
+  <div class="section-title">
+    <span class="num">01</span>
+    <h2><!-- Section Title --></h2>
+    <span class="badge chip-info"><!-- badge --></span>
+  </div>
+  <!-- modules, tables, alerts as needed -->
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="report-footer">
+  <span>Exocórtex.IA · Acervo Cognitivo</span>
+  <span>Design: brutalist-light · Tokens: WebUI theme</span>
+  <span><!-- date · classification --></span>
+</footer>
+
+</body>
+</html>
+<!--
+  ═══ HEX AUDIT (run after filling content) ═══
+  python3 -c "
+  import re
+  html = open('exports/report.html').read()
+  root = re.search(r':root\s*\{[^}]+\}', html, re.DOTALL)
+  print_block = re.search(r'@media print\s*\{.*?\n\}', html, re.DOTALL)
+  remaining = html
+  if root: remaining = remaining.replace(root.group(0), '', 1)
+  if print_block: remaining = remaining.replace(print_block.group(0), '', 1)
+  hexes = re.findall(r'#[0-9a-fA-F]{6}', remaining)
+  print('Hardcoded hex outside :root / @media print:', len(hexes))
+  for h in set(hexes): print('  ' + h)
+  print('PASSOU' if len(hexes) == 0 else 'FALHOU')
+  "
+  Expected: 0 hardcoded hex outside :root and @media print
+-->]]>

@@ -15,7 +15,8 @@ if [ -d "$SKILLS_SRC" ]; then
     skill_name=$(basename "$skill_dir")
     if [ -d "$skill_dir" ]; then
       mkdir -p "$SKILLS_DST/$skill_name"
-      cp -r "$skill_dir"* "$SKILLS_DST/$skill_name/" 2>/dev/null || true
+      # Copy the directory contents, including hidden references/metadata.
+      cp -a "$skill_dir". "$SKILLS_DST/$skill_name/" 2>/dev/null || true
       log "Skill: $skill_name"
     fi
   done

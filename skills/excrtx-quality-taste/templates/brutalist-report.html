@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  BRUTALIST REPORT TEMPLATE — excrtx-quality-taste
+  ═══════════════════════════════════════════════════════════════════
+
+  Copy this file, then:
+  1. Resolve design tokens via excrtx-quality-designsys (RESOLVE operation)
+  2. Replace :root tokens with resolved cascade values
+  3. Fill in report content (KPIs, sections, tables, pendências)
+  4. Run hex audit (see bottom of file) — zero hardcoded hex outside :root
+
+  Cascade: acervo/global/_meta/DESIGN.md → micro/{slug}/DESIGN.md
+  If microverso has no DESIGN.md, inherit from closest sibling.
+
+  Proven patterns:
+    - art_20260622_161800_relatorio-limpeza-redes/exports/report.html
+    - art_20260623_report-updates/exports/report.html
+  ═══════════════════════════════════════════════════════════════════
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- Report Title --></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKEN BLOCK ═══
+   Replace these with resolved cascade tokens.
+   Source: acervo/global/_meta/DESIGN.md → micro/{slug}/DESIGN.md
+   ═══════════════════ */
+:root {
+  /* Colors — from estudio-criativo override (example) */
+  --color-midnight: #03123f;
+  --color-accent: #1376ed;
+  --color-neutral: #d2d6e3;
+  --color-muted: #8f8a91;
+  --color-white: #ffffff;
+  --color-offwhite: #f4f5f8;
+  --color-dark: #010a1f;
+
+  /* Status colors — from global base */
+  --color-success: #34a853;
+  --color-danger: #ea4335;
+  --color-warning: #fbbc04;
+
+  /* Semantic aliases */
+  --color-bg: var(--color-dark);
+  --color-surface: var(--color-midnight);
+  --color-surface-raised: #051847;
+  --color-text: var(--color-neutral);
+  --color-text-bright: var(--color-white);
+  --color-text-dim: var(--color-muted);
+  --color-border: rgba(210, 214, 227, 0.16);
+  --color-border-strong: rgba(19, 118, 237, 0.40);
+
+  /* Typography */
+  --font-heading: "DM Sans", Inter, sans-serif;
+  --font-body: "DM Sans", Inter, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Spacing — 8px unit */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 64px;
+
+  /* Radius */
+  --radius: 2px;
+}
+
+/* ── RESET ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: var(--sp-5) var(--sp-4);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+.report-header {
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.report-header h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: var(--color-text-bright);
+  line-height: 1.15;
+}
+.report-header .meta {
+  display: flex;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+}
+.report-header .meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.report-header .meta span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+  border-radius: 50%;
+}
+
+/* ── KPI STRIP ──────────────────────────────────────── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: var(--sp-5);
+}
+.kpi {
+  background: var(--color-surface);
+  padding: var(--sp-3) var(--sp-2);
+}
+.kpi .value {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.kpi .label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-text-dim);
+  margin-top: var(--sp-1);
+}
+
+/* ── SUMMARY ────────────────────────────────────────── */
+.summary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+.summary h2 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  margin-bottom: var(--sp-2);
+}
+
+/* ── SECTION ────────────────────────────────────────── */
+.section { margin-bottom: var(--sp-5); }
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+.section-title .num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.04em;
+}
+.section-title h2 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text-bright);
+}
+.section-title .badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+}
+
+/* ── MODULE ─────────────────────────────────────────── */
+.module {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+.module h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-bright);
+  margin-bottom: var(--sp-1);
+}
+
+/* ── TABLES ─────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: var(--sp-2) 0;
+}
+th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  border-bottom: 1px solid var(--color-border-strong);
+  padding: var(--sp-1) var(--sp-2);
+}
+td {
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+td:first-child {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-bright);
+  white-space: nowrap;
+}
+tr:hover td { background: var(--color-surface-raised); }
+
+/* ── STATUS CHIPS ───────────────────────────────────── */
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+.chip-new { background: rgba(52, 168, 83, 0.15); color: var(--color-success); border: 1px solid rgba(52, 168, 83, 0.30); }
+.chip-updated { background: rgba(19, 118, 237, 0.15); color: var(--color-accent); border: 1px solid rgba(19, 118, 237, 0.30); }
+.chip-perene { background: rgba(251, 188, 4, 0.15); color: var(--color-warning); border: 1px solid rgba(251, 188, 4, 0.30); }
+.chip-crit { background: rgba(234, 67, 53, 0.15); color: var(--color-danger); border: 1px solid rgba(234, 67, 53, 0.30); }
+
+/* ── ALERTS / PENDÊNCIAS ────────────────────────────── */
+.pendencias {
+  border: 1px solid rgba(234, 67, 53, 0.30);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.pendencias .header {
+  background: rgba(234, 67, 53, 0.08);
+  padding: var(--sp-2) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-danger);
+  border-bottom: 1px solid rgba(234, 67, 53, 0.20);
+}
+
+/* ── METRICS GRID ──────────────────────────────────── */
+.metricas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.metricas .cell {
+  background: var(--color-surface);
+  padding: var(--sp-2) var(--sp-3);
+}
+.metricas .cell .v {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── CODE PATH ──────────────────────────────────────── */
+.codepath {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent);
+  background: var(--color-dark);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  display: inline-block;
+}
+
+/* ── FOOTER ─────────────────────────────────────────── */
+.report-footer {
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── PRINT ──────────────────────────────────────────── */
+@media print {
+  body {
+    background: var(--color-white) !important;
+    color: var(--color-midnight) !important;
+    padding: 24px;
+  }
+  .kpi, .module, .summary, .metricas .cell {
+    background: var(--color-offwhite) !important;
+    border-color: var(--color-midnight) !important;
+  }
+  .kpi .value { color: var(--color-midnight) !important; }
+  .report-header h1, .section-title h2, .module h3 {
+    color: var(--color-midnight) !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="report-header">
+  <h1><!-- Report Title --></h1>
+  <div class="meta">
+    <span><!-- meta item 1 --></span>
+    <span><!-- meta item 2 --></span>
+  </div>
+</header>
+
+<!-- ═══ KPI STRIP (4-8 metrics) ═══ -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="value"><!-- N --></div>
+    <div class="label"><!-- Label --></div>
+  </div>
+  <!-- repeat .kpi as needed -->
+</div>
+
+<!-- ═══ SUMMARY ═══ -->
+<div class="summary">
+  <h2>Resumo Executivo</h2>
+  <!-- ol with numbered items -->
+</div>
+
+<!-- ═══ SECTIONS ═══ -->
+<section class="section">
+  <div class="section-title">
+    <span class="num">01</span>
+    <h2><!-- Section Title --></h2>
+    <span class="badge chip-new"><!-- badge --></span>
+  </div>
+
+  <!-- Module cards -->
+  <div class="module">
+    <h3><!-- Module Title --></h3>
+    <!-- content -->
+  </div>
+
+  <!-- Data tables -->
+  <table>
+    <thead>
+      <tr><th><!-- col --></th></tr>
+    </thead>
+    <tbody>
+      <tr><td><!-- cell --></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══ PENDÊNCIAS (alert block) ═══ -->
+<section class="section">
+  <div class="section-title">
+    <span class="num"><!-- N --></span>
+    <h2>Pendências</h2>
+    <span class="badge chip-crit"><!-- count --></span>
+  </div>
+  <div class="pendencias">
+    <div class="header">⚠ Itens requerendo atenção</div>
+    <!-- ol with items -->
+  </div>
+</section>
+
+<!-- ═══ METRICS GRID ═══ -->
+<section class="section">
+  <div class="section-title">
+    <span class="num"><!-- N --></span>
+    <h2>Métricas</h2>
+  </div>
+  <div class="metricas">
+    <div class="cell"><div class="v"><!-- N --></div></div>
+    <!-- repeat -->
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="report-footer">
+  <span>Exocórtex.IA · Acervo Cognitivo</span>
+  <span><!-- tokens + taste + date --></span>
+</footer>
+
+</body>
+</html>
+<!--
+  ═══ HEX AUDIT (run after filling content) ═══
+  python3 -c "
+  import re
+  html = open('exports/report.html').read()
+  root = re.search(r':root\s*\{[^}]+\}', html, re.DOTALL).group(0)
+  print_block = re.search(r'@media print\s*\{.*\}', html, re.DOTALL)
+  remaining = html.replace(root, '', 1)
+  if print_block:
+      remaining = remaining.replace(print_block.group(0), '', 1)
+  hexes = re.findall(r'#[0-9a-fA-F]{6}', remaining)
+  print('Hardcoded hex outside :root:', len(hexes))
+  for h in set(hexes): print('  ' + h)
+  "
+  Expected: 0 hardcoded hex outside :root
+-->
