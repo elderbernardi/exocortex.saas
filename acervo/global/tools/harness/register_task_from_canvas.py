@@ -105,7 +105,7 @@ def load_template(acervo: Path) -> str:
 task_id: {task_id}
 title: "{title}"
 status: candidate
-vector: {vector}
+vetor: {vector}
 
 primary_microverso: {primary_microverso}
 related_microversos: []

@@ -53,7 +53,7 @@ compiled_rules: 'For complex inputs: parse focus, vector, gaps, urgency into a s
 
   Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.'
 ---
-# Canvas Cognitivo — Extrator de Ponteiros (v0.4)
+# Canvas Cognitivo — Extrator de Ponteiros (v0.5)
 
 > Todo input do executivo carrega informação implícita. O Canvas extrai essa estrutura para que outras skills operem com contexto rico, ancorando a tarefa no Macroverso e nos Microversos corretos.
 
