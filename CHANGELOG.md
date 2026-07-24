@@ -9,9 +9,11 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 ### Added
 - Canonical `excrtx-assess-interactive-audit` skill: owner-in-the-loop audit protocol with personas, evidence capture, issue backlog, GO/NO-GO report, and bundle/catalog wiring.
 - Bootstrap regression test for `VERSION=main` ensuring cached installer checkouts fast-forward to `origin/main` before running setup.
+- **Canvas v0.5** (harness; ADR-CT-06): the EX-06 Cognitive Canvas gains the fable-method fields — `shape`, `done_criteria`, and a named `verification` in the core schema, plus `scope`, `assumptions`, and `authorization` (session-filled) in the document template. `intent_type` widens to the 8-value superset. Enables the agent-conducted Canvas de Tarefas UI (meta issue #130, phase F1).
 
 ### Fixed
 - `install.sh` now treats branch-like versions such as `main` as moving refs: it fetches `origin`, fast-forwards safely when possible, and only reuses the local installer when already current or when the requested version is not a remote branch.
+- **Canvas harness drift unified (ADR-CT-06)**: the canonical vector key is now `vetor` across schema, templates, and `register_task_from_canvas.py` (with a one-cycle `vector` read-fallback); `register_task_from_canvas.py` now rejects an unresolved `ambiguo` vetor, actually parses `--from-stdin` canvas fields (was a latent no-op), and emits collision-safe task ids. The `task.yaml` template regained its `{task_id}`/`{title}`/`{content_hash}`/timestamp placeholders (pre-existing drift left them as literal example text).
 
 ## [1.1.1] — 2026-06-30
 
