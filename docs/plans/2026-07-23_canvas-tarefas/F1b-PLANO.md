@@ -1,9 +1,9 @@
-# F1b — MVP Sala no fork (webui): plano de implementação
+# F1b — MVP Cockpit no fork (webui): plano de implementação
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development (recomendado) ou superpowers:executing-plans, task a task. Leia o contrato de execução em `00-INDEX.md` antes de tudo.
 > **PRÉ-CONDIÇÃO DURA (T0 verifica e ABORTA se falhar):** o PR do F1a (`collab/canvas-v05`) foi APROVADO E MERGEADO pelo owner no exocortex.saas. F1b depende do canvas v0.5.
 
-**Goal:** Do intake à sessão dentro do cockpit: Átrio (lista + 1 frase) → canvas v0.5 verificável e **editável in loco** → Lançar (register + sessão + brief como 1ª mensagem) — com o enquadrador **in-process** (ADR-CT-04) e SSE com **replay/re-attach** (mata a race de double-connect).
+**Goal:** Do intake à sessão dentro do cockpit: Hangar (lista + 1 frase) → canvas v0.5 verificável e **editável in loco** → Lançar (register + sessão + brief como 1ª mensagem) — com o enquadrador **in-process** (ADR-CT-04) e SSE com **replay/re-attach** (mata a race de double-connect).
 
 **Architecture:** Superfície irmã do Acervo Studio (padrão MOD-010 replicado: `#canvasRoot` reparentado ao `<body>`, launcher próprio, global `CVT`, namespace `.cvt-*`, ZERO edição em `acervo-studio.js` — no máximo injeção RUNTIME de um botão de modo, typeof-guarded e degradável). Backend: job+poll por cima do registry existente com **log de eventos re-reproduzível por cursor** (forma dos frames = SSE do kanban: `id:`/`event:`/`data:` + `hello` + keepalive). Enquadrador troca o seam subprocess por `agent.auxiliary_client.call_llm` sob `profiles_api.profile_env_for_background_worker` (precedente: `api/streaming.py:3164` title_generation; padrão de calma offline: `api/acervo_studio_agent.py::_run_agent_text` + `_extract_json`). **Launch não depende do `#ctxTray`** — bug pré-existente confirmado no recon: `S.pendingContextAttachments` é renderizado mas nunca mesclado no send (`messages.js send()` só usa `S.pendingFiles`); o pipeline usa o contrato programático: `POST /api/session/new` → `POST /api/acervo/x/stage {session_id, source}` (retorna `{name,path,mime,size,is_image}`) → front dispara `POST /api/chat/start {session_id, message=brief, attachments=[shape acima]}` (validado: `_normalize_chat_attachments` aceita exatamente esse shape; `message` é obrigatório e não-vazio — o brief compilado É a 1ª mensagem).
 
@@ -221,7 +221,7 @@ def _call_llm_inprocess(prompt: str) -> str:
 
 **Interfaces (pós-tarefa):**
 - Registry novo: `CANVAS_JOBS: dict[str, dict]` = `{"status": "running|done", "valid": bool|None, "errors": [], "events": [(nome, payload), ...], "cond": threading.Condition()}`. Producers dão `append` + `notify_all`; NENHUM consumo destrutivo (substitui a `queue.Queue` single-consumer — replay ilimitado, N leitores).
-- `POST /api/canvas/draft` (mantido) → `{canvas_id}` e inicia job. `GET /api/canvas/job?canvas_id=` → `{status, valid, errors, n_events}`. `GET /api/canvas/stream?canvas_id=&since=N` → SSE com frames `id: <cursor>` + `event:` + `data:`, replay de `events[N:]`, keepalive `: keepalive` a cada 30s de silêncio, encerra após emitir `canvas_done` (forma dos frames = SSE do kanban). `GET /api/canvas/list` → `[{canvas_id, focus, vetor, status}]` lendo `_tasks/canvas_*/canvas.yaml` (para o Átrio). Sweep timer mantido (limpa `CANVAS_JOBS` após `_CLEANUP_DELAY` do done).
+- `POST /api/canvas/draft` (mantido) → `{canvas_id}` e inicia job. `GET /api/canvas/job?canvas_id=` → `{status, valid, errors, n_events}`. `GET /api/canvas/stream?canvas_id=&since=N` → SSE com frames `id: <cursor>` + `event:` + `data:`, replay de `events[N:]`, keepalive `: keepalive` a cada 30s de silêncio, encerra após emitir `canvas_done` (forma dos frames = SSE do kanban). `GET /api/canvas/list` → `[{canvas_id, focus, vetor, status}]` lendo `_tasks/canvas_*/canvas.yaml` (para o Hangar). Sweep timer mantido (limpa `CANVAS_JOBS` após `_CLEANUP_DELAY` do done).
 
 - [ ] **Step 1: Testes primeiro** (substituem os drenos de queue do F0 — atualize os 6 testes existentes para o novo registry; novos):
 
@@ -405,28 +405,28 @@ def test_launch_ambiguo_400(acervo):
 
 ---
 
-### Task 7: UI Átrio + Sala (reescrita de `static/canvas-tarefas.js` + css)
+### Task 7: UI Hangar + Cockpit (reescrita de `static/canvas-tarefas.js` + css)
 
 **Files:** Modify `static/canvas-tarefas.js` (reescrita completa), `static/canvas-tarefas.css`, `static/canvas-dev.html` (só se o id de mount mudar)
 
 **Interfaces/Requisitos (o código completo é longo — este é o ÚNICO passo do plano onde o implementer escreve JS a partir de spec fechada; TODA decisão está fixada abaixo, nada é escolha dele):**
-1. IIFE, global `window.CVT = {toggle, iniciar, abrirSala, applyPatch, esc}`; namespace `.cvt-*`; `esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))` — **toda** interpolação passa por `esc()`.
+1. IIFE, global `window.CVT = {toggle, iniciar, abrirCockpit, applyPatch, esc}`; namespace `.cvt-*`; `esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))` — **toda** interpolação passa por `esc()`.
 2. **Superfície**: `_build()` cria `<div id="canvasRoot" hidden>` e REPARENTA para `<body>` (lição do Studio); `role="dialog" aria-modal="true"`; topo `.cvt-top` com botões [Chat] [Acervo] [Canvas] + input de intake; corpo `.cvt-body` com duas views alternáveis: `#cvt-atrio` e `#cvt-sala`. Botão Chat → `_close()`; botão Acervo → `_close()` + `typeof acervoStudioToggle==="function" && acervoStudioToggle()`.
 3. **Launcher próprio** `#cvtLauncher` (botão flutuante "🗺️ Canvas", posição fixa acima do `#axsLauncher`); + **injeção runtime degradável** no Studio: em `DOMContentLoaded`+800ms, se `document.querySelector('#acervoStudioRoot .axs-mode')` existir, append `<button data-axs="canvas">Canvas</button>` com click → `_close Studio via acervoStudioToggle()` + `CVT.toggle()`; se não existir, silenciosamente não injeta (launcher basta). `acervo-studio.js` NÃO é editado.
-4. **Átrio**: fetch `/api/canvas/list` → cards (focus ou "(sem foco)", vetor com classe de cor F0, status). Click → `abrirSala(cid)`. Intake: input + botão "Enquadrar" → POST `/api/canvas/draft` → `abrirSala(cid)` imediato (canvas nasce na Sala, preenchendo via stream).
-5. **Sala**: snapshot via GET `/api/canvas/get`; stream `EventSource('/api/canvas/stream?canvas_id='+cid+'&since='+cursor)` com handlers p/ `canvas_snapshot|canvas_delta|canvas_validity|canvas_done|canvas_launched`; **`es.onerror` → status "reconectando…" e re-attach com o cursor corrente (o `id:` de cada frame é o cursor — guardar `e.lastEventId`)**; guard de re-entrância: `iniciar()`/`abrirSala()` fecham `es` anterior antes de abrir novo.
+4. **Hangar**: fetch `/api/canvas/list` → cards (focus ou "(sem foco)", vetor com classe de cor F0, status). Click → `abrirCockpit(cid)`. Intake: input + botão "Enquadrar" → POST `/api/canvas/draft` → `abrirCockpit(cid)` imediato (canvas nasce na Cockpit, preenchendo via stream).
+5. **Cockpit**: snapshot via GET `/api/canvas/get`; stream `EventSource('/api/canvas/stream?canvas_id='+cid+'&since='+cursor)` com handlers p/ `canvas_snapshot|canvas_delta|canvas_validity|canvas_done|canvas_launched`; **`es.onerror` → status "reconectando…" e re-attach com o cursor corrente (o `id:` de cada frame é o cursor — guardar `e.lastEventId`)**; guard de re-entrância: `iniciar()`/`abrirCockpit()` fecham `es` anterior antes de abrir novo.
 6. **Zonas editáveis** (a regra de render): cada campo editável renderiza como `<span class="cvt-edit" data-path="/focus" contenteditable="false">…</span>` + lápis; click → vira `<input>`/`<select>` (selects para `vetor` [4 opções], `intent_type` [8], `shape` [3]); blur/Enter → `POST /api/canvas/patch {canvas_id, ops:[{op:"replace", path, value}]}` → badge de validade atualizada pela resposta (`valid/errors`); Esc → cancela. Listas (`gaps`, `scope`, `assumptions`, `microversos.related`, `artifacts.expected`, `next_moves`): item com [×] (remove → op remove por índice) + input "+ adicionar" (op add `/campo/-`).
 7. **Zona Pronto**: `done_criteria` + `verification` com destaque; vazios → chip âmbar "definir pronto".
 8. **Vetor ambiguo** → cartão fixo com 3 botões (executar/explorar/manter) que fazem patch de `/vetor`.
 9. **Preview do brief**: botão "Preview do brief" → GET `/api/canvas/brief` → `<pre>` em painel colapsável (esc()).
-10. **Lançar**: botão primário → POST `/api/canvas/launch` → com a resposta, POST `/api/chat/start {session_id, message: brief, attachments}` → toast "Sala lançada — sessão {id}" + botão "ir para o chat" (`_close()` + se existir `typeof loadSession==="function"` → `loadSession(session_id)`; senão instrução textual). Erros 400/500 → status vermelho com a mensagem.
+10. **Lançar**: botão primário → POST `/api/canvas/launch` → com a resposta, POST `/api/chat/start {session_id, message: brief, attachments}` → toast "Cockpit lançada — sessão {id}" + botão "ir para o chat" (`_close()` + se existir `typeof loadSession==="function"` → `loadSession(session_id)`; senão instrução textual). Erros 400/500 → status vermelho com a mensagem.
 11. `canvas-dev.html` continua funcionando como harness (mount = mesmo root; se necessário só atualizar o script/ids).
 12. **Orçamento**: JS ≤ ~550 linhas; se o implementer projetar >700, PARAR e reportar (gatilho ADR-CT-05 em risco). CSS: estender o F0 (~+60 linhas: top bar, cards, edit affordances, badges).
 
 - [ ] **Step 1: Implementar** (sem TDD de browser; a verificação é E2E na T9 — mas rode `npm run lint:runtime` se existir no package.json: cite a saída).
 - [ ] **Step 2: Sanidade estática** — `node --check static/canvas-tarefas.js` (Expected: sem erro) e `wc -l static/canvas-tarefas.js` (cite; ≤~550).
-- [ ] **Step 3: Smoke com stub** — servidor + `CANVAS_LLM_CMD` ABSOLUTO p/ stub (lição F0), abrir a superfície pelo launcher, 1 frase → Sala preenche → editar focus in loco → badge válida → preview → **NÃO lançar ainda** (launch real é T9). Screenshot `.superpowers/sdd/t7-sala-stub.png`. Parar o servidor.
-- [ ] **Step 4: Commit** — `feat(canvas-f1): Atrio+Sala surface — editable zones, ambiguity card, brief preview, launch wiring (vanilla, escaped)`
+- [ ] **Step 3: Smoke com stub** — servidor + `CANVAS_LLM_CMD` ABSOLUTO p/ stub (lição F0), abrir a superfície pelo launcher, 1 frase → Cockpit preenche → editar focus in loco → badge válida → preview → **NÃO lançar ainda** (launch real é T9). Screenshot `.superpowers/sdd/t7-sala-stub.png`. Parar o servidor.
+- [ ] **Step 4: Commit** — `feat(canvas-f1): Atrio+Cockpit surface — editable zones, ambiguity card, brief preview, launch wiring (vanilla, escaped)`
 
 ---
 
@@ -443,7 +443,7 @@ def test_launch_ambiguo_400(acervo):
 ### Task 9: Regressão + E2E real + push + gate na #132
 
 - [ ] **Step 1: Suíte completa** — `python3 -m pytest tests/ -q -p no:cacheprovider 2>&1 | tail -3` (~8min). Régua: baseline F0 (12F pré-existentes) + todos os canvas tests novos passando; NENHUMA falha nova (flake credential_pool conhecido: se aparecer, rode-o isolado e cite).
-- [ ] **Step 2: E2E REAL** — servidor SEM `CANVAS_LLM_CMD` (in-process!; chaves via `set -a; source ~/.hermes/.env; set +a` antes do start; nunca ecoar): frase real → Sala preenche (enquadrador in-process) → editar 1 campo → definir done_criteria/verification se vazios → Lançar → **verificar na UI nativa que a sessão existe com o brief como 1ª mensagem e os 2 attachments** → screenshot `.superpowers/sdd/t9-launch-real.png` (desta vez com LLM REAL — fecha o caveat do F0) + `ls $ACERVO/_tasks/task_*/` mostrando task.yaml/canvas.yaml/links.yaml + cat do links.yaml com session_id. Parar servidor.
+- [ ] **Step 2: E2E REAL** — servidor SEM `CANVAS_LLM_CMD` (in-process!; chaves via `set -a; source ~/.hermes/.env; set +a` antes do start; nunca ecoar): frase real → Cockpit preenche (enquadrador in-process) → editar 1 campo → definir done_criteria/verification se vazios → Lançar → **verificar na UI nativa que a sessão existe com o brief como 1ª mensagem e os 2 attachments** → screenshot `.superpowers/sdd/t9-launch-real.png` (desta vez com LLM REAL — fecha o caveat do F0) + `ls $ACERVO/_tasks/task_*/` mostrando task.yaml/canvas.yaml/links.yaml + cat do links.yaml com session_id. Parar servidor.
 - [ ] **Step 3: Pushes** — fork: `git push origin collab/canvas-tarefas`; umbrella: `git -C /home/elder/projetos/projetob push origin master`.
 - [ ] **Step 4: Gate na #132** — `gh issue comment 132 -R elderbernardi/exocortex.saas` (PT-BR): checklist do gate do F1-CHARTER item a item com provas (1 frase→sala lançada→sessão com brief ✓ screenshot real; `_tasks/` completo ✓ ls; edição in loco persiste+re-valida ✓ teste+demo; suíte sem falhas novas ✓ tail). **NÃO fechar a issue** — owner fecha e decide o merge p/ stable.
 
@@ -451,6 +451,6 @@ def test_launch_ambiguo_400(acervo):
 
 ## Self-review do plano (executado na escrita)
 
-- Charter F1 coberto: Átrio mínimo (T4 list + T7), canvas editável/verificável (T5+T7), campos v0.5 (T1, consumindo F1a), enquadrador definitivo (T3, ADR-CT-04), Compile & Launch (T5 brief + T6 + T7 item 10), contrato COLLAB (T8). Insumos do review final do F0: returncode (T2), escape HTML (T7 regra 1), sufixo id (T2), fan-out/replay (T4). Deferido com registro: mapeamento vetor→profile no launch (profile é per-client/cookie — fica p/ F3, anotado no contrato T8 como evolução).
+- Charter F1 coberto: Hangar mínimo (T4 list + T7), canvas editável/verificável (T5+T7), campos v0.5 (T1, consumindo F1a), enquadrador definitivo (T3, ADR-CT-04), Compile & Launch (T5 brief + T6 + T7 item 10), contrato COLLAB (T8). Insumos do review final do F0: returncode (T2), escape HTML (T7 regra 1), sufixo id (T2), fan-out/replay (T4). Deferido com registro: mapeamento vetor→profile no launch (profile é per-client/cookie — fica p/ F3, anotado no contrato T8 como evolução).
 - Fatos de recon citados com file:line no cabeçalho Architecture; pontos de possível divergência de assinatura têm instrução explícita de citar-e-ajustar (T3), nunca improvisar.
 - Sem placeholders: única tarefa spec-driven (T7) tem TODAS as decisões fechadas em 12 regras numeradas + orçamento de linhas + gatilho de parada.
