@@ -2,7 +2,7 @@
 name: excrtx-behavior-canvas
 description: Extract implicit structure from executive input — focus, gaps, suggested
   persona, and action type. Cognitive Canvas for each interaction.
-version: 2.0.0
+version: 2.1.0
 category: excrtx
 platforms:
 - linux
@@ -43,9 +43,13 @@ compiled_rules: 'For complex inputs: parse focus, vector, gaps, urgency into a s
   canvas block before responding.
 
   Required fields: focus (string), vetor (execucao|evolucao|manutencao|ambiguo), intent_type
-  (explorar|decidir|produzir|revisar|manter).
+  (explorar|decidir|produzir|revisar|manter|publicar|ingestao|outro).
 
-  Optional: macroverso_status, microverso_primary, gaps[], urgency.
+  Optional: macroverso_status, microverso_primary, gaps[], urgency, shape, done_criteria,
+  verification.
+
+  When proposing a canvas for launch, always propose done_criteria plus a NAMED verification;
+  if none can be named, emit a gap question instead.
 
   Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.'
 ---
@@ -79,7 +83,7 @@ Para cada input complexo, extrair internamente:
 | `macroverso.sources` | Em que arquivos o Macroverso foi lido? | `["acervo/macro/SOUL.md"]` |
 | `macroverso.constraints` | Que valores, tom ou limites afetam esta tarefa? | `["draft-first", "tom direto"]` |
 | `focus` | O que o executivo quer resolver? | "Renegociar contrato com Cliente Alfa" |
-| `intent_type` | explorar, decidir, produzir, revisar, manter, publicar, outro? | "produzir" |
+| `intent_type` | explorar, decidir, produzir, revisar, manter, publicar, ingestao, outro? | "produzir" |
 | `user_intention.explicit` | O que foi dito literalmente? | "Preciso do relatório final" |
 | `user_intention.inferred` | O que provavelmente quer mas não disse? | "Quer publicar no Drive" |
 | `user_intention.confidence` | Quão segura é a inferência? | high / medium / low |
@@ -92,6 +96,9 @@ Para cada input complexo, extrair internamente:
 | `microversos.sharing_constraints` | Que restrições de compartilhamento precisam ser respeitadas com base nas regras allow/deny dos microversos? | `["deny: ALL + allow: [microverse_x] => compartilhável só com microverse_x"]` |
 | `task.anchor` | Como a tarefa foi ancorada na tríade? | "Ofício ancorado em gabinete, com apoio de jurídico" |
 | `urgency` | Há pressão de tempo? | "reunião amanhã" → alta |
+| `shape` | Que forma tem o pedido (fable-method): pergunta, plano-primeiro ou tarefa? | `pergunta` / `plano-primeiro` / `tarefa` |
+| `done_criteria` | O que significa "pronto" para esta tarefa, em uma frase? | "Ofício revisado e enviado ao jurídico" |
+| `verification` | Que verificação nomeada e observável prova o done_criteria? Se nenhuma puder ser nomeada, propor um gap em vez disso | "Confirmação de recebimento por e-mail do jurídico" |
 | `dependencies` | O output depende de algo externo? | "Preciso dos dados financeiros antes" |
 | `risks` | Riscos identificados? | "Deadline pode ser irrealista" |
 
@@ -108,6 +115,8 @@ Campos adicionais para interação com o harness:
 | `evaluation.evaluator_personas` | Quais personas devem avaliar | ["critico", "professor"] |
 | `evaluation.apply_mode` | Como aplicar sugestões | suggest / auto-incorporate / ask-user |
 | `promotion_candidates` | Conhecimento que deve ser promovido ao Acervo | ["decisão X para micro/harness-project/decisions"] |
+
+`scope`, `assumptions` e `authorization` são campos de **documento** (canvas.yaml), não de **núcleo** (schema validado do LLM): não são emitidos junto com focus/vetor/intent_type/shape/done_criteria/verification, e sim preenchidos progressivamente durante a sessão — `authorization` em particular exige as palavras exatas do executivo (AUTH) para cada ação externa, nunca inferidas.
 
 ### 3. Uso do Canvas
 
@@ -142,6 +151,7 @@ Formato de exposição:
 │ Tarefa: {task.anchor}
 │ Vetor: {intent_type}
 │ Entidade dominante: {dominant_entity}
+│ Pronto quando: {done_criteria} · verificação: {verification}
 │ 
 │ ⚠ Lacunas:
 │   • {gap_1}
