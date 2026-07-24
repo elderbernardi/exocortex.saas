@@ -1,7 +1,7 @@
 # ADR-CT-05 — Frontend do canvas: vanilla JS vs ilha Preact IIFE
 
 status: decidida
-data: 2026-07-23
+data: 2026-07-23 (proposta) · 2026-07-24 (decidida)
 contexto: meta issue #130 · constraint no-build do fork · caminho "ilha pré-bundlada" já previsto no RFC acervo-studio
 
 ## Questão

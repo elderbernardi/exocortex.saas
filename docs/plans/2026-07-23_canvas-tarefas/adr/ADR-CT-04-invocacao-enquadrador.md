@@ -1,7 +1,7 @@
 # ADR-CT-04 — Invocação do enquadrador: turno síncrono streamado vs job+poll
 
 status: decidida
-data: 2026-07-23
+data: 2026-07-23 (proposta) · 2026-07-24 (decidida)
 contexto: meta issue #130 · F0-PLANO.md T3/T6 · questão herdada do RFC acervo-studio §6.2
 
 ## Questão

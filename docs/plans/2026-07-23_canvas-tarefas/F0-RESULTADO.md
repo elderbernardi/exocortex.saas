@@ -16,7 +16,7 @@ Comando (idêntico nas duas corridas): `python3 -m pytest tests/ -q -p no:cachep
 12 failed, 13028 passed, 101 skipped, 1 xfailed, 2 xpassed, 9 warnings, 34 subtests passed in 431.97s (0:07:11)
 ```
 
-**Veredito: sem regressão.** `failed` permanece em **12** (mesmos 12 nomes, listados abaixo — nenhum é dos módulos `canvas_*`); `passed` sobe **13004 → 13028 (+24)**, exatamente os 24 testes novos do spike (`test_canvas_store.py` 7 + `test_canvas_validate.py` 6 + `test_canvas_enquadrador.py` 5 + `test_canvas_routes.py` 6 = 24; o F0-PLANO estimava "~21", a contagem real após os fix-reports de revisão é 24). `skipped`/`xfailed`/`xpassed`/`subtests` idênticos.
+**Veredito: sem regressão.** `failed` permanece em **12** (mesmos 12 nomes, listados abaixo — nenhum é dos módulos `canvas_*`); `passed` sobe **13004 → 13028 (+24)**, exatamente os 24 testes novos do spike (`test_canvas_store.py` 7 + `test_canvas_validate.py` 6 + `test_canvas_enquadrador.py` 5 + `test_canvas_routes.py` 6 = 24; o F0-PLANO listava contagens por tarefa somando 16 — os fixes das reviews elevaram o total real a 24). `skipped`/`xfailed`/`xpassed`/`subtests` idênticos.
 
 12 falhas pré-existentes (env-sensíveis, já documentadas em rounds anteriores do SDD — nenhuma nova, nenhuma no escopo do canvas):
 ```
@@ -42,7 +42,7 @@ Running 24 items in this shard
 24 passed in 3.00s
 ```
 
-**Nota de transparência (reverificação pós-interrupção de sessão):** duas corridas subsequentes da suíte completa (ainda **sem nenhuma mudança de código** desta task — só a entrada de docs do MOD-011 em `EXOCRTX_MODIFICATIONS.md`) produziram `13 failed, 13027 passed` em vez de `12 failed, 13028 passed`. A 13ª falha, `tests/test_credential_pool_providers.py::test_custom_provider_detected_by_get_available_models`, **passa isoladamente** (`1 passed in 4.90s`) e mexe em cache global de config (`config._CREDENTIAL_POOL_CACHE`, `config._cfg_mtime`) não relacionado a nenhum módulo `canvas_*` — classificando-se como flake de isolamento/ordem de teste pré-existente na suíte (mesma categoria "env-sensível" das 12 falhas documentadas), não uma regressão introduzida pelo spike: como esta task não alterou nenhum arquivo `.py`, não há mecanismo pelo qual ela poderia ter causado a diferença entre as corridas. `passed` some 1 a menos (13027 vs 13028) exatamente pela falha ter capturado esse teste em vez de contá-lo como sucesso — a contagem de testes novos do canvas (24) permanece intacta e verificada isoladamente acima.
+**Nota de transparência (reverificação pós-interrupção de sessão):** duas corridas subsequentes da suíte completa (ainda **sem nenhuma mudança de código** desta task — só a entrada de docs do MOD-011 em `EXOCRTX_MODIFICATIONS.md`) produziram `13 failed, 13027 passed` em vez de `12 failed, 13028 passed`. A 13ª falha, `tests/test_credential_pool_providers.py::test_custom_provider_detected_by_get_available_models`, **passa isoladamente** (`1 passed in 4.90s`) e mexe em cache global de config (`config._CREDENTIAL_POOL_CACHE`, `config._cfg_mtime`) não relacionado a nenhum módulo `canvas_*` — classificando-se como flake de isolamento/ordem de teste pré-existente na suíte (mesma categoria "env-sensível" das 12 falhas documentadas), não uma regressão introduzida pelo spike — mas sem descartar por completo o mecanismo: esta task acrescentou 24 arquivos de teste ao repositório (o spike), o que altera a ordem de coleta do pytest, então existe em princípio um mecanismo de dependência de ordem entre módulos capaz de produzir esse tipo de flake; a classificação acima repousa em corridas de código **IDÊNTICO** (sem qualquer mudança de `.py` nesta task) que produziram tanto 12F quanto 13F, mais o passe isolado do teste em questão — não na alegação de que nenhum mecanismo exista. `passed` some 1 a menos (13027 vs 13028) exatamente pela falha ter capturado esse teste em vez de contá-lo como sucesso — a contagem de testes novos do canvas (24) permanece intacta e verificada isoladamente acima.
 
 ## 2. E2E com stub (gate (a) da issue F0)
 
@@ -69,6 +69,8 @@ data: {"valid": true, "errors": []}
 > **"✓ canvas válido (schema v0.4)"**
 
 Screenshot (fullPage) salvo em `hermes-webui/.superpowers/sdd/t5-canvas-dev.png` — **este caminho é git-ignorado** (diretório `.superpowers/` fica fora do controle de versão do fork), então o arquivo não é rastreável via link de repositório; a citação da linha de status acima + o transcript SSE/curl bruto acima são a evidência reproduzível em texto. Fonte completa do transcript: `hermes-webui/.superpowers/sdd/task-5-report.md`.
+
+**Caveat de transparência para o gate — leia antes de aprovar:** o screenshot `t5-canvas-dev.png` mostra conteúdo vindo do **STUB** (`tests/fixtures/stub_llm_ok.py`), não de uma resposta de LLM real. A validade do pipeline com LLM real **está comprovada**, mas por outra evidência: a tabela de latência da §3 (3/3 chamadas com `valido=True`), rodada através do **MESMO pipeline** (mesmos endpoints SSE, mesma validação `canvas_validate`) — só que sem captura de browser nessa corrida com LLM real. Ou seja: a prova visual (screenshot) é stub; a prova de correção fim-a-fim com LLM real é a tabela de latência, não um screenshot.
 
 ## 3. Latência real (LLM real, `deepseek-v4-pro`)
 

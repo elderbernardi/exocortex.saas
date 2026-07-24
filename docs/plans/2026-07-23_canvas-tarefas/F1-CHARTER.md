@@ -26,3 +26,10 @@ Patch harness v0.5 (exocortex.saas, com testes de validador) → invocação def
 ## Guardrails específicos
 
 Os do `00-INDEX.md` +: não tocar no fluxo de chat nativo (a ponte é o staged context existente); o patch do harness v0.5 é PR separado no exocortex.saas com aprovação do owner ANTES de a UI depender dele (risk gate — o schema é contrato do framework).
+
+## Insumos do review final do F0 (2026-07-24)
+
+- ADR-CT-04 foi decidida SOB a restrição do seam bloqueante (`first_delta==done` por construção); ao especificar os endpoints de job+poll, referenciar explicitamente o gatilho de revisita registrado na própria ADR (streaming token-a-token no runtime in-process).
+- Primeiros commits de hardening da F1, em ordem de retorno: (1) `_call_llm` checa `returncode` + `stderr` no erro; (2) escape de HTML em todo `render()` (strings derivadas de LLM); (3) sufixo de unicidade em `new_canvas_id`; (4) substituir a fila single-consumer do SSE por fan-out/replay ao implementar job+poll (mata a race de double-connect e habilita o re-attach da ADR).
+- Quinto drift do harness encontrado no review: o comentário do template lista `vector: evolucao|execucao|manutencao` SEM `ambiguo`; reconciliar junto com vetor×vector, enums de `intent_type` e `minLength` de `focus` no canvas v0.5.
+- Seam: default `deepseek-chat` em `scripts/spike_llm_cmd.py` causa HTTP 400 a frio; corrigir para `deepseek-v4-pro` ou aposentar o seam com a integração in-process.
