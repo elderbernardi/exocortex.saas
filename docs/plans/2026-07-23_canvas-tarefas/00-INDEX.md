@@ -6,8 +6,10 @@
 
 | Arquivo | O que é |
 |---|---|
-| `F0-PLANO.md` | **Plano detalhado grau-execução** (tarefas bite-sized, código completo, verificação por passo). É a única fase executável agora. |
-| `F1-CHARTER.md` … `F5-CHARTER.md` | Charters: objetivo, entregáveis, gate, esboço de tarefas, guardrails. O plano detalhado de cada fase é escrito **somente após o gate da fase anterior** (as ADRs do F0 mudam o desenho de F1+). |
+| `F0-PLANO.md` | Plano do spike (EXECUTADO 2026-07-24; gate fechado em #131; resultado em `F0-RESULTADO.md`). |
+| `F1a-PLANO.md` | **Patch harness canvas v0.5 (ADR-CT-06)** — grau-execução; termina em PR OWNER-GATED (`collab/canvas-v05`). Executável agora. |
+| `F1b-PLANO.md` | **MVP Sala no fork** — grau-execução; pré-condição dura: PR do F1a mergeado (T0 aborta sem ele). |
+| `F1-CHARTER.md` … `F5-CHARTER.md` | Charters: objetivo, entregáveis, gate, guardrails. Plano detalhado de cada fase **somente após o gate da fase anterior**. |
 | `adr/ADR-CT-*.md` | Decisões de arquitetura do programa (propostas → decididas com evidência). |
 
 Precedente deste formato: `hermes-webui/docs/acervo-studio/PLAN-phase0..5.md` (MOD-010, fases gated).
@@ -40,4 +42,5 @@ Este programa foi desenhado para ser executado por agentes de qualquer porte, **
 
 ## Estado
 
-- 2026-07-23 — Programa criado; F0 planejado (executável); F1–F5 em charter. COLLAB registrado no umbrella (`.harness/changes/2026-07-23_collab_canvas-tarefas.md`).
+- 2026-07-23 — Programa criado; F0 planejado; F1–F5 em charter. COLLAB registrado no umbrella (`.harness/changes/2026-07-23_collab_canvas-tarefas.md`).
+- 2026-07-24 — **F0 EXECUTADO e gate FECHADO** (#131; merge ff `exocortex/stable` @ 73b62042). ADR-CT-04 = job+poll; ADR-CT-05 = vanilla. **F1 planificado em duas partes**: F1a (harness v0.5, PR owner-gated) e F1b (MVP Sala; bloqueado até o merge do F1a). Recon 2026-07-24 embutido nos planos; achado extra: bug pré-existente do ctxTray (MOD-008) documentado no F1b.
