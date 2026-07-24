@@ -1,0 +1,17 @@
+# Config do produtor de notícias (excrtx-news-sales-ai, modo auto macro).
+[publish]
+default_escopo = "macro"
+default_ttl_days = 30
+max_items_per_run = 4
+relevance_threshold = 60
+use_docbrain = false
+
+[[monitored_areas]]
+slug = "varejo"          # template do excrtx-research-cpg-brasil
+cadence = "weekly"
+max_items = 3
+relevance_threshold = 65
+
+[[monitored_areas]]
+slug = "limpeza"
+cadence = "weekly"
