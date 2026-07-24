@@ -291,10 +291,10 @@ Never claim to have done something without verifying it actually
   uncertain.
 
 ## Morning Briefing
-Briefing matinal cruza todos os microversos. Coleta: drafts pendentes, insights recentes, agenda do dia,
-  ações bloqueadas.
+Briefing v2 cruza todos os microversos via `acervoctl briefing`. Coleta: intenções vencidas/próximas,
+  disputas, drafts, episódios das últimas 24h, context heads e agenda quando integrada.
 
-  Formato: acionável, direto ao ponto. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
+  Formato: acionável, citado, direto ao ponto, ≤4k tokens. Ordenar por urgência, não por domínio. Modo compacto ≤10 linhas.
 
   Trigger: "briefing", "bom dia", "o que tem pra hoje", ou início de sessão.
 
@@ -374,6 +374,7 @@ Least privilege: use the simplest tool that solves the task.
 - Episodes, entities, and intentions are created via `acervoctl new-object`. Never create an entity without checking aliases first (aliases are mandatory); intentions carry due/trigger and owed_to; episodes never store verbatim transcripts — summary + `session://` pointer only.
 - Commitments and promises persist as intention objects in intentions/; significant events distill to episode objects in episodes/.
 - Frontmatter is Schema v0.2 (schema: acervo/v0.2, one type matching the home directory, status scalar, epistemic tier). Default read filter: status active and valid today; label anything else HISTORICAL.
+- Human-interface routing: "briefing" → `acervoctl briefing`; "modo decisão sobre X" → `acervoctl posture --mode decision`; "modo pesquisa sobre X" → `acervoctl posture --mode research`; temporal questions stay on `acervoctl retrieve` and must preserve HISTORICAL labels.
 
 ## Memory Mvexport
 - Export de microverso é via acervo/global/tools/microverso_package.py — nunca cópia manual de diretório.
@@ -405,6 +406,13 @@ Least privilege: use the simplest tool that solves the task.
 - All operations are dual-logged in .purge_log (global) and the origin container's log.md by the quarantine skill.
 - Idempotent: running the cycle twice in the same day produces no duplicate quarantines — a file already carrying quarantined_at is skipped.
 - Fail safe: if a file cannot be moved (permissions, missing path), log the error and continue the cycle — never abort on a single failure.
+
+## News Sales Ai
+# This skill does not inject runtime rules; it is a tool-only skill.
+# v1 default: Modo A (cron autônomo) publica sem subir o harness DataBrain e
+# sem DocBrain (use_docbrain=false); Modo B (manual) segue o mesmo default.
+# Guard read-before-write nunca reativa uma notícia com ativo=false —
+# Camada 2, complementar ao writer publish_noticia v3.1.0 (skipped_retired).
 
 ## Anti-Slop
 Cut filler phrases, throat-clearing openers, emphasis crutches, all

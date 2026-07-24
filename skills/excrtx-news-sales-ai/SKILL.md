@@ -12,6 +12,10 @@ metadata:
     related_skills: [excrtx-integrate-docbrain, excrtx-crawler-brasil, excrtx-research-cpg-brasil, excrtx-govern-draftfirst]
 compiled_rules: |
   # This skill does not inject runtime rules; it is a tool-only skill.
+  # v1 default: Modo A (cron autônomo) publica sem subir o harness DataBrain e
+  # sem DocBrain (use_docbrain=false); Modo B (manual) segue o mesmo default.
+  # Guard read-before-write nunca reativa uma notícia com ativo=false —
+  # Camada 2, complementar ao writer publish_noticia v3.1.0 (skipped_retired).
 ---
 # excrtx-news-sales-ai
 
@@ -22,6 +26,30 @@ Esta skill materializa a **Rota B** do pipeline de notícias.
 O agente Exocórtex pesquisa, consolida sinais, contextualiza documentos e prepara a curadoria. O **DataBrain não roda como processo ativo** para notícias: ele fica restrito a contratos, contexto, targets, guard, ledger, receipts e expire-plan, sob demanda. A publicação canônica continua no **Sales-AI MCP**.
 
 O objetivo da skill é reduzir improviso operacional. Ela define a fronteira, a sequência de execução e o artefato intermediário que permite curadoria governada antes do publish.
+
+## Modos de operação
+
+Esta skill tem dois modos. O runbook Route B abaixo (harness DataBrain sob demanda,
+DocBrain como contexto) permanece **válido e opcional** — nenhum foi removido.
+
+### Modo A — autônomo (cron, macro)
+Dirigido por `config/noticias.toml`. Um cron despachante decide quais áreas rodam:
+
+1. `python3 scripts/news_dispatch.py --config config/noticias.toml --state <acervo>/news-cadence.json --now $(date +%s)` → lista de áreas vencidas.
+2. Para cada área: `python3 ../excrtx-research-cpg-brasil/scripts/orchestrate.py --template <slug> --output json --skip-l30d` (sem `--document`; `use_docbrain=false`).
+3. `python3 scripts/build_dossier.py --job-context <ctx.json> --crawler <research.json> --output-file <dossier.json>` (reusa o helper; **não** passar `--docbrain`).
+4. Curadoria com o modelo a partir do `prompt_packet`: dedup, relevância ≥ `relevance_threshold`, `impacto`, headline via `excrtx-quality-antislop`, **só itens com url/fonte reais**; cap `max_items`.
+5. Guard: `partition()` de `scripts/news_guard.py` (via `fetch_existing`) descarta url já ativa/retirada.
+6. Publicar cada item do bucket `publish` via MCP `publish_noticia` (escopo=macro); tratar `resultado ∈ {created, updated, skipped_retired}`.
+7. `news_dispatch.py --mark <slug> --now $(date +%s)` para carimbar o run.
+8. Expirar vencidos via MCP `expire_noticia`.
+
+### Modo B — manual (comercial/gestão, via agente)
+Quando comercial ou gestão pede para publicar uma notícia específica:
+1. Receber título, url (**obrigatória**), fonte, impacto (headline opcional).
+2. Passar a headline por `excrtx-quality-antislop`.
+3. Guard `partition()` de 1 item (não reativa retirada).
+4. `publish_noticia` com `origem` = quem pediu (`comercial`/`gestao`). Sem pesquisa/curadoria.
 
 ## When to Use
 
@@ -55,6 +83,10 @@ Sales-AI MCP
 ```
 
 ## Fronteira obrigatória
+
+> **v1 autônomo (default):** o Modo A **não** usa o harness DataBrain nem DocBrain
+> (publica sem DataBrain up; `use_docbrain=false`). As etapas de harness/DocBrain
+> abaixo continuam disponíveis para o runbook manual/avançado, mas são **opcionais**.
 
 ### Fica no Exocórtex
 - pesquisa e coleta;
