@@ -1,12 +1,16 @@
-# Design — `excrtx-produce-noticias` (produtor de notícias do Hermes)
+# Design — evolução da skill `excrtx-news-sales-ai` (produtor de notícias do Hermes)
 
-> **Status:** spec aprovado (brainstorming 2026-07-24). Aguarda revisão do owner antes do plano de implementação.
+> **Status:** spec revisado (brainstorming 2026-07-24). Aguarda revisão do owner antes do plano.
 > **Change mode:** COLLAB (skill Exocórtex consome o contrato do MCP `sales-ai` + principal `hermes-publisher`).
-> **Escopo desta spec:** v1 = produtor **macro** autônomo (áreas + periodicidade parametrizáveis) **+ modo manual** (comercial/gestão). Micro (notícias de cliente) é **desenhado agora, construído na v2** (spec própria).
+> **Pivô (2026-07-24):** o Hermes já mesclou uma skill Route B — **`excrtx-news-sales-ai`** (exocortex #137: runbook + `build_dossier.py` + testes). Em vez de criar `excrtx-produce-noticias`, esta spec **evolui a skill existente sem regredir**: mantém o que ela faz (macro+micro, harness DataBrain sob demanda, DocBrain como contexto opcional) e **adiciona** as decisões do owner (default DataBrain-free, cron autônomo, config de áreas+periodicidade, modo manual comercial/gestão, sem DocBrain no padrão). Reusa `build_dossier.py`.
+> **Já entregue nesta sessão (workstream do writer):** o hardening anti-reativação do `publish_noticia` — que o record #62 afirmava (v2.2.1) mas **nunca entrou** — foi **refeito via TDD**: MCP `sales-ai` **v3.1.0** (`resultado=skipped_retired`), contrato **v1.24**, COLLAB record `2026-07-24_collab_noticias-writer-antireactivation.md`. Ver §7.
+> **Escopo desta spec:** v1 = produtor **macro** autônomo (áreas + periodicidade parametrizáveis) **+ modo manual** (comercial/gestão), **sem regredir** o macro/micro/harness/DocBrain existentes (viram opcionais). Micro autônomo por cliente = **v2** (spec própria).
 
 ## 1. Contexto
 
-A superfície de publicação de notícias está 100% em produção desde 2026-07-22 (contrato `databrain-to-sales-ai.md` v1.21): tabela canônica `noticias_publicas`, principal least-privilege `hermes-publisher`, MCP `sales-ai` v2.2.0 com `publish_noticia`/`expire_noticia`. O lado **produtor** foi parcialmente endereçado pela issue #56; o PR databrain#6 ("Route B") entregou um **harness validador na DataBrain** — mas não um produtor que publica de fato. Esta spec cobre o **produtor real**, executado pelo runtime Hermes/Exocórtex.
+A superfície de publicação está em produção desde 2026-07-22 (contrato `databrain-to-sales-ai.md`, hoje **v1.24**): tabela canônica `noticias_publicas`, principal least-privilege `hermes-publisher`, MCP `sales-ai` **v3.1.0** com `publish_noticia`/`expire_noticia`. O lado **produtor** foi endereçado em duas frentes: databrain#6 ("Route B") entregou o **harness validador na DataBrain**; exocortex#137 entregou a skill **`excrtx-news-sales-ai`** (runbook manual Route B + `build_dossier.py` + testes). Nenhuma das duas entrega um produtor **autônomo/parametrizável**. Esta spec evolui `excrtx-news-sales-ai` para esse produtor.
+
+O que **reusar** do já entregue: `build_dossier.py` (normalização/dedup/dossier — puro, testado, DataBrain/DocBrain-agnóstico nas entradas); o runbook de curadoria/fronteiras da skill; e o writer já endurecido (`skipped_retired`) como proteção server-side primária.
 
 Decisões do owner (brainstorming 2026-07-24):
 - **Escopo v1 = macro** (setor); micro vem depois.
@@ -38,7 +42,7 @@ Regra de projeto: se um passo puder ser feito por uma skill existente, ele **é*
 Caminho de publicação **independente da DataBrain**:
 
 ```
-cron despachante → sessão Hermes carrega excrtx-produce-noticias (modo auto) →
+cron despachante → sessão Hermes carrega excrtx-news-sales-ai (modo auto) →
   para cada área monitorada vencida:
     1. PESQUISA    research-cpg-brasil --template <área> --output json  → itens (url/fonte reais; sem DocBrain)
     2. CURADORIA   DeepSeek + quality-antislop                          → inputs publish_noticia canônicos
@@ -115,17 +119,17 @@ Sem pesquisa nem curadoria automática — é publicação humana-no-loop pelo c
 
 ## 7. Guard de não-reativação — read-before-write no Supabase
 
-⚠️ Regra do contrato: **re-publicar uma url expirada REATIVA a notícia** (`ativo=true` + novo TTL). O owner autorizou o agente a **depender do Supabase** (não da DataBrain, não do DocBrain). Logo, o guard usa a **fonte da verdade** em vez de um ledger local que poderia derivar:
+⚠️ Regra do contrato: **re-publicar uma url expirada REATIVA a notícia** (`ativo=true` + novo TTL). Duas camadas cobrem isso, defesa em profundidade:
 
-- **Passo 3 (guard)**: antes de publicar um candidato, o produtor faz um `SELECT` em `noticias_publicas` pela `url` (via `supabase-js` autenticado como `hermes-publisher`). A policy **`noticias_select_publisher`** (migração 024, sem filtro `ativo`) garante que o principal enxerga **todas** as linhas — inclusive expiradas/`ativo=false`. Decisão:
-  - linha existe e `ativo=true` → **skip** (já publicada, evita churn);
-  - linha existe e `ativo=false` → **skip** (retirada; **não reativar**);
-  - linha ausente → **publica**.
-- Idempotência de duplicata no update é reforçada no servidor pelo índice único `(url, cliente_id) NULLS NOT DISTINCT`; o read-before-write cobre especificamente o hazard de reativação.
-- O `SELECT` chaveia por `(url, cliente_id)` desde já — `cliente_id IS NULL` no macro (micro-ready para v2).
+**Camada 1 — servidor (primária, já entregue nesta sessão).** O writer `publish_noticia` **v3.1.0** lê `ativo` na linha `(url, cliente_id)` e, se `ativo=false`, retorna `resultado='skipped_retired'` **sem tocar na linha** — nunca reativa. Isso fecha o hazard mesmo que o produtor erre. Foi refeito via TDD porque o hardening que o record #62 afirmava (v2.2.1) nunca tinha entrado (o merge do cockpit v3.0.0 passou por cima). Contrato v1.24; COLLAB record `2026-07-24_collab_noticias-writer-antireactivation.md`.
+
+**Camada 2 — produtor (secundária, otimização).** Antes de publicar, o produtor faz um `SELECT` em `noticias_publicas` pela `url` (via `supabase-js` como `hermes-publisher`; a policy `noticias_select_publisher` deixa o principal ver linhas `ativo=false`). Serve para **evitar chamadas desnecessárias** (churn): pula url já ativa e url já retirada antes mesmo de chamar o writer. Se o `SELECT` falhar/for pulado, a Camada 1 ainda garante a invariância.
+
+- Idempotência de duplicata é reforçada no servidor pelo índice único `(url, cliente_id) NULLS NOT DISTINCT`.
+- O `SELECT` chaveia por `(url, cliente_id)` — `cliente_id IS NULL` no macro (micro-ready para v2).
 - **Sem ledger de urls no acervo.** O único estado persistido no acervo (`exocortex-ops`, via `memory-manager`) é o **`last_run_at` por área** (cadência) — que não existe no Supabase.
 
-> Transporte: leitura via `supabase-js` (read-only, creds do publisher); escrita sempre via MCP `publish_noticia`/`expire_noticia` (canal canônico). O contrato já contempla acesso direto do principal (opção 2 do contrato v1.21).
+> Transporte: leitura via `supabase-js` (read-only, creds do publisher); escrita sempre via MCP (`publish_noticia`/`expire_noticia`). O produtor trata `resultado ∈ {created, updated, skipped_retired}`.
 
 ## 8. Credenciais e segurança
 
@@ -151,13 +155,15 @@ Quando priorizado, a v2 reusa o mesmo esqueleto trocando só o passo de PESQUISA
 
 ## 11. Change mode e artefatos
 
-- **COLLAB**: change record em `.harness/changes/` (umbrella) referenciando esta spec; contrato `databrain-to-sales-ai.md` é **consumido** (v1.21+), não alterado — sem nova superfície de contrato.
-- Novos artefatos (branch `collab/noticias-producer-skill` em `exocortex.saas`):
-  - `skills/excrtx-produce-noticias/SKILL.md` (runbook dos 2 modos, contrato de curadoria, segurança).
-  - `skills/excrtx-produce-noticias/config/noticias.toml` (config default).
-  - `skills/excrtx-produce-noticias/scripts/` (cola determinística: despachante de cadência, chamada MCP publish/expire, read-before-write no Supabase, estado de cadência).
-  - `skills/excrtx-produce-noticias/.env.example` (variáveis, sem valores).
+- **COLLAB**: change record em `.harness/changes/` (umbrella). O contrato `databrain-to-sales-ai.md` já foi para **v1.24** (workstream do writer, §7); a evolução da skill em si **consome** o contrato, sem nova superfície.
+- **Evoluir a skill existente `skills/excrtx-news-sales-ai/` (sem regredir)** — não criar skill nova:
+  - `SKILL.md`: adicionar os 2 modos (auto por cron / manual comercial-gestão) e o default DataBrain-free/sem-DocBrain, **preservando** as seções atuais (macro+micro, harness DataBrain sob demanda, DocBrain como contexto opcional) marcadas como opcionais. Atualizar `compiled_rules:` e rodar `python3 scripts/compile_soul.py`.
+  - `config/noticias.toml` (novo): config default (áreas, periodicidade, `use_docbrain=false`, caps).
+  - `scripts/` (novos, ao lado de `build_dossier.py` que é **reusado**): despachante de cadência, chamada MCP publish/expire, read-before-write no Supabase, estado de cadência.
+  - `.env.example` (novo): variáveis, sem valores.
   - Registro do cron em `acervo/micro/exocortex-ops/knowledge/cron-registry.md`.
+  - Manter `references/route-b-architecture.md` e os testes existentes verdes (não regredir).
+- Qualidade: `skill_judge` da skill deve manter/atingir **PASS** (D1–D5) antes do merge.
 
 ## 12. Verificação (critérios de aceite)
 
