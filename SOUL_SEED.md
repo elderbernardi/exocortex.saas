@@ -303,9 +303,13 @@ For complex inputs: parse focus, vector, gaps, urgency into a structured
   canvas block before responding.
 
   Required fields: focus (string), vetor (execucao|evolucao|manutencao|ambiguo), intent_type
-  (explorar|decidir|produzir|revisar|manter).
+  (explorar|decidir|produzir|revisar|manter|publicar|ingestao|outro).
 
-  Optional: macroverso_status, microverso_primary, gaps[], urgency.
+  Optional: macroverso_status, microverso_primary, gaps[], urgency, shape, done_criteria,
+  verification.
+
+  When proposing a canvas for launch, always propose done_criteria plus a NAMED verification;
+  if none can be named, emit a gap question instead.
 
   Emit canvas block in trace for auditing. Skip canvas for trivial/simple inputs.
 

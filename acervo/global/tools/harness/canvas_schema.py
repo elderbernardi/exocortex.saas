@@ -8,7 +8,7 @@ Used by auditor_canvas_validator.py to check Canvas block emissions.
 
 CANVAS_SCHEMA = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Exocórtex Canvas v0.4",
+    "title": "Exocórtex Canvas v0.5",
     "description": "Structured intent analysis for complex executive inputs",
     "type": "object",
     "required": ["focus", "vetor", "intent_type"],
@@ -25,7 +25,8 @@ CANVAS_SCHEMA = {
         },
         "intent_type": {
             "type": "string",
-            "enum": ["explorar", "decidir", "produzir", "revisar", "manter"],
+            "enum": ["explorar", "decidir", "produzir", "revisar", "manter",
+                     "publicar", "ingestao", "outro"],
             "description": "Type of intent behind the input",
         },
         "macroverso_status": {
@@ -46,6 +47,19 @@ CANVAS_SCHEMA = {
             "type": "string",
             "enum": ["alta", "media", "baixa"],
             "description": "Urgency level of the request",
+        },
+        "shape": {
+            "type": "string",
+            "enum": ["pergunta", "plano-primeiro", "tarefa"],
+            "description": "Shape of the ask (fable-method): question, plan-first or task",
+        },
+        "done_criteria": {
+            "type": "string",
+            "description": "What 'done' looks like for this task, in one sentence",
+        },
+        "verification": {
+            "type": "string",
+            "description": "Named verification proving done_criteria (observable check)",
         },
     },
     "additionalProperties": False,
