@@ -19,18 +19,19 @@ Decisões do owner (brainstorming 2026-07-24):
 
 ## 2. Princípio central: skill de skills
 
-O produtor **não reimplementa** coleta, síntese, controle de qualidade editorial nem transporte MCP. Ele contribui apenas: (a) **orquestração** dos passos, (b) **config** de áreas/periodicidade, (c) a **cola de publicação + ledger de não-reativação**. Tudo o mais é delegado a skills canônicas existentes:
+O produtor **não reimplementa** coleta, síntese, controle de qualidade editorial nem transporte MCP. Ele contribui apenas: (a) **orquestração** dos passos, (b) **config** de áreas/periodicidade, (c) a **cola de publicação + guard de não-reativação** (read-before-write no Supabase). Tudo o mais é delegado a skills canônicas existentes:
 
 | Responsabilidade | Skill delegada |
 |---|---|
-| Pesquisa setorial macro (multi-fonte PT-BR) | `excrtx-research-cpg-brasil` (que já compõe `crawler-brasil` + `last30days` + `integrate-agent-reach` + `integrate-docbrain`) |
+| Pesquisa setorial macro (multi-fonte PT-BR) | `excrtx-research-cpg-brasil` (compõe `crawler-brasil` + `last30days` + `integrate-agent-reach`) — **sem DocBrain** (não usar `--document`; ver §4) |
 | Qualidade editorial (headline sem slop) | `excrtx-quality-antislop` / `excrtx-quality-gate` |
 | Canal de escrita (publish/expire) | `excrtx-integrate-mcp` → MCP `sales-ai` `publish_noticia`/`expire_noticia` |
+| Guard de não-reativação (fonte da verdade) | read-before-write no Supabase via `supabase-js` (policy `noticias_select_publisher`, ver §7) |
 | Governança de ação externa | `excrtx-govern-draftfirst` (mesmo no modo autônomo, para logging/gate na criação do cron) |
-| Ledger no acervo (estado de urls) | `excrtx-memory-manager` |
+| Estado de cadência (`last_run_at` por área) | `excrtx-memory-manager` (acervo `exocortex-ops`) |
 | (v2 micro) pesquisa por empresa + resolução de cliente | `excrtx-crawler-brasil` + `excrtx-source-cnpj` (+ `source-reclameaqui`, `source-google-trends` como sinal) |
 
-Regra de projeto: se um passo puder ser feito por uma skill existente, ele **é** feito por ela. Código novo só na orquestração e na cola de publish/ledger.
+Regra de projeto: se um passo puder ser feito por uma skill existente, ele **é** feito por ela. Código novo só na orquestração e na cola de publish/guard.
 
 ## 3. Arquitetura e fluxo de dados
 
@@ -39,12 +40,12 @@ Caminho de publicação **independente da DataBrain**:
 ```
 cron despachante → sessão Hermes carrega excrtx-produce-noticias (modo auto) →
   para cada área monitorada vencida:
-    1. PESQUISA    research-cpg-brasil --template <área> --output json  → itens (url/fonte reais)
+    1. PESQUISA    research-cpg-brasil --template <área> --output json  → itens (url/fonte reais; sem DocBrain)
     2. CURADORIA   DeepSeek + quality-antislop                          → inputs publish_noticia canônicos
-    3. GUARD-LOCAL ledger de urls no acervo (memory-manager)            → descarta retired/duplicada
+    3. GUARD       read-before-write no Supabase (SELECT por url)       → descarta url já ativa OU retirada (não-reativação)
     4. PUBLICA     MCP sales-ai.publish_noticia (escopo=macro)          → noticias_publicas (idempotente via índice único Supabase)
-    5. LEDGER      grava url + valido_ate + estado no acervo
-    6. EXPIRA      itens vencidos → expire_noticia + ledger vira retired
+    5. CADÊNCIA    grava last_run_at da área no acervo
+    6. EXPIRA      itens vencidos → expire_noticia (ativo=false)
 ```
 
 O harness da DataBrain (`databrain news guard/receipt/expire-plan`) permanece como **reconciliação offline opcional** — executada só quando a DataBrain estiver up (ex.: pipeline manual), nunca no caminho de publicação.
@@ -56,14 +57,15 @@ Arquivo de config versionado com a skill, sobreponível pelo acervo `exocortex-o
 ```toml
 [publish]
 default_escopo = "macro"
-default_ttl_days = 45          # valido_ate = publicado_em + N
+default_ttl_days = 30          # valido_ate = publicado_em + N
 max_items_per_run = 4          # cap por área/run (anti-flood do feed)
 relevance_threshold = 60       # 0-100; itens abaixo são descartados na curadoria
+use_docbrain = false           # NÃO depender do DocBrain no pipeline de pesquisa
 
 # --- áreas macro monitoradas (v1) ---
 [[monitored_areas]]
 slug = "varejo"                # template do research-cpg-brasil
-cadence = "daily"              # periodicidade parametrizável (daily|weekly|"0 7 * * 1"…)
+cadence = "weekly"             # periodicidade parametrizável (daily|weekly|"0 7 * * 1"…)
 max_items = 3                  # override do cap por área (opcional)
 relevance_threshold = 65       # override (opcional)
 
@@ -82,11 +84,12 @@ cadence = "weekly"
 - **`monitored_areas[].slug`** = template do `research-cpg-brasil` (`panorama`/`varejo`/`inovacao`/`limpeza`/`supply`) ou custom definido em `references/query-templates.md` daquela skill.
 - **`cadence`** = periodicidade por área (o despachante decide o que está vencido).
 - Overrides por área de `max_items`/`relevance_threshold`.
-- Bloco `monitored_clients` fica comentado na v1, mas o shape e o ledger já suportam `cliente_id` (micro-ready).
+- `use_docbrain = false`: o pipeline de pesquisa **não** injeta documentos via DocBrain (`--document`); depende só de crawler-brasil + last30days + agent-reach.
+- Bloco `monitored_clients` fica comentado na v1, mas o shape e o guard `(url, cliente_id)` já suportam `cliente_id` (micro-ready).
 
 ## 5. Modo A — autônomo (cron)
 
-Um **cron despachante único** registrado em `acervo/micro/exocortex-ops/knowledge/cron-registry.md`. A cada disparo, lê a config, calcula quais áreas estão vencidas pela `cadence` e roda o pipeline por área. O **último run por área** (`last_run_at`) é persistido no acervo (`exocortex-ops`, ao lado do ledger, via `memory-manager`); uma área está vencida quando `now − last_run_at ≥ cadence`. A criação do cron passa pelo gate normal de `excrtx-govern-draftfirst` (ação externa recorrente); uma vez vivo, publica autonomamente. A cadência do cron do SO deve ser ≤ a menor `cadence` configurada (ex.: cron horário serve áreas `daily`/`weekly`); o despachante é o árbitro real de quando cada área roda.
+Um **cron despachante único** registrado em `acervo/micro/exocortex-ops/knowledge/cron-registry.md`. A cada disparo, lê a config, calcula quais áreas estão vencidas pela `cadence` e roda o pipeline por área. O **último run por área** (`last_run_at`) é persistido no acervo (`exocortex-ops`, via `memory-manager`); uma área está vencida quando `now − last_run_at ≥ cadence`. A criação do cron passa pelo gate normal de `excrtx-govern-draftfirst` (ação externa recorrente); uma vez vivo, publica autonomamente. A cadência do cron do SO deve ser ≤ a menor `cadence` configurada (ex.: cron horário serve áreas `daily`/`weekly`); o despachante é o árbitro real de quando cada área roda.
 
 **Passo 2 (curadoria) — a rede de segurança da autonomia.** Sem revisão humana, a curadoria é estrita e é onde mora o julgamento do agente + DeepSeek:
 - **Factualidade:** só sobrevive item com `url` + `fonte` reais retornados pela pesquisa. **Nunca inventar** notícia; nunca publicar item sem url verificável.
@@ -106,21 +109,23 @@ Disparado sob demanda quando comercial ou gestão pede ao Hermes ("publique esta
 3. Passa a headline pelo `quality-gate`/`antislop`.
 4. Publica pelo **mesmo canal MCP** `publish_noticia`.
 5. Carimba `origem` (ex.: `comercial` / `gestao`) e registra quem pediu nos metadados/log (`govern-draftfirst`).
-6. Grava no **mesmo ledger**.
+6. Passa pelo **mesmo guard read-before-write** (§7) antes de publicar — não reativa url expirada mesmo no manual.
 
 Sem pesquisa nem curadoria automática — é publicação humana-no-loop pelo canal governado. Não altera o app; o pedido chega pelo agente.
 
-## 7. Ledger de não-reativação (DataBrain-free)
+## 7. Guard de não-reativação — read-before-write no Supabase
 
-⚠️ Regra do contrato: **re-publicar uma url expirada REATIVA a notícia** (`ativo=true` + novo TTL). Como o produtor não usa o ledger da DataBrain, ele mantém o **seu próprio ledger no acervo** (`exocortex-ops`, via `memory-manager`):
+⚠️ Regra do contrato: **re-publicar uma url expirada REATIVA a notícia** (`ativo=true` + novo TTL). O owner autorizou o agente a **depender do Supabase** (não da DataBrain, não do DocBrain). Logo, o guard usa a **fonte da verdade** em vez de um ledger local que poderia derivar:
 
-- Registra cada url publicada: `{ url_normalizada, cliente_id|null, noticia_id, estado: active|retired, valido_ate, publicado_em, origem }`.
-- **Passo 3 (guard-local)** descarta candidato cuja url esteja `retired` (evita reativação) ou `active` e ainda não-expirada (evita churn).
-- **Passo 6 (expira)** vira `retired` no ledger ao chamar `expire_noticia`.
-- Idempotência de duplicata no update é garantida no servidor pelo índice único `(url, cliente_id) NULLS NOT DISTINCT` do Supabase; o ledger local cobre especificamente o hazard de reativação e serve de auditoria.
-- Chave do ledger inclui `cliente_id` desde já (micro-ready).
+- **Passo 3 (guard)**: antes de publicar um candidato, o produtor faz um `SELECT` em `noticias_publicas` pela `url` (via `supabase-js` autenticado como `hermes-publisher`). A policy **`noticias_select_publisher`** (migração 024, sem filtro `ativo`) garante que o principal enxerga **todas** as linhas — inclusive expiradas/`ativo=false`. Decisão:
+  - linha existe e `ativo=true` → **skip** (já publicada, evita churn);
+  - linha existe e `ativo=false` → **skip** (retirada; **não reativar**);
+  - linha ausente → **publica**.
+- Idempotência de duplicata no update é reforçada no servidor pelo índice único `(url, cliente_id) NULLS NOT DISTINCT`; o read-before-write cobre especificamente o hazard de reativação.
+- O `SELECT` chaveia por `(url, cliente_id)` desde já — `cliente_id IS NULL` no macro (micro-ready para v2).
+- **Sem ledger de urls no acervo.** O único estado persistido no acervo (`exocortex-ops`, via `memory-manager`) é o **`last_run_at` por área** (cadência) — que não existe no Supabase.
 
-> Nota de correção epistêmica: quando a DataBrain estiver up, `databrain news receipt`/`expire-plan` podem reconciliar o ledger `ops` da DataBrain com este ledger local — auditoria secundária, opcional.
+> Transporte: leitura via `supabase-js` (read-only, creds do publisher); escrita sempre via MCP `publish_noticia`/`expire_noticia` (canal canônico). O contrato já contempla acesso direto do principal (opção 2 do contrato v1.21).
 
 ## 8. Credenciais e segurança
 
@@ -131,8 +136,8 @@ Sem pesquisa nem curadoria automática — é publicação humana-no-loop pelo c
 ## 9. Fronteiras (o que a skill NÃO faz)
 
 - Não reimplementa coleta/síntese (delega ao `research-cpg-brasil`).
-- Não escreve direto no Postgres nem usa `service_role`.
-- Não depende da DataBrain para publicar.
+- Não escreve direto no Postgres nem usa `service_role` (escrita só via MCP; leitura read-only via supabase-js do principal).
+- Não depende da DataBrain para publicar, nem do DocBrain para pesquisar.
 - Não resolve `cliente_id` nem publica micro na v1 (só macro).
 - Não cria afordância no app Sales-AI (modo manual é via agente).
 
@@ -142,7 +147,7 @@ Quando priorizado, a v2 reusa o mesmo esqueleto trocando só o passo de PESQUISA
 - `monitored_clients[]` na config (cliente_id + CNPJ + aliases + cadence).
 - Pesquisa por empresa: `excrtx-crawler-brasil` (por-empresa) + `excrtx-source-cnpj` (resolver/validar cadastro) + `source-reclameaqui`/`source-google-trends` como sinal.
 - Publica com `escopo='micro'` + `cliente_id` (coerência escopo⇔cliente_id garantida por CHECK no banco).
-- Mesmo ledger (já chaveado por `cliente_id`), mesmo canal MCP, mesmas travas de factualidade/relevância.
+- Mesmo guard read-before-write (já chaveado por `(url, cliente_id)`), mesmo canal MCP, mesmas travas de factualidade/relevância.
 
 ## 11. Change mode e artefatos
 
@@ -150,16 +155,16 @@ Quando priorizado, a v2 reusa o mesmo esqueleto trocando só o passo de PESQUISA
 - Novos artefatos (branch `collab/noticias-producer-skill` em `exocortex.saas`):
   - `skills/excrtx-produce-noticias/SKILL.md` (runbook dos 2 modos, contrato de curadoria, segurança).
   - `skills/excrtx-produce-noticias/config/noticias.toml` (config default).
-  - `skills/excrtx-produce-noticias/scripts/` (cola determinística: despachante de cadência, chamada MCP publish/expire, read/write do ledger; parser reutilizado quando aplicável).
+  - `skills/excrtx-produce-noticias/scripts/` (cola determinística: despachante de cadência, chamada MCP publish/expire, read-before-write no Supabase, estado de cadência).
   - `skills/excrtx-produce-noticias/.env.example` (variáveis, sem valores).
   - Registro do cron em `acervo/micro/exocortex-ops/knowledge/cron-registry.md`.
 
 ## 12. Verificação (critérios de aceite)
 
-1. **Dry-run** (`--no-publish`): pesquisa→curadoria→guard-local produz candidatos, **todos com url/fonte reais** e `valido_ate` preenchido; nenhum item inventado.
+1. **Dry-run** (`--no-publish`): pesquisa→curadoria→guard (read-before-write) produz candidatos, **todos com url/fonte reais** e `valido_ate` preenchido; nenhum item inventado.
 2. **Publish macro live**: 1 item publicado via MCP aparece no feed "Notícias do Setor" do app; invisível a fluxo micro (não aplicável na v1).
-3. **Idempotência**: re-run da mesma área não duplica (mesma `(url, cliente_id)` → update); url `retired` não é reativada (guard-local).
-4. **Expiração**: item vencido → `expire_noticia` some do feed e vira `retired` no ledger.
+3. **Idempotência**: re-run da mesma área não duplica (mesma `(url, cliente_id)` → update); url com `ativo=false` não é reativada (guard read-before-write detecta a linha expirada e faz skip).
+4. **Expiração**: item vencido → `expire_noticia` (`ativo=false`) some do feed; o mesmo url deixa de ser candidato em runs futuros.
 5. **Modo manual**: publish de comercial/gestão pelo agente entra com `origem` correta e passa pelo quality-gate.
 6. **Parametrização**: mudar `cadence`/`slug`/`max_items` na config altera o comportamento do despachante sem tocar em código.
 7. **Segurança**: nenhuma referência a `service_role` no caminho de publicação; nenhum segredo em código/commits.
@@ -170,8 +175,9 @@ Quando priorizado, a v2 reusa o mesmo esqueleto trocando só o passo de PESQUISA
 | Risco | Mitigação |
 |---|---|
 | Publicar notícia irrelevante/ruído (Copa, política nos feeds gerais) | `research-cpg-brasil` já prioriza crawler setorial; curadoria com `relevance_threshold` + atribuição de fonte obrigatória |
-| Reativar url expirada | Ledger de não-reativação local (guard-local passo 3) |
+| Reativar url expirada | Read-before-write no Supabase (§7): principal enxerga linhas `ativo=false` via `noticias_select_publisher` e faz skip |
 | Alucinação factual | Trava de factualidade: só publica item com url real retornada pela pesquisa |
 | Flood do feed | `max_items_per_run` por área |
 | Deriva de credenciais entre hosts | Env-only no runtime Hermes; `.env.example` sem valores; principal least-privilege |
 | `last30days` lento/flaky | `research-cpg-brasil` tem `--skip-l30d`; crawler BR é fonte primária |
+| Indisponibilidade do Supabase | Guard e publish exigem Supabase (dependência autorizada); run falha fechada (não publica sem conferir a fonte da verdade) |
