@@ -4,8 +4,9 @@
 # Modes:
 #   --check                Check dependencies only. No installs.
 #   --install-python       Install python-pptx for current user.
+#   --install-node         Install PptxGenJS 4.0.1 with npm -g.
 #   --install-playwright   Install Playwright Chromium via npx.
-#   --install-local        Install Python + Playwright local/runtime dependencies.
+#   --install-local        Install Python + Node + Playwright dependencies.
 #
 # Deliberate non-goals:
 #   - No global npm install by default.
@@ -16,11 +17,12 @@ set -euo pipefail
 
 MODE="${1:---check}"
 
-if [[ "$MODE" != "--check" && "$MODE" != "--install-python" && "$MODE" != "--install-playwright" && "$MODE" != "--install-local" ]]; then
+if [[ "$MODE" != "--check" && "$MODE" != "--install-python" && "$MODE" != "--install-node" && "$MODE" != "--install-playwright" && "$MODE" != "--install-local" ]]; then
   cat >&2 <<'USAGE'
 Usage:
   setup-frontend-slides.sh --check
   setup-frontend-slides.sh --install-python
+  setup-frontend-slides.sh --install-node
   setup-frontend-slides.sh --install-playwright
   setup-frontend-slides.sh --install-local
 USAGE
@@ -56,6 +58,19 @@ PY
   fi
 }
 
+check_pptxgenjs() {
+  local npm_root
+  npm_root="$(npm root -g 2>/dev/null || true)"
+  if [[ -n "$npm_root" ]] && npm list -g --depth=0 pptxgenjs@4.0.1 >/dev/null 2>&1 && \
+      NODE_PATH="${npm_root}${NODE_PATH:+:$NODE_PATH}" node -e "require('pptxgenjs')" \
+      >/dev/null 2>&1; then
+    ok "PptxGenJS 4.0.1 import works via $npm_root"
+  else
+    fail "PptxGenJS 4.0.1 missing. Install with: npm install --global pptxgenjs@4.0.1"
+    missing=$((missing + 1))
+  fi
+}
+
 check_playwright() {
   if npx --yes playwright --version >/dev/null 2>&1; then
     ok "playwright CLI available via npx"
@@ -86,6 +101,13 @@ install_python() {
   check_python_pptx
 }
 
+install_node() {
+  need_cmd node "Install Node.js 18+ first."
+  need_cmd npm "Install npm with Node.js first."
+  npm install --global --silent pptxgenjs@4.0.1
+  check_pptxgenjs
+}
+
 install_playwright() {
   need_cmd node "Install Node.js LTS first."
   need_cmd npm "Install npm with Node.js first."
@@ -100,6 +122,7 @@ run_checks() {
   need_cmd npm "Required for Node tooling."
   need_cmd npx "Required for Playwright/Marp/Vercel CLI calls."
   check_python_pptx
+  check_pptxgenjs
   check_playwright
   check_marp_optional
   check_vercel_optional
@@ -119,11 +142,15 @@ case "$MODE" in
   --install-python)
     install_python
     ;;
+  --install-node)
+    install_node
+    ;;
   --install-playwright)
     install_playwright
     ;;
   --install-local)
     install_python
+    install_node
     install_playwright
     run_checks
     ;;

@@ -334,8 +334,10 @@ run_all_checks() {
   # Python pkg names vary by distro
   local python_pkg="python3"
   local python_pip_pkg="python3-pip"
+  local node_pkg="nodejs"
+  local npm_pkg="npm"
   case "$PKG_MGR" in
-    brew) python_pkg="python@3.11" ; python_pip_pkg="" ;;
+    brew) python_pkg="python@3.11" ; python_pip_pkg="" ; node_pkg="node" ; npm_pkg="node" ;;
     pacman) python_pkg="python" ; python_pip_pkg="python-pip" ;;
   esac
 
@@ -345,8 +347,8 @@ run_all_checks() {
   check_binary "curl"    "required"    "curl"
   check_binary "rsync"   "required"    "rsync"
   check_binary "hermes"  "required"    "hermes"   "2026.4.8"
-  check_binary "npm"     "recommended" "npm"
-  check_binary "node"    "recommended" "nodejs"   "18.0.0"
+  check_binary "node"    "required"    "$node_pkg" "18.0.0"
+  check_binary "npm"     "required"    "$npm_pkg"
   check_binary "pip3"    "recommended" "$python_pip_pkg"
   check_binary "jq"      "optional"   "jq"
   check_binary "docker"  "optional"   "docker.io"

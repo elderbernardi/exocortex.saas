@@ -66,6 +66,23 @@ else
 fi
 echo ""
 
+echo "Dependências de apresentações editáveis:"
+if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+  NPM_GLOBAL_ROOT="$(npm root -g 2>/dev/null || true)"
+  if [ -n "$NPM_GLOBAL_ROOT" ] && npm list -g --depth=0 pptxgenjs@4.0.1 >/dev/null 2>&1 && \
+      NODE_PATH="${NPM_GLOBAL_ROOT}${NODE_PATH:+:$NODE_PATH}" node -e "require('pptxgenjs')" \
+      >/dev/null 2>&1; then
+    echo "  ✓ PptxGenJS 4.0.1"
+  else
+    echo "  ✗ PptxGenJS 4.0.1 (MISSING)"
+    ERRORS=$((ERRORS + 1))
+  fi
+else
+  echo "  ✗ Node.js/npm (MISSING)"
+  ERRORS=$((ERRORS + 1))
+fi
+echo ""
+
 echo "Acervo (4 camadas + v0.4 funcionais):"
 for layer in macro global micro shared; do
   if [ -d "$ACERVO/$layer" ]; then

@@ -242,6 +242,7 @@ source "$SETUP_DIR/setup/step-00-hermes-compat.sh"
 source "$SETUP_DIR/setup/step-01-hindsight.sh"
 source "$SETUP_DIR/setup/step-02-create-structure.sh"
 source "$SETUP_DIR/setup/step-03-install-skills.sh"
+source "$SETUP_DIR/setup/step-03b-install-slide-deps.sh"
 source "$SETUP_DIR/setup/step-04-install-acervo.sh"
 
 # Deploy the semantic control plane into the Acervo so the skills' control-plane ladder

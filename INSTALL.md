@@ -104,6 +104,8 @@ python3 scripts/acervo_mcp_server.py --self-test --acervo-root "$PWD/acervo"
 | `curl` | qualquer | `curl --version \| head -1` |
 | `rsync` | qualquer | `rsync --version \| head -1` |
 | `hermes` | ≥ 2026.4.8 | `hermes --version` |
+| `node` | ≥ 18.0.0 | `node --version` |
+| `npm` | compatível com o Node instalado | `npm --version` |
 
 ### Módulos Python Obrigatórios
 
@@ -114,6 +116,19 @@ python3 -c "import pptx; print(pptx.__version__)"
 ```
 
 Se faltarem: `pip3 install PyYAML google-auth-oauthlib google-api-python-client google-auth-httplib2 python-pptx`
+
+### Dependência Node para apresentações editáveis
+
+```bash
+npm list --global --depth=0 pptxgenjs@4.0.1
+NODE_PATH="$(npm root -g)" node -e "console.log(require.resolve('pptxgenjs'))"
+```
+
+O instalador provisiona `pptxgenjs@4.0.1` globalmente. Para correção manual:
+
+```bash
+npm install --global pptxgenjs@4.0.1
+```
 
 ---
 

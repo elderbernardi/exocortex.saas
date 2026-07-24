@@ -413,20 +413,31 @@ if ! command -v python3 >/dev/null 2>&1; then
   esac
 fi
 
-# Install if anything is missing
-if [ ${#MISSING_DEPS[@]} -gt 0 ] || [ ${#PYTHON_PKGS[@]} -gt 0 ]; then
-  ALL_PKGS=("${MISSING_DEPS[@]}" "${PYTHON_PKGS[@]}")
-  install_packages "${ALL_PKGS[@]}"
-
-  # Verify after install
-  for cmd in git curl rsync python3; do
-    if ! command -v "$cmd" >/dev/null 2>&1; then
-      fail "$cmd não encontrado após instalação. Instale manualmente."
-    fi
-  done
+# Check Node.js + npm (required by PptxGenJS for editable slide decks)
+NODE_PKGS=()
+if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+  case "$PKG_MGR" in
+    apt) NODE_PKGS=(nodejs npm) ;;
+    brew) NODE_PKGS=(node) ;;
+    dnf) NODE_PKGS=(nodejs npm) ;;
+    pacman) NODE_PKGS=(nodejs npm) ;;
+  esac
 fi
 
-log "Dependências OK (git, curl, rsync, python3)"
+# Install if anything is missing
+if [ ${#MISSING_DEPS[@]} -gt 0 ] || [ ${#PYTHON_PKGS[@]} -gt 0 ] || [ ${#NODE_PKGS[@]} -gt 0 ]; then
+  ALL_PKGS=("${MISSING_DEPS[@]}" "${PYTHON_PKGS[@]}" "${NODE_PKGS[@]}")
+  install_packages "${ALL_PKGS[@]}"
+fi
+
+# Verify core dependencies even when no package-manager action was needed.
+for cmd in git curl rsync python3 node npm; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    fail "$cmd não encontrado após instalação. Instale manualmente."
+  fi
+done
+
+log "Dependências OK (git, curl, rsync, python3, node, npm)"
 
 # ─── Step 3: Install Hermes (if not present) ────────────────────────────────
 show_env_preflight

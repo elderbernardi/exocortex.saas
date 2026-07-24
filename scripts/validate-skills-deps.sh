@@ -42,6 +42,7 @@ SKILL_DEPS=(
   # excrtx-produce-slides
   "excrtx-produce-slides|binary|node|command -v node|Instale Node.js >= 18|false"
   "excrtx-produce-slides|binary|npm|command -v npm|Instalado com Node.js|false"
+  "excrtx-produce-slides|node|pptxgenjs|NODE_PATH=\"$(npm root -g 2>/dev/null)\" node -e \"require('pptxgenjs')\"|npm install --global pptxgenjs@4.0.1|true"
   "excrtx-produce-slides|python|python-pptx|python3 -c 'import pptx' 2>/dev/null|pip3 install python-pptx|false"
 
   # excrtx-produce-oficios

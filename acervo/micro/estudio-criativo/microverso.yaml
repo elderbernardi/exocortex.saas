@@ -20,10 +20,11 @@ requires:
     - excrtx-quality-taste
   python_packages:
     - python-pptx>=0.6.21
-  node_packages: []
+  node_packages:
+    - pptxgenjs@4.0.1
   mcps: []
   env: []
-  system: [git, python3]
+  system: [git, node, npm, python3]
 
 compat:
   exocortex_version: ">=0.4"
