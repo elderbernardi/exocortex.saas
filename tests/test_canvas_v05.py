@@ -35,3 +35,55 @@ def test_v05_nucleo_preservado():
         "execucao", "evolucao", "manutencao", "ambiguo"}
     assert s["properties"]["focus"]["minLength"] == 3
     assert s["additionalProperties"] is False
+
+
+import os
+import subprocess
+import sys
+
+REGISTER = str(Path(__file__).resolve().parents[1] /
+               "acervo/global/tools/harness/register_task_from_canvas.py")
+
+
+def _run_register(tmp_path, canvas_yaml: str, extra=()):
+    acervo = tmp_path / "acervo"
+    (acervo / "_tasks").mkdir(parents=True)
+    (acervo / "global/templates/harness-v0.4").mkdir(parents=True)
+    src = Path(__file__).resolve().parents[1] / \
+        "acervo/global/templates/harness-v0.4/task.yaml"
+    (acervo / "global/templates/harness-v0.4/task.yaml").write_text(
+        src.read_text(encoding="utf-8"), encoding="utf-8")
+    cpath = tmp_path / "c.yaml"
+    cpath.write_text(canvas_yaml, encoding="utf-8")
+    env = dict(os.environ, ACERVO=str(acervo))
+    proc = subprocess.run(
+        [sys.executable, REGISTER, "--canvas", str(cpath), "--title", "Tarefa X",
+         *extra], env=env, capture_output=True, text=True)
+    return proc, acervo
+
+
+def test_register_le_vetor_v05(tmp_path):
+    proc, acervo = _run_register(tmp_path, "vetor: manutencao\nfocus: f\n")
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    task_yaml = next((acervo / "_tasks").glob("task_*/task.yaml")).read_text()
+    assert "manutencao" in task_yaml
+
+
+def test_register_fallback_vector_v04(tmp_path):
+    proc, acervo = _run_register(tmp_path, "vector: evolucao\nfocus: f\n")
+    assert proc.returncode == 0
+    task_yaml = next((acervo / "_tasks").glob("task_*/task.yaml")).read_text()
+    assert "evolucao" in task_yaml
+
+
+def test_register_rejeita_ambiguo(tmp_path):
+    proc, _ = _run_register(tmp_path, "vetor: ambiguo\nfocus: f\n")
+    assert proc.returncode == 1
+    assert "ambiguo" in (proc.stderr + proc.stdout)
+
+
+def test_task_id_tem_sufixo_de_unicidade(tmp_path):
+    proc, acervo = _run_register(tmp_path, "vetor: execucao\n")
+    task_dir = next((acervo / "_tasks").glob("task_*")).name
+    import re
+    assert re.fullmatch(r"task_\d{8}_[a-z0-9-]+_\d{6}", task_dir), task_dir

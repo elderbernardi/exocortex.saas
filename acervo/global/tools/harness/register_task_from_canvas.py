@@ -44,9 +44,8 @@ def resolve_acervo() -> Path:
     return Path(hermes_home) / "acervo"
 
 
-def load_yaml_file(path: Path) -> dict:
-    """Load YAML file, stripping frontmatter delimiters if present."""
-    text = path.read_text(encoding="utf-8")
+def parse_yaml_text(text: str) -> dict:
+    """Parse YAML text, stripping frontmatter delimiters if present."""
     # Strip frontmatter delimiters
     if text.startswith("---"):
         parts = text.split("---", 2)
@@ -66,6 +65,11 @@ def load_yaml_file(path: Path) -> dict:
     return result
 
 
+def load_yaml_file(path: Path) -> dict:
+    """Load YAML file, stripping frontmatter delimiters if present."""
+    return parse_yaml_text(path.read_text(encoding="utf-8"))
+
+
 def generate_task_id(title: str) -> str:
     """Generate a task ID like task_20260603_slug."""
     now = datetime.now(timezone.utc)
@@ -73,7 +77,7 @@ def generate_task_id(title: str) -> str:
     # Remove non-alphanumeric except hyphens
     slug = "".join(c for c in slug if c.isalnum() or c == "-")
     slug = slug.strip("-")
-    return f"task_{now.strftime('%Y%m%d')}_{slug}"
+    return f"task_{now.strftime('%Y%m%d')}_{slug}_{now.strftime('%H%M%S')}"
 
 
 def compute_content_hash(data: dict) -> str:
@@ -82,7 +86,7 @@ def compute_content_hash(data: dict) -> str:
     stable = {
         "title": data.get("title", ""),
         "status": data.get("status", ""),
-        "vector": data.get("vector", ""),
+        "vector": data.get("vetor", data.get("vector", "")),
         "primary_microverso": data.get("primary_microverso"),
         "decisions": data.get("decisions", {}),
         "artifacts": data.get("artifacts", []),
@@ -100,7 +104,7 @@ def load_template(acervo: Path) -> str:
     return """\
 task_id: {task_id}
 title: "{title}"
-status: registered
+status: candidate
 vector: {vector}
 
 primary_microverso: {primary_microverso}
@@ -133,7 +137,7 @@ evaluation:
   status: not_applicable
 
 state_cycle:
-  lifecycle_state: registered
+  lifecycle_state: candidate
   maintenance_state: never_reviewed
   content_hash: {content_hash}
   last_reviewed_hash: null
@@ -169,6 +173,7 @@ def main():
     canvas_text = ""
     if args.from_stdin:
         canvas_text = sys.stdin.read()
+        canvas_data = parse_yaml_text(canvas_text)
     elif args.canvas:
         canvas_path = Path(args.canvas)
         if not canvas_path.is_file():
@@ -183,7 +188,10 @@ def main():
     now = datetime.now(timezone.utc).isoformat()
 
     # Resolve vector from canvas or arg
-    vector = canvas_data.get("vector", args.vector)
+    vector = canvas_data.get("vetor", canvas_data.get("vector", args.vector))
+    if vector == "ambiguo":
+        print("ERROR: vetor 'ambiguo' — resolva o vetor antes de registrar a tarefa", file=sys.stderr)
+        sys.exit(1)
     primary_micro = canvas_data.get("microversos", {}).get("primary", args.primary_microverso)
     if primary_micro is None:
         primary_micro = "null"
