@@ -60,3 +60,27 @@ def test_mark_run_updates_state():
     d = _load("news_dispatch")
     state = d.mark_run({}, "varejo", 123)
     assert state["varejo"] == 123
+
+
+def test_classify_new_active_retired():
+    g = _load("news_guard")
+    assert g.classify(None) == "new"
+    assert g.classify({"id": "1", "ativo": True}) == "skip_active"
+    assert g.classify({"id": "1", "ativo": False}) == "skip_retired"
+
+
+def test_partition_macro_keys_on_url_and_null_client():
+    g = _load("news_guard")
+    candidates = [
+        {"url_normalized": "https://a.test/x"},                 # new
+        {"url_normalized": "https://b.test/y"},                 # active → skip
+        {"url_normalized": "https://c.test/z"},                 # retired → skip
+    ]
+    existing = {
+        ("https://b.test/y", None): {"id": "2", "ativo": True},
+        ("https://c.test/z", None): {"id": "3", "ativo": False},
+    }
+    out = g.partition(candidates, existing)
+    assert [c["url_normalized"] for c in out["publish"]] == ["https://a.test/x"]
+    assert [c["url_normalized"] for c in out["skip_active"]] == ["https://b.test/y"]
+    assert [c["url_normalized"] for c in out["skip_retired"]] == ["https://c.test/z"]
