@@ -34,3 +34,29 @@ def test_load_config_rejects_area_without_slug(tmp_path):
     import pytest
     with pytest.raises(ValueError, match="slug"):
         _load("news_config").load_config(str(bad))
+
+
+def test_cadence_seconds():
+    d = _load("news_dispatch")
+    assert d.cadence_seconds("daily") == 86400
+    assert d.cadence_seconds("weekly") == 604800
+    assert d.cadence_seconds("3d") == 3 * 86400
+    assert d.cadence_seconds("12h") == 12 * 3600
+
+
+def test_due_areas_first_run_and_window():
+    d = _load("news_dispatch")
+    areas = [{"slug": "varejo", "cadence": "weekly"},
+             {"slug": "limpeza", "cadence": "daily"}]
+    now = 1_000_000_000
+    # nunca rodou → ambas vencidas
+    assert set(d.due_areas(areas, {}, now)) == {"varejo", "limpeza"}
+    # limpeza rodou há 2h (< 1d) → não vence; varejo há 8d → vence
+    state = {"varejo": now - 8 * 86400, "limpeza": now - 2 * 3600}
+    assert d.due_areas(areas, state, now) == ["varejo"]
+
+
+def test_mark_run_updates_state():
+    d = _load("news_dispatch")
+    state = d.mark_run({}, "varejo", 123)
+    assert state["varejo"] == 123
