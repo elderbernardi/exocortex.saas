@@ -1,9 +1,9 @@
-task_id: task_YYYYMMDD_slug
-title: ""
+task_id: {task_id}
+title: "{title}"
 status: candidate  # implicit|candidate|registered|active|blocked|ready|completed|maintained|archived
 vetor: "{vector}"  # evolucao|execucao|manutencao — tarefa registrada exige vetor RESOLVIDO (ambiguo é estado de canvas, não de task; ADR-CT-06)
 
-primary_microverso: null
+primary_microverso: {primary_microverso}
 related_microversos: []
 
 canvas_path: canvas.yaml
@@ -35,12 +35,12 @@ evaluation:
 state_cycle:
   lifecycle_state: candidate
   maintenance_state: never_reviewed
-  content_hash: null
+  content_hash: {content_hash}
   last_reviewed_hash: null
   last_reviewed_at: null
   last_user_touch_at: null
   last_user_touch_session_id: null
   skip_maintenance_if_hash_unchanged: true
 
-created_at: null
-updated_at: null
+created_at: {now}
+updated_at: {now}
