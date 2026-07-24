@@ -1,7 +1,7 @@
 task_id: task_YYYYMMDD_slug
 title: ""
 status: candidate  # implicit|candidate|registered|active|blocked|ready|completed|maintained|archived
-vector: execucao   # evolucao|execucao|manutencao
+vetor: "{vector}"  # evolucao|execucao|manutencao — tarefa registrada exige vetor RESOLVIDO (ambiguo é estado de canvas, não de task; ADR-CT-06)
 
 primary_microverso: null
 related_microversos: []
