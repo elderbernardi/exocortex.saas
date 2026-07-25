@@ -2,15 +2,15 @@
 schema: acervo/v0.2
 type: knowledge
 title: Registro de cron jobs
-description: Registro de cron jobs canônicos do microverso, incluindo a reconciliação diária do AcervoIndex.
+description: Registro de cron jobs canônicos do microverso, incluindo a reconciliação diária do AcervoIndex e o despachante autônomo de notícias.
 tags: [cron, automacao, manutencao]
 timestamp: 2026-06-05
 class: volátil
 status: active
 epistemic: fact
 created_at: 2026-06-05T00:00:00Z
-last_accessed_at: 2026-06-21T00:00:00Z
-updated: 2026-06-21
+last_accessed_at: 2026-07-24T00:00:00Z
+updated: 2026-07-24
 nature: knowledge
 kind: registry
 scope_slug: exocortex-ops
@@ -59,6 +59,18 @@ created: 2026-06-05
 | side effects | Leitura do Acervo + `consolidation-scan`; sem mutações canônicas. Entrega resumo de H7 (ratio de correções pós auto-commit) e H12 (use-decay) ao home channel. |
 | approval | Reforma memory-v2 — Phase 6 learning loop reporting |
 | rollback | `hermes cron delete memory-learning-loops-monthly` |
+
+### news-producer-dispatch (docs/plans/2026-07-24_noticias-producer-skill)
+
+| Campo | Valor |
+|---|---|
+| job_id | Atribuído na ativação (`hermes cron list` após `hermes cron create --name news-producer-dispatch ...`) |
+| schedule | `0 6 * * *` (diário 06:00 GMT-3) — cadência do SO ≤ menor `cadence` de `config/noticias.toml` (hoje `weekly` em todas as áreas monitoradas); diário é suficiente |
+| script | Sessão Hermes carrega a skill `excrtx-news-sales-ai` em **Modo A (autônomo, macro)**: `python3 skills/excrtx-news-sales-ai/scripts/news_dispatch.py --config skills/excrtx-news-sales-ai/config/noticias.toml --state "$NEWS_CADENCE_STATE" --now $(date +%s)` lista as áreas vencidas; para cada área o agente roda pesquisa (`excrtx-research-cpg-brasil`) → `build_dossier.py` → curadoria (modelo + `excrtx-quality-antislop`) → guard (`scripts/news_guard.py`, read-before-write) → publish via MCP `sales-ai.publish_noticia` (escopo=macro) → `news_dispatch.py --mark <slug> --now $(date +%s)` → `expire_noticia` para itens vencidos |
+| profile/workdir | perfil default, workdir = repo do installer (`exocortex.saas/`) |
+| side effects | Publica em `noticias_publicas` via MCP `sales-ai` (DataBrain-free, `use_docbrain=false`); escreve `last_run_at` por área em `NEWS_CADENCE_STATE`; expira itens vencidos via `expire_noticia`. **Não** sobe o harness DataBrain como processo ativo. |
+| approval | Gate de ação externa recorrente via `excrtx-govern-draftfirst` na criação do cron (DRAFT → aprovação explícita); uma vez vivo, cada disparo publica autonomamente — **o despachante (`news_dispatch.py`), não o cron do SO, é o árbitro real de qual área roda em cada disparo**. Ver `docs/plans/2026-07-24_noticias-producer-skill/design.md` §5. |
+| rollback | `hermes cron delete news-producer-dispatch`; o estado de cadência em `NEWS_CADENCE_STATE` é preservado (pausar/retomar não perde `last_run_at`) |
 
 ## Regra
 
