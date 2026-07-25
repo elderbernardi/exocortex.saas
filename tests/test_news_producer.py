@@ -84,3 +84,16 @@ def test_partition_macro_keys_on_url_and_null_client():
     assert [c["url_normalized"] for c in out["publish"]] == ["https://a.test/x"]
     assert [c["url_normalized"] for c in out["skip_active"]] == ["https://b.test/y"]
     assert [c["url_normalized"] for c in out["skip_retired"]] == ["https://c.test/z"]
+
+
+def test_dispatch_cli_lists_due_areas(tmp_path):
+    import subprocess, sys
+    state = tmp_path / "state.json"
+    state.write_text("{}", encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(SCRIPTS / "news_dispatch.py"),
+         "--config", str(CONFIG), "--state", str(state), "--now", "1000000000"],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0
+    assert set(proc.stdout.split()) == {"varejo", "limpeza"}  # nunca rodaram
