@@ -41,7 +41,7 @@ Dirigido por `config/noticias.toml`. Um cron despachante decide quais áreas rod
 4. Curadoria com o modelo a partir do `prompt_packet`: dedup, relevância ≥ `relevance_threshold`, `impacto`, headline via `excrtx-quality-antislop`, **só itens com url/fonte reais**; cap `max_items`.
 5. Guard: `partition()` de `scripts/news_guard.py` (via `fetch_existing`) descarta url já ativa/retirada.
 6. Publicar cada item do bucket `publish` via MCP `publish_noticia` (escopo=macro); tratar `resultado ∈ {created, updated, skipped_retired}`.
-7. `news_dispatch.py --mark <slug> --now $(date +%s)` para carimbar o run.
+7. `python3 scripts/news_dispatch.py --config config/noticias.toml --state <acervo>/news-cadence.json --mark <slug> --now $(date +%s)` para carimbar o run.
 8. Expirar vencidos via MCP `expire_noticia`.
 
 ### Modo B — manual (comercial/gestão, via agente)
@@ -206,7 +206,7 @@ Saída:
    - Errado. DataBrain é harness on-demand; não runtime ativo da Rota B.
 
 2. **Publicar antes do guard**
-   - A skill pode coletar e curar, mas a validação final do lote continua no harness.
+   - A skill pode coletar e curar, mas a validação final do lote continua no harness (no runbook Route B/harness; no Modo A/B a validação é o guard local `news_guard.py`).
 
 3. **Tratar DocBrain como fonte de notícia pública**
    - Documento local entra como contexto estruturado, não como substituto de matéria pública.

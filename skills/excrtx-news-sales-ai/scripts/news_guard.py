@@ -5,10 +5,8 @@ v3.1.0 (resultado=skipped_retired). Aqui só evitamos chamadas redundantes ao MC
 """
 from __future__ import annotations
 import json
-import os
 import urllib.parse
 import urllib.request
-from typing import Any
 
 
 def row_key(url_normalized: str, cliente_id: str | None) -> tuple[str, str | None]:
