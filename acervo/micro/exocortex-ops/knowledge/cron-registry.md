@@ -70,6 +70,7 @@ created: 2026-06-05
 | profile/workdir | perfil default, workdir = repo do installer (`exocortex.saas/`) |
 | side effects | Publica em `noticias_publicas` via MCP `sales-ai` (DataBrain-free, `use_docbrain=false`); escreve `last_run_at` por área em `NEWS_CADENCE_STATE`; expira itens vencidos via `expire_noticia`. **Não** sobe o harness DataBrain como processo ativo. |
 | approval | Gate de ação externa recorrente via `excrtx-govern-draftfirst` na criação do cron (DRAFT → aprovação explícita); uma vez vivo, cada disparo publica autonomamente — **o despachante (`news_dispatch.py`), não o cron do SO, é o árbitro real de qual área roda em cada disparo**. Ver `docs/plans/2026-07-24_noticias-producer-skill/design.md` §5. |
+| ativação | ⏳ **PENDENTE — executar na instância Hermes de runtime (não no host de dev).** Runbook de handoff passo-a-passo (creds, MCP wiring, smoke dry-run, publish, criação do cron): `skills/excrtx-news-sales-ai/ACTIVATION.md`. |
 | rollback | `hermes cron delete news-producer-dispatch`; o estado de cadência em `NEWS_CADENCE_STATE` é preservado (pausar/retomar não perde `last_run_at`) |
 
 ## Regra
