@@ -171,7 +171,9 @@ def make_signal(
 
 def normalize_crawler_items(payload: Any) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
-    for item in ensure_list(payload):
+    wrapped = payload.get("crawler_br") if isinstance(payload, dict) else None
+    source_items = ensure_list(wrapped) if isinstance(wrapped, dict) else ensure_list(payload)
+    for item in source_items:
         if not isinstance(item, dict):
             continue
         normalized = make_signal(
@@ -194,7 +196,9 @@ def normalize_crawler_items(payload: Any) -> list[dict[str, Any]]:
 
 def normalize_agent_reach_items(payload: Any) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
-    for item in ensure_list(payload):
+    wrapped = payload.get("agent_reach") if isinstance(payload, dict) else None
+    source_items = ensure_list(wrapped) if isinstance(wrapped, dict) else ensure_list(payload)
+    for item in source_items:
         if not isinstance(item, dict):
             continue
         source = (
