@@ -609,8 +609,10 @@ async def main():
                 "clusters": len(l30d_result.get("clusters", [])) if l30d_result else 0,
                 "items_by_source": l30d_result.get("items_by_source", {}) if l30d_result else {},
             } if l30d_result else None,
-            "agent_reach": {"count": len(ar_items)},
-            "crawler_br": {"count": len(cr_items)},
+            # Keep raw, source-attributed payloads for downstream news
+            # automation; `synthesis` remains the executive-facing rendering.
+            "agent_reach": {"count": len(ar_items), "items": ar_items},
+            "crawler_br": {"count": len(cr_items), "items": cr_items},
             "structured_sources": {
                 "google_trends": trends_payload,
                 "reclameaqui": reclame_payload,

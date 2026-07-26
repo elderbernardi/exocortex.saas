@@ -210,6 +210,35 @@ class TestDossier:
         constraints = " ".join(dossier["prompt_packet"]["constraints"])
         assert "cliente-alvo" in constraints
 
+    def test_build_dossier_accepts_orchestrated_research_wrappers(self):
+        module = load_module()
+        context = {
+            "schema": "projetob/news-job-context/v1",
+            "scope": "macro",
+            "research_context": {"sector_slug": "varejo", "region": "sul-brasil", "query_terms": ["varejo"]},
+            "internal_context": {},
+        }
+        research = {
+            "crawler_br": {"count": 1, "items": [{
+                "title": "Canal amplia operação", "url": "https://example.com/crawler",
+                "date": "2026-07-26", "source": "crawler", "snippet": "Expansão regional.",
+            }]},
+            "agent_reach": {"count": 1, "items": [{
+                "title": "Mercado ajusta preços", "url": "https://example.com/reach",
+                "published_at": "2026-07-26", "source": "reach", "snippet": "Movimento de mercado.",
+            }]},
+        }
+        dossier = module.build_dossier(
+            context,
+            crawler_payloads=[research],
+            agent_reach_payloads=[research],
+            docbrain_payloads=[],
+            max_signals=10,
+        )
+        assert dossier["source_counts"]["crawler_brasil"] == 1
+        assert dossier["source_counts"]["agent_reach"] == 1
+        assert dossier["source_counts"]["signals_after_dedupe"] == 2
+
     def test_cli_writes_json_file(self, tmp_path):
         job_context = tmp_path / "context.json"
         crawler = tmp_path / "crawler.json"

@@ -23,7 +23,7 @@ python3 scripts/news_dispatch.py --config config/noticias.toml --state "$NEWS_CA
 # pesquisa de uma área (sem DocBrain)
 python3 ../excrtx-research-cpg-brasil/scripts/orchestrate.py --template varejo --output json --skip-l30d > /tmp/research.json
 # dossier determinístico (reusa build_dossier; NÃO passar --docbrain)
-python3 scripts/build_dossier.py --job-context /tmp/ctx.json --crawler /tmp/research.json --output-file /tmp/dossier.json
+python3 scripts/build_dossier.py --job-context /tmp/ctx.json --crawler /tmp/research.json --agent-reach /tmp/research.json --output-file /tmp/dossier.json
 ```
 Verificar: os candidatos curados têm `url`/`fonte` **reais**; nenhum item inventado; `valido_ate` preenchido (default +30d).
 
