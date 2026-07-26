@@ -56,3 +56,27 @@ Seed battery: the 10-prompt battery from `memory-excellence-execution-plan.md` F
 - CI (installer repo): fixture eval must pass before merging changes to memory skills/schema/scripts.
 - Live: monthly + after any schema migration, retrieval change, or provider change.
 - **Regression rule:** any metric dropping > 10 points blocks the change (revert or fix); results filed as `knowledge` in `micro/exocortex-ops/` with `observed_at` — the system remembers its own measurements.
+
+## 5. Public confirmatory track
+
+The synthetic/live harness above remains the fast regression gate. Claims about
+long-term memory and consolidation use the separate preregistered public track
+at `tests/memory-eval/public/`:
+
+- LongMemEval-S: stratified pilot 50, frozen configuration, untouched
+  confirmatory 450, official evaluator;
+- LoCoMo: external replication with bootstrap clustered by conversation;
+- primary causal contrast: full pipeline minus identical no-consolidation
+  ablation;
+- 10,000 paired bootstrap resamples, paired randomization test, effect and 95%
+  interval, and zero-contamination hard gate;
+- two blind human raters on a stratified 10% judge audit, with Cohen's kappa
+  before adjudication;
+- deterministic 800-case Acervo-native suite for isolation, authorized bridges,
+  update chains, consolidation extraction, and abstention.
+
+Entry point: `python3 scripts/run_public_memory_benchmark.py --help`. The public
+runner uses a disposable Acervo per case and physically separates histories,
+queries, sealed gold data, immutable run receipts, and imported judge labels.
+It refuses to run the `full` condition without a named consolidation command
+and version, preventing raw retrieval from being mislabeled as consolidation.

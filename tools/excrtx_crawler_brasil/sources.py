@@ -154,6 +154,47 @@ CPG_SOURCES: List[Source] = [
         rate_limit_seconds=5.0,
         timeout_seconds=45.0,
     ),
+
+    # ── Regionais — Sul do Brasil ────────────────────────────────────────────
+
+    Source(
+        slug="economia-sc",
+        name="Economia SC",
+        source_type="rss",
+        url="https://economiasc.com/feed/",
+        domains=["cpg", "regional", "sc", "negocios", "economia"],
+        description="Portal de economia, negócios e inovação de Santa Catarina",
+    ),
+
+    # ── Atacado e Distribuição ──────────────────────────────────────────────
+
+    Source(
+        slug="abad",
+        name="ABAD — Associação Brasileira de Atacadistas e Distribuidores",
+        source_type="rss",
+        url="https://abad.com.br/feed/",
+        domains=["cpg", "atacado", "distribuicao", "varejo"],
+        description="Associação nacional do setor atacadista distribuidor — dados de mercado, eventos e regulação",
+    ),
+    Source(
+        slug="revista-distribuicao",
+        name="Revista Distribuição (ABAD)",
+        source_type="rss",
+        url="https://distribuicao.abad.com.br/feed/",
+        domains=["cpg", "atacado", "distribuicao", "varejo"],
+        description="Revista oficial da ABAD — notícias do canal atacadista, inaugurações e tendências de distribuição",
+    ),
+
+    # ── Indústria de Limpeza ────────────────────────────────────────────────
+
+    Source(
+        slug="abipla",
+        name="ABIPLA — Associação Brasileira das Indústrias de Produtos de Limpeza e Afins",
+        source_type="rss",
+        url="https://abipla.org.br/feed/",
+        domains=["cpg", "limpeza", "domesticos", "industria"],
+        description="Associação da indústria de produtos de limpeza — regulação, premiações e segurança",
+    ),
 ]
 
 
