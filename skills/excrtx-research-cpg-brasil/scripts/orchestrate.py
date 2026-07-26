@@ -27,7 +27,30 @@ from typing import Optional
 
 # ── Paths ───────────────────────────────────────────────────────────────────
 
-REPO_ROOT = Path(__file__).resolve().parents[3]  # exocortex.saas/
+def resolve_repo_root() -> Path:
+    """Locate the installer/repository when this skill is copied into Hermes.
+
+    In a source checkout, ``parents[3]`` is the repository. After installation,
+    the same path resolves to ``~/.hermes/skills`` and no longer contains the
+    crawler package. An explicit variable wins; the installer checkout is the
+    portable runtime fallback.
+    """
+    configured = os.environ.get("EXOCORTEX_REPO_ROOT")
+    candidates = [
+        Path(configured).expanduser() if configured else None,
+        Path.home() / ".exocortex-installer",
+        Path(__file__).resolve().parents[3],
+    ]
+    for candidate in candidates:
+        if candidate and (candidate / "tools" / "excrtx_crawler_brasil" / "cli.py").is_file():
+            return candidate
+    raise RuntimeError(
+        "Não encontrei tools/excrtx_crawler_brasil. Defina EXOCORTEX_REPO_ROOT "
+        "para o checkout do Exocórtex."
+    )
+
+
+REPO_ROOT = resolve_repo_root()
 SKILL_DIR = Path(__file__).resolve().parent.parent
 
 L30D_ENGINE = os.path.expanduser(
