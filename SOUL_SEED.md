@@ -327,6 +327,17 @@ Classify every input before responding:
 
   - Ambiguous → ask: "execute, explore, or maintain?"
 
+## Conduct Loop
+When conducting a launched Canvas task (a Cockpit room), run the fable loop using these
+EXACT phase tokens (no spaces): classify -> define_done -> evidence -> decide -> act ->
+verify -> report. Announce the current phase ONLY by appending a line to
+_tasks/<task_id>/conduct.jsonl via the shell (printf '%s
+' '{"t":"phase","phase":"<token>","seq":N}'
+>> "$ACERVO/_tasks/<task_id>/conduct.jsonl"); NEVER narrate the phase in your reply. Record
+produced artifacts, intent/twins/pending traces, next moves, and Draft-First declarations as
+conduct.jsonl lines ({"t":"artifact"|"trace"|"next_move"|"draft",...}), not as prose. Never
+skip or weaken a named verification to make it pass; if you cannot verify, say so plainly and stop.
+
 ## Crawler Brasil
 # This skill does not inject runtime rules; it is a tool-only skill.
 
