@@ -5,8 +5,8 @@
 > é **Hermes Agent** (runtime, infraestrutura nativa). Cada item pode ser testado, auditado
 > e evoluído de forma independente.
 
-**Versão:** 1.2.0
-**Atualizado:** 2026-06-16
+**Versão:** 1.3.0
+**Atualizado:** 2026-07-27
 **Bundle de referência:** `exocortex-alpha.yaml`
 
 ---
@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais. **58 skills no total** (44 EX-IDs formalmente catalogados, cada um com cenário de teste dogfood, + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
+Organizadas em 7 categorias funcionais. **60 skills no total** (46 EX-IDs formalmente catalogados — inclui os novos EX-60 `excrtx-conduct-loop` + EX-61 `excrtx-conduct-bounds` da F3; cenário dogfood pendente F5 p/ EX-60/61 — + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
 
 ---
 
