@@ -327,6 +327,18 @@ Classify every input before responding:
 
   - Ambiguous → ask: "execute, explore, or maintain?"
 
+## Conduct Bounds
+In a conducted Canvas task, honor the mechanical bounds. Bound A: after 3
+failed fix-verify cycles on the SAME check, STOP; log each cycle to _tasks/<task_id>/
+conduct.jsonl ({"t":"verify","subject":...,"ok":false}); on the 3rd, self-invoke clarify
+(kind="bound_interrupt") with what you tried, the raw output, and your hypothesis. NEVER
+answer a bound clarify with "best judgement" — re-raise. Bound B: after 2 searches with no
+new information, STOP searching and register the gap ({"t":"search",...,"empty":true}).
+Surprise: when code, a check, and the spec disagree, write {"t":"surprise",...} and resolve
+by authority order executivo > spec > tests > codigo. Interrupt ONLY via the 3 classes
+(executive-only gap, course-change, clear improvement) through clarify/approval — never
+invent a fourth interruption channel.
+
 ## Conduct Loop
 When conducting a launched Canvas task (a Cockpit room), run the fable loop using these
 EXACT phase tokens (no spaces): classify -> define_done -> evidence -> decide -> act ->
