@@ -5,8 +5,8 @@
 > é **Hermes Agent** (runtime, infraestrutura nativa). Cada item pode ser testado, auditado
 > e evoluído de forma independente.
 
-**Versão:** 1.2.0
-**Atualizado:** 2026-06-16
+**Versão:** 1.3.0
+**Atualizado:** 2026-07-27
 **Bundle de referência:** `exocortex-alpha.yaml`
 
 ---
@@ -125,7 +125,7 @@ features mas **não as implementa**. O setup.sh configura, aplica patches e hard
 ## Parte 2 — Features do Exocórtex
 
 Estas são as features proprietárias implementadas como skills, scripts e configuração do Exocórtex.
-Organizadas em 7 categorias funcionais. **58 skills no total** (44 EX-IDs formalmente catalogados, cada um com cenário de teste dogfood, + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
+Organizadas em 7 categorias funcionais. **60 skills no total** (46 EX-IDs formalmente catalogados — inclui os novos EX-60 `excrtx-conduct-loop` + EX-61 `excrtx-conduct-bounds` da F3; cenário dogfood pendente F5 p/ EX-60/61 — + 15 skills de suporte/auxiliares sem ID formal — veja seção "Supporting / Auxiliary Skills" abaixo). Além disso, 4 serviços opcionais de infraestrutura foram promovidos a first-class GA nesta release (seção "Serviços Opcionais & Infraestrutura").
 
 ---
 
@@ -594,6 +594,26 @@ Organizadas em 7 categorias funcionais. **58 skills no total** (44 EX-IDs formal
 | **Fontes gratuitas**       | Reddit (RSS público), Hacker News (Algolia), YouTube (yt-dlp), Polymarket (API pública), GitHub (gh CLI).                                                                                                                                                                           |
 | **Fontes com key**         | X/Twitter (`XAI_API_KEY`), TikTok/Instagram/Threads/Pinterest (`SCRAPECREATORS_API_KEY`), Bluesky (`BSKY_HANDLE`+`BSKY_APP_PASSWORD`), Web Search (`BRAVE_API_KEY`), Deep Research (papel LLM **default**).                                                                         |
 | **Dependências de Tools**  | Python 3.12+, yt-dlp, Node.js, gh CLI. Reasoning (planner/reranker) usa o papel LLM **default** (`EXOCORTEX_DEFAULT_*`).                                                                                                                                                            |
+
+#### EX-60. Conduct Loop (`excrtx-conduct-loop`)
+
+| Campo                      | Detalhe                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Funcionalidade**         | Persona de condução da sala viva (F3): guia uma tarefa lançada do Canvas pelo loop fable com os tokens exatos de fase (`classify` → `define_done` → `evidence` → `decide` → `act` → `verify` → `report`). Anuncia a fase apenas out-of-band, anexando linhas a `_tasks/<task_id>/conduct.jsonl` — nunca narra a fase na resposta e nunca enfraquece uma verificação para passar. |
+| **Como usar**              | Ativa automaticamente quando uma tarefa do Canvas é lançada num Cockpit e o agente é o condutor. Fora de uma sala de tarefa lançada, o loop é inerte. O Cockpit renderiza os cards `sala_*` a partir da trilha `conduct.jsonl`.                                                                                                                                                     |
+| **Instalação**             | `setup.sh` copia a skill; `compile_soul.py` injeta `compiled_rules` na seção `## Conduct Loop` de `SOUL_SEED.md`, propagada ao runtime `$HERMES_HOME/SOUL.md` pelo step-07 (ADR-CT-07).                                                                                                                                                                                            |
+| **Dependências de Skills** | `excrtx-conduct-bounds`, `excrtx-govern-draftfirst`, `excrtx-behavior-vetor`                                                                                                                                                                                                                                                                                                      |
+| **Dependências de Tools**  | Shell (append em `conduct.jsonl` via `printf ... >>`); `$ACERVO` do microverso ativo.                                                                                                                                                                                                                                                                                             |
+
+#### EX-61. Conduct Bounds (`excrtx-conduct-bounds`)
+
+| Campo                      | Detalhe                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Funcionalidade**         | Limites mecânicos da tarefa conduzida (F3), pareados ao `excrtx-conduct-loop`. Bound A: após 3 ciclos falha-conserto na MESMA verificação, PARA e auto-invoca um clarify `bound_interrupt` (tentativas + saída bruta + hipótese). Bound B: após 2 buscas sem informação nova, PARA de buscar e registra a lacuna. Surpresa: código/check/spec divergem → grava `{"t":"surprise",...}` e resolve pela ordem de autoridade `executivo > spec > tests > código`. Interrompe APENAS pelas 3 classes sancionadas de HITL (lacuna só-executivo, mudança de rumo, melhoria clara). |
+| **Como usar**              | Ativa junto com `excrtx-conduct-loop` dentro de uma tarefa lançada do Canvas — transforma um loop travado numa devolução honesta em vez de sucesso fabricado. Nunca responde um clarify de bound com "use o bom senso" (isso auto-prossegue): re-levanta.                                                                                                                                                        |
+| **Instalação**             | `setup.sh` copia a skill; `compile_soul.py` injeta `compiled_rules` na seção `## Conduct Bounds` de `SOUL_SEED.md`, propagada ao runtime `$HERMES_HOME/SOUL.md` pelo step-07 (ADR-CT-07).                                                                                                                                                                                                                       |
+| **Dependências de Skills** | `excrtx-conduct-loop`, `excrtx-govern-draftfirst`                                                                                                                                                                                                                                                                                                                                                              |
+| **Dependências de Tools**  | Shell (append em `conduct.jsonl`); registros HITL `clarify` / `route_approvals`; `$ACERVO` do microverso ativo.                                                                                                                                                                                                                                                                                                |
 
 ---
 

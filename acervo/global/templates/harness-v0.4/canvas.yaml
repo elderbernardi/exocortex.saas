@@ -66,3 +66,4 @@ evaluation:
   apply_mode: suggest  # suggest|auto-incorporate|ask-user
 
 next_moves: []
+acervo_aplicado: []     # itens do acervo aplicados pelo Curador (F2): {path, nature, porque}
