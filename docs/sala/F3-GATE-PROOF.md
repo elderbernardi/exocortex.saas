@@ -55,3 +55,45 @@ not false-positive on a narration-free reply).
 
 Committed home (script/test that runs this over `.messages[]`) = **F5**; C0 uses it here as the live-gate
 assertion (this document), not as a committed test.
+
+---
+
+# C0 — T16 gate CLOSED (live DeepSeek smoke, 2026-07-28)
+
+Isolated run: fork server on **:8793** (prod :8787 pid unchanged, verified before/after), isolated
+`HERMES_HOME` (provider deepseek, `model.default: deepseek-v4-pro`, `base_url: api.deepseek.com/v1`,
+`api_mode: openai_chat_completions`, **`context_file_max_chars: 40000`** pinned), isolated `ACERVO`,
+`SOUL.md` = calibrated `SOUL_SEED` (26,115 chars; `## Conduct Loop` + `## Conduct Bounds` + tail intact),
+`SALA_ENABLE=1`, hermes-agent venv. Scenario: *"Redigir e enviar e-mail de cobrança da fatura 4471 ao
+Cliente Alfa até sexta"* (executable, external send → forces Draft-First). Session `8112ff6fec16`,
+`model=deepseek-v4-pro`, 11 API calls / 10 tool turns.
+
+## PROVEN LIVE ✅ (the F3 gap is fixed)
+- **Agent WRITES `conduct.jsonl` via shell** (not narration): the launched agent, under the calibrated SOUL,
+  ran `printf '%s\n' '{...}' >> .../conduct.jsonl` for the 6 phases (`classify`→`define_done`→`evidence`→
+  `decide`→`act`→`report`) plus `{"t":"trace"}` (pending/gaps), `{"t":"draft"}`, `{"t":"artifact"}` — 9 real
+  frames with the exact reducer field schema. (Run-journal evidence: `agent.tool_executor: tool terminal`.)
+- **task_id injection (MOD-015) worked live**: the launch brief carried `Task ID (para o conduct.jsonl): <id>`
+  and the agent used the correct `task_id` in the append path.
+- **Draft-First recognized**: wrote a DRAFT file, declared *"o e-mail não sai sem você bater o martelo"*, and
+  emitted the `{"t":"draft","action":"email_cobranca",...}` frame.
+- **Observer → cards**: fed the agent's real frames through the running observer → `n_events=15`:
+  `sala_phase`×6, `sala_kanban`×6, `sala_trace`, `sala_artifact`, and **`sala_draft` with `requires_auth:true`**
+  (the Draft-First AUTH card). ≥1 card + ≥1 Draft-First AUTH — **met**.
+- **Anti-narration (PT-BR pattern above) on the REAL 2,125-char reply: EMPTY** (non-vacuous) — the agent's
+  reply is outcome-first; the method lives only in `conduct.jsonl`.
+- **Isolation**: prod :8787 pid `78373` unchanged throughout.
+
+## CAVEAT (smoke-isolation artifact, not a prod bug)
+The isolated config's **acervo MCP server still points at the REAL acervo**, so the agent learned the real
+acervo path and wrote `conduct.jsonl` to `/home/elder/exocortex/acervo/_tasks/<id>/` instead of the isolated
+`$ACERVO`. **In production (single acervo), this is CORRECT** — agent-write path == observer-watch path. In
+the isolated smoke it caused the observer (watching the isolated `$ACERVO`) to see 0 events until the agent's
+**real** frames were relocated to the observed path. The real-acervo write was **cleaned up** after capture;
+prior sessions (F1b/F2/F3, Jul 24/25) left the same kind of leak — a **smoke-isolation hardening** item for
+F5/a new issue (isolate the acervo MCP in the smoke `HERMES_HOME`).
+
+## GATE VERDICT
+**COMPLETE.** The C0 thesis is proven live end-to-end: the calibrated SOUL makes the launched model WRITE the
+`conduct.jsonl` trail (not narrate), producing sala cards including a Draft-First AUTH card, with an empty
+PT-BR anti-narration check on the real reply. The F3 PARTIAL verdict above is **superseded** by this run.
