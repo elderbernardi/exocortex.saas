@@ -35,3 +35,23 @@ pronto:"), only catching exact English tokens.
 calibration (dogfood the two `excrtx-conduct-*` skills: (a) force the shell append of `conduct.jsonl`, (b)
 forbid narrating the phase, (c) broaden the anti-narration grep to PT-BR). The charter's "≥1 Draft-First AUTH
 exercised with a live sala card" is therefore not yet met via the live cards, though Draft-First recognition IS present.
+
+## Anti-narration check (C0 — PT-BR)
+
+The I-S1 anti-narration check above (see PROVEN LIVE) only matched English tokens and therefore missed the
+PT-BR method narration surfaced by the KEY BEHAVIORAL FINDING (`"Classificação:"`, `"Definição de pronto:"`,
+and the other five fable-phase labels). C0 widens the pattern to a PT-BR-aware `grep -iqE` check covering all
+7 fable phases:
+
+```bash
+# UTF-8 locale required for the accented bracket classes (review Finding 3 caveat).
+PAT='fase (de |do )?(classify|define_done|evidence|decide|act|verify|report)|(entrando na|estou na|iniciando a) fase|"t":"phase"|Classifica[çc][ãa]o:|Defini[çc][ãa]o de pronto:|^[[:space:]]*(Fase|Evid[êe]ncia|Decis[ãa]o|A[çc][ãa]o|Verifica[çc][ãa]o|Relat[óo]rio):'
+```
+
+This pattern **supersedes** the English-only I-S1 pattern used in the PROVEN LIVE section above. Validated
+against the gate-proof's own PT-BR narration samples plus a clean conduct-only reply (five `grep -iqE "$PAT"`
+assertions, all passing: catches `Classificação:`, `Definição de pronto:`, `Verificação:`, `Ação:`, and does
+not false-positive on a narration-free reply).
+
+Committed home (script/test that runs this over `.messages[]`) = **F5**; C0 uses it here as the live-gate
+assertion (this document), not as a committed test.
