@@ -34,16 +34,18 @@ metadata:
       remediation_tip: Quebra de bound. 3 falhas na mesma verificação = pare e devolva com
         hipótese; nunca "use bom senso" num bound; ordem de autoridade executivo>spec>tests>código.
 compiled_rules: |
-  In a conducted Canvas task, honor the mechanical bounds. Bound A: after 3
-  failed fix-verify cycles on the SAME check, STOP; log each cycle to _tasks/<task_id>/
-  conduct.jsonl ({"t":"verify","subject":...,"ok":false}); on the 3rd, self-invoke clarify
-  (kind="bound_interrupt") with what you tried, the raw output, and your hypothesis. NEVER
-  answer a bound clarify with "best judgement" — re-raise. Bound B: after 2 searches with no
-  new information, STOP searching and register the gap ({"t":"search",...,"empty":true}).
-  Surprise: when code, a check, and the spec disagree, write {"t":"surprise",...} and resolve
-  by authority order executivo > spec > tests > codigo. Interrupt ONLY via the 3 classes
-  (executive-only gap, course-change, clear improvement) through clarify/approval — never
-  invent a fourth interruption channel.
+  In a conducted Canvas task, honor the mechanical bounds and record each via a conduct line
+  (out-of-band shell append, never prose) at "$ACERVO/_tasks/<id>/conduct.jsonl" (same id from
+  the launch brief). Bound A: after 3 failed fix-verify cycles on the SAME check, STOP; append
+  each cycle {"t":"verify","subject":..,"ok":false,"tried":..,"output":..,"hypothesis":..} and on
+  the 3rd self-invoke clarify (kind="bound_interrupt") with tried + raw output + hypothesis;
+  NEVER answer a bound clarify with "best judgement" — re-raise. Bound B: after 2 searches with
+  no new information, STOP and append {"t":"search","query":..,"query_sig":..,"empty":true}.
+  Surprise: when code, a check and the spec disagree, append {"t":"surprise","subject":..,
+  "code":..,"check":..,"spec":..,"resolution":..} and resolve by authority order executivo > spec
+  > tests > codigo. Interrupt ONLY via the 3 sanctioned classes (executive-only gap, course-change,
+  clear improvement) through clarify/approval — never invent a fourth channel. Verify/search cards
+  surface only at the bound threshold (3rd fail / 2nd empty) — by design.
 ---
 # Conduct Bounds — limites da tarefa conduzida
 
@@ -53,9 +55,9 @@ Inside a launched Canvas task, alongside `excrtx-conduct-loop`. It is the discip
 
 ## Procedure
 
-1. Track fix-verify cycles per check; on the 3rd failure, stop and self-invoke a `bound_interrupt` clarify with tried + raw output + hypothesis.
-2. Track searches; on the 2nd empty, stop and register the gap.
-3. On code/check/spec disagreement, write a `surprise` line and apply authority order executivo > spec > tests > código.
+1. Track fix-verify cycles per check; append `{"t":"verify","subject":…,"ok":false,"tried":…,"output":…,"hypothesis":…}` each cycle; on the 3rd, stop and self-invoke a `bound_interrupt` clarify.
+2. Track searches; on the 2nd empty, append `{"t":"search","query":…,"query_sig":…,"empty":true}` and stop.
+3. On code/check/spec disagreement, append `{"t":"surprise","subject":…,"code":…,"check":…,"spec":…,"resolution":…}` and apply authority order executivo > spec > tests > código.
 4. Every interruption is one of the 3 sanctioned classes, raised only via clarify/approval.
 
 ## Pitfalls

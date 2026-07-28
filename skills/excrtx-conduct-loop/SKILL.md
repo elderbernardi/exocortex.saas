@@ -34,14 +34,23 @@ metadata:
       remediation_tip: Quebra de anti-narração. As fases do loop são sinal out-of-band
         (conduct.jsonl), não texto para o usuário. Nunca declare "verificado" sem a saída bruta.
 compiled_rules: |
-  When conducting a launched Canvas task (a Cockpit room), run the fable loop using these
-  EXACT phase tokens (no spaces): classify -> define_done -> evidence -> decide -> act ->
-  verify -> report. Announce the current phase ONLY by appending a line to
-  _tasks/<task_id>/conduct.jsonl via the shell (printf '%s\n' '{"t":"phase","phase":"<token>","seq":N}'
-  >> "$ACERVO/_tasks/<task_id>/conduct.jsonl"); NEVER narrate the phase in your reply. Record
-  produced artifacts, intent/twins/pending traces, next moves, and Draft-First declarations as
-  conduct.jsonl lines ({"t":"artifact"|"trace"|"next_move"|"draft",...}), not as prose. Never
-  skip or weaken a named verification to make it pass; if you cannot verify, say so plainly and stop.
+  When conducting a launched Canvas task (a Cockpit room), your FIRST act in EVERY phase is
+  a real shell command appending one line to the conduct trail — not prose in your reply. The
+  reply is the work; the loop is signalled out-of-band only.
+  Resolve your task id ONCE from the launch brief line "Task ID (para o conduct.jsonl): <id>"
+  and reuse it. Append target is the absolute path "$ACERVO/_tasks/<id>/conduct.jsonl" (the
+  dir already exists; >> creates the file).
+  Run the fable loop with these EXACT phase tokens (no spaces): classify -> define_done ->
+  evidence -> decide -> act -> verify -> report. At each phase boundary run:
+  printf '%s\n' '{"t":"phase","phase":"<token>","seq":N}' >> "$ACERVO/_tasks/<id>/conduct.jsonl"
+  incrementing N. After the FIRST append, self-verify once: wc -l "$ACERVO/_tasks/<id>/conduct.jsonl".
+  Record every product as a conduct line with the EXACT keys the Cockpit renders (missing keys
+  render empty cards): artifact -> {"t":"artifact","title":..,"atype":..,"path":..,"tool":..};
+  trace -> {"t":"trace","kind":"intent|twins|pending","title":..,"evidence":{..}}; next move ->
+  {"t":"next_move","text":..}; Draft-First -> {"t":"draft","action":..,"draft_text":..}.
+  NEVER narrate a phase in your reply — no "Classificacao:", "Definicao de pronto:", "Fase:",
+  "estou na fase X"; the phase is the conduct line, never text. Never skip or weaken a named
+  verification to make it pass; if you cannot verify, say so plainly and stop.
 ---
 # Conduct Loop — condução da sala viva
 
@@ -55,7 +64,7 @@ Phase tokens are exact and lowercase, no spaces: `classify` `define_done` `evide
 
 1. **classify** the input (vetor/intent) — append `{"t":"phase","phase":"classify","seq":N}`.
 2. **define_done** — the named `verification` from the canvas; append the phase line.
-3. **evidence → decide → act** — record artifacts/traces/next-moves as conduct.jsonl lines as you go.
+3. **evidence → decide → act** — as you produce them, append conduct lines with exact keys: `{"t":"artifact","title":…,"atype":…,"path":…,"tool":…}`, `{"t":"trace","kind":"intent|twins|pending","title":…,"evidence":{…}}`, `{"t":"next_move","text":…}`. A Draft-First (external action) is `{"t":"draft","action":…,"draft_text":…}`.
 4. **verify** — run the named verification; paste its raw output; never declare success without it (EX-49).
 5. **report** — outcome first. Phases stay in conduct.jsonl; your reply is the work, not a narration of the loop.
 

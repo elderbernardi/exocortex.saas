@@ -23,7 +23,7 @@ skill compiled_rules → compile_soul.py → SOUL_SEED.md (entre marcadores COMP
 
 1. A persona da sessão lançada é `run_agent.load_soul_md()` lendo **`$HERMES_HOME/SOUL.md`** como slot de identidade #1 (`personality=None`; `config.yaml agent.personalities` é código morto para sessões lançadas).
 2. `compile_soul.py` escreve o **`SOUL_SEED.md`** do repo (o `compiled_rules` de `excrtx-conduct-loop` compila para a seção `## Conduct Loop`; o de `excrtx-conduct-bounds` para `## Conduct Bounds`).
-3. O runtime `$HERMES_HOME/SOUL.md` é uma **cópia verbatim** instalada por `setup.sh` **step-07** — que sobrescreve o compile in-place. Esse `cp` é o **2º hop obrigatório**: `compile_soul → SOUL_SEED.md` sozinho **não** alcança a sessão lançada.
+3. O runtime `$HERMES_HOME/SOUL.md` é uma **cópia verbatim** instalada por `setup.sh` **step-07** — que sobrescreve o compile in-place. Esse `cp` é o **2º hop obrigatório**: `compile_soul → SOUL_SEED.md` sozinho **não** alcança a sessão lançada. (destrutivo num install personalizado — ver `## Consequências`; a propagação viva usa o compile cirúrgico, não o cp).
 4. Governança é **provável offline (sem chave LLM)** via `run_agent.load_soul_md()` + `agent._build_system_prompt()` (ambos montagem pura de arquivos). Os gates keyless desta fase são `skill_judge.py --skill excrtx-conduct-loop --d1-only` e `--skill excrtx-conduct-bounds --d1-only`, mais o grep de `## Conduct Loop`/`## Conduct Bounds` + a *cauda* (`NEVER narrate`) em `SOUL_SEED.md` (prova que o `compiled_rules` é um block scalar `|` e não foi truncado — C-S1).
 
 ## Caveats
@@ -36,5 +36,11 @@ skill compiled_rules → compile_soul.py → SOUL_SEED.md (entre marcadores COMP
 
 - Duas novas skills sob `skills/excrtx-conduct-*`, ambas registradas em `FEATURES.md` (EX-60, EX-61) e compiladas em `SOUL_SEED.md`.
 - `SOUL_SEED.md` é **regenerado** por `compile_soul.py` — o bloco compilado nunca é editado à mão.
-- A propagação ao acervo vivo (`$HERMES_HOME/SOUL.md`) exige re-rodar `setup.sh` step-07 (ou `cp SOUL_SEED.md $HERMES_HOME/SOUL.md`) — passo do smoke/exit-gate (T15/T16).
+- A propagação das regras compiladas ao acervo vivo é **cirúrgica**:
+`python3 scripts/compile_soul.py --soul "$HERMES_HOME/SOUL.md"` — `inject_into_soul` troca
+**apenas** o bloco entre `<!-- COMPILED_RULES_START -->`/`END`, preservando a seção de
+onboarding. **⚠ NÃO use `setup.sh` step-07 nem `cp SOUL_SEED.md $HERMES_HOME/SOUL.md`** num
+install já personalizado: o `cp` sobrescreve o arquivo INTEIRO com o seed genérico, apagando
+a identidade do onboarding (Identidade Raiz/Valores/Tom/Contexto de Negócio). O `cp`/step-07 só
+é seguro num provisionamento novo ou num `$HERMES_HOME` isolado de smoke.
 - `.dogfood/scenarios/EX-60.yaml` + `EX-61.yaml` (cenários de 10 campos) + `calibrate-hermes.sh` + `skill_judge` D2–D5 completo ficam para **F5**; F3 entrega as skills no D1 keyless + registro em `FEATURES.md`.

@@ -458,6 +458,11 @@ test -f "$BRANDING/exocortex-logo.sh" && \
   chmod +x "$HERMES_HOME/exocortex-logo.sh"
 ```
 
+> **⚠ Destrutivo num install personalizado.** Este `cp` sobrescreve `SOUL.md` inteiro com o
+> seed — apaga a seção de onboarding. Só rode num provisionamento novo. Para propagar mudanças
+> de `compiled_rules` a um install vivo, use o compile cirúrgico do Step 05b
+> (`compile_soul.py --soul "$HERMES_HOME/SOUL.md"`), que preserva o onboarding.
+
 ---
 
 ## Step 08 — Integração DocBrain

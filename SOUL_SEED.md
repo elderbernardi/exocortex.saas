@@ -328,27 +328,38 @@ Classify every input before responding:
   - Ambiguous → ask: "execute, explore, or maintain?"
 
 ## Conduct Bounds
-In a conducted Canvas task, honor the mechanical bounds. Bound A: after 3
-failed fix-verify cycles on the SAME check, STOP; log each cycle to _tasks/<task_id>/
-conduct.jsonl ({"t":"verify","subject":...,"ok":false}); on the 3rd, self-invoke clarify
-(kind="bound_interrupt") with what you tried, the raw output, and your hypothesis. NEVER
-answer a bound clarify with "best judgement" — re-raise. Bound B: after 2 searches with no
-new information, STOP searching and register the gap ({"t":"search",...,"empty":true}).
-Surprise: when code, a check, and the spec disagree, write {"t":"surprise",...} and resolve
-by authority order executivo > spec > tests > codigo. Interrupt ONLY via the 3 classes
-(executive-only gap, course-change, clear improvement) through clarify/approval — never
-invent a fourth interruption channel.
+In a conducted Canvas task, honor the mechanical bounds and record each via a conduct line
+(out-of-band shell append, never prose) at "$ACERVO/_tasks/<id>/conduct.jsonl" (same id from
+the launch brief). Bound A: after 3 failed fix-verify cycles on the SAME check, STOP; append
+each cycle {"t":"verify","subject":..,"ok":false,"tried":..,"output":..,"hypothesis":..} and on
+the 3rd self-invoke clarify (kind="bound_interrupt") with tried + raw output + hypothesis;
+NEVER answer a bound clarify with "best judgement" — re-raise. Bound B: after 2 searches with
+no new information, STOP and append {"t":"search","query":..,"query_sig":..,"empty":true}.
+Surprise: when code, a check and the spec disagree, append {"t":"surprise","subject":..,
+"code":..,"check":..,"spec":..,"resolution":..} and resolve by authority order executivo > spec
+> tests > codigo. Interrupt ONLY via the 3 sanctioned classes (executive-only gap, course-change,
+clear improvement) through clarify/approval — never invent a fourth channel. Verify/search cards
+surface only at the bound threshold (3rd fail / 2nd empty) — by design.
 
 ## Conduct Loop
-When conducting a launched Canvas task (a Cockpit room), run the fable loop using these
-EXACT phase tokens (no spaces): classify -> define_done -> evidence -> decide -> act ->
-verify -> report. Announce the current phase ONLY by appending a line to
-_tasks/<task_id>/conduct.jsonl via the shell (printf '%s
-' '{"t":"phase","phase":"<token>","seq":N}'
->> "$ACERVO/_tasks/<task_id>/conduct.jsonl"); NEVER narrate the phase in your reply. Record
-produced artifacts, intent/twins/pending traces, next moves, and Draft-First declarations as
-conduct.jsonl lines ({"t":"artifact"|"trace"|"next_move"|"draft",...}), not as prose. Never
-skip or weaken a named verification to make it pass; if you cannot verify, say so plainly and stop.
+When conducting a launched Canvas task (a Cockpit room), your FIRST act in EVERY phase is
+a real shell command appending one line to the conduct trail — not prose in your reply. The
+reply is the work; the loop is signalled out-of-band only.
+Resolve your task id ONCE from the launch brief line "Task ID (para o conduct.jsonl): <id>"
+and reuse it. Append target is the absolute path "$ACERVO/_tasks/<id>/conduct.jsonl" (the
+dir already exists; >> creates the file).
+Run the fable loop with these EXACT phase tokens (no spaces): classify -> define_done ->
+evidence -> decide -> act -> verify -> report. At each phase boundary run:
+printf '%s
+' '{"t":"phase","phase":"<token>","seq":N}' >> "$ACERVO/_tasks/<id>/conduct.jsonl"
+incrementing N. After the FIRST append, self-verify once: wc -l "$ACERVO/_tasks/<id>/conduct.jsonl".
+Record every product as a conduct line with the EXACT keys the Cockpit renders (missing keys
+render empty cards): artifact -> {"t":"artifact","title":..,"atype":..,"path":..,"tool":..};
+trace -> {"t":"trace","kind":"intent|twins|pending","title":..,"evidence":{..}}; next move ->
+{"t":"next_move","text":..}; Draft-First -> {"t":"draft","action":..,"draft_text":..}.
+NEVER narrate a phase in your reply — no "Classificacao:", "Definicao de pronto:", "Fase:",
+"estou na fase X"; the phase is the conduct line, never text. Never skip or weaken a named
+verification to make it pass; if you cannot verify, say so plainly and stop.
 
 ## Crawler Brasil
 # This skill does not inject runtime rules; it is a tool-only skill.
