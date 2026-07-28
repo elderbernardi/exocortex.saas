@@ -88,13 +88,14 @@ def with_task_id(brief: str, task_id: str) -> str:
 
 - [ ] **Step 4: Wire it into `_handle_launch`**
 
-In `api/canvas_tarefas.py`, immediately after `task_id = _register_task(...)` succeeds (i.e. after the register try/except that yields `task_id`, before the `_update_links`/return path uses `brief`), add:
+In `api/canvas_tarefas.py`, after `task_id = _register_task(...)` succeeds (~:248) and **before the session/attachment staging** (`session = _new_session()` ~:261, which stages `brief_path` via `_stage_file` copying bytes off disk ~:262-263), add BOTH lines:
 
 ```python
     brief = canvas_brief.with_task_id(brief, task_id)
+    brief_path.write_text(brief, encoding="utf-8")   # marker reaches the staged brief.md too
 ```
 
-Verify by reading the surrounding lines that `brief` is the SAME variable returned in the launch response `"brief": brief` (~:277) — that returned value becomes the agent's first message (`/api/chat/start message: res.brief`). Do NOT touch the hot zone; this is one line in `canvas_tarefas.py`.
+**Why the second line (review Finding 1):** `brief.md` is written pre-task_id at ~:245, and `_stage_file` (~:175-186) copies the file bytes into the session attachments. Mutating only the local `brief` var would give the agent a message WITH the marker but a staged `brief.md` WITHOUT it — if the agent reads the attachment, task_id resolution fails. Re-persisting `brief_path` after `with_task_id` keeps message + attachment in sync. Confirm `brief` is the same var returned as `"brief": brief` (~:277) → the agent's first message (`/api/chat/start message: res.brief`). Do NOT touch the hot zone.
 
 - [ ] **Step 5: Run the unit test + full canvas suite (no regression)**
 
@@ -257,15 +258,21 @@ assert "## Conduct Bounds" in s, "missing ## Conduct Bounds"
 assert "NEVER narrate a phase" in s, "anti-narration tail truncated (C-S1!)"
 assert "printf '%s" in s, "printf few-shot truncated"
 assert n <= 30000, f"SOUL_SEED too large ({n}) — truncation risk in 128K case"
-loop = s.index("## Conduct Loop"); bounds = s.index("## Conduct Bounds")
-end_conduct = max(loop, bounds) + 1200
-assert end_conduct < 21504, f"conduct block ends at ~{end_conduct} — outside head window"
-print(f"OK — SOUL_SEED {n} chars; conduct sections present; tail intact")
+# direct tail check (review Finding 2): the anti-narration line must sit inside the
+# head window (21504), not a +1200 proxy of the section start.
+tail = s.index("NEVER narrate a phase")
+assert tail < 21504, f"anti-narration tail at {tail} — outside 128K head window"
+print(f"OK — SOUL_SEED {n} chars; conduct sections present; tail at {tail} (<21504)")
 PY
 ```
 Expected: prints `OK …`; no assertion error.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Desync sanity (review Finding 5 — cheap keyless)**
+
+Run: `cd <exo-wt> && python3 scripts/compile_soul.py --validate-compiled-rules 2>&1 | grep -iE 'conduct-loop|conduct-bounds' ; echo "exit=$?"`
+Expected: **no `conduct-loop`/`conduct-bounds` line** (they are body-synced). ⚠ A repo-wide `--validate-compiled-rules` is RED for ~7 pre-existing tool-only skills (known; use it only to confirm OUR two skills don't NEWLY appear) — do not gate the phase on the global exit code.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git -C <exo-wt> branch --show-current | grep -qx collab/canvas-c0 && \
@@ -288,12 +295,15 @@ git -C <exo-wt> commit -m "chore(soul): recompile SOUL_SEED with calibrated cond
 Create a scratch fixture and assert the widened pattern catches the gate-proof's own PT-BR narration samples and is empty on a clean conduct-only reply:
 
 ```bash
-PAT='fase (de |do )?(classify|define_done|evidence|decide|act|verify|report)|(entrando na|estou na|iniciando a) fase|"t":"phase"|Classifica[çc][ãa]o:|Defini[çc][ãa]o de pronto:|^[[:space:]]*Fase:'
+# UTF-8 locale required for the accented bracket classes (review Finding 3 caveat).
+PAT='fase (de |do )?(classify|define_done|evidence|decide|act|verify|report)|(entrando na|estou na|iniciando a) fase|"t":"phase"|Classifica[çc][ãa]o:|Defini[çc][ãa]o de pronto:|^[[:space:]]*(Fase|Evid[êe]ncia|Decis[ãa]o|A[çc][ãa]o|Verifica[çc][ãa]o|Relat[óo]rio):'
 printf '%s\n' 'Classificação: Execução — entrego o artefato' | grep -iqE "$PAT" && echo "catches PT-BR classify: OK"
 printf '%s\n' 'Definição de pronto: DRAFT aguardando aprovação' | grep -iqE "$PAT" && echo "catches PT-BR done: OK"
+printf '%s\n' 'Verificação: os testes passam' | grep -iqE "$PAT" && echo "catches PT-BR verify: OK"
+printf '%s\n' 'Ação: envio o e-mail' | grep -iqE "$PAT" && echo "catches PT-BR act: OK"
 printf '%s\n' 'Segue o ofício em anexo; aguardo sua autorização.' | grep -iqE "$PAT" || echo "clean reply: OK (no false positive)"
 ```
-Expected: three `OK` lines.
+Expected: five `OK` lines. All 7 fable phases now have a PT-BR method-label branch (review Finding 3: the earlier pattern caught only `classify`/`define_done`, letting `Evidência:`/`Decisão:`/`Ação:`/`Verificação:`/`Relatório:` narration pass as clean).
 
 - [ ] **Step 2: Record the widened pattern + F5 note in F3-GATE-PROOF.md**
 
@@ -342,9 +352,13 @@ In both rows replace "propagada ao runtime `$HERMES_HOME/SOUL.md` pelo step-07 (
 propagada ao runtime via `compile_soul.py --soul "$HERMES_HOME/SOUL.md"` (cirúrgico, preserva onboarding; **não** via step-07 `cp` — destrutivo num install personalizado; ADR-CT-07).
 ```
 
-- [ ] **Step 3: Annotate F3-PLANO.md C-E (~:40) and T13 note (~:71)**
+- [ ] **Step 3: Annotate F3-PLANO.md — two spots (review Finding 4)**
 
-Where they say the runtime SOUL is a "verbatim copy installed by setup.sh step-07 (which overwrites the in-place compile)", append inline: *"— NB (C0): esse `cp` apaga o onboarding num install vivo; a propagação correta é `compile_soul.py --soul "$HERMES_HOME/SOUL.md"` (cirúrgico). O step-07/cp só vale no smoke isolado (é o que T15/T16 usam)."* Do not rewrite the historical trace — annotate only.
+There are two distinct step-07/verbatim mentions with different wording (not one "T13 note"):
+- **~:40** (the C-E paragraph): "…runtime `$HERMES_HOME/SOUL.md` is a **verbatim copy** installed by `setup.sh` **step-07** (which overwrites the in-place compile)."
+- **~:71** (a file-table row for `$HERMES_HOME/SOUL.md`): "Receives `SOUL_SEED.md` verbatim via `setup.sh` step-07 (or `cp …`)."
+
+Append the same inline NB to BOTH (don't expect a verbatim string match at :71): *"— NB (C0): esse `cp`/step-07 apaga o onboarding num install vivo; a propagação correta é `compile_soul.py --soul "$HERMES_HOME/SOUL.md"` (cirúrgico). O step-07/cp só vale no smoke isolado (é o que T15/T16 usam)."* Annotate only — do not rewrite the historical trace.
 
 - [ ] **Step 4: Warn in INSTALL.md Step-07**
 
