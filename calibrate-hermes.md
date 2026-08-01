@@ -1,6 +1,6 @@
 # Project Plan: Calibrate Hermes (calibrate-hermes.md)
 
-This project plan details the deprecation of `scripts/calibrate-hermes.sh` and its replacement with a modern, modular, and smart Python-based Prompt-Driven Development (PDD) calibration system. It pairs with all 45 features (EX-01 to EX-35, EX-48 to EX-55), reads raw personalization profiles from `acervo/macro/`, and supports an interactive hybrid calibration flow.
+This project plan details the deprecation of `scripts/calibrate-hermes.sh` and its replacement with a modern, modular, and smart Python-based Prompt-Driven Development (PDD) calibration system. It pairs with the active feature catalog, reads raw personalization profiles from `acervo/macro/`, and supports an interactive hybrid calibration flow.
 
 > **STATUS: ✅ ALL PHASES COMPLETE** — Runner built, 45/45 cases valid (EX-53/54/55 added 2026-06-19 — Memory Lifecycle Skills), dry-run mode + report export operational. Ready for live calibration when Hermes is running.
 
@@ -20,7 +20,7 @@ Calibration prompts and acceptance criteria are stored in `scripts/migrate_calib
 - **BACKEND / CLI TOOL** (Python-based script and test runner integration)
 
 ## Success Criteria
-1. **Full Feature Coverage**: Support calibrating and testing all 42 features (EX-01 to EX-35, EX-48 to EX-54). ✅
+1. **Full Feature Coverage**: Support calibrating and testing every active feature. ✅
 2. **Modular Design (Option B)**: Load calibration prompt configurations dynamically from each skill's `SKILL.md` frontmatter.
 3. **Personalization Integration (Option B)**: Inject the raw executive personality data (`acervo/macro/valores.md`, `acervo/macro/estilo.md`, `acervo/macro/current-state.md`) directly into the Hermes calibration session.
 4. **Interactive Hybrid Flow (Option B)**: Runs each test, prints results, and prompts the operator (`s/n`) with the option to automatically retry with remediation prompts.

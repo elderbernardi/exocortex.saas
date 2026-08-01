@@ -85,7 +85,6 @@
 | `excrtx-govern-tools` | D2/D4 | Trigger scope + bundle check |
 | `excrtx-assess-repofit` | D2/D3/D4 | Draft-first + verification |
 | `excrtx-behavior-vetor` | D3/D4 | Manut vec support |
-| `excrtx-harness-imbroke` | D2/D4 | Concrete triggers |
 | `excrtx-integrate-browser` | D2/D4 | Numbered procedure |
 | `excrtx-govern-draftfirst` | — | Already compliant |
 

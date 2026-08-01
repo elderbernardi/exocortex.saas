@@ -15,6 +15,11 @@ O Firecrawl é resolvido pelo `setup/step-11c-integration-firecrawl.sh` em 3 tie
    falhar. As skills que dependem de Firecrawl caem para fallback (browser/erro
    estruturado).
 
+O backend local é separado do adapter MCP stdio. O profile `full` exige a
+capacidade `firecrawl-mcp`, declarada em `setup/capabilities.json`; o instalador
+registra o adapter com `FIRECRAWL_API_URL` apontando para o backend local, mas não
+executa `npm install`.
+
 ## Stack
 
 | Serviço | Imagem (pinada) | Papel |
@@ -57,6 +62,7 @@ EXOCORTEX_ENABLE_FIRECRAWL=1 bash provision/firecrawl/scripts/install.sh
 
 ```bash
 bash provision/firecrawl/scripts/smoke.sh
+hermes mcp test firecrawl
 ```
 
 ### Parar

@@ -263,12 +263,6 @@ D2D5_EVALUATIONS = {
         "D4_fitness": {"label": "NEEDS_HARDENING", "reasoning": "References directory exists but trilho system needs clearer verification criteria.", "issues": ["Trilho verification not specific enough"], "recommendations": ["Add trilho-specific test cases"]},
         "D5_economy": {"label": "EFFICIENT", "reasoning": "3704B body. Concise.", "issues": [], "recommendations": []},
     },
-    "excrtx-harness-imbroke": {
-        "D2_clarity": {"label": "CLEAR", "reasoning": "29 sections cover imbroke mode comprehensively. Rating scale 1-10. Free model router script. Counter-triggers present. Tables.", "issues": [], "recommendations": []},
-        "D3_alignment": {"label": "ALIGNED", "reasoning": "Degraded-mode operation for cost management. Script-backed with openrouter_free_model_router.py.", "issues": [], "recommendations": []},
-        "D4_fitness": {"label": "PRODUCTION_READY", "reasoning": "References directory exists. Script exists and tests pass (--status exit 0). Verification testable.", "issues": [], "recommendations": []},
-        "D5_economy": {"label": "ACCEPTABLE", "reasoning": "9610B body approaches 10KB. Justified by the complexity of the cost management system.", "issues": ["Body approaches 10KB"], "recommendations": []},
-    },
     "excrtx-harness-kanban": {
         "D2_clarity": {"label": "CLEAR", "reasoning": "20 sections. Kanban operations defined. Code blocks for commands. Numbered steps.", "issues": [], "recommendations": []},
         "D3_alignment": {"label": "ALIGNED", "reasoning": "References produce-artifacts and memory-manager. Task management within Exocortex.", "issues": [], "recommendations": []},

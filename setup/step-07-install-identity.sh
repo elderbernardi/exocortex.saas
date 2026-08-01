@@ -9,8 +9,22 @@ if [ "${_EXOCORTEX_COMMON_LOADED:-}" != "1" ]; then
 fi
 
 if [ -f "$SCRIPT_DIR/SOUL_SEED.md" ]; then
-  cp "$SCRIPT_DIR/SOUL_SEED.md" "$HERMES_HOME/SOUL.md"
-  log "SOUL.md instalado (de SOUL_SEED.md)"
+  SOUL_TARGET="$HERMES_HOME/SOUL.md"
+  if [ -f "$SOUL_TARGET" ] && grep -q "Você é o Exocórtex.IA" "$SOUL_TARGET"; then
+    # O compile_soul.py roda depois deste step e atualiza apenas o bloco
+    # compilado. A Constituição preenchida pelo onboarding fica intacta.
+    log "SOUL.md Exocórtex já presente; identidade e onboarding preservados"
+  else
+    if [ -f "$SOUL_TARGET" ]; then
+      BACKUP_DIR="$HERMES_HOME/backups/exocortex-install"
+      mkdir -p "$BACKUP_DIR"
+      BACKUP_PATH="$BACKUP_DIR/SOUL.before-exocortex.$(date +%Y%m%d_%H%M%S).md"
+      cp "$SOUL_TARGET" "$BACKUP_PATH"
+      log "Identidade Hermes anterior preservada em $BACKUP_PATH"
+    fi
+    cp "$SCRIPT_DIR/SOUL_SEED.md" "$SOUL_TARGET"
+    log "SOUL.md Exocórtex instalado; Macroverso permanece pendente até o onboarding"
+  fi
 fi
 
 # ─── Branding: logo ASCII + script ───────────────────────────────────────

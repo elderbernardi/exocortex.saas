@@ -126,6 +126,45 @@ class MemoryRoutingProvisionTest(unittest.TestCase):
             data = json.loads(result.stdout)
             self.assertTrue(data["ok"])
 
+    def test_core_profile_preserves_existing_memory_provider(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            hermes = base / ".hermes"
+            acervo = base / "exocortex" / "acervo"
+            repo_root = base / "repo"
+            hermes.mkdir()
+            acervo.mkdir(parents=True)
+            self._seed_repo_root(repo_root)
+            (hermes / "config.yaml").write_text("memory:\n  provider: local\n", encoding="utf-8")
+            (hermes / "SOUL.md").write_text("# SOUL\n", encoding="utf-8")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(PROVISION),
+                    "--profile",
+                    "core",
+                    "--hermes-home",
+                    str(hermes),
+                    "--acervo",
+                    str(acervo),
+                    "--repo-root",
+                    str(repo_root),
+                    "--json",
+                ],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("provider: local", (hermes / "config.yaml").read_text(encoding="utf-8"))
+            self.assertFalse((hermes / "hindsight" / "config.json").exists())
+            self.assertIn("Protocolo de Memória e Contexto", (hermes / "SOUL.md").read_text(encoding="utf-8"))
+            report = json.loads(result.stdout)
+            self.assertTrue(report["hindsight"]["skipped"])
+
 
 if __name__ == "__main__":
     unittest.main()

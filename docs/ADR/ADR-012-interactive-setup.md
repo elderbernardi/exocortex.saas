@@ -1,6 +1,6 @@
 # ADR-012: Setup Interativo com Validação de Environment
 
-**Status:** Aceito
+**Status:** Superseded por [ADR-024](ADR-024-installer-v2.md)
 **Data:** 2026-06-15
 **Decisão por:** Elder Bernardi
 

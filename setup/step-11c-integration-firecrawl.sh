@@ -69,37 +69,27 @@ EOF
 }
 
 # ─── Registro do MCP do Firecrawl (guardado + idempotente) ───────────────────
-# Espelha step-11-integration-context7.sh: só registra quando o Firecrawl está
-# disponível e o servidor ainda não está na lista. Self-host dispensa API key.
+# O adapter stdio recebe o endpoint local por ambiente. O backend self-hosted
+# dispensa API key, mas o adapter é uma capacidade explícita do profile full.
 _firecrawl_register_mcp() {
   local base="$1"
-  command -v hermes >/dev/null 2>&1 || { info "hermes CLI não encontrado; pulando MCP do Firecrawl"; return 0; }
+  command -v hermes >/dev/null 2>&1 || { warn "hermes CLI não encontrado; MCP Firecrawl indisponível"; return 1; }
+  command -v firecrawl-mcp >/dev/null 2>&1 || {
+    warn "Capacidade ausente: firecrawl-mcp"
+    warn "Instale a ferramenta isolada e rode novamente: npm install --global firecrawl-mcp@3.22.0"
+    return 1
+  }
   if hermes mcp list 2>/dev/null | grep -q "firecrawl"; then
     log "MCP server 'firecrawl' já configurado"
-    return 0
-  fi
-  command -v curl >/dev/null 2>&1 || { info "curl não encontrado; pulando registro MCP do Firecrawl"; return 0; }
-  local mcp_url="${base%/}/mcp"
-  local mcp_code
-  mcp_code="$(curl -so /dev/null --max-time 5 -w "%{http_code}" "$mcp_url" 2>/dev/null || true)"
-  case "$mcp_code" in
-    200|204|400|401|403|405|406)
-      ;;
-    *)
-      info "Firecrawl ativo em $base, mas endpoint MCP não está disponível em $mcp_url (HTTP ${mcp_code:-000}) — pulando registro MCP"
-      return 0
-      ;;
-  esac
-  # Firecrawl expõe um endpoint MCP HTTP; a key é opcional no self-host.
-  if [ -n "${FIRECRAWL_API_KEY:-}" ]; then
-    printf 'n\ny\n' | hermes mcp add firecrawl --url "$mcp_url" --env "FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}" >/dev/null 2>&1 \
-      && log "MCP server 'firecrawl' adicionado (url=$mcp_url, com API key)" \
-      || warn "Falha ao adicionar MCP server 'firecrawl' (não-fatal; skills usam fallback)"
   else
-    printf 'n\ny\n' | hermes mcp add firecrawl --url "$mcp_url" >/dev/null 2>&1 \
-      && log "MCP server 'firecrawl' adicionado (url=$mcp_url, self-host sem key)" \
-      || warn "Falha ao adicionar MCP server 'firecrawl' (não-fatal; skills usam fallback)"
+    printf 'y\n' | hermes mcp add firecrawl \
+      --command firecrawl-mcp \
+      --env "FIRECRAWL_API_URL=${FIRECRAWL_BASE_URL}" >/dev/null
+    log "MCP server 'firecrawl' registrado contra o backend local"
   fi
+
+  hermes mcp test firecrawl >/dev/null
+  log "MCP server 'firecrawl' conectado ao backend $base"
 }
 
 # ─── Orquestrador dos tiers ──────────────────────────────────────────────────

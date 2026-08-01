@@ -78,7 +78,6 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 EXOCORTEX_HOME="${EXOCORTEX_HOME:-$HOME/exocortex}"
 ACERVO="${ACERVO:-$EXOCORTEX_HOME/acervo}"
 
-IMBROKE_MODE="${IMBROKE_MODE:-0}"
 CALIBRATE_MODE="${CALIBRATE_MODE:-0}"
 INTERACTIVE_MODE="${INTERACTIVE_MODE:-1}"
 INIT_ONLY="${INIT_ONLY:-0}"
@@ -90,9 +89,6 @@ STEP_BY_STEP_MODE="${STEP_BY_STEP_MODE:-0}"
 _parse_setup_flags() {
   for arg in "$@"; do
     case "$arg" in
-      --imbroke)
-        IMBROKE_MODE=1
-        ;;
       --calibrate)
         CALIBRATE_MODE=1
         ;;
@@ -109,13 +105,12 @@ _parse_setup_flags() {
         STEP_BY_STEP_MODE=1
         ;;
       -h|--help)
-        echo "Uso: bash setup.sh [--yes] [--init-only] [--skip-env-check] [--step-by-step] [--imbroke] [--calibrate]"
+        echo "Uso: bash setup.sh [--yes] [--init-only] [--skip-env-check] [--step-by-step] [--calibrate]"
         echo ""
         echo "  --yes            Aceita todos os defaults sem prompts (CI/CD)"
         echo "  --init-only      Apenas configuração, sem executar steps"
         echo "  --skip-env-check Pula validação de pré-requisitos"
         echo "  --step-by-step   Força revisão guiada de paths, env vars e API keys"
-        echo "  --imbroke        Ativa modo de contingência OpenRouter free"
         echo "  --calibrate      Executa calibração cognitiva interativa pós-instalação"
         exit 0
         ;;
@@ -164,5 +159,5 @@ ACERVO_SRC="$SCRIPT_DIR/acervo"
 # ─── Export ──────────────────────────────────────────────────────────────────
 
 export HERMES_HOME EXOCORTEX_HOME ACERVO SCRIPT_DIR
-export IMBROKE_MODE CALIBRATE_MODE INTERACTIVE_MODE INIT_ONLY SKIP_ENV_CHECK STEP_BY_STEP_MODE
+export CALIBRATE_MODE INTERACTIVE_MODE INIT_ONLY SKIP_ENV_CHECK STEP_BY_STEP_MODE
 export SKILLS_SRC SKILLS_DST PROFILES_SRC PROFILES_DST BUNDLES_SRC BUNDLES_DST ACERVO_SRC

@@ -7,13 +7,40 @@ this repository (`elderbernardi/exocortex.saas`). The format is loosely based on
 ## [Unreleased]
 
 ### Added
+- Installer v2 with explicit `plan`, `apply`, and `verify` commands; `core` and
+  `full` profiles; per-stage sanitized logs; install lock; managed snapshot; and
+  machine-readable run state under `$HERMES_HOME/exocortex-install/`.
+- Deterministic installation verifier plus a bounded three-turn behavioral
+  acceptance for identity, Evolução, and Draft-First.
+- Isolated end-to-end tests proving an existing Hermes prerequisite, pre-onboarding
+  identity, onboarding preservation, profile strictness, and idempotent reapply.
+- Capability-oriented dependency manifest with OS-family detection, native package
+  remediation, minimum-version probes, package provenance, and JSON reporting.
+- NotebookLM registration/verification stage and explicit Firecrawl stdio MCP
+  adapter wired to the local backend in the `full` profile.
 - Canonical `excrtx-assess-interactive-audit` skill: owner-in-the-loop audit protocol with personas, evidence capture, issue backlog, GO/NO-GO report, and bundle/catalog wiring.
-- Bootstrap regression test for `VERSION=main` ensuring cached installer checkouts fast-forward to `origin/main` before running setup.
 - **Canvas v0.5** (harness; ADR-CT-06): the EX-06 Cognitive Canvas gains the fable-method fields — `shape`, `done_criteria`, and a named `verification` in the core schema, plus `scope`, `assumptions`, and `authorization` (session-filled) in the document template. `intent_type` widens to the 8-value superset. Enables the agent-conducted Canvas de Tarefas UI (meta issue #130, phase F1).
 
 ### Fixed
-- `install.sh` now treats branch-like versions such as `main` as moving refs: it fetches `origin`, fast-forwards safely when possible, and only reuses the local installer when already current or when the requested version is not a remote branch.
+- Reinstall no longer overwrites an onboarded `SOUL.md`; only a generic Hermes
+  identity receives the Exocórtex seed, followed by surgical rule compilation.
+- Skill synchronization excludes local runtimes and caches, reducing repeat-install
+  time and preventing user-owned environments from entering snapshots.
+
+### Changed
+- Hermes and system dependencies are prerequisites. The Exocórtex installer no
+  longer installs Hermes, packages, Node modules, or provider-routing utilities.
+- End-user dogfood is reduced from the release catalog to three high-signal live
+  scenarios. The full catalog remains a CI/release gate.
+- Self-hosted Hindsight, Firecrawl, and WebUI are mandatory in `full` by default;
+  partial installs require `--allow-degraded-services`.
+- NotebookLM and Firecrawl adapters are verified as user-space capabilities rather
+  than installed implicitly by setup scripts.
 - **Canvas harness drift unified (ADR-CT-06)**: the canonical vector key is now `vetor` across schema, templates, and `register_task_from_canvas.py` (with a one-cycle `vector` read-fallback); `register_task_from_canvas.py` now rejects an unresolved `ambiguo` vetor, actually parses `--from-stdin` canvas fields (was a latent no-op), and emits collision-safe task ids. The `task.yaml` template regained its `{task_id}`/`{title}`/`{content_hash}`/timestamp placeholders (pre-existing drift left them as literal example text).
+
+### Removed
+- Removed the abandoned emergency model-routing contingency, including its router,
+  setup path, skill, bundle entry, dogfood scenario, tests, and user-facing docs.
 
 ## [1.1.1] — 2026-06-30
 
@@ -211,8 +238,8 @@ and folds in the memory-routing reform.
 - Memory-routing reform: Hindsight tools-first routing + AcervoIndex write hook and
   daily reconciliation cron (`scripts/provision_memory_routing.py`,
   `scripts/smoke_memory_routing.py`, wired into `setup.sh` and `step-13`).
-- INSTALL.md now documents **Step 10c** (Acervo workspace registration in the WebUI),
-  the **`--imbroke`** OpenRouter-free contingency, and the canonical LLM model.
+- INSTALL.md now documents **Step 10c** (Acervo workspace registration in the WebUI)
+  and the canonical LLM model.
 
 ### Changed
 - `step-12-verify-keys.sh` inspects `$HERMES_HOME/config.yaml` **non-destructively**:

@@ -50,13 +50,6 @@ CALIBRATION_MAPPING = {
         "acceptance_criteria": "O agente deve requisitar as informações em falta (Slug, Type, Description) ou demonstrar o clone da estrutura base do template e substituição de placeholders nos arquivos.",
         "remediation_tip": "Falha no Provisionamento: O microverso deve ser inicializado copiando o template completo e ajustando todos os placeholders e SCHEMA."
     },
-    "EX-48": {
-        "skill": "excrtx-harness-imbroke",
-        "calibration_prompt": "Quando o modo 'imbroke' for ativado pelo executivo (ou por erro de pagamento detectado), você deve agir estritamente por meio do script determinístico 'scripts/openrouter_free_model_router.py'.\n- NUNCA use o LLM para adivinhar, classificar ou formatar informações do modo imbroke.\n- O script faz a seleção com base em benchmarks reais (escala 1-10) e configura o Hermes automaticamente.\n- Copie e apresente exatamente o resultado retornado pelo script, preservando o warning contextual de segurança correspondente ao rating (🟢 OK, 🟡 ALERTA ou 🔴 PERIGO).\n- Lembre o executivo que a mudança exige reiniciar a sessão com '/new'.",
-        "test_prompt": "Qual o status do modo imbroke e qual o rating de capacidade do modelo atual?",
-        "acceptance_criteria": "O agente deve executar o script 'python3 scripts/openrouter_free_model_router.py --status' e reportar estritamente o output do script, exibindo o rating 1-10 e warnings de capacidade sem alucinar.",
-        "remediation_tip": "Erro de Harness: Modo imbroke é 100% determinístico. Você deve ler e reportar o output bruto do script de roteamento sem reformular com LLM."
-    },
     "EX-50": {
         "skill": "excrtx-harness-tooldev",
         "calibration_prompt": "Você é capaz de projetar e estender o harness do Hermes criando ferramentas diretas.\n- Toda nova ferramenta em Python deve ser criada em 'tools/' e se registrar usando 'registry.register()' especificando nome, schema JSON de parâmetros, handler em lambda e uma função de pré-requisitos 'check_fn()'.\n- Evite o loop do LLM implementando a chamada direta via comando '/tool <nome> [argumentos]'. Os argumentos devem ser parseados como JSON ou no formato 'chave=valor' no interpretador CLI/Gateway.",

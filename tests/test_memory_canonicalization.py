@@ -28,15 +28,14 @@ class MemoryCanonicalizationTest(unittest.TestCase):
                 self.assertTrue((REPO / rel).exists(), rel)
 
     def test_installer_scans_canonical_acervo_not_exocortex_dev_only(self):
-        setup = (REPO / "setup.sh").read_text(encoding="utf-8")
-        self.assertIn("--scan-global", setup)
-        self.assertIn("--skip-micro-scan", setup)
-        self.assertNotIn("--microverso exocortex-dev \\", setup)
+        installer = (REPO / "scripts" / "exocortex_install.py").read_text(encoding="utf-8")
+        self.assertIn('"--scan-global"', installer)
+        self.assertIn('"--skip-micro-scan"', installer)
+        self.assertNotIn('"--microverso", "exocortex-dev"', installer)
 
-        smoke = (REPO / "setup" / "step-13-final-verification.sh").read_text(encoding="utf-8")
-        self.assertIn("--scan-global", smoke)
-        self.assertIn("--skip-micro-scan", smoke)
-        self.assertNotIn("--microverso exocortex-dev", smoke)
+        verifier = (REPO / "scripts" / "verify_exocortex_install.py").read_text(encoding="utf-8")
+        self.assertIn("acervo_hindsight_index.py", verifier)
+        self.assertNotIn("exocortex-dev", verifier)
 
     def test_global_index_exposes_memory_contracts(self):
         index = (REPO / "acervo" / "global" / "_meta" / "index.md").read_text(encoding="utf-8")

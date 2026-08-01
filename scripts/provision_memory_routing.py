@@ -59,13 +59,11 @@ DESIRED_HINDSIGHT = {
     "recall_max_input_chars": 800,
 }
 
-BOOTSTRAP_MEMORY = """Terminal Hermes sanitiza segredos `sk-*`; para gravar chaves ou inspecionar env do gateway, usar `execute_code` Python ou `/proc/<pid>/environ`.
+BOOTSTRAP_MEMORY = """O Exocórtex usa a memória rápida apenas para preferências duráveis e invariantes necessários antes da primeira ferramenta.
 §
-DocBrain (`ProjetoBB/docBrainBB.git`) é privado; nunca citar em README, preflight ou help text. Decisão canônica: `acervo/micro/exocortex-dev/decisions/docbrain-not-public.md`.
+Hindsight recupera contexto operacional; o Acervo confirma conhecimento canônico; session_search prova a literalidade das conversas.
 §
-`last30days`: skill em `skills/last30days/`, symlink em `~/.hermes/skills/research/last30days`, Python `/usr/sbin/python3.14`. Reasoning/visão vêm dos papéis LLM (`EXOCORTEX_DEFAULT_*` / `EXOCORTEX_VISION_*`); chaves de scraping são próprias da skill.
-§
-Google Workspace OAuth usa project `734420556052` e token `~/.hermes/google_token.json`.
+Segredos, progresso temporário e fatos específicos de uma instalação não pertencem à memória rápida.
 """
 
 
@@ -247,6 +245,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--hermes-home", default=os.environ.get("HERMES_HOME", str(Path.home() / ".hermes")))
     p.add_argument("--acervo", default=os.environ.get("ACERVO") or os.environ.get("EXOCORTEX_HOME", str(Path.home() / "exocortex")) + "/acervo")
     p.add_argument("--repo-root", default=str(Path(__file__).resolve().parents[1]))
+    p.add_argument("--profile", choices=("core", "full"), default="full")
     p.add_argument("--microverso", default="exocortex-ops")
     p.add_argument("--scan-global", action="store_true", help="scan global Acervo layer before the selected microverso")
     p.add_argument("--skip-micro-scan", action="store_true", help="only scan global layer when paired with --scan-global")
@@ -263,13 +262,22 @@ def main(argv: list[str] | None = None) -> int:
     acervo = Path(args.acervo).expanduser().resolve()
     repo_root = Path(args.repo_root).expanduser().resolve()
     report: dict[str, Any] = {"ok": True, "hermes_home": str(hermes_home), "acervo": str(acervo)}
-    for key, fn in [
-        ("hindsight", lambda: ensure_hindsight_config(hermes_home)),
-        ("hermes_memory", lambda: ensure_hermes_memory_flags(hermes_home)),
+    operations = [
         ("soul", lambda: patch_soul(hermes_home)),
         ("memory_budget", lambda: ensure_memory_budget(hermes_home, consolidate=args.consolidate_memory)),
         ("acervo_index", lambda: ensure_acervo_index(acervo, repo_root)),
-    ]:
+    ]
+    if args.profile == "full":
+        operations[0:0] = [
+            ("hindsight", lambda: ensure_hindsight_config(hermes_home)),
+            ("hermes_memory", lambda: ensure_hermes_memory_flags(hermes_home)),
+        ]
+    else:
+        reason = "profile core preserves the existing Hermes memory provider"
+        report["hindsight"] = {"skipped": True, "reason": reason}
+        report["hermes_memory"] = {"skipped": True, "reason": reason}
+        args.skip_index_scan = True
+    for key, fn in operations:
         try:
             report[key] = fn()
         except Exception as exc:

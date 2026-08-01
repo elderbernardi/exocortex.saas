@@ -46,7 +46,6 @@ Activate when:
 - Deciding how Hermes publishes final deliverables (PDFs, docs, ZIPs)
 - Building local CLI API contracts between Hermes and sibling engines
 - Separating Hermes runtime (`$HERMES_HOME`) from Exocórtex workspace (`$EXOCORTEX_HOME`)
-- Implementing contingency/fallback surface activation (`--imbroke`)
 
 **Don't use for:** Choosing between gateway/UI/TUI surfaces (use `excrtx-harness-surfaces`). Tool governance (use `excrtx-govern-tools`). Google Drive integration (use `excrtx-integrate-gdrive`).
 
@@ -115,18 +114,6 @@ Why cwd matters:
 - Gateway/messaging uses `terminal.cwd` from `config.yaml`
 - Relative paths, file searches, and generated files follow that workspace
 
-## Opt-in contingency surfaces
-
-When introducing a fallback, degraded, or budget-emergency mode, do not make it default.
-
-| Rule | Implementation |
-|------|---------------|
-| Normal path is default | Contingency is opt-in only |
-| CLI activation | Named flag like `--imbroke` |
-| Chat activation | Parallel command like `/xc imbroke` |
-| Write actions | Require explicit contingency flag |
-| Read-only/reporting | May run without activation |
-
 ## Local CLI APIs for sibling engines
 
 When Hermes operates a sibling local project, prefer machine-oriented CLI API over HTTP:
@@ -176,7 +163,7 @@ Security baseline: private bucket, short TTL, checksums, MIME sniffing, credenti
 
 - **Token leakage:** Never pass `access_token` or `refresh_token` into Hermes config, env, prompts, memory, or logs. Use `connection_id` references.
 - **Runtime/workspace confusion:** Do not move auth, config, logs, sessions, skills, or Hindsight config into `~/exocortex`; those stay in `~/.hermes`.
-- **Contingency auto-enable:** Do not auto-enable a fallback provider just because an LLM role key (e.g. `EXOCORTEX_DEFAULT_API_KEY`) is present. Require explicit `--imbroke` flag.
+
 - **CLI API stdout pollution:** Human-readable output in stdout breaks agent JSON parsing. Route logs to stderr.
 - **GitHub as doc delivery:** Do not use GitHub as default delivery UX for ordinary documents — only for software releases.
 - **Acervo path inference:** Do not resolve Acervo from `$HERMES_HOME/acervo` in new scripts; use `$ACERVO` or `$EXOCORTEX_HOME/acervo`.
@@ -186,7 +173,7 @@ Security baseline: private bucket, short TTL, checksums, MIME sniffing, credenti
 - `references/artifact-publishing-architecture.md` — artifact delivery pattern
 - `references/local-cli-api-contracts.md` — CLI API envelope and testing patterns
 - `references/exocortex-home-layout.md` — runtime vs workspace separation
-- `references/contingency-surface-activation.md` — opt-in fallback activation
+
 
 ## Procedure
 
@@ -198,7 +185,6 @@ Security baseline: private bucket, short TTL, checksums, MIME sniffing, credenti
    | PDF, doc, ZIP, file delivery, publish | → **Artifact publishing** section |
    | CLI API, JSON contract, sibling engine | → **Local CLI APIs** section |
    | `$HERMES_HOME`, `$EXOCORTEX_HOME`, workspace | → **Runtime vs workspace** section |
-   | fallback, `--imbroke`, contingency, budget | → **Contingency surfaces** section |
 
 2. **OAuth connector flow:**
    - Verify connector exists: `hermes mcp list | grep connector`
@@ -223,5 +209,4 @@ Security baseline: private bucket, short TTL, checksums, MIME sniffing, credenti
 - [ ] Artifact publishing returns a receipt with SHA-256 and signed URL
 - [ ] CLI API stdout contains only JSON, logs go to stderr
 - [ ] `$HERMES_HOME` and `$EXOCORTEX_HOME` are separate, not mixed
-- [ ] Contingency mode requires explicit `--imbroke` activation
 - [ ] Draft-First applied for irreversible actions (send, share, publish)

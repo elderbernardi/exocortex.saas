@@ -374,7 +374,6 @@ show_config_table() {
   _show_row "EXOCORTEX_ENABLE_HERMES_WEBUI" "${EXOCORTEX_ENABLE_HERMES_WEBUI:-0}" "ok"
   _show_row "EXOCORTEX_ENABLE_CONTEXT7"    "${EXOCORTEX_ENABLE_CONTEXT7:-0}"      "ok"
   _show_row "EXOCORTEX_ENABLE_FIRECRAWL"   "${EXOCORTEX_ENABLE_FIRECRAWL:-0}"     "ok"
-  _show_row "IMBROKE_MODE"                  "${IMBROKE_MODE:-0}"                   "ok"
   _show_row "CALIBRATE_MODE"                "${CALIBRATE_MODE:-0}"                "ok"
 
   echo -e "${BOLD}║ Paths Opcionais${NC}"
@@ -463,6 +462,6 @@ run_interactive_init() {
   ACERVO_SRC="$SCRIPT_DIR/acervo"
 
   export HERMES_HOME EXOCORTEX_HOME ACERVO SCRIPT_DIR
-  export IMBROKE_MODE CALIBRATE_MODE STEP_BY_STEP_MODE FIRECRAWL_BASE_URL
+  export CALIBRATE_MODE STEP_BY_STEP_MODE FIRECRAWL_BASE_URL
   export SKILLS_SRC SKILLS_DST PROFILES_SRC PROFILES_DST BUNDLES_SRC BUNDLES_DST ACERVO_SRC
 }

@@ -1,0 +1,101 @@
+{
+  "schema": "exocortex-capabilities/v1",
+  "platforms": {
+    "arch": {"package_manager": "pacman", "install_template": "sudo pacman -S --needed {package}"},
+    "debian": {"package_manager": "apt", "install_template": "sudo apt-get install {package}"},
+    "ubuntu": {"package_manager": "apt", "install_template": "sudo apt-get install {package}"},
+    "fedora": {"package_manager": "dnf", "install_template": "sudo dnf install {package}"},
+    "rhel": {"package_manager": "dnf", "install_template": "sudo dnf install {package}"},
+    "darwin": {"package_manager": "brew", "install_template": "brew install {package}"}
+  },
+  "capabilities": [
+    {
+      "id": "hermes-runtime",
+      "description": "Hermes Agent configurado",
+      "layer": "runtime",
+      "profiles": ["core", "full"],
+      "commands": ["hermes"],
+      "probe": ["hermes", "config", "check"],
+      "remediation": "Instale e configure o Hermes Agent: https://hermes-agent.nousresearch.com/docs"
+    },
+    {
+      "id": "python-runtime",
+      "description": "Python para scripts do harness",
+      "layer": "system",
+      "profiles": ["core", "full"],
+      "commands": ["python3"],
+      "versions": [{"command": "python3", "args": ["--version"], "minimum": "3.11.0"}],
+      "packages": {"apt": "python3", "dnf": "python3", "pacman": "python", "brew": "python@3.12"}
+    },
+    {
+      "id": "git-client",
+      "description": "Git para checkout e rastreabilidade",
+      "layer": "system",
+      "profiles": ["core", "full"],
+      "commands": ["git"],
+      "packages": {"apt": "git", "dnf": "git", "pacman": "git", "brew": "git"}
+    },
+    {
+      "id": "file-sync",
+      "description": "Rsync para sincronização idempotente",
+      "layer": "system",
+      "profiles": ["core", "full"],
+      "commands": ["rsync"],
+      "packages": {"apt": "rsync", "dnf": "rsync", "pacman": "rsync", "brew": "rsync"}
+    },
+    {
+      "id": "posix-shell",
+      "description": "Bash para estágios de provisionamento",
+      "layer": "system",
+      "profiles": ["core", "full"],
+      "commands": ["bash"],
+      "packages": {"apt": "bash", "dnf": "bash", "pacman": "bash", "brew": "bash"}
+    },
+    {
+      "id": "container-runtime",
+      "description": "Docker com Compose v2 para serviços self-hosted",
+      "layer": "service",
+      "profiles": ["full"],
+      "commands": ["docker"],
+      "probe": ["docker", "compose", "version"],
+      "degradable": true,
+      "packages": {"apt": "docker.io docker-compose-v2", "dnf": "docker-ce docker-compose-plugin", "pacman": "docker docker-compose", "brew": "docker"}
+    },
+    {
+      "id": "http-client",
+      "description": "Cliente HTTP para health checks dos serviços locais",
+      "layer": "service",
+      "profiles": ["full"],
+      "commands": ["curl"],
+      "degradable": true,
+      "packages": {"apt": "curl", "dnf": "curl", "pacman": "curl", "brew": "curl"}
+    },
+    {
+      "id": "node-runtime",
+      "description": "Node.js e npm para executar e manter adapters MCP em JavaScript",
+      "layer": "system",
+      "profiles": ["full"],
+      "commands": ["node", "npm"],
+      "degradable": true,
+      "packages": {"apt": "nodejs npm", "dnf": "nodejs npm", "pacman": "nodejs npm", "brew": "node"}
+    },
+    {
+      "id": "notebooklm-tools",
+      "description": "NotebookLM CLI e servidor MCP isolados no espaço do usuário",
+      "layer": "user-tool",
+      "profiles": ["full"],
+      "commands": ["nlm", "notebooklm-mcp"],
+      "versions": [{"command": "nlm", "args": ["--version"], "minimum": "0.7.0"}],
+      "remediation": "uv tool install notebooklm-mcp-cli"
+    },
+    {
+      "id": "firecrawl-mcp",
+      "description": "Adaptador MCP para o backend Firecrawl local",
+      "layer": "user-tool",
+      "profiles": ["full"],
+      "commands": ["firecrawl-mcp"],
+      "degradable": true,
+      "remediation": "npm install --global firecrawl-mcp@3.22.0"
+    }
+  ]
+}

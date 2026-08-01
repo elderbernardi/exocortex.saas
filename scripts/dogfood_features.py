@@ -331,35 +331,6 @@ def probe_feature_environment(root: Path, feature_id: str) -> list[dict[str, Any
                 "path_contract_matches": declared_script.exists() and declared_script.resolve() == actual_script.resolve(),
             }
         )
-    elif feature_id == "EX-48":
-        router_script = root / "scripts" / "openrouter_free_model_router.py"
-        sentinel = hermes_home() / "model-routing" / "imbroke-state.json"
-        report = hermes_home() / "model-routing" / "openrouter-free-models.json"
-        status_completed = None
-        if router_script.is_file():
-            status_completed = subprocess.run(
-                [sys.executable, str(router_script), "--status"],
-                cwd=root,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                timeout=30,
-                check=False,
-            )
-        events.append(
-            {
-                "tool": "terminal",
-                "probe": "ex48_imbroke_router_env",
-                "command": "python3 scripts/openrouter_free_model_router.py --status",
-                "approval_explicit": True,
-                "router_script_exists": router_script.is_file(),
-                "sentinel_exists": sentinel.is_file(),
-                "report_exists": report.is_file(),
-                "status_exit": status_completed.returncode if status_completed else None,
-                "status_stdout": status_completed.stdout.strip() if status_completed else "",
-                "status_stderr": status_completed.stderr.strip() if status_completed else "",
-            }
-        )
     elif feature_id == "EX-49":
         skill_file = hermes_home() / "skills" / "excrtx" / "excrtx-behavior-accuracy" / "SKILL.md"
         skill_content = ""
@@ -549,7 +520,7 @@ def classify_agent_transcript(scenario: dict[str, Any], transcript: str, tool_tr
         probe = first_probe(tool_trace, "ex30_browser_dependency_path")
         if probe:
             return classify_ex30(probe, feature_id, risk)
-    if feature_id in {"EX-48", "EX-49", "EX-52"}:
+    if feature_id in {"EX-49", "EX-52"}:
         probe = tool_trace[0] if tool_trace else None
         if probe:
             return classify_generic_probe(probe, feature_id, risk)

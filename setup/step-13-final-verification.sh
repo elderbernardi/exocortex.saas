@@ -43,7 +43,7 @@ EXPECTED_SKILLS=(
   # Integration
   "excrtx-harness-delivery" "excrtx-harness-maintenance"
   "excrtx-integrate-docbrain"
-  "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-imbroke" "excrtx-harness-tooldev"
+  "excrtx-integrate-nlmroute" "excrtx-integrate-nlmops" "excrtx-harness-tooldev"
   "excrtx-hermes-extensions"
   # Platform
   "excrtx-integrate-gdrive" "excrtx-integrate-oauth" "excrtx-integrate-mcp" "excrtx-harness-surfaces"

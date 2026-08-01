@@ -97,7 +97,6 @@ graph TD
 
     subgraph "Integration"
         EX25[EX-25 Google Drive]
-        EX27[EX-27 DocBrain Parser]
         EX28[EX-28 NotebookLM Route]
         EX29[EX-29 NotebookLM Ops]
         EX30[EX-30 Browser Automation]
@@ -106,7 +105,7 @@ graph TD
 
 ### 1. Onboarding & Assessment
 
-- **`excrtx-onboard-welcome` (EX-01)**: Welcome flow. Detects empty Acervo, presents `WELCOME.md`, and triggers calibration.
+- **`excrtx-onboard-welcome` (EX-01)**: Welcome flow. Detects an empty Macroverso, presents `WELCOME.md`, and starts onboarding.
 - **`excrtx-onboard-interview` (EX-02)**: Conducts the structured 5-block interview to build the `SOUL.md` profile.
 - **`excrtx-assess-selftest` (EX-03)**: Self-test validator. Audits system state and prints a `N/5` checkpoint score.
 - **`excrtx-assess-repofit` (EX-04)**: Evaluates external repositories, identifying architectural fits and delta gaps.
@@ -154,7 +153,6 @@ graph TD
 
 - **`excrtx-integrate-gdrive` (EX-25)**: Google Drive client. Hardened search queries (ignoring trashed files) and handle paginated list results.
 - **`excrtx-integrate-oauth` (EX-26)**: Setup and diagnostic utility for configuring external OAuth-based MCP servers.
-- **`excrtx-integrate-docbrain` (EX-27)**: Parser engine integration for ingesting legacy PDFs and documents.
 - **`excrtx-integrate-nlmroute` (EX-28)**: Routes research requests to NotebookLM CLI (`nlm`) or NotebookLM MCP.
 - **`excrtx-integrate-nlmops` (EX-29)**: Operational workflows to ingest sources and query NotebookLM notebooks.
 - **`excrtx-integrate-browser` (EX-30)**: Autonomously controls local Chrome instances using `playwright` and `browser-use`.
@@ -163,7 +161,6 @@ graph TD
 
 - **`excrtx-harness-promptlog` (EX-31)**: Auditable log of all configuration prompts written to `MEMORY.md`.
 - **`excrtx-harness-surfaces` (EX-35)**: Routes communication interfaces (Telegram for Chat, TUI/CLI for Admin, Dashboard for cockpit).
-- **`excrtx-harness-imbroke` (EX-48)**: Financial contingency model fallback (OpenRouter free model watchdog and recovery router).
 - **`excrtx-harness-tooldev` (EX-50)**: Standard API for writing and registering custom `/tool` extensions.
 - **`excrtx-hermes-extensions` (EX-51)**: Guidelines for writing custom commands and dispatch paths in `gateway/run.py`.
 - **`excrtx-harness-maintenance` (EX-56)**: Síndico persona with 4 maintenance routines (weekly audit, inbox triage, artifact quality, publication check).
@@ -180,11 +177,10 @@ The following 15 skills have no formal EX-ID but sustain cataloged features or p
 - **`excrtx-memory-deprecate`**: Semantic revision on insert — detects contradictions and auto-deprecates superseded `volátil` Acervo files (ADR-014/016).
 - **`excrtx-memory-quarantine`**: Quarantine cycle — moves stale/deprecated files, purges expired, restores within the 30-day window (ADR-015).
 - **`excrtx-memory-syndic`**: Autonomous Acervo cleanup agent — scans, quarantines, purges. Runs under the `manut` profile (ADR-018).
-- **`excrtx-adapter-docbrain-acervo`**: Transforms DocBrain structured output into provenance-annotated Acervo-ready markdown.
 - **`excrtx-integrate-last30days`**: Operator skill for the `last30days` research engine — install, provider config, patching, and tests.
 - **`excrtx-integrate-agent-reach`**: Adapter for Agent-Reach CLI; produces normalized research items for the research pipeline.
 - **`excrtx-crawler-brasil`**: Brazilian sector crawler for CPG/FMCG; scans 10+ RSS sources with local cache and normalized JSON output.
-- **`excrtx-research-cpg-brasil`**: Research wrapper for Brazilian CPG industry — orchestrates `last30days`, Agent-Reach, crawler, and DocBrain.
+- **`excrtx-research-cpg-brasil`**: Research wrapper for Brazilian CPG industry — orchestrates public-source collectors and the research pipeline.
 - **`excrtx-source-cnpj`**: Public CNPJ data collector (BrasilAPI + ReceitaWS) with normalized JSON envelope and local cache.
 - **`excrtx-source-google-trends`**: Google Trends public API — interest over time, regional interest, related queries.
 - **`excrtx-source-reclameaqui`**: Brazilian company reputation collector (Reclame Aqui), Cloudflare-aware, structured JSON output.
@@ -196,8 +192,19 @@ The following 15 skills have no formal EX-ID but sustain cataloged features or p
 ### Prerequisites
 
 - **OS**: Linux (Debian, Ubuntu, Arch) or macOS.
-- **System Tools**: `git`, `curl`, `rsync`, `python3` (>=3.11), `pip`, `venv`.
-- **Containers**: `docker` & `docker compose` (Required only if Hindsight local memory is enabled).
+- **Runtime**: Hermes Agent already installed; `hermes config check` must pass.
+- **Core capabilities**: `git`, `rsync`, `python3` (>=3.11), and `bash`.
+- **Full capabilities**: Docker/Compose v2, `curl`, Node/npm, NotebookLM CLI/MCP,
+  and the Firecrawl MCP adapter.
+
+`setup/capabilities.json` is the canonical dependency contract. The read-only
+checker detects the OS and its native package manager, validates commands,
+versions and probes, and prints remediation without installing anything:
+
+```bash
+python3 scripts/check_capabilities.py --profile core
+python3 scripts/check_capabilities.py --profile full --json
+```
 
 ---
 
@@ -205,136 +212,72 @@ The following 15 skills have no formal EX-ID but sustain cataloged features or p
 >
 > **`INSTALL.md` lives only in this source repository** (`elderbernardi/exocortex.saas`); it is **not** copied into the runtime (`~/.hermes`, `~/exocortex`). If you can't find it, you are not in the source checkout — `git clone https://github.com/elderbernardi/exocortex.saas.git && cd exocortex.saas`, then open `INSTALL.md`. A runtime-side pointer also lives in the Acervo at `micro/exocortex-ops/knowledge/install-runbook-location.md`.
 
-### Step-by-Step Installation
+### Installation v2
 
-#### 1. Execute the Bootstrap Installer
-
-This command pulls the installer, checks for OS dependencies, installs the Hermes Agent CLI (if not present), and clones the Exocortex repository to a local cache directory:
+The installer now assumes a working Hermes installation. It does not install
+Hermes, package managers, Python packages, or Node dependencies. Configure Hermes
+first and verify it with `hermes config check`.
 
 ```bash
-# Standard interactive installation
+# Inspect the exact plan without changing the Hermes/Exocórtex runtime
+curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
+  | bash -s -- --plan --profile full
+
+# Full interactive install: harness + NotebookLM + Hindsight + Firecrawl + WebUI
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
 
-# Guided installation with explicit review of env vars and API keys
-curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash -s -- --step-by-step
-```
-
-To automatically install and bind the **Telegram Gateway**, pass the token in the environment:
-
-```bash
-TELEGRAM_BOT_TOKEN="your_telegram_bot_token" curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
-```
-
-To pin a specific tag or version:
-
-```bash
-VERSION=v1.0.5 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh | bash
-```
-
-#### Full Installation (All Utilities)
-
-A single command that activates every optional component — WebUI cockpit, Hindsight local memory, Telegram gateway, reasoning keys, DocBrain, Firecrawl, and Context7 — with guided step-by-step review and post-install cognitive calibration:
-
-```bash
-EXOCORTEX_DEFAULT_PROVIDER="deepseek" \
-EXOCORTEX_DEFAULT_API_KEY="sk-..." \
-EXOCORTEX_AUX_API_KEY="sk-or-..." \
-TELEGRAM_BOT_TOKEN="123456:ABC..." \
-EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
-EXOCORTEX_ENABLE_HINDSIGHT=1 \
-FIRECRAWL_API_KEY="fc-..." \
-FIRECRAWL_BASE_URL="http://127.0.0.1:3002" \
-CONTEXT7_API_KEY="c7-..." \
+# Core install: identity, vectors, memory harness, Acervo, profiles and MCP only
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
-  | bash -s -- --step-by-step --calibrate
-```
+  | bash -s -- --profile core
 
-What each marker activates:
-
-| Variable | Component | Notes |
-|---|---|---|
-| `EXOCORTEX_DEFAULT_*` | Default LLM role (`{PROVIDER,MODEL,API_KEY,BASE_URL}`) | Primary LLM — reasoning, routing, all skills. **Always used; required.** Empty `BASE_URL` is derived from `setup/providers.json`. |
-| `EXOCORTEX_VISION_*` | Vision LLM role | Multimodal (image/OCR) model. Each empty field **inherits the default** role field-by-field. |
-| `EXOCORTEX_AUX_*` | Auxiliary LLM role | External software: DocBrain parser and the Hindsight LLM backend. Each empty field **inherits the default**. |
-| `TELEGRAM_BOT_TOKEN` | Telegram Gateway | Bot token from BotFather. Enables remote chat interface. |
-| `EXOCORTEX_ENABLE_HERMES_WEBUI=1` | Hermes WebUI cockpit | Controlled fork of `nesquena/hermes-webui` with Exocórtex customizations. Access at `127.0.0.1:8787` or via Tailscale. See [`provision/hermes-webui/README.md`](provision/hermes-webui/README.md). |
-| `EXOCORTEX_ENABLE_HINDSIGHT=1` | Hindsight local memory | Docker container for persistent cross-session operational memory (used by EX-16). Requires `docker` + `docker compose`. See [`docs/setup-hindsight.md`](docs/setup-hindsight.md). |
-| `FIRECRAWL_API_KEY` | Firecrawl web scraping | First-class supported service — high-fidelity web scraping/extraction used by EX-30 (Browser Automation) and the research pipeline. Three tiers: self-host → existing server → degrade to alternative. Set `EXOCORTEX_ENABLE_FIRECRAWL=1` to wire provisioning. See [`docs/setup-firecrawl.md`](docs/setup-firecrawl.md). |
-| `FIRECRAWL_BASE_URL` | Firecrawl endpoint | Default: `http://127.0.0.1:3002`. Set if your instance runs elsewhere. |
-| `CONTEXT7_API_KEY` | Context7 docs MCP | First-class supported service — technical documentation lookup for libraries via MCP. Set `EXOCORTEX_ENABLE_CONTEXT7=1` to auto-register. See [`docs/setup-context7.md`](docs/setup-context7.md). |
-
-> **The 3 LLM roles** are the single source of truth for every LLM call in this repo. Configure
-> just the **default** role for most setups — **vision** and **auxiliar** inherit it field-by-field
-> when unset. Providers (`openrouter`, `deepseek`, `openai`, `gemini`, `xai`, `opencode`, `opencode-go`)
-> and their base URLs come from `setup/providers.json`; resolve the effective config with
-> `python3 scripts/lib/llm_roles.py all`. Legacy installs are migrated once by
-> `scripts/migrate-env-roles.py` (run automatically by `setup.sh`): old `OPENROUTER`/`DEEPSEEK`/`OPENCODE`
-> keys map to **default**, `DOCBRAIN_LLM` to **auxiliar**, `OPENAI`/`GEMINI`/`GOOGLE` to **vision**.
-
-Flags used:
-
-- `--step-by-step` — Pauses at each configuration block (paths, env vars, API keys, features) for explicit review before proceeding. Every value is shown masked — no secrets in terminal scrollback.
-- `--calibrate` — Runs the interactive behavioral calibration suite at the end of setup, testing each core feature (vector classification, draft-first, accuracy verification) against the model and injecting corrective prompts if output drifts.
-
-If you prefer a non-interactive full install (CI/CD, headless server), replace `--step-by-step --calibrate` with `--yes`:
-
-```bash
-EXOCORTEX_DEFAULT_PROVIDER="deepseek" \
-EXOCORTEX_DEFAULT_API_KEY="sk-..." \
-EXOCORTEX_ENABLE_HERMES_WEBUI=1 \
-EXOCORTEX_ENABLE_HINDSIGHT=1 \
+# Headless full install
 curl -fsSL https://raw.githubusercontent.com/elderbernardi/exocortex.saas/main/install.sh \
-  | bash -s -- --yes
+  | bash -s -- --profile full --yes
 ```
 
-##### Installer Flags
+`full` is strict: NotebookLM tools, Docker/Compose, the Firecrawl adapter and the
+three self-hosted services are verified. `--allow-degraded-services` relaxes only
+capabilities declared as degradable; it does not hide a missing NotebookLM setup.
+
+#### Execution model
+
+1. Read-only preflight resolves capabilities through the host OS and emits native remediation.
+2. A deterministic plan selects `core` or `full` stages.
+3. Managed runtime files receive a local snapshot before mutation.
+4. Stages run idempotently under an install lock with per-stage sanitized logs.
+5. Deterministic verification rechecks capabilities, identity, compiled rules,
+   skills, Acervo, memory routing, profiles, MCPs, authentication, and services.
+6. Three live Hermes scenarios verify identity, the Evolução vector, and Draft-First.
+
+The live acceptance is a conformance check, not model training. Persistent behavior
+comes from `SOUL.md`, compiled skill rules, profiles, and the Acervo. The suite is
+small by design; the full EX feature catalog remains a release/CI concern.
+
+#### Installer flags
 
 | Flag | Effect |
 |---|---|
-| `--yes`, `-y` | Headless mode — no prompts, persists detected values and runs all steps |
-| `--step-by-step` | Guided mode — pauses at each config block for explicit review |
-| `--init-only` | Saves configuration to `.env.local` and skips provisioning steps |
-| `--skip-env-check` | Skips prerequisite validation in `setup.sh` |
-| `--imbroke` | Activates OpenRouter free-model contingency routing |
-| `--calibrate` | Runs cognitive calibration at the end of setup |
-| `-h`, `--help` | Prints usage and exits |
+| `--profile core\|full` | Selects harness-only or harness plus integrations and self-hosted services |
+| `--yes`, `-y` | Applies the plan without confirmation |
+| `--plan` | Prints plan and preflight; no Hermes/Exocórtex runtime mutation |
+| `--verify-only` | Verifies the existing installation |
+| `--step-by-step` | Confirms each stage |
+| `--skip-acceptance` | Explicitly skips the three live behavioral scenarios |
+| `--allow-degraded-services` | Converts unavailable full-profile services to warnings |
+| `--model ID` | Overrides the model only for behavioral acceptance |
 
-##### Environment Variable Preflight
-
-Before touching Hermes, the installer runs a preflight scan of all relevant env vars (API keys, tokens, endpoints). Sensitive values are **masked** in the output — only the first and last few characters are shown. The preflight also flags suspicious values (whitespace inside a key, keys shorter than 12 chars) with actionable warnings. This means you can verify your credentials are detected **before** the install proceeds, without exposing secrets in terminal scrollback or CI logs.
-
-If a command fails at any stage, the installer captures stderr, scrubs any secrets from it, and prints the last useful lines alongside a hint about what went wrong and how to recover — instead of a bare exit code.
-
-#### 2. The `setup.sh` Orchestrator
-
-The installer will automatically invoke `setup.sh`. If you want to customize home paths, you can run `setup.sh` manually:
+Run the orchestrator directly from a checkout when needed:
 
 ```bash
-HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
-HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh --step-by-step
+python3 scripts/exocortex_install.py plan --profile full
+python3 scripts/exocortex_install.py apply --profile full
+python3 scripts/exocortex_install.py verify --profile full
 ```
 
-To also provision the Hermes WebUI cockpit (controlled fork of `nesquena/hermes-webui` with Exocórtex customizations — see [`provision/hermes-webui/README.md`](provision/hermes-webui/README.md)):
-
-```bash
-EXOCORTEX_ENABLE_HERMES_WEBUI=1 HERMES_HOME=~/.hermes EXOCORTEX_HOME=~/exocortex bash setup.sh
-```
-
-The WebUI source is pinned via `provision/sources/sources.lock.yaml` (audited SHA ref). Access at `http://127.0.0.1:8787` or via Tailscale.
-
-##### What `setup.sh` Executes:
-
-- **`step-00`**: Validates Hermes version compatibility (Expected bounds: `2026.4.8` to `2026.4.16`).
-- **`step-01`**: Provision Hindsight database container if `EXOCORTEX_ENABLE_HINDSIGHT=1` is provided.
-- **`step-02`**: Initializes the directory trees for the workspace, logs, task boards, and the 4-layer Acervo structure.
-- **`step-03` to `step-05`**: Copies and installs all 58 skills (44 EX-ID cataloged + 15 supporting), bundles, and execution profiles (`default` and `manut`).
-- **`step-06` (Hardening)**:
-  - Applies a search paging patch to `google_api.py`.
-  - Removes legacy email skills (`himalaya` / `hymalaia`) to ensure Google Workspace takes precedence.
-  - Removes `composio` from the MCP registry in favor of direct API clients.
-- **`step-06b` to `step-11`**: Sets up Google Auth tools, clones and compiles the DocBrain engine (`elderbernardi/docbrain`, tracking main, deps refreshed before build), installs the NotebookLM CLI, provisions Browser Automation files, optionally provisions the Hermes WebUI cockpit, Context7 MCP, Hindsight Docker container, and Firecrawl integration.
-- **`step-12` to `step-14`**: Performs final key verifications (real LLM ping per role, model-id validation) and validates that all skills are correctly mapped in the runtime.
-- **`step-15`**: Launches the interactive prompt calibration if `--calibrate` is passed.
+Every run writes machine-readable state, verification output, and stage logs to
+`$HERMES_HOME/exocortex-install/runs/<timestamp>/`. The installed seed identifies
+itself as Exocórtex.IA before onboarding; onboarding fills the executive-specific
+Macroverso without changing the runtime relationship.
 
 ---
 
@@ -358,15 +301,15 @@ Upon launching your first session, the Exocortex checks if your `SOUL.md` (the M
 
 ---
 
-### 2. Prompt-Driven Development (PDD) Behavior Calibration
+### 2. Behavioral Acceptance
 
-To ensure the LLM model respects the 12 core behavioural features (Vector classification, Draft-first, verification proofs, etc.), run the interactive calibration suite:
+The installer already runs the three high-signal behavioral scenarios. Re-run them after changing the model or the compiled harness:
 
 ```bash
-bash scripts/calibrate-hermes.sh
+python3 scripts/verify_exocortex_behavior.py
 ```
 
-This script runs a test prompt for each feature, shows you the model output alongside the acceptance criteria, and asks for your verification. If the output drifts, it automatically injects a Socratic corrective prompt to recalibrate the model.
+This checks identity, the Evolução vector, and Draft-First with real Hermes turns. It does not inject corrective prompts and does not claim to train the model. Run the larger calibration catalog only during harness development or release qualification.
 
 ---
 
@@ -418,53 +361,30 @@ If this prints `AUTHENTICATED`, the Google Workspace driver is fully functional.
 
 ### 4. NotebookLM Integration (`nlm` CLI)
 
-NotebookLM integration requires the `notebooklm-mcp-cli` python package.
+The `full` profile treats NotebookLM as a user-space capability. Setup registers
+and tests the MCP server but never installs the package implicitly.
 
-1. Verify `uv` is installed, then install the package:
+1. If the capability preflight reports it missing, install it explicitly:
    ```bash
-   uv tool install notebooklm-mcp-cli --force
+   uv tool install notebooklm-mcp-cli
    ```
-   _(Fallback: `python3 -m pip install --upgrade notebooklm-mcp-cli`)_
 2. Authenticate the CLI:
    ```bash
    nlm login
    ```
-3. Verify the authentication:
+3. Verify authentication with a real read:
    ```bash
-   nlm login --check
+   nlm notebook list --title
    ```
-4. Register the MCP server in Hermes:
+4. Registration normally happens in `apply --profile full`. To repair it manually:
    ```bash
    hermes mcp add notebooklm --command notebooklm-mcp
+   hermes mcp test notebooklm
    ```
 
 ---
 
-### 5. DocBrain Parser Engine Setup
-
-DocBrain is used to parse complex documents and PDFs.
-
-1. Ensure Node.js and `npm` are installed.
-2. Fresh installs may clone the parser repository to `~/exocortex/tools/docbrain`, but the live runtime can also use a repository-local checkout. Resolve the active workspace with `api health`, then verify/build that workspace:
-   ```bash
-   DOCBRAIN_DIR="${EXOCORTEX_DOCBRAIN_DIR:-$HOME/exocortex/tools/docbrain}"
-   cd "$DOCBRAIN_DIR"
-   npm install
-   npm run build
-   ```
-3. DocBrain is configured by the **auxiliary** LLM role. The setup `step-08` generates DocBrain's
-   `.env` from `EXOCORTEX_AUX_*`; if the aux role is empty, it inherits the **default** role:
-   ```bash
-   export EXOCORTEX_DEFAULT_PROVIDER="deepseek"
-   export EXOCORTEX_DEFAULT_API_KEY="your-default-key"
-   export EXOCORTEX_AUX_API_KEY="your-aux-key"        # optional — isolates DocBrain's LLM key
-   export FIRECRAWL_BASE_URL="http://127.0.0.1:3002"  # se usar Firecrawl local
-   ```
-   _(Inspect the resolved roles with `python3 scripts/lib/llm_roles.py all`.)_
-
----
-
-### 6. Browser Automation Skill Runtime
+### 5. Browser Automation Skill Runtime
 
 The browser automation skill uses `browser-use` and `playwright`.
 
@@ -475,22 +395,6 @@ The browser automation skill uses `browser-use` and `playwright`.
    bash scripts/browser-use.sh open https://example.com
    ```
 2. This will download and cache Playwright Chromium binaries under `.runtime/ms-playwright/`.
-
----
-
-### 7. Financial Contingency Mode (Modo Imbroke)
-
-If your OpenRouter account runs out of credits, you can toggle the system to use free models via the free-routing CLI:
-
-```bash
-# Enable free-routing circuit breaker
-python3 scripts/openrouter_free_model_router.py --imbroke --activate
-
-# Check routing status
-python3 scripts/openrouter_free_model_router.py --status
-```
-
-_Note: After enabling or disabling imbroke mode, restart your active Hermes sessions with `/new` to reload the settings._
 
 ---
 
@@ -567,7 +471,6 @@ This is the General Availability release of Exocórtex.IA. Key changes from v1.0
 
 - **EX-32/33/34 removed:** The OpenAI code-model integration trio (EX-32/33/34) has been cut from the GA surface. These features were never part of the stable skill surface and are no longer wired in the installer or bundles. See CHANGELOG.md for details.
 - **Installer hardening:**
-  - DocBrain now provisioned from `elderbernardi/docbrain` tracking `main` with dependency refresh before each build/start (note: reproducibility trades off against always-latest).
   - Unguarded `rm -rf` in `step-06b-google-auth.sh` replaced with guarded removal.
   - Silent `npm run build` failure now surfaces as an explicit error.
   - Setup logs are now durable under `$HERMES_HOME/logs/setup/` (survives reruns).
@@ -586,7 +489,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the detailed change log.
 - **Optional-service live smoke requires a real environment:** The smoke harnesses for Context7, Hindsight, WebUI, and Firecrawl need a live box with real API keys, a running Docker daemon, and network access. They are not gating in CI runs against emulated environments.
 - **Firecrawl self-host stack:** The self-hosted Firecrawl tier pulls a multi-container stack (~large image). Budget download time and ensure sufficient disk space before provisioning.
 - **D2–D5 skill quality tests are non-gating in CI:** The LLM-judge dimensions (D2 Clarity, D3 Alignment, D4 Fitness, D5 Economy) require a live LLM key and introduce non-determinism. They are scheduled/advisory in CI; only D1 (structural check) is gating.
-- **DocBrain tracks `main`:** DocBrain is cloned from `elderbernardi/docbrain` and follows `main`. This means the installed version is always the latest rather than a pinned release. If a breaking change lands in DocBrain upstream, it will affect the next install or `git pull`. Pin `EXOCORTEX_DOCBRAIN_DIR` to a local checkout to freeze the version.
+
 - **Hermes WebUI is a controlled fork:** `provision/hermes-webui` is a customized fork of `nesquena/hermes-webui`. Upstream changes are not blindly merged — see `hermes-webui/EXOCRTX_MODIFICATIONS.md` for the customization catalog.
 
 ---

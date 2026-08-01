@@ -759,30 +759,6 @@ test_EX35() {
   SMOKE_PROMPT="Verifique se a skill define Gateway, UI/Web e TUI como superfícies."
 }
 
-test_EX48() {
-  CURRENT_FEATURE_NAME="Modo imbroke"
-  CURRENT_FEATURE_CATEGORY="Behavior & Governance"
-  local skill="excrtx-harness-imbroke"
-
-  check_skill_exists "$skill"
-  check_frontmatter "$skill" "name" "description" "version"
-  check_no_skill_deps
-
-  local repo_root
-  repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-  local script="$repo_root/scripts/openrouter_free_model_router.py"
-
-  check_file_exists "$script" "Roteador OpenRouter free"
-
-  if python3 "$script" --status >/dev/null 2>&1; then
-    log_check_pass "Script do roteador funcional (--status exit 0)"
-  else
-    log_check_fail "Script do roteador falhou (--status exit diferente de 0)"
-  fi
-
-  SMOKE_PROMPT="Verifique o status do modo imbroke e garanta que o rating na escala 1-10 e warnings correspondentes são exibidos."
-}
-
 test_EX50() {
   CURRENT_FEATURE_NAME="Hermes Tool Development"
   CURRENT_FEATURE_CATEGORY="Harness & Infrastructure"
@@ -828,7 +804,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-p0)
       run_id="dogfood-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-48 EX-49 EX-50 EX-52; do
+      for feature_id in EX-08 EX-25 EX-30 EX-49 EX-50 EX-52; do
         python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \
           --run-id "$run_id" \
@@ -846,7 +822,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
       ;;
     dogfood-real-p0)
       run_id="dogfood-real-p0-$(date +%Y%m%d-%H%M%S)"
-      for feature_id in EX-08 EX-25 EX-30 EX-48 EX-49 EX-50 EX-52; do
+      for feature_id in EX-08 EX-25 EX-30 EX-49 EX-50 EX-52; do
         DOGFOOD_AGENT_TIMEOUT="${DOGFOOD_AGENT_TIMEOUT:-120}" \
           python "$REPO_ROOT/scripts/dogfood_features.py" run "$feature_id" \
           --root "$REPO_ROOT" \

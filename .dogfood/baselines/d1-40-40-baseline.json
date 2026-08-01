@@ -236,29 +236,7 @@
     "priority_fixes": [],
     "judge_prompt": null
   },
-  {
-    "skill_name": "excrtx-harness-imbroke",
-    "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-imbroke/SKILL.md",
-    "dimensions": {
-      "D1_structural": {
-        "label": "COMPLIANT",
-        "reasoning": "Found 0 issues. Sections present: {'trigger_or_when': True, 'procedure': True, 'pitfalls': True, 'verification': True}. Frontmatter fields: name=True, desc=True, version=True. Line numbers: False. Size: 10212B.",
-        "issues": [],
-        "recommendations": [
-          "Consider adding 'related_skills' to metadata.hermes"
-        ],
-        "sections_found": {
-          "trigger_or_when": true,
-          "procedure": true,
-          "pitfalls": true,
-          "verification": true
-        }
-      }
-    },
-    "overall_verdict": "PASS",
-    "priority_fixes": [],
-    "judge_prompt": null
-  },
+
   {
     "skill_name": "excrtx-harness-kanban",
     "skill_path": "/home/elder/projetos/projetob/exocortex.saas/skills/excrtx-harness-kanban/SKILL.md",

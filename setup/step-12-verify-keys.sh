@@ -8,55 +8,6 @@ if [ "${_EXOCORTEX_COMMON_LOADED:-}" != "1" ]; then
   source "$(dirname "$0")/common.sh"
 fi
 
-configure_openrouter_free_router() {
-  local router_script="$SCRIPT_DIR/scripts/openrouter_free_model_router.py"
-  local report_path="$HERMES_HOME/model-routing/openrouter-free-models.json"
-
-  if [ ! -f "$router_script" ]; then
-    warn "Roteador OpenRouter free não encontrado: $router_script"
-    return 0
-  fi
-  if ! command -v python3 >/dev/null 2>&1; then
-    warn "python3 não encontrado; pulando roteador OpenRouter free"
-    return 0
-  fi
-
-  # A contingência --imbroke precisa de uma credencial OpenRouter (sk-or-…).
-  # O roteador a busca nos papéis LLM (qualquer papel com provider openrouter)
-  # ou nas vars legadas. Aqui só decidimos se há como APLICAR (precisa de chave)
-  # ou apenas RANQUEAR.
-  exocortex_resolve_role default
-  _imbroke_key="${OPENROUTER_API_KEY:-}"
-  case "$ROLE_API_KEY" in sk-or-*) _imbroke_key="$ROLE_API_KEY" ;; esac
-  if [ -z "$_imbroke_key" ]; then
-    info "Sem credencial OpenRouter (sk-or-…) nos papéis/legado; gerando ranking de contingência sem aplicar provider/model"
-    if python3 "$router_script" --imbroke --report-path "$report_path" --format text >/dev/null 2>&1; then
-      log "Ranking OpenRouter free gerado em $report_path"
-    else
-      warn "Falha ao gerar ranking OpenRouter free"
-    fi
-    return 0
-  fi
-
-  if ! command -v hermes >/dev/null 2>&1; then
-    warn "hermes CLI não encontrado; roteador OpenRouter free não pode aplicar config"
-    return 0
-  fi
-
-  # Use --activate for full circuit breaker setup (sentinel + watchdog cron)
-  if python3 "$router_script" --imbroke --activate --report-path "$report_path" --format text >/dev/null 2>&1; then
-    log "Roteador OpenRouter free ativado com circuit breaker; relatório em $report_path"
-  else
-    # Fallback to legacy --apply if --activate fails (e.g., hermes cron unavailable)
-    warn "Falha no --activate; tentando --apply legado"
-    if python3 "$router_script" --imbroke --apply --report-path "$report_path" --format text >/dev/null 2>&1; then
-      log "Roteador OpenRouter free aplicado (modo legado); relatório em $report_path"
-    else
-      warn "Falha ao configurar roteador OpenRouter free"
-    fi
-  fi
-}
-
 # ─── Provedores LLM (3 papéis) ───────────────────────────────────────────────
 # Fonte única: EXOCORTEX_{DEFAULT,VISION,AUX}_*. vision/aux herdam o default.
 # Resolução, herança e catálogo de providers vivem em scripts/lib/llm_roles.py
@@ -342,15 +293,6 @@ if [ -n "${BSKY_HANDLE:-}" ] && [ -n "${BSKY_APP_PASSWORD:-}" ]; then
   log "BSKY_HANDLE+BSKY_APP_PASSWORD definidos — last30days Bluesky ativado"
 else
   info "BSKY_HANDLE/BSKY_APP_PASSWORD não definidos (opcional — Bluesky desabilitado no last30days)"
-fi
-
-# ─── OpenRouter Free Router ─────────────────────────────────────────────────
-
-if [ "$IMBROKE_MODE" = "1" ]; then
-  info "Modo --imbroke ativo: configurando roteador OpenRouter free..."
-  configure_openrouter_free_router
-else
-  info "Modo OpenRouter free desativado por default; use --imbroke para acionar a contingência"
 fi
 
 # ─── Telegram ────────────────────────────────────────────────────────────────

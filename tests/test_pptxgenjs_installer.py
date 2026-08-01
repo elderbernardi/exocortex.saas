@@ -24,9 +24,9 @@ def _write_executable(path: Path, content: str) -> None:
     path.chmod(path.stat().st_mode | stat.S_IEXEC)
 
 
-def test_pptxgenjs_is_wired_into_installer_contract() -> None:
+def test_pptxgenjs_remains_skill_managed_not_installer_managed() -> None:
     assert STEP.exists()
-    assert 'step-03b-install-slide-deps.sh' in SETUP.read_text(encoding="utf-8")
+    assert 'step-03b-install-slide-deps.sh' not in SETUP.read_text(encoding="utf-8")
 
     manifest = yaml.safe_load(ESTUDIO_MANIFEST.read_text(encoding="utf-8"))
     assert "pptxgenjs@4.0.1" in manifest["requires"]["node_packages"]
@@ -46,14 +46,15 @@ def test_pptxgenjs_is_wired_into_installer_contract() -> None:
     assert "pptxgenjs/package.json" not in combined_checks
 
 
-def test_node_and_npm_are_required_by_bootstrap() -> None:
+def test_bootstrap_does_not_install_node_or_npm() -> None:
     validator = ENV_VALIDATOR.read_text(encoding="utf-8")
     assert 'check_binary "node"    "required"' in validator
     assert 'check_binary "npm"     "required"' in validator
 
     installer = OUTER_INSTALLER.read_text(encoding="utf-8")
-    assert "NODE_PKGS" in installer
-    assert 'for cmd in git curl rsync python3 node npm; do' in installer
+    assert "NODE_PKGS" not in installer
+    assert "apt-get" not in installer
+    assert "npm install" not in installer
 
 
 def test_pptxgenjs_step_installs_once_and_verifies_global_resolution(tmp_path: Path) -> None:

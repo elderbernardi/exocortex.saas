@@ -119,14 +119,13 @@ class SetupAcervoMcpTest(unittest.TestCase):
             self.assertEqual(cfg_after["mcp_servers"]["acervo"]["args"], [str(SERVER_SCRIPT)])
 
     def test_setup_and_final_verification_wire_acervo_mcp(self):
-        setup_text = (REPO / "setup.sh").read_text(encoding="utf-8")
-        self.assertIn('step-11b-integration-acervo-mcp.sh', setup_text)
+        installer_text = (REPO / "scripts" / "exocortex_install.py").read_text(encoding="utf-8")
+        self.assertIn('step-11b-integration-acervo-mcp.sh', installer_text)
 
-        final_text = FINAL_VERIFICATION.read_text(encoding="utf-8")
-        self.assertIn('Acervo MCP (registro + health):', final_text)
-        self.assertIn('hermes mcp test acervo', final_text)
-        self.assertIn('acervo_mcp_server.py" --self-test', final_text)
-        self.assertIn("MCP server 'acervo' registrado", final_text)
+        final_text = (REPO / "scripts" / "verify_exocortex_install.py").read_text(encoding="utf-8")
+        self.assertIn('"mcp", "test", "acervo"', final_text)
+        self.assertIn('"--self-test"', final_text)
+        self.assertIn('"acervo-mcp-runtime"', final_text)
 
 
 if __name__ == "__main__":

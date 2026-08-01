@@ -114,7 +114,7 @@ echo -e "${_BOLD}═══ FASE 1 — Verificação Determinística ═══${_
 
 FAST_FAIL_TRIGGERED=false
 
-for id in $(seq -f "EX-%02g" 1 35) EX-48 EX-49 EX-50 EX-51 EX-52; do
+for id in $(seq -f "EX-%02g" 1 35) EX-49 EX-50 EX-51 EX-52; do
   if ! run_feature_test "$id"; then
     if [ "$FAST_FAIL" = "1" ]; then
       FAST_FAIL_TRIGGERED=true
