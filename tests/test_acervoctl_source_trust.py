@@ -89,3 +89,62 @@ def test_commit_write_untrusted_forces_status_draft(acervo: Path, tmp_path: Path
     committed = json.loads(cm.stdout)
     on_disk = Path(committed["target_path"]).read_text(encoding="utf-8")
     assert "status: draft" in on_disk  # trust gate forced it
+
+def test_commit_write_rejects_loosening_trust(acervo: Path, tmp_path: Path):
+    """Verify that commit-write --source-trust rejects loosening (only allows tightening).
+
+    Receipt prepared with untrusted (most restrictive) cannot be loosened to agent.
+    Commit must return non-zero and reject the change.
+    """
+    # Step 1: prepare with untrusted (restrictive)
+    pr = _run(["prepare-write", "--acervo-root", str(acervo), "--microverso", "cliente-norte",
+               "--nature", "knowledge", "--title", "Nota de teste",
+               "--source-trust", "untrusted", "--receipt-out", str(tmp_path/"r.json")], acervo)
+    assert pr.returncode == 0, f"stderr: {pr.stderr}\nstdout: {pr.stdout}"
+
+    # Step 2: try to commit with --source-trust agent (more trusting = loosening)
+    content = (
+        "---\nschema: acervo/v0.2\ntype: knowledge\ntitle: Nota de teste\n"
+        "description: nota\ntags: []\ncreated_at: 2026-08-01T00:00:00Z\nclass: volátil\n"
+        "status: active\nepistemic: observation\nconfidence: likely\n"
+        "sources:\n  - type: agent-inference\n    ref: t1\nobserved_at: 2026-08-01\n"
+        "extraction: agent\n---\ncorpo\n")
+    (tmp_path/"c.md").write_text(content, encoding="utf-8")
+    cm = _run(["commit-write", "--receipt", str(tmp_path/"r.json"),
+               "--content-file", str(tmp_path/"c.md"), "--description", "nota",
+               "--source-trust", "agent"], acervo)
+
+    # Step 3: Expect non-zero exit (rejection)
+    assert cm.returncode != 0, f"Expected rejection but got success. stdout: {cm.stdout}"
+    assert "afrouxaria" in cm.stdout or "afrouxaria" in cm.stderr, \
+        f"Expected error message about loosening, got: stderr={cm.stderr}, stdout={cm.stdout}"
+
+def test_commit_write_allows_tightening_trust(acervo: Path, tmp_path: Path):
+    """Verify that commit-write --source-trust allows tightening (only rejects loosening).
+
+    Receipt prepared with agent can be tightened to untrusted. Commit must succeed.
+    """
+    # Step 1: prepare with agent (moderate trust)
+    pr = _run(["prepare-write", "--acervo-root", str(acervo), "--microverso", "cliente-norte",
+               "--nature", "knowledge", "--title", "Nota de teste",
+               "--source-trust", "agent", "--receipt-out", str(tmp_path/"r.json")], acervo)
+    assert pr.returncode == 0, f"stderr: {pr.stderr}\nstdout: {pr.stdout}"
+
+    # Step 2: commit with --source-trust untrusted (more restrictive = tightening)
+    content = (
+        "---\nschema: acervo/v0.2\ntype: knowledge\ntitle: Nota de teste\n"
+        "description: nota\ntags: []\ncreated_at: 2026-08-01T00:00:00Z\nclass: volátil\n"
+        "status: active\nepistemic: observation\nconfidence: likely\n"
+        "sources:\n  - type: agent-inference\n    ref: t1\nobserved_at: 2026-08-01\n"
+        "extraction: agent\n---\ncorpo\n")
+    (tmp_path/"c.md").write_text(content, encoding="utf-8")
+    cm = _run(["commit-write", "--receipt", str(tmp_path/"r.json"),
+               "--content-file", str(tmp_path/"c.md"), "--description", "nota",
+               "--source-trust", "untrusted"], acervo)
+
+    # Step 3: Expect success (tightening is allowed)
+    assert cm.returncode == 0, f"stderr: {cm.stderr}\nstdout: {cm.stdout}"
+    committed = json.loads(cm.stdout)
+    # With untrusted, file should have status: draft
+    on_disk = Path(committed["target_path"]).read_text(encoding="utf-8")
+    assert "status: draft" in on_disk

@@ -33,6 +33,9 @@ from acervo_semantic_core import (
     validate_entry,
 )
 
+# Trust levels ordered by restrictiveness: higher index = more restrictive/trusting behavior
+_TRUST_ORDER = {"executive": 2, "agent": 1, "untrusted": 0}
+
 
 def print_json(payload: dict[str, Any]) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -83,6 +86,16 @@ def command_commit_write(args: argparse.Namespace) -> dict[str, Any]:
         content = args.content
     else:
         raise RuntimeError("Informe --content-file ou --content para commit-write.")
+
+    # Guard: --source-trust só pode apertar o trust (nunca afrouxar).
+    # Tighten only: passed trust must be equal-or-more restrictive than the receipt's trust.
+    if args.source_trust is not None:
+        receipt_trust = prepared.get("source_trust") or "agent"
+        if _TRUST_ORDER[args.source_trust] > _TRUST_ORDER[receipt_trust]:
+            raise SystemExit(
+                f"--source-trust {args.source_trust!r} afrouxaria o trust do receipt "
+                f"({receipt_trust!r}); proibido (só é permitido apertar)."
+            )
 
     return commit_write(
         prepared,
