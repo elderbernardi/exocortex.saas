@@ -69,6 +69,7 @@ def command_prepare_write(args: argparse.Namespace) -> dict[str, Any]:
         nature=args.nature,
         filename=filename,
         active_microverso=args.active_microverso or args.microverso,
+        source_trust=args.source_trust,
     )
     write_receipt_if_needed(payload, args.receipt_out)
     return payload
@@ -89,6 +90,7 @@ def command_commit_write(args: argparse.Namespace) -> dict[str, Any]:
         entry_type=args.entry_type,
         description=args.description,
         class_name=args.class_name,
+        source_trust=args.source_trust,
     )
 
 
@@ -362,6 +364,8 @@ def build_parser() -> argparse.ArgumentParser:
     prepare_cmd.add_argument("--filename", help="Override explícito do nome do arquivo")
     prepare_cmd.add_argument("--active-microverso", help="Override do microverso ativo")
     prepare_cmd.add_argument("--receipt-out", help="Arquivo para gravar o receipt JSON")
+    prepare_cmd.add_argument("--source-trust", choices=["executive", "agent", "untrusted"],
+                             default="agent", help="Nível de confiança da origem (08-write-policy §2)")
     prepare_cmd.set_defaults(handler=command_prepare_write)
 
     commit_cmd = sub.add_parser("commit-write", help="Efetiva uma mutação semântica preparada")
@@ -371,6 +375,8 @@ def build_parser() -> argparse.ArgumentParser:
     commit_cmd.add_argument("--entry-type", default="CREATED")
     commit_cmd.add_argument("--description", required=True)
     commit_cmd.add_argument("--class-name", default="volátil")
+    commit_cmd.add_argument("--source-trust", choices=["executive", "agent", "untrusted"],
+                            default=None, help="Aperta o trust do receipt (nunca afrouxa)")
     commit_cmd.set_defaults(handler=command_commit_write)
 
     validate_cmd = sub.add_parser("validate-frontmatter", help="Valida frontmatter de um arquivo")
