@@ -51,6 +51,8 @@ compiled_rules: |
   NEVER narrate a phase in your reply — no "Classificacao:", "Definicao de pronto:", "Fase:",
   "estou na fase X"; the phase is the conduct line, never text. Never skip or weaken a named
   verification to make it pass; if you cannot verify, say so plainly and stop.
+  - No fechamento (fase report), para cada conhecimento/decisão/reflexão que MEREÇA virar memória canônica, faça UM append out-of-band (nunca narre): printf '%s\n' '{"t":"harvest","nature":"knowledge|decision|reflection","scope":"<microverso>","title":"…","porque":"…","ref":"<path do artefato>"|"body":"<texto curto>","class":"perene|volátil","source_trust":"agent"}' >> "$ACERVO/_tasks/$TID/conduct.jsonl"
+  - Use ref quando o conteúdo já é um arquivo produzido; body para achado/reflexão sem arquivo. Nunca invente conteúdo só para preencher. Se nada merece promoção, não escreva harvest.
 ---
 # Conduct Loop — condução da sala viva
 
@@ -66,7 +68,7 @@ Phase tokens are exact and lowercase, no spaces: `classify` `define_done` `evide
 2. **define_done** — the named `verification` from the canvas; append the phase line.
 3. **evidence → decide → act** — as you produce them, append conduct lines with exact keys: `{"t":"artifact","title":…,"atype":…,"path":…,"tool":…}`, `{"t":"trace","kind":"intent|twins|pending","title":…,"evidence":{…}}`, `{"t":"next_move","text":…}`. A Draft-First (external action) is `{"t":"draft","action":…,"draft_text":…}`.
 4. **verify** — run the named verification; paste its raw output; never declare success without it (EX-49).
-5. **report** — outcome first. Phases stay in conduct.jsonl; your reply is the work, not a narration of the loop.
+5. **report** — outcome first. Phases stay in conduct.jsonl; your reply is the work, not a narration of the loop. For each knowledge/decision/reflection that MERITS canonical memory, append one harvest line out-of-band (never narrate it): `printf '%s\n' '{"t":"harvest","nature":"knowledge|decision|reflection","scope":"<microverso>","title":"…","porque":"…","ref":"<path do artefato>"|"body":"<texto curto>","class":"perene|volátil","source_trust":"agent"}' >> "$ACERVO/_tasks/$TID/conduct.jsonl"`. Use `ref` when the content is already a produced file; `body` for findings/reflections without a file. Never invent content just to fill; if nothing merits promotion, write no harvest line.
 
 ## Pitfalls
 

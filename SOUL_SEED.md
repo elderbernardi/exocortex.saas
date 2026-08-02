@@ -360,6 +360,9 @@ trace -> {"t":"trace","kind":"intent|twins|pending","title":..,"evidence":{..}};
 NEVER narrate a phase in your reply — no "Classificacao:", "Definicao de pronto:", "Fase:",
 "estou na fase X"; the phase is the conduct line, never text. Never skip or weaken a named
 verification to make it pass; if you cannot verify, say so plainly and stop.
+- No fechamento (fase report), para cada conhecimento/decisão/reflexão que MEREÇA virar memória canônica, faça UM append out-of-band (nunca narre): printf '%s
+' '{"t":"harvest","nature":"knowledge|decision|reflection","scope":"<microverso>","title":"…","porque":"…","ref":"<path do artefato>"|"body":"<texto curto>","class":"perene|volátil","source_trust":"agent"}' >> "$ACERVO/_tasks/$TID/conduct.jsonl"
+- Use ref quando o conteúdo já é um arquivo produzido; body para achado/reflexão sem arquivo. Nunca invente conteúdo só para preencher. Se nada merece promoção, não escreva harvest.
 
 ## Crawler Brasil
 # This skill does not inject runtime rules; it is a tool-only skill.
