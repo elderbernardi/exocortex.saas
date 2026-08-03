@@ -12,7 +12,7 @@ info "Instalando acervo..."
 
 copy_acervo_seed() {
   if command -v rsync >/dev/null 2>&1; then
-    rsync -a \
+    rsync -a --ignore-existing \
       --exclude '__pycache__' \
       --exclude 'micro/exocortex-ops/***' \
       --exclude 'micro/estudio-editorial/***' \

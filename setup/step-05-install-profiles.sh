@@ -11,13 +11,13 @@ fi
 info "Instalando profiles..."
 
 if [ -d "$PROFILES_SRC" ]; then
-  cp -r "$PROFILES_SRC"/* "$PROFILES_DST/" 2>/dev/null || true
+  cp -rn "$PROFILES_SRC"/* "$PROFILES_DST/" 2>/dev/null || true
   log "Profiles: $(ls -1d "$PROFILES_DST"/*/ 2>/dev/null | wc -l) profiles"
 fi
 
 info "Instalando bundles..."
 
 if [ -d "$BUNDLES_SRC" ]; then
-  cp -r "$BUNDLES_SRC"/* "$BUNDLES_DST/" 2>/dev/null || true
+  cp -rn "$BUNDLES_SRC"/* "$BUNDLES_DST/" 2>/dev/null || true
   log "Bundle copiado"
 fi
