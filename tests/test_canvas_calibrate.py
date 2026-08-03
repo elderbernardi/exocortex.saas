@@ -14,4 +14,4 @@ def test_keyless_checks_present():
 def test_keyless_run_returns_report():
     report = CC.run_keyless(REPO)
     assert set(report) >= {"soul", "d1", "dogfood", "anti_narration", "primer", "verdict"}
-    assert report["verdict"] in ("PASS", "FAIL")
+    assert report["verdict"] == "PASS"

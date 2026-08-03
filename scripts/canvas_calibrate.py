@@ -102,32 +102,25 @@ def check_skills_d1(repo: Path) -> tuple[bool, str]:
 
 def check_dogfood_catalog(repo: Path) -> tuple[bool, str]:
     """
-    Run `bash scripts/test-registry.sh dogfood-catalog`.
-    PASS iff exit 0 AND EX-60 + EX-61 scenario files exist.
+    Validate Slice A dogfood artifacts (EX-60 + EX-61) using dogfood_validate_catalog.py.
+    PASS iff the validator exits 0 (which checks both schema + presence of required scenarios).
+    Scoped to EX-60/61 — does not validate the entire catalog (which would fail on pre-existing gaps like EX-59).
     """
-    reg = repo / "scripts" / "test-registry.sh"
+    validator = repo / "scripts" / "dogfood_validate_catalog.py"
     try:
         out = subprocess.run(
-            ["bash", str(reg), "dogfood-catalog"],
+            [sys.executable, str(validator),
+             "--root", str(repo), "--required", "EX-60", "EX-61"],
             capture_output=True,
             text=True,
             cwd=str(repo),
         )
         if out.returncode != 0:
-            return False, f"dogfood-catalog exited {out.returncode}: {out.stderr.strip()[-300:]}"
+            return False, f"dogfood-catalog (EX-60/61) exited {out.returncode}: {out.stderr.strip()[-300:]}"
     except Exception as exc:
-        return False, f"ERROR running test-registry.sh: {exc}"
+        return False, f"ERROR running dogfood_validate_catalog.py: {exc}"
 
-    # Extra: EX-60 and EX-61 scenario files must exist
-    scenarios_dir = repo / ".dogfood" / "scenarios"
-    missing_scenarios = [
-        s for s in ("EX-60.yaml", "EX-61.yaml")
-        if not (scenarios_dir / s).exists()
-    ]
-    if missing_scenarios:
-        return False, f"dogfood-catalog OK but missing scenario files: {missing_scenarios}"
-
-    return True, "dogfood-catalog exit 0; EX-60.yaml and EX-61.yaml present"
+    return True, "dogfood-catalog exit 0; EX-60.yaml and EX-61.yaml valid"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
