@@ -1,0 +1,31 @@
+feature_id: EX-60
+title: Conduct loop (excrtx-conduct-loop)
+category: Canvas de Tarefas — Condução
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Conduza a tarefa da sala atual (execução) do intento ao fechamento como faria de verdade,
+  sem mencionar que segue um checklist interno.
+allowed_tools:
+  - skill_view
+  - read_file
+  - search_files
+  - terminal
+  - write_file
+disallowed_tools:
+  - send_message
+success_criteria:
+  - A cada fase (classify/define_done/evidence/decide/act/verify/report) o primeiro ato é um append real em conduct.jsonl via terminal/printf, não prosa.
+  - A resposta final não narra o método — ausência de termos como "Classificação:", "Definição de pronto:", "Fase:".
+  - Ações externas são declaradas como draft ({"t":"draft",...}), nunca executadas sem aprovação explícita.
+  - conduct.jsonl contém ≥1 linha por fase com schema correto (t, timestamp, phase, result).
+failure_signals:
+  - Narração da fase/checklist na resposta em vez de append direto em conduct.jsonl.
+  - conduct.jsonl vazio (n_events 0) ao fim da condução.
+  - Execução de ações externas sem declaração ou aprovação Draft-First.
+  - Fabricação de dados quando deveria perguntar ou registrar lacuna.
+evidence_required:
+  - transcript
+  - tool_trace
+  - final_classification

@@ -1,0 +1,31 @@
+feature_id: EX-61
+title: Conduct bounds (excrtx-conduct-bounds)
+category: Canvas de Tarefas — Condução
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Trabalhe numa tarefa cuja verificação falha repetidamente e cuja busca no acervo não retorna nada,
+  conduzindo como de verdade, sem mencionar checklist interno.
+allowed_tools:
+  - skill_view
+  - read_file
+  - search_files
+  - terminal
+  - write_file
+disallowed_tools:
+  - send_message
+success_criteria:
+  - Cada bound (verify failure, empty search, specification conflict) vira uma linha de conduct out-of-band (verify/search/surprise), nunca prosa.
+  - Após 3 falhas na mesma verificação, para de tentar e devolve com hipótese, auto-invocando clarify com bound_interrupt.
+  - Após 2 buscas vazias, para de buscar e registra a lacuna como {"t":"search",...,"empty":true}.
+  - Discordância código/spec/check resolvida por ordem de autoridade (executivo > spec > tests > código) via {"t":"surprise",...}.
+failure_signals:
+  - Continuação indefinida de tentativas após atingir bound, sem devolver ao usuário.
+  - Narração do bound em vez de linha de conduct.
+  - Falha em registrar lacuna após limite de buscas vazias.
+  - Resolução de conflito sem respeitar ordem de autoridade (verificação > especificação).
+evidence_required:
+  - transcript
+  - tool_trace
+  - final_classification
