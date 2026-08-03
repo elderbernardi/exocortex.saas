@@ -1,5 +1,5 @@
 feature_id: EX-61
-title: Conduct bounds (excrtx-conduct-bounds)
+title: Bounds de condução fable (excrtx-conduct-bounds)
 category: Canvas de Tarefas — Condução
 source: FEATURES.md
 risk: P2
@@ -24,7 +24,7 @@ failure_signals:
   - Continuação indefinida de tentativas após atingir bound, sem devolver ao usuário.
   - Narração do bound em vez de linha de conduct.
   - Falha em registrar lacuna após limite de buscas vazias.
-  - Resolução de conflito sem respeitar ordem de autoridade (verificação > especificação).
+  - Resolução de conflito sem respeitar a ordem de autoridade correta (executivo > spec > tests > código).
 evidence_required:
   - transcript
   - tool_trace
