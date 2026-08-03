@@ -315,6 +315,16 @@ _LIVE_PHRASES: list[tuple[str, str]] = [
     ),
 ]
 
+# Vetor accent-normalisation map (accented and unaccented → canonical unaccented form).
+_VETOR_MAP = {
+    "execucao": "execucao",
+    "execução": "execucao",
+    "evolucao": "evolucao",
+    "evolução": "evolucao",
+    "manutencao": "manutencao",
+    "manutenção": "manutencao",
+}
+
 # Isolated smoke port (must not conflict with prod :8787).
 _LIVE_PORT = 8794
 
@@ -336,19 +346,29 @@ def _apply_yaml_overrides(config_path: Path, overrides: dict[str, str]) -> None:
     This is intentionally simple: for each leaf key, it rewrites the line that contains
     `<leaf_key>:` with the new value.  It does NOT parse YAML — it is purely a line-based
     substitution, safe for the known hermes config.yaml structure.
+
+    If a leaf key is ABSENT from the file, it is APPENDED as a new top-level line — this
+    guarantees every mandated override actually takes effect (e.g. `context_file_max_chars`,
+    which is a top-level key not always present in a provisioned config).  Without this, an
+    absent key would be silently skipped, leaving the isolated run on the real config's value.
     """
     text = config_path.read_text(encoding="utf-8")
     for dotted_key, value in overrides.items():
         leaf = dotted_key.split(".")[-1]
+        found = False
         new_lines = []
         for line in text.splitlines():
             stripped = line.lstrip()
             if stripped.startswith(f"{leaf}:"):
+                found = True
                 indent = line[: len(line) - len(stripped)]
                 new_lines.append(f"{indent}{leaf}: {value}")
             else:
                 new_lines.append(line)
         text = "\n".join(new_lines) + "\n"
+        if not found:
+            # Key absent → append as a top-level line so the override is not silently dropped.
+            text = text.rstrip("\n") + f"\n{leaf}: {value}\n"
     config_path.write_text(text, encoding="utf-8")
 
 
@@ -452,17 +472,9 @@ def _enquadrador_check(base_url: str) -> tuple[bool, str]:
             continue
 
         actual_vetor = canvas.get("vetor", "")
-        gaps = canvas.get("gaps", [])
+        gaps = canvas.get("gaps") or []
 
-        # vetor must match (normalise: strip accents via simple map)
-        _VETOR_MAP = {
-            "execucao": "execucao",
-            "execução": "execucao",
-            "evolucao": "evolucao",
-            "evolução": "evolucao",
-            "manutencao": "manutencao",
-            "manutenção": "manutencao",
-        }
+        # vetor must match (normalise accents via the module-level map)
         normalised_actual = _VETOR_MAP.get(actual_vetor.lower(), actual_vetor.lower())
         normalised_expected = _VETOR_MAP.get(expected_vetor, expected_vetor)
 
@@ -472,10 +484,17 @@ def _enquadrador_check(base_url: str) -> tuple[bool, str]:
             )
             continue
 
-        # gaps must not be fabricated (None or empty list is fine; non-empty is a risk signal)
-        if gaps and not isinstance(gaps, list):
+        # gaps must NOT be fabricated.  All 3 canonical phrases are self-contained (they
+        # carry no implicit blocking prerequisite), so a non-empty `gaps` on ANY of them
+        # is a fabrication signal → FAIL.  (An unexpected non-list type is also a FAIL.)
+        if not isinstance(gaps, list):
             results.append(
-                f"WARN[{expected_vetor}] unexpected gaps type: {gaps!r}"
+                f"FAIL[{expected_vetor}] unexpected gaps type: {gaps!r}"
+            )
+            continue
+        if gaps:
+            results.append(
+                f"FAIL[{expected_vetor}] fabricated gaps on self-contained phrase: {gaps!r}"
             )
             continue
 
@@ -689,20 +708,21 @@ def run_live(repo: Path) -> dict:
         server_env["EXOCORTEX_ACERVO_PATH"] = str(tmp_acervo)
 
         server_log = tmp_dir / "server.log"
-        with open(server_log, "w") as log_fh:
-            server_proc = subprocess.Popen(
-                [
-                    str(venv_python),
-                    "-m", "server",  # hermes-webui conventional entry point
-                ],
-                env=server_env,
-                cwd=str(fork_checkout),
-                stdout=log_fh,
-                stderr=log_fh,
-            )
-
         base_url = f"http://127.0.0.1:{_LIVE_PORT}"
+        server_proc = None  # guarded in finally: Popen may raise before assignment
         try:
+            with open(server_log, "w") as log_fh:
+                server_proc = subprocess.Popen(
+                    [
+                        str(venv_python),
+                        "-m", "server",  # hermes-webui conventional entry point
+                    ],
+                    env=server_env,
+                    cwd=str(fork_checkout),
+                    stdout=log_fh,
+                    stderr=log_fh,
+                )
+
             if not _wait_for_server(base_url, retries=30, delay=0.5):
                 raise RuntimeError(
                     f"Isolated server on :{_LIVE_PORT} did not start in 15s. "
@@ -723,11 +743,12 @@ def run_live(repo: Path) -> dict:
             )
 
         finally:
-            server_proc.terminate()
-            try:
-                server_proc.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                server_proc.kill()
+            if server_proc is not None:
+                server_proc.terminate()
+                try:
+                    server_proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    server_proc.kill()
 
     finally:
         # Clean up temp dir (remove isolated env so no key material lingers on disk)

@@ -99,9 +99,10 @@ The `context_file_max_chars: 40000` pin avoids SOUL truncation at the 128K cap.
 | 2 | "Estou pensando sobre como reposicionar a linha premium." | `evolucao` (explorar) |
 | 3 | "Revise as pendências e limpe o que estiver obsoleto." | `manutencao` (revisar) |
 
-**PASS criterion (enquadrador):** all 3 vetores correct, `gaps` not fabricated (empty or
-`null`; a non-empty `gaps` list on phrase 2/3 which have no explicit blocking context is a
-signal that the model hallucinated prerequisites).
+**PASS criterion (enquadrador):** all 3 vetores correct, `gaps` not fabricated. All 3
+canonical phrases are self-contained (they carry no implicit blocking prerequisite), so a
+non-empty `gaps` list on ANY of them means the model hallucinated prerequisites → that phrase
+FAILs. Expected `gaps`: empty list or `null`.
 
 ---
 
