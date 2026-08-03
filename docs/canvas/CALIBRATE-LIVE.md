@@ -67,7 +67,9 @@ The script:
 2. Creates a temp directory with an isolated `HERMES_HOME` + `ACERVO` scaffold.
 3. Copies `~/.hermes/config.yaml` into the isolated home and applies DeepSeek overrides
    (see "Isolated env overrides" below).
-4. Starts the hermes-webui fork on port `:8794` using the hermes-agent venv.
+4. Starts the hermes-webui fork on port `:8794` using the hermes-agent venv
+   (sets `HERMES_WEBUI_PORT=8794` + `HERMES_WEBUI_HOST=127.0.0.1` — the fork reads
+   `HERMES_WEBUI_PORT`, not bare `PORT`; prod `:8787` is NEVER touched).
 5. Drives the enquadrador check (3 canonical phrases) and the conduction check (1 real session).
 6. Terminates the server and deletes the temp directory.
 7. Prints the EX-49 evidence report and exits 0 (PASS) or 3 (FAIL).
@@ -166,7 +168,8 @@ Exit code `0` = PASS.  Exit code `3` = smoke ran but FAIL.  Exit code `2` = key 
 
 ## Post-run cleanup checklist
 
-1. Verify prod server still running: `curl -s http://127.0.0.1:8787/api/health | python3 -m json.tool`
+1. Verify prod server still running: `curl -s http://127.0.0.1:8787/health | python3 -m json.tool`
+   (The fork's health route is `/health` — not `/api/health`.  The isolated smoke uses `:8794` via `HERMES_WEBUI_PORT`; prod is `:8787`.  These must never overlap.)
 2. If conduct.jsonl leaked to real acervo (caveat above): `rm -rf ~/exocortex/acervo/_tasks/<task_id>`
 3. Temp dir is deleted automatically by the script even on error.
 4. Do NOT commit the `DEEPSEEK_API_KEY` value anywhere.

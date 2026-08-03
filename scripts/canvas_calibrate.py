@@ -343,32 +343,82 @@ def _apply_yaml_overrides(config_path: Path, overrides: dict[str, str]) -> None:
     Apply flat key=value overrides to a YAML config file using sed-style replacements.
     Supports dot-notation keys (e.g. 'model.provider') as nested YAML paths.
 
-    This is intentionally simple: for each leaf key, it rewrites the line that contains
-    `<leaf_key>:` with the new value.  It does NOT parse YAML — it is purely a line-based
-    substitution, safe for the known hermes config.yaml structure.
+    This is intentionally simple and section-aware: for each dotted key, it rewrites the
+    leaf line ONLY when the current top-level section matches the key's first segment.  This
+    prevents a leaf like `provider:` (which may appear under multiple top-level blocks) from
+    being incorrectly rewritten in every nested block — only the intended section is patched.
 
-    If a leaf key is ABSENT from the file, it is APPENDED as a new top-level line — this
-    guarantees every mandated override actually takes effect (e.g. `context_file_max_chars`,
-    which is a top-level key not always present in a provisioned config).  Without this, an
-    absent key would be silently skipped, leaving the isolated run on the real config's value.
+    A top-level section is detected as a line with NO leading indentation that ends with `:`.
+
+    If a leaf key is ABSENT from the file (in the correct section), it is APPENDED under the
+    correct section block — this guarantees every mandated override actually takes effect
+    (e.g. `context_file_max_chars`, which is a top-level key not always present in a
+    provisioned config).  Without this, an absent key would be silently skipped, leaving the
+    isolated run on the real config's value.
     """
     text = config_path.read_text(encoding="utf-8")
     for dotted_key, value in overrides.items():
-        leaf = dotted_key.split(".")[-1]
+        parts = dotted_key.split(".")
+        target_section = parts[0]   # e.g. "model" for "model.provider"
+        leaf = parts[-1]            # e.g. "provider"
+        # For top-level keys (no dot), treat them as their own section.
+        is_top_level = len(parts) == 1
+
         found = False
+        current_section: str = ""
         new_lines = []
-        for line in text.splitlines():
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
             stripped = line.lstrip()
+            # Detect top-level section header: no leading whitespace + ends with ':'
+            if line and not line[0].isspace() and stripped.endswith(":") and not stripped.startswith("#"):
+                current_section = stripped[:-1]  # strip trailing ':'
+
             if stripped.startswith(f"{leaf}:"):
-                found = True
-                indent = line[: len(line) - len(stripped)]
-                new_lines.append(f"{indent}{leaf}: {value}")
-            else:
-                new_lines.append(line)
+                # Only rewrite if in the correct section (or it is a top-level key).
+                in_correct_section = (
+                    is_top_level and current_section == leaf
+                ) or (
+                    not is_top_level and current_section == target_section
+                )
+                if in_correct_section:
+                    found = True
+                    indent = line[: len(line) - len(stripped)]
+                    new_lines.append(f"{indent}{leaf}: {value}")
+                    continue
+            new_lines.append(line)
         text = "\n".join(new_lines) + "\n"
+
         if not found:
-            # Key absent → append as a top-level line so the override is not silently dropped.
-            text = text.rstrip("\n") + f"\n{leaf}: {value}\n"
+            if is_top_level:
+                # Append as a new top-level line.
+                text = text.rstrip("\n") + f"\n{leaf}: {value}\n"
+            else:
+                # Append under the target section block: find the section header and
+                # insert after it (before the next top-level section or EOF).
+                lines2 = text.splitlines()
+                section_idx = None
+                insert_at = len(lines2)
+                for idx, line in enumerate(lines2):
+                    stripped2 = line.lstrip()
+                    if (
+                        not line[0:1].isspace()
+                        and stripped2.endswith(":")
+                        and not stripped2.startswith("#")
+                        and stripped2[:-1] == target_section
+                    ):
+                        section_idx = idx
+                    elif section_idx is not None and idx > section_idx:
+                        # Next top-level section detected → insert before it.
+                        if not line[0:1].isspace() and stripped2.endswith(":") and not stripped2.startswith("#"):
+                            insert_at = idx
+                            break
+                if section_idx is not None:
+                    lines2.insert(insert_at, f"  {leaf}: {value}")
+                    text = "\n".join(lines2) + "\n"
+                else:
+                    # target section absent entirely → append section + key.
+                    text = text.rstrip("\n") + f"\n{target_section}:\n  {leaf}: {value}\n"
     config_path.write_text(text, encoding="utf-8")
 
 
@@ -393,7 +443,7 @@ def _http_get(url: str, timeout: int = 30) -> dict:
 
 def _wait_for_server(base_url: str, retries: int = 20, delay: float = 0.5) -> bool:
     """Poll the server health endpoint until it responds or we give up."""
-    health = f"{base_url}/api/health"
+    health = f"{base_url}/health"
     for _ in range(retries):
         try:
             _http_get(health, timeout=3)
@@ -703,13 +753,20 @@ def run_live(repo: Path) -> dict:
         server_env["DEEPSEEK_API_KEY"] = api_key  # passed through, never echoed
         server_env["SALA_ENABLE"] = "1"
         server_env["PYTHONPATH"] = str(fork_checkout)
-        server_env["PORT"] = str(_LIVE_PORT)
+        server_env["HERMES_WEBUI_PORT"] = str(_LIVE_PORT)   # fork reads HERMES_WEBUI_PORT, not bare PORT
+        server_env["HERMES_WEBUI_HOST"] = "127.0.0.1"       # loopback-only; never binds 0.0.0.0
         # Ensure no accidental write to prod acervo MCP:
         server_env["EXOCORTEX_ACERVO_PATH"] = str(tmp_acervo)
 
         server_log = tmp_dir / "server.log"
         base_url = f"http://127.0.0.1:{_LIVE_PORT}"
         server_proc = None  # guarded in finally: Popen may raise before assignment
+        # Initialise result vars so the post-try verdict block never hits NameError
+        # (e.g. if _wait_for_server raises RuntimeError before enq/cond are assigned).
+        enq_ok = False
+        enq_detail = ""
+        cond_ok = False
+        cond_detail = ""
         try:
             with open(server_log, "w") as log_fh:
                 server_proc = subprocess.Popen(
