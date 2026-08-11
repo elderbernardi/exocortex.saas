@@ -19,11 +19,14 @@ def _load(name: str):
 def test_load_config_merges_area_defaults():
     cfg = _load("news_config").load_config(str(CONFIG))
     assert cfg["publish"]["default_ttl_days"] == 30
+    assert cfg["publish"]["max_age_days"] == 10
     assert cfg["publish"]["use_docbrain"] is False
     areas = {a["slug"]: a for a in cfg["areas"]}
     assert areas["varejo"]["cadence"] == "weekly"
+    assert areas["varejo"]["max_age_days"] == 10
     assert areas["varejo"]["max_items"] == 3            # override
     assert areas["varejo"]["relevance_threshold"] == 65 # override
+    assert areas["limpeza"]["max_age_days"] == 10
     assert areas["limpeza"]["max_items"] == 4           # inherits publish default
     assert areas["limpeza"]["relevance_threshold"] == 60
 
@@ -58,8 +61,9 @@ def test_due_areas_first_run_and_window():
 
 def test_mark_run_updates_state():
     d = _load("news_dispatch")
-    state = d.mark_run({}, "varejo", 123)
-    assert state["varejo"] == 123
+    state = d.mark_run({}, "varejo", 123, "run-1", "success")
+    assert state["schema"] == "exocortex/news-cadence/v1"
+    assert state["areas"]["varejo"] == {"last_success_at": 123, "last_run_id": "run-1"}
 
 
 def test_classify_new_active_retired():
@@ -84,6 +88,17 @@ def test_partition_macro_keys_on_url_and_null_client():
     assert [c["url_normalized"] for c in out["publish"]] == ["https://a.test/x"]
     assert [c["url_normalized"] for c in out["skip_active"]] == ["https://b.test/y"]
     assert [c["url_normalized"] for c in out["skip_retired"]] == ["https://c.test/z"]
+
+
+def test_partition_skips_stale_candidates_by_publicado_em():
+    g = _load("news_guard")
+    candidates = [
+        {"candidate_id": "fresh", "url_normalized": "https://a.test/x", "publicado_em": "2026-08-05"},
+        {"candidate_id": "stale", "url_normalized": "https://b.test/y", "publicado_em": "2026-07-20"},
+    ]
+    out = g.partition(candidates, {}, max_age_days=10, today="2026-08-10")
+    assert [c["candidate_id"] for c in out["publish"]] == ["fresh"]
+    assert [c["candidate_id"] for c in out["skip_stale"]] == ["stale"]
 
 
 def test_dispatch_cli_lists_due_areas(tmp_path):

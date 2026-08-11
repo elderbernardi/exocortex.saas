@@ -6,6 +6,7 @@ from typing import Any
 _PUBLISH_DEFAULTS = {
     "default_escopo": "macro",
     "default_ttl_days": 30,
+    "max_age_days": 10,
     "max_items_per_run": 4,
     "relevance_threshold": 60,
     "use_docbrain": False,
@@ -24,6 +25,7 @@ def load_config(path: str) -> dict[str, Any]:
         areas.append({
             "slug": slug,
             "cadence": entry.get("cadence", "weekly"),
+            "max_age_days": entry.get("max_age_days", publish["max_age_days"]),
             "max_items": entry.get("max_items", publish["max_items_per_run"]),
             "relevance_threshold": entry.get(
                 "relevance_threshold", publish["relevance_threshold"]),

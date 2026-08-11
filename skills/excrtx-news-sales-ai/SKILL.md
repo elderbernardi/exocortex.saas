@@ -37,8 +37,8 @@ Dirigido por `config/noticias.toml`. Um cron despachante decide quais áreas rod
 
 1. `python3 scripts/news_dispatch.py --config config/noticias.toml --state <acervo>/news-cadence.json --now $(date +%s)` → lista de áreas vencidas.
 2. Para cada área: `python3 ../excrtx-research-cpg-brasil/scripts/orchestrate.py --template <slug> --output json --skip-l30d` (sem `--document`; `use_docbrain=false`).
-3. `python3 scripts/build_dossier.py --job-context <ctx.json> --crawler <research.json> --agent-reach <research.json> --output-file <dossier.json>` (reusa os itens brutos por canal do helper; **não** passar `--docbrain`).
-4. Curadoria com o modelo a partir do `prompt_packet`: dedup, relevância ≥ `relevance_threshold`, `impacto`, headline via `excrtx-quality-antislop`, **só itens com url/fonte reais**; cap `max_items`.
+3. `python3 scripts/build_dossier.py --job-context <ctx.json> --crawler <research.json> --agent-reach <research.json> --output-file <dossier.json>` (reusa os itens brutos por canal do helper; **não** passar `--docbrain`). As fontes do template são ponto de partida operacional, não lista fechada.
+4. Curadoria com o modelo a partir do `prompt_packet`: seleção por título, tema, relevância comercial e frescor ≤ `max_age_days`; dedup, relevância ≥ `relevance_threshold`, `impacto`, headline via `excrtx-quality-antislop`, **só itens com url/fonte reais**; cap `max_items`. Outras superfícies de pesquisa disponíveis nas skills/harness podem complementar a coleta.
 5. Guard: `partition()` de `scripts/news_guard.py` (via `fetch_existing`) descarta url já ativa/retirada.
 6. Publicar cada item do bucket `publish` via MCP `publish_noticia` (escopo=macro); tratar `resultado ∈ {created, updated, skipped_retired}`.
 7. `python3 scripts/news_dispatch.py --config config/noticias.toml --state <acervo>/news-cadence.json --mark <slug> --now $(date +%s)` para carimbar o run.

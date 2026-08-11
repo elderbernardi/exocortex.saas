@@ -2,6 +2,7 @@
 [publish]
 default_escopo = "macro"
 default_ttl_days = 30
+max_age_days = 10
 max_items_per_run = 4
 relevance_threshold = 60
 use_docbrain = false

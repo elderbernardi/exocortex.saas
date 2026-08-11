@@ -13,11 +13,21 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILL_DIR = REPO_ROOT / "skills" / "excrtx-news-sales-ai"
 SCRIPT = SKILL_DIR / "scripts" / "build_dossier.py"
+ROSTER_SCRIPT = SKILL_DIR / "scripts" / "roster_freeze.py"
 STEP = REPO_ROOT / "setup" / "step-03-install-skills.sh"
 
 
 def load_module():
     spec = importlib.util.spec_from_file_location("build_dossier", SCRIPT)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_roster_module():
+    spec = importlib.util.spec_from_file_location("roster_freeze", ROSTER_SCRIPT)
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)
@@ -40,12 +50,25 @@ class TestStructural:
         assert (SKILL_DIR / "SKILL.md").exists()
         assert (SKILL_DIR / "references" / "route-b-architecture.md").exists()
         assert SCRIPT.exists()
+        assert ROSTER_SCRIPT.exists()
 
     def test_help_works(self):
         result = run_script("--help")
         assert result.returncode == 0, result.stdout + result.stderr
         assert "--job-context" in result.stdout
         assert "--crawler" in result.stdout
+
+    def test_roster_help_works(self):
+        result = subprocess.run(
+            [sys.executable, str(ROSTER_SCRIPT), "--help"],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            timeout=60,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "--vendedores" in result.stdout
+        assert "--acessos" in result.stdout
 
     def test_installer_copies_skill_recursively(self):
         with tempfile.TemporaryDirectory() as td:
@@ -76,6 +99,7 @@ class TestStructural:
             installed_root = hermes_home / "skills" / "excrtx" / "excrtx-news-sales-ai"
             assert (installed_root / "SKILL.md").exists()
             assert (installed_root / "scripts" / "build_dossier.py").exists()
+            assert (installed_root / "scripts" / "roster_freeze.py").exists()
             assert (installed_root / "references" / "route-b-architecture.md").exists()
 
 
@@ -137,6 +161,197 @@ class TestNormalization:
                 "document_id": None,
             }
         ]
+
+
+class TestRosterFreeze:
+    def test_build_rosters_filters_to_eligible_sellers_and_matrices(self):
+        module = load_roster_module()
+        sellers = [
+            {
+                "id": "seller-1",
+                "nome": "Alice",
+                "email": "alice@example.com",
+                "role": "vendedor",
+                "ativo": True,
+                "erp_ref_code": "10",
+                "erp_ref_codes": ["10"],
+            },
+            {
+                "id": "seller-2",
+                "nome": "<SEM VENDEDOR>",
+                "email": "sem@example.com",
+                "role": "vendedor",
+                "ativo": True,
+                "erp_ref_code": "0",
+                "erp_ref_codes": ["0"],
+            },
+            {
+                "id": "seller-3",
+                "nome": "Gerente",
+                "email": "gerente@example.com",
+                "role": "gerente",
+                "ativo": True,
+                "erp_ref_code": "20",
+                "erp_ref_codes": ["20"],
+            },
+        ]
+        clients = [
+            {
+                "id": "client-1",
+                "nome": "Rede Um Ltda",
+                "nome_fantasia": "Rede Um",
+                "cnpj": "12345678000190",
+                "cidade": "Porto Alegre",
+                "uf": "RS",
+                "status": "ativo",
+                "tabela_atual": "191 - REDE UM",
+                "rfm_label": "A",
+                "matriz_id": None,
+                "erp_ref_code": "500",
+            },
+            {
+                "id": "client-2",
+                "nome": "Filial Dois",
+                "nome_fantasia": "Filial Dois",
+                "cnpj": "99887766000111",
+                "cidade": "Canoas",
+                "uf": "RS",
+                "status": "ativo",
+                "tabela_atual": None,
+                "rfm_label": None,
+                "matriz_id": "client-1",
+                "erp_ref_code": "501",
+            },
+        ]
+        accesses = [
+            {"vendedor_id": "seller-1", "cliente_id": "client-1", "tipo": "titular"},
+            {"vendedor_id": "seller-1", "cliente_id": "client-1", "tipo": "compartilhado"},
+            {"vendedor_id": "seller-2", "cliente_id": "client-1", "tipo": "titular"},
+            {"vendedor_id": "seller-1", "cliente_id": "client-2", "tipo": "titular"},
+        ]
+
+        frozen = module.build_rosters(sellers, clients, accesses)
+
+        assert frozen["index"]["seller_count"] == 1
+        assert frozen["index"]["client_count_total"] == 1
+        manifest = frozen["seller_manifests"]["seller-1"]
+        assert manifest["seller"]["seller_name"] == "Alice"
+        assert manifest["client_count"] == 1
+        assert manifest["clients"][0]["cliente_id"] == "client-1"
+        assert manifest["clients"][0]["access_types"] == ["compartilhado", "titular"]
+        assert "rede um" in manifest["clients"][0]["aliases"]
+        assert manifest["clients"][0]["brand_aliases"] == []
+
+    def test_build_rosters_derives_brand_alias_for_rede(self):
+        module = load_roster_module()
+        client = {
+            "id": "client-1",
+            "nome": "SUPERMERCADO BRUDA LTDA",
+            "nome_fantasia": "CD BRUDA",
+            "cnpj": "79645404000516",
+            "cidade": "Canoinhas",
+            "uf": "SC",
+            "status": "ativo",
+            "tabela_atual": "198 - BRUDA FOB 10% 2026",
+            "rfm_label": "Cliente fiel",
+            "matriz_id": None,
+            "erp_ref_code": "7200",
+        }
+
+        roster = module.roster_client(client, ["titular"])
+
+        assert roster["brand_aliases"] == ["bruda"]
+        assert "bruda" in roster["aliases"]
+
+    def test_brand_alias_requires_same_distinct_brand_in_legal_and_fantasy_names(self):
+        module = load_roster_module()
+        client = {
+            "nome": "SUPERMERCADO PORTAL LTDA",
+            "nome_fantasia": "SUPERMERCADO FRONTAL",
+        }
+
+        assert module.client_brand_aliases(client) == []
+
+    def test_brand_alias_rejects_ambiguous_common_word(self):
+        module = load_roster_module()
+        client = {
+            "nome": "SUPERMERCADO PORTO LTDA",
+            "nome_fantasia": "SUPERMERCADO PORTO LTDA",
+        }
+
+        assert module.client_brand_aliases(client) == []
+
+    def test_brand_alias_preserves_distinct_multiword_brand_with_accents(self):
+        module = load_roster_module()
+        client = {
+            "nome": "MAIS PAPEIS INDUSTRIA E COMERCIO LTDA",
+            "nome_fantasia": "MAIS PAPÉIS",
+        }
+
+        assert module.client_brand_aliases(client) == ["mais papeis"]
+
+    def test_freeze_rosters_cli_writes_json_and_csv(self, tmp_path):
+        vendors_path = tmp_path / "vendors.json"
+        clients_path = tmp_path / "clients.json"
+        accesses_path = tmp_path / "accesses.json"
+        out_dir = tmp_path / "out"
+
+        vendors_path.write_text(json.dumps({"data": [{
+            "id": "seller-1",
+            "nome": "Alice",
+            "email": "alice@example.com",
+            "role": "vendedor",
+            "ativo": True,
+            "erp_ref_code": "10",
+            "erp_ref_codes": ["10"],
+        }]}), encoding="utf-8")
+        clients_path.write_text(json.dumps({"data": [{
+            "id": "client-1",
+            "nome": "Rede Um Ltda",
+            "nome_fantasia": "Rede Um",
+            "cnpj": "12345678000190",
+            "cidade": "Porto Alegre",
+            "uf": "RS",
+            "status": "ativo",
+            "tabela_atual": "191 - REDE UM",
+            "rfm_label": "A",
+            "matriz_id": None,
+            "erp_ref_code": "500",
+        }]}), encoding="utf-8")
+        accesses_path.write_text(json.dumps({"data": [{
+            "vendedor_id": "seller-1",
+            "cliente_id": "client-1",
+            "tipo": "titular",
+        }]}), encoding="utf-8")
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROSTER_SCRIPT),
+                "--vendedores",
+                str(vendors_path),
+                "--clientes",
+                str(clients_path),
+                "--acessos",
+                str(accesses_path),
+                "--out-dir",
+                str(out_dir),
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            timeout=60,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "seller_count=1" in result.stdout
+        payload = json.loads((out_dir / "index.json").read_text(encoding="utf-8"))
+        assert payload["seller_count"] == 1
+        assert payload["client_count_total"] == 1
+        manifest = json.loads((out_dir / "sellers" / "seller-1.json").read_text(encoding="utf-8"))
+        assert manifest["clients"][0]["cliente_id"] == "client-1"
+        csv_rows = (out_dir / "sellers" / "seller-1.csv").read_text(encoding="utf-8")
+        assert "cliente_id" in csv_rows
+        assert "client-1" in csv_rows
 
 
 class TestDossier:

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MicroNewsSingleStageSelfGate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "confidence",
+    "reason",
+    "headline",
+    "summary",
+    "commercial_why",
+    "impacto"
+  ],
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": ["publica", "revisa", "descarta"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["alta", "media", "baixa"]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "headline": {
+      "type": ["string", "null"]
+    },
+    "summary": {
+      "type": ["string", "null"]
+    },
+    "commercial_why": {
+      "type": ["string", "null"]
+    },
+    "impacto": {
+      "type": ["string", "null"],
+      "enum": ["positivo", "negativo", "neutro", null]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {"const": "publica"}
+        }
+      },
+      "then": {
+        "properties": {
+          "headline": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "commercial_why": {"type": "string", "minLength": 1},
+          "impacto": {"type": "string", "enum": ["positivo", "negativo", "neutro"]}
+        }
+      },
+      "else": {
+        "properties": {
+          "headline": {"const": null},
+          "summary": {"const": null},
+          "commercial_why": {"const": null},
+          "impacto": {"const": null}
+        }
+      }
+    }
+  ]
+}
