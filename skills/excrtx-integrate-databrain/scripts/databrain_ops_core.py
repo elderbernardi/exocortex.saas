@@ -22,6 +22,7 @@ from uuid import uuid4
 
 DEFAULT_CONTAINER = "databrain-databrain-1"
 DEFAULT_API_URL = "http://127.0.0.1:8000"
+DEFAULT_INGEST_WRAPPER = "/srv/databrain/ops/ingest-run.sh"
 DEFAULT_OPS_ROOT = Path.home() / ".hermes" / "runs" / "databrain-ops"
 RECEIPT_TTL_HOURS = 24
 MAX_RUNTIME_SECONDS = 4 * 60 * 60
@@ -120,13 +121,6 @@ OPERATIONS: dict[str, OperationSpec] = {
         True,
         ("node", "dist/cli/index.js", "run", "publish"),
     ),
-    "publish_retry": OperationSpec(
-        "publish_retry",
-        "Reexecuta publicação de artefatos que falharam anteriormente.",
-        "external_write",
-        True,
-        ("node", "dist/cli/index.js", "run", "publish", "--retry-failed"),
-    ),
 }
 
 
@@ -152,11 +146,17 @@ def api_url() -> str:
     return os.getenv("DATABRAIN_API_URL", DEFAULT_API_URL).rstrip("/")
 
 
+def ingest_wrapper() -> str:
+    return os.getenv("DATABRAIN_INGEST_WRAPPER", DEFAULT_INGEST_WRAPPER)
+
+
 def operation_command(operation: str) -> list[str]:
     try:
         spec = OPERATIONS[operation]
     except KeyError as exc:
         raise ValueError(f"Operação não permitida: {operation}") from exc
+    if "--fetch-oracle" in spec.command:
+        return ["sudo", "-n", ingest_wrapper(), "--", *spec.command]
     return ["sudo", "-n", "docker", "exec", container_name(), *spec.command]
 
 
@@ -182,6 +182,39 @@ def http_json(path: str, *, timeout: float = 10.0) -> Any:
         raise RuntimeError(f"DataBrain indisponível em {url}: {exc}") from exc
 
 
+def _system_unit_state(unit: str, *, timer: bool = False) -> dict[str, Any]:
+    state: dict[str, Any] = {"unit": unit}
+    for action in ("is-active", "is-enabled"):
+        proc = subprocess.run(
+            ["sudo", "-n", "systemctl", action, unit],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        state[action.replace("-", "_")] = proc.stdout.strip() or "unknown"
+    if timer:
+        proc = subprocess.run(
+            [
+                "sudo", "-n", "systemctl", "show", unit,
+                "--property=NextElapseUSecRealtime",
+                "--property=LastTriggerUSec",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        state.update(
+            {
+                line.split("=", 1)[0]: line.split("=", 1)[1]
+                for line in proc.stdout.splitlines()
+                if "=" in line
+            }
+        )
+    return state
+
+
 def _scheduler_state() -> dict[str, Any]:
     proc = subprocess.run(
         [
@@ -193,18 +226,25 @@ def _scheduler_state() -> dict[str, Any]:
         text=True,
         timeout=15,
     )
-    if proc.returncode != 0:
-        return {"enabled": None, "source": "container_env", "error": proc.stderr.strip()[:300]}
     value = None
-    for line in proc.stdout.splitlines():
-        if line.startswith("DATABRAIN_SCHEDULER_ENABLED="):
-            value = line.split("=", 1)[1].strip().lower()
-            break
-    enabled = value in {"1", "true", "yes", "on"} if value is not None else None
+    if proc.returncode == 0:
+        for line in proc.stdout.splitlines():
+            if line.startswith("DATABRAIN_SCHEDULER_ENABLED="):
+                value = line.split("=", 1)[1].strip().lower()
+                break
+    internal_enabled = value in {"1", "true", "yes", "on"} if value is not None else None
+    ingest_timer = _system_unit_state("databrain-ingest.timer", timer=True)
     return {
-        "enabled": enabled,
-        "source": "DATABRAIN_SCHEDULER_ENABLED",
-        "automatic_runs": enabled is True,
+        "automatic_runs": ingest_timer.get("is_active") == "active",
+        "canonical_scheduler": "host_systemd_timer",
+        "host_ingest_timer": ingest_timer,
+        "host_backup_timer": _system_unit_state("databrain-backup.timer", timer=True),
+        "host_vpn_service": _system_unit_state("databrain-net.service"),
+        "internal_scheduler": {
+            "enabled": internal_enabled,
+            "source": "DATABRAIN_SCHEDULER_ENABLED",
+            "expected": False,
+        },
     }
 
 

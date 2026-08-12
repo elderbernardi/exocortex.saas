@@ -31,9 +31,9 @@ def test_capabilities_have_no_arbitrary_shell():
 def test_external_writes_require_approval():
     core = load_core()
     assert core.OPERATIONS["publish"].approval_required is True
-    assert core.OPERATIONS["publish_retry"].approval_required is True
     assert core.OPERATIONS["incremental_publish"].approval_required is True
     assert core.OPERATIONS["incremental_prepare"].approval_required is False
+    assert "publish_retry" not in core.OPERATIONS
 
 
 def test_operation_command_is_fixed_and_container_scoped(monkeypatch):
@@ -44,6 +44,15 @@ def test_operation_command_is_fixed_and_container_scoped(monkeypatch):
     assert command[-1] == "--dry-run"
     with pytest.raises(ValueError):
         core.operation_command("shell")
+
+
+def test_oracle_operations_use_production_ingest_wrapper(monkeypatch):
+    core = load_core()
+    monkeypatch.setenv("DATABRAIN_INGEST_WRAPPER", "/srv/databrain/ops/ingest-run.sh")
+    command = core.operation_command("incremental_prepare")
+    assert command[:4] == ["sudo", "-n", "/srv/databrain/ops/ingest-run.sh", "--"]
+    assert "--fetch-oracle" in command
+    assert command[:5] != ["sudo", "-n", "docker", "exec", core.container_name()]
 
 
 def test_receipt_is_immutable_and_one_time(tmp_path, monkeypatch):

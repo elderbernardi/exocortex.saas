@@ -33,10 +33,11 @@ Ative quando o executivo pedir para operar o DataBrain do Projeto B:
 
 ## Arquitetura
 
-A skill usa o MCP local `databrain-ops`, que adapta duas superfícies canônicas:
+A skill usa o MCP local `databrain-ops`, que adapta três superfícies canônicas:
 
-1. API Cockpit local (`http://127.0.0.1:8000`) para saúde e histórico;
-2. CLI oficial dentro do container `databrain-databrain-1` para execução.
+1. API Cockpit local (`http://127.0.0.1:8000`) para saúde e histórico saneado;
+2. CLI oficial dentro do container `databrain-databrain-1` para estágios sem Oracle;
+3. wrapper host `/srv/databrain/ops/ingest-run.sh` para qualquer operação com `--fetch-oracle`, preservando VPN efêmera, `flock`, preflight e watermark.
 
 Não existe ferramenta de shell livre. Toda mutação resolve para uma operação da allowlist `projetob.databrain.ops.v1`.
 
@@ -48,7 +49,7 @@ Não existe ferramenta de shell livre. Toda mutação resolve para uma operaçã
 4. Aplicar a governança:
    - leitura e escrita local: executar diretamente;
    - Hot/Judge: informar que há custo de LLM;
-   - `publish`, `publish_retry` e `incremental_publish`: apresentar DRAFT e aguardar aprovação explícita.
+   - `publish` e `incremental_publish`: apresentar DRAFT e aguardar aprovação explícita.
 5. Chamar `databrain_start_operation` com o receipt exato. Para publicação, incluir `approval_ref` pós-DRAFT.
 6. Consultar `databrain_operation_status` e `databrain_operation_logs` até concluir.
 7. Validar o efeito:
@@ -87,7 +88,8 @@ Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o def
 | `incremental_ai_prepare` | Oracle → Judge, sem publicação | informar custo |
 | `incremental_publish` | pipeline completo → Sales-AI | DRAFT obrigatório |
 | `publish` | Gold atual → Sales-AI | DRAFT obrigatório |
-| `publish_retry` | retry de falhas → Sales-AI | DRAFT obrigatório |
+
+`publish_retry` não faz parte da v1: a flag `--retry-failed` cai em publicação completa na imagem implantada e não oferece recuperação seletiva real.
 
 ## Limites
 
@@ -103,13 +105,14 @@ Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o def
 - **Imagem versus checkout:** a produção executa a imagem do container, não a working tree local; sempre usar o CLI dentro de `databrain-databrain-1`.
 - **Started não é sucesso:** iniciar uma unidade só prova aceitação; aguardar `succeeded` e `ExecMainStatus=0`.
 - **Operação concorrente:** advisory locks internos protegem o pipeline, mas a ponte também bloqueia dois starts simultâneos.
-- **Dados externos:** `incremental_prepare` lê Oracle via VPN; falha de VPN deve ser reportada, não contornada.
+- **Dados externos:** toda operação Oracle usa `/srv/databrain/ops/ingest-run.sh`; nunca substituir por `docker exec`, pois o wrapper governa VPN exclusiva, `flock`, preflight e watermark.
+- **Scheduler:** o timer `databrain-ingest.timer` do host é canônico; o scheduler interno do container fica desligado para evitar duplicidade.
 - **Publicação:** `publish*` muda Supabase/Sales-AI e sempre exige DRAFT pós-intenção + `approval_ref`.
 - **Cópia aposentada:** nunca usar `databrain.clean.RETIRED-*`.
 
 ## Verification
 
 - `hermes mcp test databrain-ops` conecta e descobre 9 tools.
-- `databrain_health` retorna API `ok`, container `healthy` e o estado efetivo do scheduler lido de `DATABRAIN_SCHEDULER_ENABLED`.
+- `databrain_health` retorna API `ok`, container `healthy`, timer canônico do host e scheduler interno desligado.
 - `dry_run` termina com status `succeeded` e exit code 0.
 - tentativa de `publish` sem `approval_ref` é recusada.
