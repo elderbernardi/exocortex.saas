@@ -24,3 +24,6 @@ nature: _meta
 - UPDATED: global/ — [2026-06-21] canonicalize | Pacote de memória promovido de `micro/exocortex-dev` para `global/`: ADR-019/020/021, contrato de roteamento, spec do AcervoIndex e reflexão arquitetural.
 - UPDATED: global/ — [2026-06-21] create | Contrato canônico de estrutura de diretórios de microverso em `contracts/microverso-directory-structure.md` (issue #89 / MV-PACK-2). Unifica 11 natures + 3 dirs de infra = 14 diretórios. Corrige _template/ (adicionados raw/ e _archive/). Corrigidas 3 skills: memory-manager ("7"→"11"), newmicro (ref para contrato), mvsetup ("Ontologia Multifocal v2"→estrutura canônica).
 - UPDATED: global/ — [2026-06-21] update | Sincronização documental pós-MV-PACK (issue #94 / MV-PACK-9). `shared/groups.md` reescrito com 7 microversos e 4 grupos (DOMAINS, PROJECTS, ROLES, CRIACAO). `acervo/README.md` atualizado com 14 diretórios e contrato canônico. `global/_meta/index.md` referencia microverso-package-spec e microversos.yaml. `mvinstall` alinhado ao contrato de estrutura.
+
+## 2026-08-15
+- CREATED: contracts/workspace-boundary-v1.md (perene) — DRAFT da fronteira V1 entre workspace operacional e memória do Acervo, aprovado para implementação do Slice 0.
