@@ -24,18 +24,18 @@ Motivo observado: ${reason}
 
 No diretório do repositório Exocórtex, execute:
 
-```bash
+\`\`\`bash
 export ACERVO="$ACERVO"
 export EXOCORTEX_HOME="$EXOCORTEX_HOME"
 export HERMES_HOME="$HERMES_HOME"
 "$python_hint" "$SCRIPT_DIR/scripts/acervo_mcp_server.py" --self-test --acervo-root "$ACERVO"
 hermes mcp test acervo
-```
+\`\`\`
 
 ## Modo degradado permitido
 
 Enquanto o MCP não voltar:
-- use `python3 scripts/acervoctl.py` para operações semânticas locais
+- use \`python3 scripts/acervoctl.py\` para operações semânticas locais
 - humano, infra e manutenção podem acessar arquivos diretamente
 - agentes continuam restritos ao caminho semântico oficial quando o MCP estiver disponível
 EOF
