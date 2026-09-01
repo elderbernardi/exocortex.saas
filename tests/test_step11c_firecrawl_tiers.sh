@@ -117,7 +117,7 @@ run_tier() {
   local box="$1" toggle="$2" base_url="$3"
   (
     set +e
-    export PATH="$box/bin:$PATH"
+    export PATH="$box/bin:${FIRECRAWL_TEST_PATH:-$PATH}"
     export HERMES_HOME="$box/hermes_home"
     export EXOCORTEX_FIRECRAWL_SKIP_AUTORUN=1
     export EXOCORTEX_ENABLE_FIRECRAWL="$toggle"
@@ -221,6 +221,20 @@ if [ "$RC" = "0" ] && [ -f "$REMINDER" ]; then
   pass "T-FC06: second run exit 0, reminder present"
 else
   fail_test "T-FC06" "rc=$RC reminder=$([ -f "$REMINDER" ] && echo yes || echo no)"
+fi
+rm -rf "$BOX"
+
+# =============================================================================
+# T-FC07: adapter MCP absent after a successful Tier 1 → degrade, never abort
+# =============================================================================
+echo -e "${BOLD}T-FC07: Tier 1 (adapter MCP absent) → degrade sem abortar setup${NC}"
+BOX="$(make_sandbox present down)"
+RC="$(FIRECRAWL_TEST_PATH="/usr/bin:/bin" run_tier "$BOX" "1" "http://127.0.0.1:3002")"
+REMINDER="$BOX/hermes_home/reminders/firecrawl.md"
+if [ -f "$BOX/INSTALL_RAN" ] && [ "$RC" = "0" ] && [ -f "$REMINDER" ]; then
+  pass "T-FC07: adapter ausente degrada com lembrete, exit 0"
+else
+  fail_test "T-FC07" "expected install + reminder + exit 0; rc=$RC reminder=$([ -f "$REMINDER" ] && echo yes || echo no); out=$(cat "$BOX/OUT")"
 fi
 rm -rf "$BOX"
 
