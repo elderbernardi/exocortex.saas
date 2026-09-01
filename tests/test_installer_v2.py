@@ -6,6 +6,7 @@ import os
 import shlex
 import subprocess
 import sys
+import venv
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -95,6 +96,9 @@ def test_setup_wrapper_keeps_acervo_mcp_selftest_on_compatible_runtime(tmp_path:
     bin_dir.mkdir()
     lean_bin.mkdir()
     compatible_bin.mkdir()
+    lean_venv = tmp_path / "lean-runtime"
+    venv.EnvBuilder(with_pip=False).create(lean_venv)
+    lean_python = lean_venv / "bin" / "python"
     _write_executable(
         bin_dir / "hermes",
         "#!/usr/bin/env bash\n"
@@ -106,7 +110,7 @@ def test_setup_wrapper_keeps_acervo_mcp_selftest_on_compatible_runtime(tmp_path:
     )
     _write_executable(
         lean_bin / "python3",
-        "#!/bin/sh\nexec " + shlex.quote("/home/ubuntu/.hermes/hermes-agent/venv/bin/python3") + ' "$@"\n',
+        "#!/bin/sh\nexec " + shlex.quote(str(lean_python)) + ' "$@"\n',
     )
     _write_executable(
         compatible_bin / "python3",
