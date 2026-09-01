@@ -24,6 +24,10 @@ class FirecrawlProvisionTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + "\n" + result.stderr)
         self.assertIn("All tests passed.", result.stdout)
 
+    @unittest.skipUnless(
+        os.environ.get("EXOCORTEX_TEST_LIVE_FIRECRAWL") == "1",
+        "requires EXOCORTEX_TEST_LIVE_FIRECRAWL=1 and a provisioned local Firecrawl runtime",
+    )
     def test_smoke_script_passes_against_live_runtime(self):
         env = os.environ.copy()
         env["HERMES_HOME"] = str(HERMES_HOME)
