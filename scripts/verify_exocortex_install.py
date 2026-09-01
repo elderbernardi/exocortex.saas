@@ -86,6 +86,48 @@ def run_with_retry(
     return code, output, attempts
 
 
+def configured_acervo_mcp_command(hermes_home: Path) -> str | None:
+    """Return the configured Acervo MCP runtime without importing PyYAML.
+
+    The verifier may itself be running under a lean Python that cannot import
+    FastMCP or PyYAML. The setup writes this small mapping deterministically;
+    parsing only its `mcp_servers.acervo.command` scalar lets the self-test use
+    the runtime that setup already proved capable.
+    """
+    config_path = hermes_home / "config.yaml"
+    try:
+        lines = config_path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+
+    mcp_indent: int | None = None
+    acervo_indent: int | None = None
+    for raw_line in lines:
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        indent = len(raw_line) - len(raw_line.lstrip())
+        clean = stripped.split(" #", 1)[0].rstrip()
+        if mcp_indent is None:
+            if clean == "mcp_servers:":
+                mcp_indent = indent
+            continue
+        if indent <= mcp_indent:
+            return None
+        if acervo_indent is None:
+            if indent > mcp_indent and clean == "acervo:":
+                acervo_indent = indent
+            continue
+        if indent <= acervo_indent:
+            return None
+        if clean.startswith("command:"):
+            value = clean.removeprefix("command:").strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+                value = value[1:-1]
+            return value or None
+    return None
+
+
 def main() -> int:
     args = parse_args()
     hermes_home = Path(os.environ.get("HERMES_HOME", Path.home() / ".hermes")).expanduser().resolve()
@@ -174,7 +216,8 @@ def main() -> int:
     record("memory-routing", "Roteamento de memória", routing_ok, routing_evidence)
 
     mcp_server = REPO_ROOT / "scripts" / "acervo_mcp_server.py"
-    code, output = run([sys.executable, str(mcp_server), "--self-test", "--acervo-root", str(acervo)], env=env, timeout=120)
+    mcp_python = configured_acervo_mcp_command(hermes_home) or sys.executable
+    code, output = run([mcp_python, str(mcp_server), "--self-test", "--acervo-root", str(acervo)], env=env, timeout=120)
     record("acervo-mcp-selftest", "Acervo MCP local", code == 0, f"exit={code}; {output.splitlines()[-1] if output else ''}")
     if hermes:
         code, output = run([hermes, "mcp", "test", "acervo"], env=env, timeout=120)

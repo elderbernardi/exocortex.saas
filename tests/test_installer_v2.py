@@ -3,9 +3,11 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -24,6 +26,7 @@ def _load_module(name: str, path: Path):
 
 installer = _load_module("exocortex_install_test", SCRIPTS / "exocortex_install.py")
 behavior = _load_module("verify_exocortex_behavior_test", SCRIPTS / "verify_exocortex_behavior.py")
+verification = _load_module("verify_exocortex_install_test", SCRIPTS / "verify_exocortex_install.py")
 SCENARIOS = behavior.SCENARIOS
 evaluate = behavior.evaluate
 
@@ -43,6 +46,98 @@ def test_profiles_are_explicit_and_full_includes_self_hosted_services() -> None:
     assert {"hindsight", "firecrawl", "webui"}.issubset(full_ids)
     assert "verify" in core_ids
     assert "verify" in full_ids
+
+
+def test_verification_reuses_acervo_mcp_runtime_persisted_in_config(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    hermes_home = tmp_path / ".hermes"
+    exocortex_home = tmp_path / "exocortex"
+    acervo = exocortex_home / "acervo"
+    hermes_home.mkdir()
+    acervo.mkdir(parents=True)
+    compatible_python = tmp_path / "compatible-python"
+    (hermes_home / "config.yaml").write_text(
+        "mcp_servers:\n"
+        "  acervo:\n"
+        f"    command: {compatible_python}\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("EXOCORTEX_HOME", str(exocortex_home))
+    monkeypatch.setenv("ACERVO", str(acervo))
+    monkeypatch.setattr(
+        verification,
+        "parse_args",
+        lambda: SimpleNamespace(profile="core", allow_degraded_services=False, json_report=None),
+    )
+    monkeypatch.setattr(verification.shutil, "which", lambda _name: None)
+    commands: list[list[str]] = []
+
+    def fake_run(command: list[str], *, env: dict[str, str], timeout: int = 120) -> tuple[int, str]:
+        commands.append(command)
+        return 0, "ok"
+
+    monkeypatch.setattr(verification, "run", fake_run)
+
+    verification.main()
+
+    self_test = next(command for command in commands if "--self-test" in command)
+    assert self_test[0] == str(compatible_python)
+
+
+def test_setup_wrapper_keeps_acervo_mcp_selftest_on_compatible_runtime(tmp_path: Path) -> None:
+    home = tmp_path / "home"
+    hermes_home = home / ".hermes"
+    exocortex_home = home / "exocortex"
+    bin_dir = tmp_path / "bin"
+    lean_bin = tmp_path / "lean-bin"
+    compatible_bin = tmp_path / "compatible-bin"
+    hermes_home.mkdir(parents=True)
+    bin_dir.mkdir()
+    lean_bin.mkdir()
+    compatible_bin.mkdir()
+    _write_executable(
+        bin_dir / "hermes",
+        "#!/usr/bin/env bash\n"
+        "case \"${1:-} ${2:-}\" in\n"
+        "  'config check'|'mcp add'|'mcp test') exit 0 ;;\n"
+        "esac\n"
+        "if [ \"${1:-}\" = --version ]; then echo 'Hermes Agent v0.test'; exit 0; fi\n"
+        "exit 0\n",
+    )
+    _write_executable(
+        lean_bin / "python3",
+        "#!/bin/sh\nexec " + shlex.quote("/home/ubuntu/.hermes/hermes-agent/venv/bin/python3") + ' "$@"\n',
+    )
+    _write_executable(
+        compatible_bin / "python3",
+        "#!/bin/sh\nexec " + shlex.quote(sys.executable) + ' "$@"\n',
+    )
+    env = os.environ.copy()
+    env.update(
+        {
+            "BASH_ENV": "",
+            "HOME": str(home),
+            "HERMES_HOME": str(hermes_home),
+            "EXOCORTEX_HOME": str(exocortex_home),
+            "ACERVO": str(exocortex_home / "acervo"),
+            "PATH": os.pathsep.join([str(bin_dir), str(lean_bin), str(compatible_bin), env["PATH"]]),
+        }
+    )
+
+    result = subprocess.run(
+        ["bash", str(REPO / "setup.sh"), "--profile", "core", "--yes", "--skip-acceptance"],
+        cwd=REPO,
+        env=env,
+        text=True,
+        capture_output=True,
+        timeout=180,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    latest = json.loads((hermes_home / "exocortex-install" / "latest.json").read_text(encoding="utf-8"))
+    assert latest["status"] == "pass"
+    config = (hermes_home / "config.yaml").read_text(encoding="utf-8")
+    assert f"command: {compatible_bin / 'python3'}" in config
 
 
 def test_preflight_requires_existing_configured_hermes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
