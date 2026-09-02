@@ -17,7 +17,7 @@ nature: _meta
 
 > Catálogo de conteúdo universal. Tudo aqui se aplica a TODOS os Microversos.
 > Carregado no boot de toda sessão. Consultar antes de carregar páginas.
-> Last updated: 2026-06-21 | Total pages: canonical memory package active
+> Last updated: 2026-08-15 | Total pages: canonical memory package active
 
 ## Instruções
 <!-- Regras universais — ordenar alfabeticamente -->
@@ -41,6 +41,7 @@ nature: _meta
 - [contracts/memory-routing-contract.md](contracts/memory-routing-contract.md) — roteamento canônico entre memória rápida, Hindsight, Acervo e session_search.
 - [contracts/microverso-directory-structure.md](contracts/microverso-directory-structure.md) — estrutura canônica de diretórios de microverso (14 dirs: 11 natures + 3 infra).
 - [contracts/microverso-package-spec.md](contracts/microverso-package-spec.md) — especificação do formato .mvpkg (excrtx/v1) para export/import de microversos.
+- [contracts/workspace-boundary-v1.md](contracts/workspace-boundary-v1.md) — DRAFT da fronteira entre workspace operacional, locator local e memória do Acervo.
 - [_meta/microversos.yaml](_meta/microversos.yaml) — registro de microversos instalados (append-only, mantido pelo mvinstall).
 
 ## Decisões canônicas
