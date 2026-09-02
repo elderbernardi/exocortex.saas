@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -55,7 +56,19 @@ class SetupAcervoMcpTest(unittest.TestCase):
             )
             incompatible_python.chmod(0o755)
             compatible_python = compatible_bin / "python3"
-            compatible_python.symlink_to(Path(sys.executable).resolve())
+            # A symlink to a venv interpreter breaks venv detection: Python
+            # derives sys.prefix from argv[0] before resolving, so a symlinked
+            # venv falls back to the base interpreter and loses the venv
+            # site-packages (fastmcp). A wrapper that execs the real venv
+            # interpreter (the path itself, not `.resolve()`, which would strip
+            # the venv) keeps it genuinely fastmcp-capable on venv runners.
+            compatible_python.write_text(
+                "#!/bin/sh\nexec "
+                + shlex.quote(str(Path(sys.executable)))
+                + ' "$@"\n',
+                encoding="utf-8",
+            )
+            compatible_python.chmod(0o755)
             relative_compatible_bin = os.path.relpath(compatible_bin, REPO)
             env["PATH"] = os.pathsep.join(
                 [str(incompatible_bin), relative_compatible_bin, env["PATH"]]

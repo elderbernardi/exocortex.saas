@@ -113,7 +113,10 @@ configure_firecrawl() {
         # Self-host = endpoint local; fixa a base URL para o restante do setup.
         export FIRECRAWL_BASE_URL="$base_url"
         log "Firecrawl self-hosted ativo em $base_url"
-        _firecrawl_register_mcp "$base_url"
+        if ! _firecrawl_register_mcp "$base_url"; then
+          warn "Backend Firecrawl ativo, mas o adapter MCP não ficou disponível — mantendo degradação graciosa"
+          _firecrawl_write_reminder "$base_url"
+        fi
       else
         warn "Falha ao provisionar Firecrawl self-hosted — caindo para degradação"
         _firecrawl_write_reminder "$base_url"
@@ -126,7 +129,10 @@ configure_firecrawl() {
   if _firecrawl_probe "$base_url"; then
     log "Tier 2: usando Firecrawl existing em $base_url (health OK)"
     export FIRECRAWL_BASE_URL="$base_url"
-    _firecrawl_register_mcp "$base_url"
+    if ! _firecrawl_register_mcp "$base_url"; then
+      warn "Backend Firecrawl existente acessível, mas o adapter MCP não ficou disponível — mantendo degradação graciosa"
+      _firecrawl_write_reminder "$base_url"
+    fi
     return 0
   fi
 

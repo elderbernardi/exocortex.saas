@@ -259,6 +259,11 @@ def run_stage(
             }
 
     command = render_command(stage, values)
+    # Python stages must run under the interpreter that invoked the installer,
+    # not the first `python3` on PATH: a Hermes prepended lean runtime may lack
+    # the packages (yaml, fastmcp) the stage scripts require.
+    if command and command[0] == "python3":
+        command = [sys.executable, *command[1:]]
     stage_env = dict(env)
     stage_env.update(stage.env)
     log_path = log_dir / f"{stage.id}.log"
