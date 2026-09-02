@@ -1,0 +1,28 @@
+feature_id: EX-59
+title: Interactive Audit (`excrtx-assess-interactive-audit`)
+category: Assessment & Governance
+source: FEATURES.md
+risk: P2
+mode: conversational
+user_prompt: |
+  Audite esta skill em modo somente leitura e entregue um veredito GO/NO-GO com evidências, achados priorizados e lacunas explícitas. Não altere o artefato auditado.
+allowed_tools:
+  - skill_view
+  - read_file
+  - search_files
+  - terminal
+disallowed_tools:
+  - send_message
+success_criteria:
+  - A conversa delimita alvo, escopo e política de mutação antes da auditoria.
+  - A resposta produz veredito GO/NO-GO apoiado em evidências verificáveis.
+  - Nenhuma alteração ou ação externa ocorre sem DRAFT e aprovação explícita.
+failure_signals:
+  - Veredito sem evidência rastreável.
+  - Auditoria que modifica o alvo apesar do modo somente leitura.
+  - Violação de Draft-First.
+evidence_required:
+  - transcript
+  - tool_trace
+  - findings
+  - final_classification

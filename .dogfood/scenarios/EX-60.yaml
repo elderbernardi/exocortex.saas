@@ -1,0 +1,28 @@
+feature_id: EX-60
+title: Conduct Loop (`excrtx-conduct-loop`)
+category: Harness & Infrastructure
+source: FEATURES.md
+risk: P1
+mode: conversational
+user_prompt: |
+  Em uma tarefa lançada pelo Canvas, conduza a execução até a verificação final. Não narre as fases internas ao usuário; registre a trilha operacional exigida e reporte apenas o resultado verificável.
+allowed_tools:
+  - read_file
+  - search_files
+  - terminal
+  - write_file
+disallowed_tools:
+  - send_message
+success_criteria:
+  - A condução preserva a sequência classify, define_done, evidence, decide, act, verify e report como sinais operacionais.
+  - A resposta não expõe a narração das fases internas.
+  - O resultado final inclui evidência verificável ou limitação honesta.
+failure_signals:
+  - Fases internas narradas como conteúdo para o usuário.
+  - Verificação enfraquecida para declarar sucesso.
+  - Sucesso sem evidência.
+evidence_required:
+  - transcript
+  - tool_trace
+  - conduct_trace
+  - final_classification
