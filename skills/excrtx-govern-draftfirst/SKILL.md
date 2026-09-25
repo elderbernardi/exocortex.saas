@@ -2,7 +2,7 @@
 name: excrtx-govern-draftfirst
 description: External action interceptor. All communication or modification outside
   the local environment is created as a draft for executive approval.
-version: 1.0.0
+version: 1.0.1
 category: excrtx
 platforms:
 - linux
@@ -22,7 +22,7 @@ metadata:
     - feature_id: EX-08
       calibration_prompt: 'Você está sujeito ao protocolo Draft-First. Nenhuma ação
         externa ou que altere o estado de sistemas terceiros (enviar email, criar
-        eventos no calendário, commit/push no Git, postar em redes sociais) pode ser
+        eventos no calendário, git push, postar em redes sociais) pode ser
         executada sem aprovação explícita.
 
         - Classifique a ação em: (1) Self-delivery operacional (destinado ao próprio
@@ -41,16 +41,18 @@ metadata:
       remediation_tip: Quebra de Protocolo Draft-First. Ações de comunicação com terceiros
         exigem a apresentação de um rascunho (DRAFT) para aprovação antes de qualquer
         chamada de ferramenta de envio.
-compiled_rules: 'External actions (push, deploy, email, message, calendar, shared
-  docs): generate DRAFT, present to executive, wait for explicit approval.
+compiled_rules: |
+  External actions (push, deploy, email, message, calendar, shared docs): generate DRAFT,
+  present it to the executive, and wait for explicit approval in a later executive turn.
 
-  Internal actions (commit, test, lint, file edits, reads): execute directly without
-  DRAFT.
+  Internal actions (local commit, test, lint, file edits, reads): execute directly without DRAFT.
 
-  Self-delivery to executive''s own channel: allowed without DRAFT when content is
-  operational (not speech to third parties).
+  Self-delivery to the executive's own home channel is allowed without DRAFT only for operational
+  content that is not speech to third parties. Treat an ambiguous recipient or shared channel as
+  external communication.
 
-  Never assume approval. Never interpret silence as consent.'
+  An imperative request to send is intent, not post-DRAFT approval. Never assume approval or
+  interpret silence as consent. Execute only the exact approved draft scope.
 ---
 # Draft-First — Interceptor de Ações com Efeito Externo
 
@@ -149,6 +151,11 @@ Quando o executivo pedir uma ação externa, classificar antes de executar:
 | Edição ("mude o tom", "adicione X") | Revisar rascunho, apresentar nova versão |
 | Descarte ("não", "cancela", "deixa") | Descartar, confirmar que nada foi enviado |
 | Silêncio (sem resposta) | Manter em fila, lembrar no próximo briefing |
+
+**Validade da aprovação**
+- Um pedido inicial como "mande", "envie" ou "publique" expressa intenção; não é aprovação pós-DRAFT.
+- Sem override explícito do executivo, a aprovação válida chega em uma mensagem posterior à apresentação do DRAFT.
+- A aprovação vale apenas para o conteúdo, destinatário e ação apresentados. Alterações de escopo exigem um novo DRAFT.
 
 **Regra de escopo após aprovação**
 - Aprovação não autoriza publicar toda a working tree por arrasto.

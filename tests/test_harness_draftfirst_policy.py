@@ -55,6 +55,24 @@ class HarnessDraftFirstPolicyTest(unittest.TestCase):
         self.assertIn("quero revisar antes", content)
         self.assertIn("confio, execute direto", content)
 
+    def test_compiler_preserves_complete_draftfirst_rule(self):
+        from scripts.compile_soul import compile_rules
+
+        compiled = compile_rules(ROOT / "skills")
+        section = compiled.split("## Draft-First\n", 1)[1].split("\n\n## Tool Governance", 1)[0]
+
+        self.assertIn("executive's own home channel", section)
+        self.assertIn("ambiguous recipient or shared channel", section)
+        self.assertIn("intent, not post-DRAFT approval", section)
+        self.assertIn("exact approved draft scope", section)
+
+    def test_draftfirst_calibration_keeps_local_commit_internal(self):
+        content = DRAFTFIRST_SKILL.read_text(encoding="utf-8")
+        calibration = content.split("compiled_rules:", 1)[0]
+
+        self.assertIn("git push", calibration)
+        self.assertNotIn("commit/push", calibration)
+
     def test_tool_governance_skill_classifies_internal_actions(self):
         content = TOOLS_SKILL.read_text(encoding="utf-8")
         self.assertIn("**Ações internas (git/tests)**", content)

@@ -71,22 +71,29 @@ def extract_compiled_rules(skill_path: Path) -> tuple[str, str] | None:
     name_match = re.search(r"^name:\s*(.+)$", frontmatter, re.MULTILINE)
     name = name_match.group(1).strip() if name_match else skill_path.parent.name
 
-    # Extract compiled_rules (supports multiline block | or quoted strings)
-    rules_match = re.search(
-        r"^compiled_rules:\s*\|\n((?:[ \t]+.+\n?)+)",
-        frontmatter,
-        re.MULTILINE,
-    )
-    if rules_match:
-        # Dedent the rules block (remove leading whitespace from YAML indentation)
-        raw = rules_match.group(1)
-        rule_lines = raw.splitlines()
-        if rule_lines:
-            # Find minimum indentation
-            indents = [len(l) - len(l.lstrip()) for l in rule_lines if l.strip()]
-            min_indent = min(indents) if indents else 0
-            rule_lines = [l[min_indent:] for l in rule_lines]
-        rules = "\n".join(rule_lines).strip()
+    # Extract compiled_rules (supports YAML literal blocks and quoted strings).
+    # Blank lines are part of a literal block. The prior regex stopped at the
+    # first blank line, silently truncating compiled policy after one paragraph.
+    block_match = re.search(r"^compiled_rules:\s*\|\s*$", frontmatter, re.MULTILINE)
+    if block_match:
+        block_lines = []
+        for line in frontmatter[block_match.end():].splitlines():
+            if not line.strip():
+                block_lines.append("")
+                continue
+            if line[0].isspace():
+                block_lines.append(line)
+                continue
+            break
+
+        if not block_lines:
+            return None
+
+        indents = [len(line) - len(line.lstrip()) for line in block_lines if line.strip()]
+        min_indent = min(indents) if indents else 0
+        rules = "\n".join(
+            line[min_indent:] if line.strip() else "" for line in block_lines
+        ).strip()
     else:
         quoted_match = re.search(
             r"^compiled_rules:\s*(['\"])(.*?)\1",
