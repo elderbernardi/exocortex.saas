@@ -503,7 +503,7 @@ def operation_logs(operation_id: str, tail_lines: int = 200) -> dict[str, Any]:
 
 
 # Read-only shared projection; no shell, remote snapshot or raw log content crosses this surface.
-EXECUTION_FIELDS = {"state", "capacity", "reasonCode", "runId", "startedAt", "finishedAt", "resultAt", "nextRunAt", "exitCode", "image", "selected", "completed", "recovered", "pending", "costUsd"}
+EXECUTION_FIELDS = {"state", "capacity", "coverage", "coverageUnavailable", "reasonCode", "runId", "startedAt", "finishedAt", "resultAt", "nextRunAt", "exitCode", "image", "selected", "completed", "recovered", "pending", "costUsd"}
 
 
 def execution_status() -> dict[str, Any]:
