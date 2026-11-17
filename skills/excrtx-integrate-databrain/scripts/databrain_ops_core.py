@@ -8,6 +8,7 @@ lista fixa de argumentos do CLI oficial do DataBrain dentro do container ativo.
 from __future__ import annotations
 
 import json
+import tempfile
 import os
 import re
 import subprocess
@@ -233,11 +234,15 @@ def _scheduler_state() -> dict[str, Any]:
                 value = line.split("=", 1)[1].strip().lower()
                 break
     internal_enabled = value in {"1", "true", "yes", "on"} if value is not None else None
+    daily_timer = _system_unit_state("databrain-insights-daily.timer", timer=True)
     ingest_timer = _system_unit_state("databrain-ingest.timer", timer=True)
     return {
-        "automatic_runs": ingest_timer.get("is_active") == "active",
+        "automatic_runs": ingest_timer.get("is_active") == "active" or daily_timer.get("is_active") == "active",
         "canonical_scheduler": "host_systemd_timer",
         "host_ingest_timer": ingest_timer,
+        "host_daily_timer": daily_timer,
+        "host_daily_service": _system_unit_state("databrain-insights-daily.service"),
+        "host_ingest_service": _system_unit_state("databrain-ingest.service"),
         "host_backup_timer": _system_unit_state("databrain-backup.timer", timer=True),
         "host_vpn_service": _system_unit_state("databrain-net.service"),
         "internal_scheduler": {
@@ -268,6 +273,7 @@ def health() -> dict[str, Any]:
         "api": payload,
         "container": container,
         "scheduler": _scheduler_state(),
+        "execution": execution_status(),
     }
 
 
@@ -410,6 +416,11 @@ def start_operation(receipt_id: str, approval_ref: str | None = None) -> dict[st
     if live["api"].get("status") != "ok" or live["container"].get("health") != "healthy":
         raise RuntimeError("DataBrain não está saudável; operação recusada.")
 
+    scheduler = live.get("scheduler", {})
+    if any(scheduler.get(key, {}).get("is_active") in {"active", "activating", "deactivating", "reloading"}
+           for key in ("host_daily_service", "host_ingest_service")):
+        raise RuntimeError("Uma execução host diária/semanal está em andamento; nova operação recusada.")
+
     operation_id = receipt_id
     directory = ops_root() / operation_id
     log_path = directory / "operation.log"
@@ -489,3 +500,70 @@ def operation_logs(operation_id: str, tail_lines: int = 200) -> dict[str, Any]:
         return {"status": "ok", "operation_id": operation_id, "lines": [], "message": "log ainda não criado"}
     lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     return {"status": "ok", "operation_id": operation_id, "line_count": len(lines), "lines": lines[-tail_lines:]}
+
+
+# Read-only shared projection; no shell, remote snapshot or raw log content crosses this surface.
+EXECUTION_FIELDS = {"state", "capacity", "reasonCode", "runId", "startedAt", "finishedAt", "resultAt", "nextRunAt", "exitCode", "image", "selected", "completed", "recovered", "pending", "costUsd"}
+
+
+def execution_status() -> dict[str, Any]:
+    path = Path(os.environ.get("DATABRAIN_EXECUTION_STATUS", "/var/lib/databrain/execution-control/public/status.json"))
+    try:
+        # Production data ancestors are private to the service account. Read exactly the fixed projection.
+        if "DATABRAIN_EXECUTION_STATUS" in os.environ:
+            raw = path.read_text(encoding="utf-8")
+        else:
+            r = subprocess.run(["sudo", "-n", "cat", str(path)], capture_output=True, text=True, timeout=5)
+            if r.returncode != 0:
+                raise ValueError("projection unavailable")
+            raw = r.stdout
+        if len(raw) > 128 * 1024:
+            raise ValueError("projection bound")
+        d = json.loads(raw)
+        if d.get("schemaVersion") != "databrain-execution/v1":
+            raise ValueError("projection version")
+        age = (utc_now() - datetime.fromisoformat(d["observedAt"].replace("Z", "+00:00"))).total_seconds()
+        if age < -30:
+            raise ValueError("future observation")
+        return {"schemaVersion": d["schemaVersion"], "availability": "stale" if age > 180 else "available", "observedAt": d["observedAt"], "latestEventId": d.get("latestEventId"),
+                "daily": {k: v for k, v in d["daily"].items() if k in EXECUTION_FIELDS},
+                "weekly": {k: v for k, v in d["weekly"].items() if k in EXECUTION_FIELDS},
+                "manualOperations": [{k: v for k, v in r.items() if k in {"operationId", "operation", "state", "exitCode"}} for r in d.get("manualOperations", [])[:5]],
+                "notifications": {k: v for k, v in d.get("notifications", {}).items() if k in {"queued", "retrying", "accepted", "processed"}},
+                "recentRuns": [{k: v for k, v in r.items() if k in {"id", "status", "startedAt", "completedAt", "reconciliation"}} for r in d.get("recentRuns", [])[:10]]}
+    except Exception:
+        return {"schemaVersion": "databrain-execution/v1", "availability": "unavailable", "reasonCode": "execution_projection_unavailable"}
+
+
+def ack_event(event_id: str) -> dict[str, Any]:
+    if not re.fullmatch(r"[a-f0-9]{64}", event_id):
+        raise ValueError("event_id inválido")
+    events = Path(os.environ.get("DATABRAIN_EVENTS_DIRECTORY", "/var/lib/databrain/execution-control/events"))
+    try:
+        event = json.loads((events / (event_id + ".json")).read_text(encoding="utf-8"))
+        if event["event"]["eventId"] != event_id:
+            raise ValueError("event mismatch")
+    except Exception:
+        raise ValueError("Evento inexistente ou inválido") from None
+    acks = Path(os.environ.get("DATABRAIN_EVENT_ACKS", str(Path.home() / ".hermes/runs/databrain-events/acks")))
+    acks.mkdir(parents=True, exist_ok=True, mode=0o700)
+    result = {"eventId": event_id, "processedAt": utc_now().isoformat()}
+    path = acks / (event_id + ".json")
+    fd, temporary = tempfile.mkstemp(prefix=".ack-", dir=acks)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as out:
+            json.dump(result, out)
+            out.flush()
+            os.fsync(out.fileno())
+        try:
+            os.link(temporary, path)  # atomic no-clobber: readers never see partial JSON
+        except FileExistsError:
+            result = json.loads(path.read_text(encoding="utf-8"))
+        directory_fd = os.open(acks, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    finally:
+        os.unlink(temporary)
+    return result

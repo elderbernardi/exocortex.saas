@@ -12,6 +12,8 @@ from fastmcp import FastMCP
 
 from databrain_ops_core import (
     capabilities,
+    execution_status,
+    ack_event,
     get_run,
     health,
     list_inbox,
@@ -45,6 +47,19 @@ def create_server() -> FastMCP:
     def databrain_capabilities() -> dict[str, Any]:
         """Lista operações permitidas, efeitos e gates de aprovação."""
         return ok("capacidades listadas", **capabilities())
+
+    @app.tool(name="databrain_execution_status")
+    def databrain_execution_status() -> dict[str, Any]:
+        """Estado diário/semanal e pendências; available, stale ou unavailable explícitos."""
+        return execution_status()
+
+    @app.tool(name="databrain_ack_event")
+    def databrain_ack_event(event_id: str) -> dict[str, Any]:
+        """Confirma processamento de um evento conhecido após consultar execution_status; não executa pipelines."""
+        try:
+            return ok("evento processado", **ack_event(event_id))
+        except Exception as exc:
+            return error(exc)
 
     @app.tool(name="databrain_health")
     def databrain_health() -> dict[str, Any]:
@@ -121,7 +136,7 @@ def self_test() -> dict[str, Any]:
     async def run() -> dict[str, Any]:
         tools = sorted(tool.name for tool in await server.list_tools())
         result: dict[str, Any] = {
-            "ok": len(tools) == 9,
+            "ok": len(tools) == 11,
             "server": SERVER_NAME,
             "tool_count": len(tools),
             "tools": tools,

@@ -84,3 +84,42 @@ def test_sanitize_payload_removes_config_snapshot_and_redacts_nested_secrets():
     assert "config_snapshot" not in clean
     assert clean["safe"] == {"service_key": "[REDACTED]", "count": 2}
     assert clean["rows"] == [{"apiKey": "[REDACTED]", "name": "ok"}]
+
+
+def test_execution_status_reads_projection_and_marks_stale(tmp_path, monkeypatch):
+    core = load_core()
+    p = tmp_path / 'status.json'
+    monkeypatch.setenv('DATABRAIN_EXECUTION_STATUS', str(p))
+    assert core.execution_status()['availability'] == 'unavailable'
+    p.write_text(json.dumps({'schemaVersion': 'databrain-execution/v1', 'observedAt': '2026-11-17T06:00:00Z', 'daily': {'state': 'pending', 'pending': 761, 'secret': 'hide'}, 'weekly': {'state': 'failed'}, 'recentRuns': []}))
+    result = core.execution_status()
+    assert result['availability'] in {'available', 'stale'}
+    assert result['daily']['pending'] == 761
+    assert 'hide' not in json.dumps(result)
+
+
+def test_ack_requires_known_event_and_is_idempotent(tmp_path, monkeypatch):
+    core = load_core()
+    events, acks = tmp_path / 'events', tmp_path / 'acks'
+    events.mkdir()
+    monkeypatch.setenv('DATABRAIN_EVENTS_DIRECTORY', str(events))
+    monkeypatch.setenv('DATABRAIN_EVENT_ACKS', str(acks))
+    with pytest.raises(ValueError):
+        core.ack_event('../unsafe')
+    event_id = 'a' * 64
+    with pytest.raises(ValueError):
+        core.ack_event(event_id)
+    (events / (event_id + '.json')).write_text(json.dumps({'event': {'eventId': event_id}, 'delivery': {'state': 'accepted'}}))
+    first = core.ack_event(event_id)
+    assert first == core.ack_event(event_id)
+    assert first['eventId'] == event_id
+
+
+def test_bridge_refuses_new_operation_while_host_daily_is_running(tmp_path, monkeypatch):
+    core = load_core()
+    monkeypatch.setenv('DATABRAIN_OPS_ROOT', str(tmp_path))
+    receipt = core.prepare_operation('dry_run')
+    monkeypatch.setattr(core, '_active_bridge_operations', lambda: [])
+    monkeypatch.setattr(core, 'health', lambda: {'api': {'status': 'ok'}, 'container': {'health': 'healthy'}, 'scheduler': {'host_daily_service': {'is_active': 'activating'}}})
+    with pytest.raises(RuntimeError, match='host'):
+        core.start_operation(receipt['receipt_id'])

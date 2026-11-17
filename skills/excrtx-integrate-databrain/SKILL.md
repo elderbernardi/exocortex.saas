@@ -41,6 +41,18 @@ A skill usa o MCP local `databrain-ops`, que adapta três superfícies canônica
 
 Não existe ferramenta de shell livre. Toda mutação resolve para uma operação da allowlist `projetob.databrain.ops.v1`.
 
+## Estado operacional vigente (17/11/2026)
+
+Antes de iniciar trabalho, usar `databrain_execution_status`. Esta consulta reúne diário, semanal, últimas operações manuais da ponte e entrega de eventos; o histórico tradicional de `databrain_list_runs` não cobre a execução diária. `databrain_health` distingue disponibilidade da API e execução.
+
+- `availability=stale|unavailable`: não declarar sucesso nem confirmar processamento; investigar observador.
+- `daily.state=pending`: há obrigações remanescentes, não inferir publicação incompleta pelo código 3.
+- `daily.capacity.ready=false`: a próxima tranche não pode iniciar com segurança. Preservar evidências e não reduzir a reserva de disco.
+- Em evento autenticado, consultar estado atual e usar `databrain_ack_event(event_id)` após leitura disponível. Ack confirma processamento, não autorização de execução/publicação. Repetição do mesmo evento não autoriza repetir pipeline ou gasto.
+- Linha histórica `stale_unconfirmed` não pode ser convertida em succeeded sem prova da unidade/processo e do resultado.
+
+Runbook vigente: DataBrain `ops/EXECUTION_CONTROL.md`. Planos e handoffs antigos preservam decisões datadas; GO/NO-GO pertence à identidade/evidência da respectiva revisão. Gates locais via `pb heavy`; não exigir pagamento ou reativação de Actions. Não repetir campanha paga quando a identidade canônica não mudou e o verificador aceita a evidência vigente.
+
 ## Procedure
 
 1. Chamar `databrain_health`.
