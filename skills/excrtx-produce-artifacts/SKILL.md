@@ -151,7 +151,7 @@ For a book cover with back, spine and front, preserve editable source, raw brand
 8. Validate exports before publishing: file exists, size greater than zero, consistent MIME, and SHA-256 hash recorded.
 9. Apply the Unified Quality Gate (`excrtx-quality-gate`): all final prose in the artifact must pass the anti-slop gate (`excrtx-quality-antislop`); all visual components must pass the taste gate (`excrtx-quality-taste`). Gate failures must be fixed by the executor itself before delivering.
 9.1. When Canvas/manifest requires evaluation, generate assessments in `evaluations/` with relevant personas, including Scientist for factual/methodological claims and Professor for educational materials.
-10. Generate or update `manifest.json` with hash, MIME, size, source, exports, and destination.
+10. Generate or update `manifest.json` with hash, MIME, size, source, exports, and destination; then validate it with `python3 "$ACERVO/global/tools/harness/validate_artifact_manifest.py" <artifact_dir>` — a failed manifest blocks `ready`/publication.
 11. Publish exports to the user's private Drive via configured provider.
 11.1. Resolve the destination folder before upload (`drive_target.folder_path`) and require explicit parent; root upload is invalid for final artifacts.
 12. Write `receipt.{provider}.json` with IDs, links, and status.
