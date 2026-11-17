@@ -1,7 +1,7 @@
 ---
 name: excrtx-integrate-databrain
 description: Operate Projeto B DataBrain through a governed MCP control plane for health, ingestion, pipeline stages, publication and audit.
-version: 1.0.0
+version: 1.2.0
 category: excrtx
 platforms:
   - linux
@@ -29,7 +29,8 @@ Ative quando o executivo pedir para operar o DataBrain do Projeto B:
 - ingerir arquivos;
 - buscar o incremental do Sankhya/Oracle;
 - executar Cold, Hot, Judge ou Publisher;
-- acompanhar uma operação e analisar seus logs.
+- acompanhar uma operação e analisar seus logs;
+- disponibilizar o Cockpit do gestor com acesso restrito via Tailscale.
 
 ## Arquitetura
 
@@ -63,9 +64,11 @@ Runbook vigente: DataBrain `ops/EXECUTION_CONTROL.md`. Planos e handoffs antigos
    - Hot/Judge: informar que há custo de LLM;
    - `publish` e `incremental_publish`: apresentar DRAFT e aguardar aprovação explícita.
 5. Chamar `databrain_start_operation` com o receipt exato. Para publicação, incluir `approval_ref` pós-DRAFT.
-6. Consultar `databrain_operation_status` e `databrain_operation_logs` até concluir.
-7. Validar o efeito:
+6. Consultar `databrain_operation_status` e `databrain_operation_logs` até concluir. Para Hot longo, use status como fonte de ciclo de vida e logs em intervalos mais amplos (5–10 min), evitando inundar o contexto com logs por cliente.
+7. Ao concluir Hot, leia a cauda final dos logs e registre o resumo emitido pelo estágio: `clientes`, `briefings`, `insights`, `llm_calls`, tokens de entrada/saída/total, `fallbacks`, duração e a confirmação `Hot Engine Gold output written`.
+8. Validar o efeito:
    - ingest/local: conferir exit code e novo run;
+   - Hot: exigir `operation_status=succeeded`, `ExecMainStatus=0` e o resumo final do estágio; o status sozinho não fornece a qualidade/volume da geração;
    - publicação: conferir run + Sales-AI somente após sucesso.
 
 ## Comandos naturais suportados
@@ -85,6 +88,27 @@ O executivo pode pedir, em PT-BR:
 - **“Acompanhe a operação `<id>`.”** → status + logs até conclusão.
 
 Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o default conservador `incremental_prepare`. Nunca interpretar “ingerir” como autorização para publicar.
+
+### Sequenciamento ERP → Hot
+
+Quando o executivo pedir **“ingestão ERP completa para que o Hot rode com dados atualizados”**, trate como duas etapas deliberadamente separadas:
+
+1. Execute `incremental_refresh_prepare` quando o pedido incluir atualização integral de dimensões; ele busca Oracle, atualiza Bronze → Silver → Gold e mantém `--skip-hot --skip-publisher`.
+2. Valide o run concluído, o watermark, a inbox vazia, as contagens de ingestão e a promoção Silver/Gold antes de liberar a próxima etapa.
+3. Se houver Scanntech ativo, confirme nos logs o `vintageKey` selecionado e que os quatro Golds Scanntech foram regravados. A safra pode manter o mesmo timestamp de origem, mas seus cruzamentos com o ERP atualizado precisam ser recalculados.
+4. Só então prepare `hot`, informe que há custo de LLM e deixe explícito que não haverá publicação. A frase “para que o Hot possa rodar” é preparatória; execute-o somente se o executivo também pedir “rode/executa o Hot” ou confirmar após a informação de custo.
+
+Ao reportar, separe: **ERP/Gold atualizado**, **Hot ainda não executado** e **nenhuma publicação realizada**. Não use o sucesso da operação de lake como evidência de que briefings ou insights foram regenerados.
+
+### Judge automático e escopo real do Publisher
+
+Antes de informar custo ou qualidade do Judge, leia o resumo final dos logs. Quando `judge.auto_approve=true`, o estágio aprova administrativamente todos os itens pendentes, sem avaliação dimensional por LLM — o resumo deve mostrar `llm_calls: 0` e tokens zerados. Nesse cenário, o estágio Judge é aprovação administrativa. O Hot pode ter executado o julgamento factual semântico; confira a proveniência e as chamadas desse julgamento separadamente. Não atribua avaliação por IA ao estágio administrativo nem conclua que o Hot não usou juiz pelo contador zero do Judge externo.
+
+No DRAFT de `publish`, não deduza contagens finais apenas da última Hot ou do Judge. O Publisher atual pode sincronizar dimensões e carteiras, expirar/gerar insights e inbox, histórico cliente×produto, preços, rankings e consolidação matriz/filial, além dos artefatos Gold/Hot/Judge. Declare o escopo como publicação ampla e liste as famílias afetadas. Depois da aprovação, só considere concluído com `operation_status=succeeded`, exit code 0, `Publisher Stage Completed` com `errors: 0` e `Publish log recorded` dos artefatos críticos.
+
+**Inbox não é prova por lote.** Se o Publisher disser que publicou mensagens, valide a inbox pelo `vendedor_id` da conta que relatou o problema antes de atribuir a ausência ao app. Contas de teste/sombra podem ter `cliente_acesso`, briefings e insights, mas ficar fora de mensagens automáticas quando o conjunto de destinatários é derivado apenas de vendedores com `erp_ref_code`. Diferencie explicitamente persistência do lote, elegibilidade do destinatário e exibição no PWA. Procedimento e decisão de remediação em `references/inbox-delivery-verification.md`.
+
+Detalhes e exceções recuperáveis em `references/publisher-scope-and-auto-judge.md`.
 
 ## Operações v1
 
@@ -107,6 +131,7 @@ Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o def
 
 - Nunca montar comandos a partir de texto do usuário.
 - Nunca expor segredo, `.env` ou credenciais Oracle/Supabase.
+- Nunca navegar diretamente em rotas brutas do Cockpit (inclusive `/cockpit/runs/{id}`) para diagnóstico. Em 2026-08-30, a rota local de detalhe devolveu `config_snapshot` sem autenticação de sessão e incluiu material sensível; use somente os outputs saneados do MCP. Se esse vazamento for observado, não reproduza valores: registre incidente de segurança, preserve apenas evidência não sensível e proponha rotação/restrição via DRAFT.
 - Nunca rodar duas operações da ponte em paralelo.
 - Nunca contornar `approval_ref` em escrita externa.
 - Nunca interpretar `started` como sucesso; aguardar `succeeded` e exit code 0.
@@ -116,11 +141,26 @@ Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o def
 
 - **Imagem versus checkout:** a produção executa a imagem do container, não a working tree local; sempre usar o CLI dentro de `databrain-databrain-1`.
 - **Started não é sucesso:** iniciar uma unidade só prova aceitação; aguardar `succeeded` e `ExecMainStatus=0`.
+- **Política factual vigente:** no perfil `semantic-v1`, heurísticas de frases/cifras/verbos, densidade numérica e estilo são diagnósticos. Todo texto utilizável passa pelo juiz factual; incerteza é pendência, e descarte factual exige contradição comprovada. Não converter alertas antigos de estilo em NO-GO nem alegar que foram descartes corretos na política atual. `legacy-strict` permanece apenas para reprodução explícita do protocolo histórico. Conferir proveniência, texto final julgado e resultado real da operação.
 - **Operação concorrente:** advisory locks internos protegem o pipeline, mas a ponte também bloqueia dois starts simultâneos.
 - **Dados externos:** toda operação Oracle usa `/srv/databrain/ops/ingest-run.sh`; nunca substituir por `docker exec`, pois o wrapper governa VPN exclusiva, `flock`, preflight e watermark.
-- **Scheduler:** o timer `databrain-ingest.timer` do host é canônico; o scheduler interno do container fica desligado para evitar duplicidade.
+- **Scheduler:** os timers host `databrain-ingest.timer` (semanal) e `databrain-insights-daily.timer` (diário seletivo) são canônicos; o scheduler interno do container fica desligado para evitar duplicidade.
 - **Publicação:** `publish*` muda Supabase/Sales-AI e sempre exige DRAFT pós-intenção + `approval_ref`.
 - **Cópia aposentada:** nunca usar `databrain.clean.RETIRED-*`.
+- **`dry_run` valida orquestração, não mapeamento de arquivo:** o dry-run termina `succeeded` com `stages: []` e counts zerados mesmo com um arquivo novo na inbox — ele valida o plano do pipeline, não se o schema Bronze aceita o formato. Para provar compatibilidade de um arquivo externo, é preciso rodar `ingest_inbox` (Bronze local, reversível). Nunca usar dry_run como green para ingestão.
+- **Inbox física exige sudo:** a inbox de produção fica em `/srv/databrain/data/inbox` (grupo `databrain`, `drwxr-x---`); o MCP lista via `sudo -n find`. Para copiar um arquivo externo, usar `sudo -n cp` + `sudo -n sha256sum` para verificar; nome na inbox deve ser limpo (sem prefixos de cache). Procedimento completo em `references/external-file-ingestion.md`.
+- **Exposição Tailscale:** auditar credenciais e JWT antes de qualquer `tailscale serve`; a presença de fallback de desenvolvimento bloqueia a exposição. Usar proxy loopback allowlisted e nunca Funnel. O perfil mínimo é o default; ampliar para APIs gerenciais e runs exige DRAFT próprio, enumeração de rotas/métodos e autenticação adicional no proxy. Validar separadamente disponibilidade da API e presença de telas na UI — resposta `200` não prova que o gestor consegue usar a função visualmente. Consulte `references/tailscale-cockpit-exposure.md`.
+
+## Gate de promoção Scanntech
+
+Após uma ingestão Scanntech bem-sucedida, não presuma que a safra chegou ao produto publicável. Antes de Hot, Judge ou Publisher, valide a cadeia inteira:
+
+1. **Bronze:** existem os três Parquets mais recentes (`geral`, `guimaraes`, `share`) com timestamp da safra recebida.
+2. **Silver:** `dim_pdv_scanntech` e `fact_mercado_scanntech` foram regravados depois da Bronze correspondente.
+3. **Gold:** os quatro artefatos Scanntech — `share_overlap`, `prospects_alta_prioridade`, `alertas_queda_share` e `ranking_compradores` — foram regravados depois da Silver.
+4. Somente então execute Hot/Judge e apresente o DRAFT de publicação.
+
+Código de saída `0` de uma etapa isolada não substitui a prova de promoção entre camadas. Se timestamps ou artefatos não avançarem, interrompa a cadeia: não rode Hot/Judge e não publique dados potencialmente anteriores. Abra diagnóstico da transição Bronze → Silver/Gold com logs e evidência de artefato antes de qualquer correção.
 
 ## Verification
 
@@ -128,3 +168,11 @@ Pedidos de “atualizar dados” sem explicitar IA/publicação devem usar o def
 - `databrain_health` retorna API `ok`, container `healthy`, timer canônico do host e scheduler interno desligado.
 - `dry_run` termina com status `succeeded` e exit code 0.
 - tentativa de `publish` sem `approval_ref` é recusada.
+
+## Referência operacional
+
+Para diagnóstico de deploy, escolha do executor, scheduler host versus interno, sanitização, recovery e isolamento por worktree, consulte `references/deployment-and-control-plane-verification.md`.
+
+Para publicar o Cockpit do gestor no tailnet com proxy restritivo, auditoria prévia de credenciais, bloqueio de rotas técnicas e verificação sem Funnel, consulte `references/tailscale-cockpit-exposure.md`.
+
+Para ingerir arquivos externos (planilhas, CSVs, exports de fornecedores) na inbox de produção, verificação de integridade e limites do dry_run, consulte `references/external-file-ingestion.md`.
