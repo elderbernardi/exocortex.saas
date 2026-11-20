@@ -10,7 +10,7 @@ platforms:
 author: Exocórtex
 license: MIT
 gate:
-  require_quality_gate: true
+  require_quality_gate: false
   max_context_tokens: 2000
 metadata:
   hermes:
@@ -365,9 +365,9 @@ Use os arquivos em `references/upstream-frontend-slides/` como referência opera
 
 ## Quality Gate
 
-Antes de entregar, aplique o Quality Gate Unificado (`excrtx-quality-gate`) como passo final obrigatório:
+Execute `excrtx-quality-gate` apenas por pedido expresso; o mesmo vale, separadamente, para `excrtx-quality-antislop`. Antes de entregar, mantenha as verificações próprias dos slides:
 
-- aplicar `excrtx-quality-taste` para validar a interface/visual e `excrtx-quality-antislop` para prosa;
+- aplicar `excrtx-quality-taste` para validar a interface/visual;
 - verificar contraste e hierarquia visual;
 - verificar stage 16:9 em desktop e viewport estreita;
 - verificar ausência de overflow e sobreposição;

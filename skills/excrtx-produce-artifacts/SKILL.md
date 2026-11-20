@@ -9,7 +9,7 @@ platforms:
 author: Exocórtex
 license: MIT
 gate:
-  require_quality_gate: true
+  require_quality_gate: false
   max_context_tokens: 2000
 metadata:
   hermes:
@@ -66,7 +66,7 @@ Before executing, load when applicable:
 - `productivity/google-workspace`, for Google Drive operations.
 - `excrtx-govern-draftfirst`, if there's sharing, sending, external publication, or permission change.
 - `excrtx-quality-designsys` and `excrtx-quality-taste`, if the artifact has a visual component.
-- `excrtx-quality-antislop`, if the artifact has final prose.
+- `excrtx-quality-antislop`, only if the user explicitly requests anti-slop for the final prose.
 
 ## Principle
 
@@ -87,7 +87,7 @@ Harness model v0.4:
 - Microversos and tasks point to artifacts via metadata; path is not the canonical source of the relationship.
 - `friendly_name`/`publication_names` control filenames seen by the user; `artifact_id`/`canonical_slug` remain stable.
 - When an artifact becomes `ready` or approved, ask the user if they want to publish.
-- Before `ready`, apply Quality Gate; when Canvas/manifest requires it, run Persona Evaluation and record assessments in `evaluations/`.
+- Before `ready`, validate the package; when Canvas/manifest requires it, run Persona Evaluation and record assessments in `evaluations/`.
 
 ```text
 ~/.hermes/acervo/_artifacts/items/{artifact_id}/
@@ -149,7 +149,7 @@ For a book cover with back, spine and front, preserve editable source, raw brand
 6. Copy necessary assets to `assets/` with relative paths.
 7. Export final formats to `exports/`.
 8. Validate exports before publishing: file exists, size greater than zero, consistent MIME, and SHA-256 hash recorded.
-9. Apply the Unified Quality Gate (`excrtx-quality-gate`): all final prose in the artifact must pass the anti-slop gate (`excrtx-quality-antislop`); all visual components must pass the taste gate (`excrtx-quality-taste`). Gate failures must be fixed by the executor itself before delivering.
+9. Run `excrtx-quality-gate` only if explicitly requested; run `excrtx-quality-antislop` only if the user requests anti-slop. Neither is a prerequisite for delivery. Keep the visual pre-flight (`excrtx-quality-taste`) and mandatory manifest validation before publishing.
 9.1. When Canvas/manifest requires evaluation, generate assessments in `evaluations/` with relevant personas, including Scientist for factual/methodological claims and Professor for educational materials.
 10. Generate or update `manifest.json` with hash, MIME, size, source, exports, and destination.
 11. Publish exports to the user's private Drive via configured provider.
@@ -352,7 +352,7 @@ Session detail: `references/session-2026-06-01-nugai-html-drive-email.md`.
 When the request is for an institutional, office, printing, or final delivery artifact from Exocórtex:
 - Prioritize skills from the `excrtx` domain before resorting to generic or other-domain workflows.
 - Use skills from other domains only as specific technical support, not as the main track.
-- If there's institutional prose, also apply `excrtx-quality-antislop` and the local writing rule without gender-neutral language.
+- For institutional prose, apply the local writing rule without gender-neutral language.
 - If the artifact is for print, generate at least HTML and PDF; create a ZIP of the complete package when this improves transport, review, or reuse.
 - Visually validate the exported HTML before closing the task.
 
@@ -402,7 +402,7 @@ Record the failure in `receipt.google_drive.failed.json` and mark `manifest.stat
 - [ ] Final exports generated in `exports/`.
 - [ ] On Telegram, final ZIP created and registered in manifest when artifact is visual, HTML, deck, or multi-file package.
 - [ ] Hash, MIME, and size recorded in manifest.
-- [ ] Quality Gate applied before `ready`.
+- [ ] Required technical checks completed before `ready`; editorial checks only if requested.
 - [ ] Persona evaluation recorded in `evaluations/` when Canvas/manifest requires it.
 - [ ] Full-wrap editorial packages record spine/bleed assumptions and remain DRAFT until printer and author gates pass.
 - [ ] Book-cover packages include combined/individual PDFs plus front and spread contact sheets.

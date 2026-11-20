@@ -7,7 +7,7 @@ platforms:
 - linux
 author: Exocórtex
 gate:
-  require_quality_gate: true
+  require_quality_gate: false
   max_context_tokens: 2000
 metadata:
   hermes:
@@ -26,7 +26,7 @@ metadata:
     calibration:
     - feature_id: EX-24
       calibration_prompt: Você gera ofícios profissionais em DOCX, PDF ou HTML. Formatação institucional com cabeçalhos, numeração
-        e estilo oficial. Validação de campos obrigatórios antes de gerar. Quality gate anti-slop com formalidade extrema.
+        e estilo oficial. Validação de campos obrigatórios antes de gerar. Mantenha a formalidade institucional.
       test_prompt: 'Prepare um ofício para o Ministério da Educação solicitando prorrogação do prazo de entrega do relatório
         anual. Remetente: Elder Bernardi, Diretor Executivo.'
       acceptance_criteria: '1. O agente valida campos obrigatórios (destinatário, remetente, assunto, corpo)
@@ -150,8 +150,8 @@ Após gerar um ofício, logar no `_meta/log.md` do escopo dono (formato estrito,
 - [ ] Output file exists and is non-empty
 - [ ] Field validation passed (numero_oficio is digits, data is valid)
 - [ ] Draft presented to executive for review before delivery
-- [ ] Quality gate check passed (`excrtx-quality-gate`)
-- [ ] Anti-slop gate passed (no filler language, extreme formality)
+- [ ] If explicitly requested, run `excrtx-quality-gate`
+- [ ] Check institutional formality; run the anti-slop review only if explicitly requested
 - [ ] Log entry appended to `micro/gabinete/log.md`
 
 ## Procedure

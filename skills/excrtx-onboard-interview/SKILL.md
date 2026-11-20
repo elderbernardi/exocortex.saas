@@ -129,7 +129,7 @@ After confirmation: update SOUL.md, create microversos via `excrtx-memory-newmic
 
 ## Rules
 
-- Questions apply `excrtx-quality-antislop` — direct, no fluff
+- Ask direct questions without filler; use `excrtx-quality-antislop` only if explicitly requested.
 - Executive can skip questions — use reasonable defaults
 - Faithfully map the executive's style, without judgment
 - Re-onboarding does not destroy existing data (merge)

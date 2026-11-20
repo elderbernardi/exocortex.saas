@@ -17,11 +17,9 @@ skills:
   - excrtx-onboard-welcome
   - excrtx-onboard-interview
 
-  # ── Quality: anti-slop e estética ────────────────────────────────────
-  - excrtx-quality-antislop
+  # Qualidade visual padrão; gate editorial e anti-slop ficam disponíveis sob demanda.
   - excrtx-quality-taste
   - excrtx-quality-designsys
-  - excrtx-quality-gate
   - excrtx-quality-skilljudge
 
   # ── Memory: acervo e microversos ─────────────────────────────────────

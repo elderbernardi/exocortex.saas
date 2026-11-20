@@ -17,12 +17,15 @@ from scripts.exocortex_runtime_guard import (
 
 
 class RuntimeSkillGateTest(unittest.TestCase):
-    def test_production_skill_without_quality_gate_is_rejected(self):
-        result = enforce_skill_gate(
-            "excrtx-produce-slides",
-            loaded_skills=["excrtx-produce-artifacts"],
-            estimated_context_tokens=1200,
-        )
+    def test_explicit_frontmatter_requirement_is_still_enforced(self):
+        # A real production skill no longer requires the optional editorial gate.
+        # Keep testing the guard itself for skills that deliberately require it.
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            skill = root / "requires-gate"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text("---\ngate:\n  require_quality_gate: true\n---\n")
+            result = enforce_skill_gate(skill.name, loaded_skills=[], skills_dir=root)
         self.assertFalse(result["allowed"])
         self.assertEqual(result["reason"], "quality_gate_required")
 

@@ -127,7 +127,7 @@ Ordenar itens por:
 - **Empty acervo panic**: Se o acervo estiver vazio (executivo novo), dizer: "Acervo vazio — execute o onboarding para começar". Don't fabricate content.
 - **Fabricated items**: Não inventar itens. Cada item do briefing deve vir do payload e manter seu path canônico.
 - **Calendar fiction**: `calendar_status:not_configured|missing` significa agenda indisponível, nunca agenda vazia confirmada.
-- **Slop in briefings**: O briefing aplica `excrtx-quality-antislop` — zero frases de enchimento, direto ao ponto.
+- **Slop in briefings**: O briefing vai direto ao ponto; use `excrtx-quality-antislop` só por pedido expresso.
 - **Compact mode overflow**: Não incluir microversos sem itens relevantes no briefing compacto. Stay within 10 lines.
 - **Cross-microverso blind spots**: Alertar sobre conflitos cross-microverso quando detectados. Don't ignore interactions between domains.
 
@@ -138,4 +138,4 @@ Ordenar itens por:
 - [ ] Insights recentes são incluídos
 - [ ] Priorização respeita urgência > impacto > tempo
 - [ ] Modo compacto não ultrapassa 10 linhas
-- [ ] Output passa excrtx-quality-antislop (direto, sem enchimento)
+- [ ] Briefing direto, sem enchimento; sem pontuação editorial por padrão
